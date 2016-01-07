@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}Proxy Server(s){% endblock %}
+{% block head %}
+  <link rel="import" href="{{ url_for('static', filename='bower_components/iron-collapse/iron-collapse.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
+{% endblock %}
+{% block body %}
+  <a href="{{ url_for('proxyserver_add') }}">
+    <paper-button raised class="anchor-button">Add New Proxy Server
+    </paper-button></a>
+  <div id="proxy-card-holder">
+  {% for proxy_server in proxy_servers %}
+    <paper-card heading="{{ proxy_server.name }}">
+      <div class="card-content">
+        <p>{{ proxy_server.ip_address }}, {{ proxy_server.fingerprint }}</p>
+        <paper-button onclick="toggleCollapse('collapse-{{loop.index}}')">Show/hide SSH Key</paper-button>
+        <iron-collapse id="collapse-{{loop.index}}"><div>
+          <textarea rows="20" cols="80">{{ proxy_server.ssh_private_key }}
+          </textarea></div></iron-collapse>
+      </div>
+      <div class="card-actions">
+        <a href="{{ url_for('proxyserver_edit', server_id=proxy_server.id) }}">
+          <paper-button class="anchor-button">Edit</paper-button></a>
+        <a href="{{ url_for('proxyserver_delete', server_id=proxy_server.id) }}">
+          <paper-button class="anchor-button">Delete</paper-button></a>
+      </div>
+    </paper-card>
+  {% endfor %}
+  </div>
+{% endblock %}

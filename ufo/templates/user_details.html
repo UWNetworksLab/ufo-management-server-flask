@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block title %}User Details{% endblock %}
+{% block head %}
+  <link rel="import" href="{{ url_for('static', filename='bower_components/iron-collapse/iron-collapse.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
+{% endblock %}
+{% block body %}
+  <div id="user-card-holder">
+    <paper-card heading="{{ user.name }}">
+      <div class="card-content">
+        <p>{{ user.name }}, {{ user.email }}</p>
+        <p>Access Status: <b>
+          {% if user.is_key_revoked %}
+            Disabled
+          {% else %}
+            Enabled
+          {% endif %}
+        </b></p>
+        <paper-button onclick="toggleCollapse('collapse-pri')">Show/hide SSH Private Key</paper-button>
+        <iron-collapse id="collapse-pri"><div><textarea rows="20" cols="80">
+          {{ user.private_key }}</textarea></div></iron-collapse><br>
+        <paper-button onclick="toggleCollapse('collapse-pub')">Show/hide SSH Public Key</paper-button>
+        <iron-collapse id="collapse-pub"><div><textarea rows="20" cols="80">
+          {{ user.public_key }}</textarea></div></iron-collapse>
+      </div>
+      <div class="card-actions">
+        <a href="{{ url_for('delete_user', user_id=user.id) }}">
+          <paper-button raised class="anchor-button">Delete User
+        </paper-button></a>
+        <a href="{{ url_for('user_get_new_key_pair', user_id=user.id) }}">
+          <paper-button raised class="anchor-button">Rotate Key Pair
+        </paper-button></a>
+        <a href="{{ url_for('user_toggle_revoked', user_id=user.id) }}">
+          <paper-button raised class="anchor-button">
+            {% if user.is_key_revoked %}
+              Enable
+            {% else %}
+              Disable
+            {% endif %} Access
+        </paper-button></a>
+      </div>
+    </paper-card>
+    {% if invite_code %}
+      <paper-card heading="Invite Code Below">
+        <textarea rows="20" cols="80">{{ invite_code }}</textarea><br>
+      </paper-card>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}Users{% endblock %}
+{% block head %}
+  <link rel="import" href="/static/bower_components/paper-button/paper-button.html" />
+  <link rel="import" href="/static/bower_components/paper-card/paper-card.html" />
+  <link rel="import" href="/static/bower_components/paper-item/paper-item.html" />
+  <link rel="import" href="/static/bower_components/paper-listbox/paper-listbox.html" />
+{% endblock %}
+{% block body %}
+  <div class="top-buttons">
+    <a id='add_users' href="{{ url_for('add_user') }}">
+      <paper-button raised class="anchor-button">Add Users</paper-button></a>
+      <br />
+  </div>
+  <paper-card heading="Users">
+    <div class="card-content">
+      <p>Click a user below to view more details.</p>
+      <paper-listbox>
+      {% for user_id, email in user_payloads.iteritems() %}
+        <a href="{{ url_for('user_details', user_id=user_id) }}">
+          <paper-item>{{ email }}</paper-item>
+        </a>
+      {% endfor %}
+      </paper-listbox></div>
+  </paper-card>
+{% endblock %}

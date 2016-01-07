@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Proxy Server(s){% endblock %}
+{% block head %}
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-input/paper-input.html') }}" />
+{% endblock %}
+{% block body %}
+  <form id="proxy-edit-add-form" method="post">
+    <paper-input label="IP Address" type="text" name="ip_address" value="{{ proxy_server.ip_address }}" required></paper-input>
+    <paper-input label="Name" type="text" name="name" value="{{ proxy_server.name }}" required></paper-input>
+    <paper-input label="SSH Private Key" type="text" name="ssh_private_key" value="{{ proxy_server.ssh_private_key }}" required></paper-input>
+    <paper-input label="Fingerprint" type="text" name="fingerprint" value="{{ proxy_server.fingerprint }}" required></paper-input>
+    <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
+    <paper-button raised onclick="submitByFormId('proxy-edit-add-form')" class="form-submit-button" type="submit">Submit</paper-button>
+  </form>
+{% endblock %}

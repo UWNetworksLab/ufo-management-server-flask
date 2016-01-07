@@ -1,0 +1,29 @@
+{
+  "name": "UFO Management Server",
+  "description": "Management server for multiple uProxy instances",
+  "keywords": [],
+  "website": "https://uproxy.org/",
+  "repository": "https://github.com/uproxy/ufo-management-server",
+  "logo": "https://uproxy.org/images/uproxy_logo.svg",
+  "success_url": "/setup",
+  "scripts": {
+    "postdeploy": "python setup_database.py"
+  },
+  "env": {
+    "SECRET_KEY": {
+      "description": "Secret token, used for signing cookies",
+      "generator": "secret"
+    }
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-python"
+    }
+  ]
+}

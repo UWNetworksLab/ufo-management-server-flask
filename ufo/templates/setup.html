@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block title %}Setup OAuth Client{% endblock %}
+{% block head %}
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-input/paper-input.html') }}" />
+{% endblock %}
+{% block body %}
+  <!-- TODO make a clear way to say you do not want to use Google apps -->
+  {% if not config.isConfigured %}
+    <p>
+      Hey there!  Welcome to the uProxy for Organizations management server!
+      To start, we want to get a bit of information from you to get everything
+      set up.
+    </p>
+
+    <p>
+      First of all, if you are planning on using this application with a Google
+      apps domain, we're going to need to get permission from you to access
+      that.  This will be used to keep the list of users in your domain in sync
+      with who is allowed to access the uProxy servers.  The credentials you
+      authorize will be shared by any administrators who log into this server.
+      If you do not plan on using a Google apps domain with this product, you
+      can just go straight to adding users.
+    </p>
+  {% else %}
+    <p>
+      You hae already successfully configured this deployment!  If you want to
+      change the settings, you may do so below.  Please note: submitting the
+      form even without filling in any parameters will cause the previous saved
+      configuration to be lost.
+    </p>
+
+    {% if config.credentials and config.domain %}
+      <p>
+        This site is set up to work with the
+        <strong>{{config.domain}}</strong> domain.  If that is not correct,
+        please update the configuration.
+      </p>
+    {% else %}
+      <p>
+        This site is not set up to use any Google apps domain name, all users
+        will need to be manually input.
+      </p>
+    {% endif %}
+  {% endif %}
+
+  <p>
+    Please keep in mind that this is a much simpler version than what you
+    would actually expect to see in a finished version of the site.
+    Noteably, this page should include something about authenticating
+    yourself in the future (and actually include a way to skip)
+  </p>
+
+  <a href="{{ oauth_url }}" target="_blank">Connect to your domain</a>
+
+  <p>
+    Once you finish authorizing access, please paste the code you receive in
+    the box below.
+  </p>
+
+  <!-- TODO make this form be more useful -->
+  <form id="setup-form" method="post">
+    <paper-input label="Domain" name="domain"></paper-input>
+    <paper-input label="OAuth Code" name="oauth_code"></paper-input>
+    <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}" />
+    <paper-button raised onclick="submitByFormId('setup-form')" class="form-submit-button" type="submit">Submit</paper-button>
+  </form>
+{% endblock %}

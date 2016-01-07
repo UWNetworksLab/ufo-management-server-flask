@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block title %}Add Users{% endblock %}
+{% block head %}
+  <link rel="import" href="/static/bower_components/paper-button/paper-button.html" />
+  <link rel="import" href="/static/bower_components/paper-input/paper-input.html" />
+{% endblock %}
+{% block body %}
+  {% if error%}
+    <p>An error occurred while processing the request. Please retry or select another query. The error text is below.</p>
+    <p>{{ error }}</p>
+  {% endif %}
+  {% if directory_users%}
+    <form id="users-add-form" method="post">
+      <p>Select Users to Add.</p>
+      <table class="padding-between-columns">
+        <tr>
+          <th>-</th>
+          <th>Name</th>
+          <th>Email</th>
+        </tr>
+      {% for directory_user in directory_users %}
+        <tr>
+          <!-- Paper checkbox doesn't work without manually collecting values
+          in javascript so we aren't using that yet. -->
+          <td><input type="checkbox" name="selected_user" value="{{ directory_user }}"></td>
+          <td>{{ directory_user['name']['fullName'] }}</td>
+          <td>{{ directory_user['primaryEmail'] }}</td>
+        </tr>
+      {% endfor %}
+      </table>
+      <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
+      <paper-button raised onclick="submitByFormId('users-add-form')" class="form-submit-button" type="submit">Add Selected Users</paper-button>
+    </form>
+  {% else %}
+    <p>No users found. Try another query below.</p>
+  {% endif %}
+  <br><br>
+
+
+  <form id="users-group-form" method="get" action="{{ BASE_URL }}/user/add">
+    <paper-input label="Input a group key (group email address or unique id) to fetch more users." type="textbox" name="group_key" value="{{ group_key }}">
+    </paper-input>
+    <paper-button raised onclick="submitByFormId('users-group-form')" class="form-submit-button" type="submit">Fetch Users From Group</paper-button>
+  </form><br>
+
+  <form id="users-user-form" method="get" action="{{ BASE_URL }}/user/add">
+    <paper-input label="Input user key (email address or unique id) to search for a specific user." type="email" name="user_key" value="{{ user_key }}">
+    </paper-input>
+    <paper-button raised onclick="submitByFormId('users-user-form')" class="form-submit-button" type="submit">Search for Specific User</paper-button>
+  </form><br>
+
+  <form id="users-domain-form" method="get" action="{{ BASE_URL }}/user/add">
+    <input type="hidden" name="get_all" value="true">
+    <paper-button raised onclick="submitByFormId('users-domain-form')" class="form-submit-button" type="submit">Fetch All Users in Domain</paper-button>
+  </form><br>
+{% endblock %}

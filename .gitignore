@@ -1,0 +1,5 @@
+instance/*
+venv/*
+*.pyc
+ufo/static/bower_components/*
+node_modules/*
