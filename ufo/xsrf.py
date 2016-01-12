@@ -1,4 +1,4 @@
-from management_server import app
+from . import app
 
 import binascii
 import flask
