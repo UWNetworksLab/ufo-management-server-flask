@@ -2,9 +2,10 @@
 
 from . import app, db, setup_required
 
-import logging
+import database
 import flask
-import models
+import logging
+from models import ProxyServer
 
 
 def _MakeKeyString():
@@ -16,7 +17,7 @@ def _MakeKeyString():
   Returns:
     key_string: A string of users with associated key.
   """
-  users = models.User.query.all()
+  users = database.GetAll(User)
   key_string = ''
   ssh_starting_portion = 'ssh-rsa'
   space = ' '
@@ -36,8 +37,7 @@ def _SendKeysToServer(server, keys):
 @app.route('/proxyserver/list')
 @setup_required
 def proxyserver_list():
-  proxy_servers = models.ProxyServer.query.all()
-  print proxy_servers
+  proxy_servers = database.GetAll(ProxyServer)
   return flask.render_template('proxy_server.html',
                                proxy_servers=proxy_servers)
 
@@ -49,19 +49,19 @@ def proxyserver_add():
     return flask.render_template('proxy_server_form.html',
                                  proxy_server=None)
 
-  server = models.ProxyServer(
+  server = ProxyServer(
       name=flask.request.form.get('name'),
       ip_address=flask.request.form.get('ip_address'),
       ssh_private_key=flask.request.form.get('ssh_private_key'),
       fingerprint=flask.request.form.get('fingerprint'))
-  db.session.add(server)
+  database.Add(server)
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
 @app.route('/proxyserver/<server_id>/edit', methods=['GET', 'POST'])
 @setup_required
 def proxyserver_edit(server_id):
-  server = models.ProxyServer.query.get_or_404(server_id)
+  server = database.GetById(ProxyServer, server_id)
 
   if flask.request.method == 'GET':
     return flask.render_template('proxy_server_form.html',
@@ -72,6 +72,8 @@ def proxyserver_edit(server_id):
   server.ssh_private_key = flask.request.form.get('ssh_private_key')
   server.fingerprint = flask.request.form.get('fingerprint')
 
+  database.Add(server)
+
   return flask.redirect(flask.url_for('proxyserver_list'))
 
 @app.route('/proxyserver/<server_id>/delete')
@@ -79,9 +81,9 @@ def proxyserver_edit(server_id):
 def proxyserver_delete(server_id):
   """Handler for deleting an existing proxy server."""
   #TODO should at least be post
-  server = models.ProxyServer.query.get_or_404(server_id)
+  server = database.GetById(ProxyServer, server_id)
 
-  db.session.delete(server)
+  database.Delete(server)
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
@@ -90,7 +92,7 @@ def proxyserver_delete(server_id):
 @setup_required
 def proxyserver_distributekeys():
   key_string = _MakeKeyString()
-  proxy_servers = models.ProxyServer.query.all()
+  proxy_servers = database.GetAll(ProxyServer)
   for proxy_server in proxy_servers:
     _SendKeysToServer(proxy_server, key_string)
   return 'Done!'
