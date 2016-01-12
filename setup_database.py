@@ -1,3 +1,3 @@
-from ufo import management_server
+from ufo.management_server import db
 
-management_server.db.create_all()
+db.create_all()
