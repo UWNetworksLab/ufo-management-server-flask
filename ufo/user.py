@@ -2,10 +2,12 @@ from management_server import app, db, setup_required
 
 import ast
 import base64
+import database
 import flask
 import google_directory_service
 import json
-import models
+from models import ProxyServer
+from models import User
 import oauth
 import random
 
@@ -42,7 +44,7 @@ def _RenderUserAdd():
                                  error=error)
 
 def _GetRandomServerIp():
-  proxy_servers = models.ProxyServer.query.all()
+  proxy_servers = database.GetAll(ProxyServer)
   if len(proxy_servers) == 0:
     return None
 
@@ -100,7 +102,7 @@ def _MakeInviteCode(user):
 @app.route('/user')
 @setup_required
 def user_list():
-  users = models.User.query.all()
+  users = database.GetAll(User)
   user_emails = {}
   for user in users:
     user_emails[user.id] = user.email
@@ -118,17 +120,17 @@ def add_user():
   for user in users:
     # TODO we should be submitting data in a better format
     u = ast.literal_eval(user)
-    user = models.User()
+    user = User()
     user.name = u['name']['fullName']
     user.email = u['primaryEmail']
-    db.session.add(user)
+    database.Add(user)
 
   return flask.redirect(flask.url_for('user_list'))
 
 @app.route('/user/<user_id>/details')
 @setup_required
 def user_details(user_id):
-  user = models.User.query.get_or_404(user_id)
+  user = database.GetById(User, user_id)
   return flask.render_template('user_details.html',
                                user=user,
                                invite_code=_MakeInviteCode(user))
@@ -141,9 +143,9 @@ def delete_user(user_id):
   If we had access to a delete method then we would not use get here.
   """
   #TODO guess what the comment is?  Yup, should be a post.
-  user = models.User.query.get_or_404(user_id)
+  user = database.GetById(User, user_id)
 
-  db.session.delete(user)
+  database.Delete(user)
 
   return flask.redirect(flask.url_for('user_list'))
 
@@ -151,7 +153,7 @@ def delete_user(user_id):
 @setup_required
 def user_get_new_key_pair(user_id):
   #TODO yeah...should be post at least
-  user = models.User.query.get_or_404(user_id)
+  user = database.GetById(User, user_id)
   user.regenerate_key_pair()
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
@@ -160,7 +162,7 @@ def user_get_new_key_pair(user_id):
 @setup_required
 def user_toggle_revoked(user_id):
   # TODO the toggle alone means this should be a post!
-  user = models.User.query.get_or_404(user_id)
+  user = database.GetById(User, user_id)
   user.is_key_revoked = not user.is_key_revoked
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
