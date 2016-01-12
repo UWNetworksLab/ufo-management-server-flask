@@ -26,7 +26,6 @@ db = sqlalchemy.SQLAlchemy(app)
 
 # DB needs to be defined before this point
 import database
-from database import db_session
 import models
 from models import Config
 
@@ -57,4 +56,4 @@ import routes
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db_session.remove()
+    database.db_session.remove()
