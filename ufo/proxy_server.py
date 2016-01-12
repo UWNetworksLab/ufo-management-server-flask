@@ -2,10 +2,9 @@
 
 from . import app, db, setup_required
 
-import logging
-import flask
-import models
 import database
+import flask
+import logging
 from models import ProxyServer
 
 
@@ -18,7 +17,7 @@ def _MakeKeyString():
   Returns:
     key_string: A string of users with associated key.
   """
-  users = models.User.query.all()
+  users = database.GetAll(User)
   key_string = ''
   ssh_starting_portion = 'ssh-rsa'
   space = ' '
@@ -50,12 +49,12 @@ def proxyserver_add():
     return flask.render_template('proxy_server_form.html',
                                  proxy_server=None)
 
-  server = models.ProxyServer(
+  server = ProxyServer(
       name=flask.request.form.get('name'),
       ip_address=flask.request.form.get('ip_address'),
       ssh_private_key=flask.request.form.get('ssh_private_key'),
       fingerprint=flask.request.form.get('fingerprint'))
-  database.Add(server)
+  database.Add(ProxyServer, server)
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
@@ -73,7 +72,7 @@ def proxyserver_edit(server_id):
   server.ssh_private_key = flask.request.form.get('ssh_private_key')
   server.fingerprint = flask.request.form.get('fingerprint')
 
-  database.Add(server)
+  database.Add(ProxyServer, server)
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 

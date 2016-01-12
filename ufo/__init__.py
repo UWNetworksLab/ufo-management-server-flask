@@ -26,7 +26,6 @@ db = sqlalchemy.SQLAlchemy(app)
 
 # DB needs to be defined before this point
 import database
-import models
 from models import Config
 
 def get_user_config():
