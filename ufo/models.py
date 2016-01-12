@@ -1,4 +1,4 @@
-from . import db
+from management_server import db
 
 from Crypto.PublicKey import RSA
 
