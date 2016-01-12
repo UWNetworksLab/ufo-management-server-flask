@@ -54,7 +54,7 @@ def proxyserver_add():
       ip_address=flask.request.form.get('ip_address'),
       ssh_private_key=flask.request.form.get('ssh_private_key'),
       fingerprint=flask.request.form.get('fingerprint'))
-  database.Add(ProxyServer, server)
+  database.Add(server)
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
@@ -72,7 +72,7 @@ def proxyserver_edit(server_id):
   server.ssh_private_key = flask.request.form.get('ssh_private_key')
   server.fingerprint = flask.request.form.get('fingerprint')
 
-  database.Add(ProxyServer, server)
+  database.Add(server)
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
