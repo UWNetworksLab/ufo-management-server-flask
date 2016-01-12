@@ -6,7 +6,7 @@ import sys
 
 import base64
 from config import PATHS
-from management_server import app, db
+from . import app, db
 import models
 from googleapiclient import errors
 import hashlib

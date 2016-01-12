@@ -1,4 +1,4 @@
-from management_server import app, db, setup_required
+from . import app, db, setup_required
 
 import ast
 import base64
