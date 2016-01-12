@@ -1,6 +1,6 @@
 """The module for handling proxy servers"""
 
-from . import app, db, setup_required
+from management_server import app, db, setup_required
 
 import logging
 import flask

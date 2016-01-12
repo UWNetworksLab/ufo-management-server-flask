@@ -1,4 +1,4 @@
-from . import app, get_user_config
+from management_server import app, get_user_config
 
 import flask
 import httplib2
