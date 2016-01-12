@@ -1,8 +1,7 @@
-import os
 import flask
-import functools
-
 from flask.ext import sqlalchemy
+import functools
+import os
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
@@ -26,30 +25,17 @@ app.config.from_pyfile('application.cfg', silent=True)
 db = sqlalchemy.SQLAlchemy(app)
 
 # DB needs to be defined before this point
+import database
 import models
-
-@app.after_request
-def commitDB(response):
-  """Save credentials if changed, then commit the db session"""
-  # credentials are cached in the app context, save them if they have changed
-  credentials = getattr(flask.g, '_credentials', None)
-  if credentials is not None:
-    config = get_user_config()
-    json_credentials = credentials.to_json()
-    if config.credentials != json_credentials:
-      config.credentials = json_credentials
-
-  db.session.commit()
-
-  return response
+from models import Config
 
 def get_user_config():
   """Returns the current user-defined configuration from the database"""
-  config = models.Config.query.get(0)
+  config = database.GetFirstRecord(Config)
   if config is None:
-    config = models.Config()
+    config = Config()
     config.id = 0
-    db.session.add(config)
+    database.Add(config)
 
   return config
 

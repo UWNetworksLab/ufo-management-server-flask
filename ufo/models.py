@@ -1,10 +1,13 @@
 from . import db
+from database import Base
+from database import db_session
 
 from Crypto.PublicKey import RSA
 
 LONG_STRING_LENGTH = 1024
 
-class Config(db.Model):
+
+class Config(Base):
   """Class for anything that needs to be stored as a singleton for the site
   configuration
   """
@@ -19,7 +22,7 @@ class Config(db.Model):
   dv_content = db.Column(db.String(LONG_STRING_LENGTH))
 
 
-class User(db.Model):
+class User(Base):
   """Class for information about the users of the proxy servers
   """
   __tablename__ = "user"
@@ -56,7 +59,8 @@ class User(db.Model):
     self.private_key = key_pair['private_key']
     self.public_key = key_pair['public_key']
 
-class ProxyServer(db.Model):
+
+class ProxyServer(Base):
   """Class for information about the proxy servers
   """
   __tablename__ = "proxyserver"
@@ -67,3 +71,9 @@ class ProxyServer(db.Model):
   name = db.Column(db.String(LONG_STRING_LENGTH))
   ssh_private_key = db.Column(db.String(LONG_STRING_LENGTH))
   fingerprint = db.Column(db.String(LONG_STRING_LENGTH))
+  
+  def __init__(self, ip_address, name, ssh_private_key, fingerprint):
+    self.ip_address=ip_address
+    self.name = name
+    self.ssh_private_key = ssh_private_key
+    self.fingerprint = fingerprint
