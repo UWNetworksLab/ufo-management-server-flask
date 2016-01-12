@@ -38,6 +38,7 @@ def GetById(model, id):
 def GetFirstRecord(model):
   return model.query.get(0)
 
+# This will be an edit operation if the instance already exists in db.
 def Add(instance):
   db_session.add(instance)
   db_session.commit()
