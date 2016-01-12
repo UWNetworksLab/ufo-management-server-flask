@@ -1,6 +1,5 @@
 from . import db
 from database import Base
-from database import db_session
 
 from Crypto.PublicKey import RSA
 
