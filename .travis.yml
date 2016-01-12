@@ -5,6 +5,7 @@ python:
 # commands to setup environment and install dependencies
 install:
  - pip install -r requirements.txt
+ - python setup_database.py
  - npm install
 # command to run tests
 script:
