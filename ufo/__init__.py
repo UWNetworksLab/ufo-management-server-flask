@@ -25,16 +25,29 @@ app.config.from_pyfile('application.cfg', silent=True)
 db = sqlalchemy.SQLAlchemy(app)
 
 # DB needs to be defined before this point
-import database
-from models import Config
+import models
+
+@app.after_request
+def checkCredentialChange(response):
+  """Save credentials if changed"""
+  credentials = getattr(flask.g, '_credentials', None)
+  if credentials is not None:
+    config = get_user_config()
+    json_credentials = credentials.to_json()
+    if config.credentials != json_credentials:
+      config.credentials = json_credentials
+      config.Add()
+
+  return response
 
 def get_user_config():
   """Returns the current user-defined configuration from the database"""
-  config = database.GetFirstRecord(Config)
+  config = models.Config.GetById(0)
   if config is None:
-    config = Config()
+    config = models.Config()
     config.id = 0
-    database.Add(config)
+
+    config.Add()
 
   return config
 
@@ -52,7 +65,3 @@ def setup_required(f):
 
 import xsrf
 import routes
-
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    database.db_session.remove()
