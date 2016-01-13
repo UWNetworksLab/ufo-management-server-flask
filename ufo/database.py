@@ -6,7 +6,7 @@ http://flask.pocoo.org/docs/0.10/patterns/sqlalchemy/#declarative
 
 import os
 
-from . import app
+from management_server import app
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
