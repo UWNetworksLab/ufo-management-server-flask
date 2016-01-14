@@ -48,16 +48,16 @@ def get_user_config():
 
   return config
 
-def setup_required(f):
+def setup_required(func):
   """Decorator to handle routes that need setup to have been completed
 
   This decorator should be applied to nearly all routes"""
-  @functools.wraps(f)
+  @functools.wraps(func)
   def decorated_function(*args, **kwargs):
     config = get_user_config()
     if not config.isConfigured:
       return flask.redirect(flask.url_for('not_setup'))
-    return f(*args, **kwargs)
+    return func(*args, **kwargs)
   return decorated_function
 
 import xsrf

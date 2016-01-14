@@ -1,4 +1,6 @@
 """Test user module functionality."""
+from mock import MagicMock
+from mock import patch
 import os
 
 import flask
@@ -39,11 +41,11 @@ class UserTest(unittest.TestCase):
     import models
     database.Base.metadata.create_all(bind=self.engine)
 
-    self.mock_config = models.Config()
-    self.mock_config.isConfigured = True
-    self.mock_config.id = 0
+    self.config = models.Config()
+    self.config.isConfigured = True
+    self.config.id = 0
 
-    self.session.add(self.mock_config)
+    self.session.add(self.config)
     self.session.commit()
 
   def tearDown(self):
@@ -53,20 +55,18 @@ class UserTest(unittest.TestCase):
     # management_server.db.create_all()
     # management_server.db.session.remove()
     # management_server.db.drop_all()
-    self.session.delete(self.mock_config)
+    self.session.delete(self.config)
     self.session.commit()
     self.session.close()
 
-  def testListUsersHandler(self):
+  @patch('database.GetAll')
+  def testListUsersHandler(self, mock_get_all):
     """Test the list user handler displays users from the database."""
     fake_users = []
     for x in range(0, len(FAKE_EMAILS)):
-      fake_user = models.User()
-      fake_user.email = FAKE_EMAILS[x]
-      fake_user.name = FAKE_NAMES[x]
+      fake_user = MagicMock(email=FAKE_EMAILS[x], name=FAKE_NAMES[x])
       fake_users.append(fake_user)
-      self.session.add(fake_user)
-    self.session.commit()
+    mock_get_all.return_value = fake_users
 
     resp = self.app.get(flask.url_for('user_page_path'))
     user_list_output = resp.data
