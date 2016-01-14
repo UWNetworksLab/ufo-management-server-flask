@@ -9,7 +9,6 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 import unittest
 
-import database
 import management_server
 import models
 import user
