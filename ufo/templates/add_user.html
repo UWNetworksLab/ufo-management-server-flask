@@ -37,19 +37,19 @@
   <br><br>
 
 
-  <form id="users-group-form" method="get" action="{{ url_for('add_user') }}">
+  <form id="users-group-form" method="get" action="{{ BASE_URL }}/user/add">
     <paper-input label="Input a group key (group email address or unique id) to fetch more users." type="textbox" name="group_key" value="{{ group_key }}">
     </paper-input>
     <paper-button raised onclick="submitByFormId('users-group-form')" class="form-submit-button" type="submit">Fetch Users From Group</paper-button>
   </form><br>
 
-  <form id="users-user-form" method="get" action="{{ url_for('add_user') }}">
+  <form id="users-user-form" method="get" action="{{ BASE_URL }}/user/add">
     <paper-input label="Input user key (email address or unique id) to search for a specific user." type="email" name="user_key" value="{{ user_key }}">
     </paper-input>
     <paper-button raised onclick="submitByFormId('users-user-form')" class="form-submit-button" type="submit">Search for Specific User</paper-button>
   </form><br>
 
-  <form id="users-domain-form" method="get" action="{{ url_for('add_user') }}">
+  <form id="users-domain-form" method="get" action="{{ BASE_URL }}/user/add">
     <input type="hidden" name="get_all" value="true">
     <paper-button raised onclick="submitByFormId('users-domain-form')" class="form-submit-button" type="submit">Fetch All Users in Domain</paper-button>
   </form><br>
