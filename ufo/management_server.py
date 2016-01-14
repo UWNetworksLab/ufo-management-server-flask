@@ -22,6 +22,16 @@ if 'DATABASE_URL' in os.environ:
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
 
+# Set jinja environment globals
+app.jinja_env.globals['EMAIL_VALIDATION_PATTERN'] = r'[^@]+@[^@]+.[^@]+'
+EMAIL_VALIDATION_ERROR = 'Please supply a valid email address.'
+app.jinja_env.globals['EMAIL_VALIDATION_ERROR'] = EMAIL_VALIDATION_ERROR
+# Key lookup for users and group allows email or unique id.
+KEY_LOOKUP_PATTERN = r'([^@]+@[^@]+.[^@]+|[a-zA-Z0-9]+)'
+KEY_LOOKUP_ERROR = 'Please supply a valid email address or unique id.'
+app.jinja_env.globals['KEY_LOOKUP_VALIDATION_PATTERN'] = KEY_LOOKUP_PATTERN
+app.jinja_env.globals['KEY_LOOKUP_VALIDATION_ERROR'] = KEY_LOOKUP_ERROR
+
 db = sqlalchemy.SQLAlchemy(app)
 
 # DB needs to be defined before this point

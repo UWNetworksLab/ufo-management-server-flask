@@ -1,12 +1,12 @@
 """Test user module functionality."""
 import os
 
+import flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 import unittest
 
-import config
 import database
 import management_server
 import models
@@ -68,7 +68,7 @@ class UserTest(unittest.TestCase):
       self.session.add(fake_user)
     self.session.commit()
 
-    resp = self.app.get(config.PATHS['user_page_path'])
+    resp = self.app.get(flask.url_for('user_page_path'))
     user_list_output = resp.data
 
     self.assertEquals('Add Users' in user_list_output, True)
