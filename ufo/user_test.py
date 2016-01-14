@@ -17,8 +17,11 @@ from . import user
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-FAKE_EMAILS = ['foo@aol.com', 'bar@yahoo.com', 'baz@gmail.com']
-FAKE_NAMES = ['joe', 'bob', 'mark']
+FAKE_EMAILS_AND_NAMES = [
+  {'email': 'foo@aol.com', 'name': 'joe'},
+  {'email': 'bar@yahoo.com', 'name': 'bob'},
+  {'email': 'baz@gmail.com', 'name': 'mark'}
+]
 
 class UserTest(TestCase):
 
@@ -30,17 +33,7 @@ class UserTest(TestCase):
 
   def setUp(self):
     """Setup test app on which to call handlers and db to query."""
-    #self.app = app.test_client()
     db.create_all()
-    # The code below is what was used for the prior initialization.
-    # I'm keeping it around in case we switch back so I can find it again.
-    # self.engine = create_engine(self.db_uri, convert_unicode=True)
-    # self.session = scoped_session(sessionmaker(autocommit=False,
-    #                                            autoflush=False,
-    #                                            bind=self.engine))
-    # database.Base.query = self.session.query_property()
-    # import models
-    # database.Base.metadata.create_all(bind=self.engine)
 
     self.config = models.Config()
     self.config.isConfigured = True
@@ -50,11 +43,6 @@ class UserTest(TestCase):
 
   def tearDown(self):
     """Teardown the test db and instances."""
-    # The code below is what was used for the prior tear down.
-    # I'm keeping it around in case we switch back so I can find it again.
-    # management_server.db.create_all()
-    # management_server.db.session.remove()
-    # management_server.db.drop_all()
     db.session.delete(self.config)
     db.session.commit()
     db.session.close()
@@ -63,8 +51,9 @@ class UserTest(TestCase):
   def testListUsersHandler(self, mock_get_all):
     """Test the list user handler displays users from the database."""
     mock_users = []
-    for x in range(0, len(FAKE_EMAILS)):
-      mock_user = MagicMock(id=x + 1, email=FAKE_EMAILS[x], name=FAKE_NAMES[x])
+    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
+      mock_user = MagicMock(id=x + 1, email=FAKE_EMAILS_AND_NAMES[x]['email'],
+                            name=FAKE_EMAILS_AND_NAMES[x]['name'])
       mock_users.append(mock_user)
     mock_get_all.return_value = mock_users
 
@@ -75,9 +64,10 @@ class UserTest(TestCase):
     click_user_string = 'Click a user below to view more details.'
     self.assertEquals(click_user_string in user_list_output, True)
 
-    for x in range(0, len(FAKE_EMAILS)):
-      self.assertEquals(FAKE_EMAILS[x] in user_list_output, True)
-      details_link = ('/user/' + str(mock_users[x].id) + '/details')
+    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
+      self.assertEquals(FAKE_EMAILS_AND_NAMES[x]['email'] in user_list_output,
+                        True)
+      details_link = flask.url_for('user_details', user_id=mock_users[x].id)
       self.assertEquals(details_link in user_list_output, True)
 
 
