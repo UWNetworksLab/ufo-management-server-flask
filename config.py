@@ -1,0 +1,34 @@
+from os.path import abspath, dirname, join
+
+_cwd = dirname(abspath(__file__))
+
+
+class BaseConfiguration(object):
+  """Configurations for running the application in production."""
+
+  SQLALCHEMY_DATABASE_URI = 'sqlite:///' + join(_cwd, 'app.db')
+  # Old value in case we need it.
+  # 'sqlite:///' + os.path.join(app.instance_path, 'app.db')
+  SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+  SECRET_KEY = 'NOT VERY SECRET'
+
+  SHARED_OAUTH_CLIENT_ID = '84596478403-6uffc6hu8v5b6v3nh0ski5cbptl02dsd.apps.googleusercontent.com'
+  SHARED_OAUTH_CLIENT_SECRET = 'R5H27t1C-9enMO9ZNfxym3Gw'
+
+class TestConfiguration(BaseConfiguration):
+  """Configurations for testing the application in development."""
+
+  TESTING = True
+  WTF_CSRF_ENABLED = False
+
+
+  SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+  # Can use the value below to use the real database or keep it in memory
+  # for faster unit tests.
+  # 'sqlite:///' + os.path.join(BASE_DIR, 'test.db')
+
+  # Since we want our unit tests to run quickly
+  # we turn this down - the hashing is still done
+  # but the time-consuming part is left out.
+  HASH_ROUNDS = 1
