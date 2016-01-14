@@ -64,11 +64,11 @@ class UserTest(unittest.TestCase):
     """Test the list user handler displays users from the database."""
     fake_users = []
     for x in range(0, len(FAKE_EMAILS)):
-      fake_user = MagicMock(email=FAKE_EMAILS[x], name=FAKE_NAMES[x])
+      fake_user = MagicMock(id=x + 1, email=FAKE_EMAILS[x], name=FAKE_NAMES[x])
       fake_users.append(fake_user)
     mock_get_all.return_value = fake_users
 
-    resp = self.app.get(flask.url_for('user_page_path'))
+    resp = self.app.get('/user') # flask.url_for('user_list')
     user_list_output = resp.data
 
     self.assertEquals('Add Users' in user_list_output, True)

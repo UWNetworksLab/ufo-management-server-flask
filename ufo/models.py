@@ -1,12 +1,32 @@
 from management_server import db
-from database import Base
 
 from Crypto.PublicKey import RSA
 
 LONG_STRING_LENGTH = 1024
 
+class Model(db.Model):
+  __abstract__ = True
 
-class Config(Base):
+  @classmethod
+  def GetAll(cls):
+    return cls.query.all()
+
+  @classmethod
+  def GetById(cls, id):
+    return cls.query.get(id)
+
+  def Add(self):
+    db.session.add(self)
+    db.session.commit()
+
+    return self
+
+  def Delete(self):
+    db.session.delete(self)
+    db.session.commit()
+
+
+class Config(Model):
   """Class for anything that needs to be stored as a singleton for the site
   configuration
   """
@@ -21,7 +41,7 @@ class Config(Base):
   dv_content = db.Column(db.String(LONG_STRING_LENGTH))
 
 
-class User(Base):
+class User(Model):
   """Class for information about the users of the proxy servers
   """
   __tablename__ = "user"
@@ -59,7 +79,7 @@ class User(Base):
     self.public_key = key_pair['public_key']
 
 
-class ProxyServer(Base):
+class ProxyServer(Model):
   """Class for information about the proxy servers
   """
   __tablename__ = "proxyserver"
