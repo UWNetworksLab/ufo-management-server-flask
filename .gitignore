@@ -3,6 +3,3 @@ venv/*
 *.pyc
 ufo/static/bower_components/*
 node_modules/*
-ufo/.cache/*
-ufo/venv/*
-ufo/test.db

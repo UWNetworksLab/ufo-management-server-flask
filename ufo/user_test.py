@@ -10,7 +10,8 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 import unittest
 
-from . import app, db
+from . import app
+from . import db
 from . import models
 from . import user
 
@@ -61,11 +62,11 @@ class UserTest(TestCase):
   @patch.object(models.User, 'GetAll')
   def testListUsersHandler(self, mock_get_all):
     """Test the list user handler displays users from the database."""
-    fake_users = []
+    mock_users = []
     for x in range(0, len(FAKE_EMAILS)):
-      fake_user = MagicMock(id=x + 1, email=FAKE_EMAILS[x], name=FAKE_NAMES[x])
-      fake_users.append(fake_user)
-    mock_get_all.return_value = fake_users
+      mock_user = MagicMock(id=x + 1, email=FAKE_EMAILS[x], name=FAKE_NAMES[x])
+      mock_users.append(mock_user)
+    mock_get_all.return_value = mock_users
 
     resp = self.client.get(flask.url_for('user_list'))
     user_list_output = resp.data
@@ -76,7 +77,7 @@ class UserTest(TestCase):
 
     for x in range(0, len(FAKE_EMAILS)):
       self.assertEquals(FAKE_EMAILS[x] in user_list_output, True)
-      details_link = ('/user/' + str(fake_users[x].id) + '/details')
+      details_link = ('/user/' + str(mock_users[x].id) + '/details')
       self.assertEquals(details_link in user_list_output, True)
 
 
