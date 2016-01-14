@@ -9,7 +9,7 @@ install:
  - npm install
 # command to run tests
 script:
- - cd ufo && python -m unittest discover -p "*_test.py"
+ - python -m unittest discover -p "*_test.py"
 # Turn off email updates.
 notifications:
   email: false

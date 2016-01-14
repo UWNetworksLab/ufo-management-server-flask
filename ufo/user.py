@@ -50,7 +50,7 @@ def _GetRandomServerIp():
   return proxy_servers[index].ip_address
 
 def _MakeInviteCode(user):
-  r"""Create an invite code for the given user.
+  """Create an invite code for the given user.
 
   The invite code is a format created by the uproxy team.
   Below is an example of an unencoded invite code for a cloud instance:
@@ -97,7 +97,7 @@ def _MakeInviteCode(user):
 
   return invite_code
 
-@app.route('/user/')
+@app.route('/user')
 @setup_required
 def user_list():
   users = models.User.GetAll()
