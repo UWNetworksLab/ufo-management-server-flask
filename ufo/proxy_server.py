@@ -60,7 +60,7 @@ def proxyserver_add():
 @app.route('/proxyserver/<server_id>/edit', methods=['GET', 'POST'])
 @setup_required
 def proxyserver_edit(server_id):
-  server = ProxyServer.GetById(server_id)
+  server = models.ProxyServer.GetById(server_id)
   # TODO assert server not none
 
   if flask.request.method == 'GET':
