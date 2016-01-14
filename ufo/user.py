@@ -115,15 +115,23 @@ def add_user():
   if flask.request.method == 'GET':
     return _RenderUserAdd()
 
-  users = flask.request.form.getlist('selected_user')
-  decoded_users = []
-  for user in users:
-    # TODO we should be submitting data in a better format
-    u = ast.literal_eval(user)
+  manual = flask.request.form.get('manual')
+  if manual:
+    user_name = flask.request.form.get('user_name')
+    user_email = flask.request.form.get('user_email')
     user = User()
-    user.name = u['name']['fullName']
-    user.email = u['primaryEmail']
+    user.name = user_name
+    user.email = user_email
     database.Add(user)
+  else:
+    users = flask.request.form.getlist('selected_user')
+    for user in users:
+      # TODO we should be submitting data in a better format
+      u = ast.literal_eval(user)
+      user = User()
+      user.name = u['name']['fullName']
+      user.email = u['primaryEmail']
+      database.Add(user)
 
   return flask.redirect(flask.url_for('user_list'))
 
@@ -164,5 +172,6 @@ def user_toggle_revoked(user_id):
   # TODO the toggle alone means this should be a post!
   user = database.GetById(User, user_id)
   user.is_key_revoked = not user.is_key_revoked
+  database.Add(user)
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
