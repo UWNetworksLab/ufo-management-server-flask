@@ -10,8 +10,8 @@ import unittest
 
 from . import app
 from . import db
-from . import models
-from . import user
+import models
+import user
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
