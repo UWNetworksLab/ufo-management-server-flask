@@ -11,11 +11,7 @@ import random
 
 from googleapiclient import errors
 
-def _RenderUserAdd():
-  get_all = flask.request.args.get('get_all')
-  group_key = flask.request.args.get('group_key')
-  user_key = flask.request.args.get('user_key')
-
+def _RenderUserAdd(get_all, group_key, user_key):
   credentials = oauth.getSavedCredentials()
   # TODO this should handle the case where we do not have oauth
   if not credentials:
@@ -111,22 +107,25 @@ def user_list():
 @setup_required
 def add_user():
   if flask.request.method == 'GET':
-    return _RenderUserAdd()
+    get_all = flask.request.args.get('get_all')
+    group_key = flask.request.args.get('group_key')
+    user_key = flask.request.args.get('user_key')
+    return _RenderUserAdd(get_all, group_key, user_key)
 
   manual = flask.request.form.get('manual')
   if manual:
     user_name = flask.request.form.get('user_name')
     user_email = flask.request.form.get('user_email')
-    user = User()
+    user = models.User()
     user.name = user_name
     user.email = user_email
-    database.Add(user)
+    user.Add()
   else:
     users = flask.request.form.getlist('selected_user')
     for user in users:
       # TODO we should be submitting data in a better format
       u = ast.literal_eval(user)
-      user = User()
+      user = models.User()
       user.name = u['name']['fullName']
       user.email = u['primaryEmail']
       user.Add()

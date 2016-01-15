@@ -10,10 +10,11 @@ def xsrf_protect():
 
   Slight modification of http://flask.pocoo.org/snippets/3/
   """
-  if flask.request.method != 'GET':
-    token = flask.session.pop('_xsrf_token', None)
-    if not token or token != flask.request.form.get('_xsrf_token'):
-      abort(403)
+  if app.config['WTF_CSRF_ENABLED']:
+    if flask.request.method != 'GET':
+      token = flask.session.pop('_xsrf_token', None)
+      if not token or token != flask.request.form.get('_xsrf_token'):
+        flask.abort(403)
 
 def generate_xsrf_token():
   if '_xsrf_token' not in flask.session:

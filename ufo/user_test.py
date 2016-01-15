@@ -5,14 +5,21 @@ import os
 
 import flask
 from flask.ext.testing import TestCase
+import json
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 import unittest
+from werkzeug.datastructures import MultiDict
+from werkzeug.datastructures import ImmutableMultiDict
 
 from . import app
 from . import db
+# I practically have to shorten this name so every single line doesn't go
+# over. If someone can't understand, they can use ctrl+f to look it up here.
+from . import google_directory_service as gds
 from . import models
+from . import oauth
 from . import user
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -22,6 +29,18 @@ FAKE_EMAILS_AND_NAMES = [
   {'email': 'bar@yahoo.com', 'name': 'bob'},
   {'email': 'baz@gmail.com', 'name': 'mark'}
 ]
+FAKE_DIRECTORY_USER_ARRAY = []
+for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
+  fake_add_user = {}
+  fake_add_user['primaryEmail'] = FAKE_EMAILS_AND_NAMES[x]['email']
+  fake_add_user['name'] = {}
+  fake_add_user['name']['fullName'] = FAKE_EMAILS_AND_NAMES[x]['name']
+  fake_add_user['email'] = FAKE_EMAILS_AND_NAMES[x]['email']
+  fake_add_user['role'] = 'MEMBER'
+  fake_add_user['type'] = 'USER'
+  FAKE_DIRECTORY_USER_ARRAY.append(fake_add_user)
+
+FAKE_CREDENTIALS = 'Look at me, Im a credential'
 
 class UserTest(TestCase):
 
@@ -47,123 +66,61 @@ class UserTest(TestCase):
     db.session.commit()
     db.session.close()
 
-  @patch.object(models.User, 'GetAll')
-  def testListUsersHandler(self, mock_get_all):
-    """Test the list user handler displays users from the database."""
-    mock_users = []
-    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
-      mock_user = MagicMock(id=x + 1, email=FAKE_EMAILS_AND_NAMES[x]['email'],
-                            name=FAKE_EMAILS_AND_NAMES[x]['name'])
-      mock_users.append(mock_user)
-    mock_get_all.return_value = mock_users
+  @patch.object(oauth, 'getSavedCredentials')
+  def testRenderUserAddNoCredentials(self, mock_get_saved_credentials):
+    """Test render user add displays an error when oauth isn't set."""
+    mock_get_saved_credentials.return_value = None
 
-    resp = self.client.get(flask.url_for('user_list'))
-    user_list_output = resp.data
+    result = user._RenderUserAdd(None, None, None)
 
-    self.assertEquals('Add Users' in user_list_output, True)
-    click_user_string = 'Click a user below to view more details.'
-    self.assertEquals(click_user_string in user_list_output, True)
+    self.assertEquals('OAuth is not set up' in result, True)
 
-    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
-      self.assertEquals(FAKE_EMAILS_AND_NAMES[x]['email'] in user_list_output,
-                        True)
-      details_link = flask.url_for('user_details', user_id=mock_users[x].id)
-      self.assertEquals(details_link in user_list_output, True)
+  @patch.object(oauth, 'getSavedCredentials')
+  @patch.object(gds.GoogleDirectoryService, 'GetUserAsList')
+  @patch.object(gds.GoogleDirectoryService, 'GetUsersByGroupKey')
+  @patch.object(gds.GoogleDirectoryService, 'GetUsers')
+  @patch.object(gds.GoogleDirectoryService, '__init__')
+  def testRenderUserAddNoParam(self, mock_ds, mock_get_users,
+                               mock_get_by_key, mock_get_user,
+                               mock_get_saved_credentials):
+    """Test render add users displays no users on initial get."""
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_ds.return_value = None
 
-  @patch.object(user, '_RenderUserAdd')
-  def testAddUsersGetHandler(self, mock_render):
-    """Test the add users get handler returns _RenderUserAdd's result."""
-    return_text = '<html>something here </html>'
-    mock_render.return_value = return_text
-    resp = self.client.get(flask.url_for('add_user'))
+    result = user._RenderUserAdd(None, None, None)
 
-    self.assertEquals(resp.data, return_text)
+    mock_ds.assert_called_once_with(FAKE_CREDENTIALS)
+    mock_get_users.assert_not_called()
+    mock_get_user.assert_not_called()
+    mock_get_by_key.assert_not_called()
+    self.assertEquals('No users found. Try another query below.' in result,
+                      True)
 
-  # @patch('user.User.InsertUsers')
-  # def testAddUsersPostHandler(self, mock_insert):
-  #   """Test the add users post handler calls to insert the specified users."""
-  #   user_1 = {}
-  #   user_1['primaryEmail'] = FAKE_EMAIL_1
-  #   user_1['name'] = {}
-  #   user_1['name']['fullName'] = FAKE_EMAIL_1
-  #   user_2 = {}
-  #   user_2['primaryEmail'] = FAKE_EMAIL_2
-  #   user_2['name'] = {}
-  #   user_2['name']['fullName'] = FAKE_EMAIL_2
-  #   user_array = []
-  #   user_array.append(user_1)
-  #   user_array.append(user_2)
-  #   data = '?selected_user={0}&selected_user={1}'.format(user_1, user_2)
-  #   response = self.testapp.post(PATHS['user_add_path'] + data)
+  @patch.object(oauth, 'getSavedCredentials')
+  @patch.object(gds.GoogleDirectoryService, 'GetUserAsList')
+  @patch.object(gds.GoogleDirectoryService, 'GetUsersByGroupKey')
+  @patch.object(gds.GoogleDirectoryService, 'GetUsers')
+  @patch.object(gds.GoogleDirectoryService, '__init__')
+  def testRenderUserAddWithGroup(self, mock_ds, mock_get_users,
+                                 mock_get_by_key, mock_get_user,
+                                 mock_get_saved_credentials):
+    """Test render add users displays users from a given group."""
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_ds.return_value = None
+    # Email address could refer to group or user
+    group_key = 'foo@bar.mybusiness.com'
+    mock_get_by_key.return_value = FAKE_DIRECTORY_USER_ARRAY
 
-  #   mock_insert.assert_called_once_with(user_array)
-  #   self.assertEqual(response.status_int, 302)
-  #   self.assertTrue(PATHS['user_page_path'] in response.location)
+    result = user._RenderUserAdd(None, group_key, None)
 
-  # @patch('user.User.InsertUsers')
-  # def testAddUsersPostManualHandler(self, mock_insert):
-  #   """Test add users manually calls to insert the specified user."""
-  #   user_1 = {}
-  #   user_1['primaryEmail'] = FAKE_EMAIL
-  #   user_1['name'] = {}
-  #   user_1['name']['fullName'] = FAKE_NAME
-  #   user_array = []
-  #   user_array.append(user_1)
-  #   data = '?manual=true&user_name={0}&user_email={1}'.format(FAKE_NAME,
-  #                                                             FAKE_EMAIL)
-  #   response = self.testapp.post(PATHS['user_add_path'] + data)
-
-  #   mock_insert.assert_called_once_with(user_array)
-  #   self.assertEqual(response.status_int, 302)
-  #   self.assertTrue(PATHS['user_page_path'] in response.location)
-
-  # @patch('user._RenderAddUsersTemplate')
-  # @patch('google_directory_service.GoogleDirectoryService.WatchUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUserAsList')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsersByGroupKey')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.__init__')
-  # def testAddUsersGetHandlerNoParam(self, mock_ds, mock_get_users,
-  #                                   mock_get_by_key, mock_get_user,
-  #                                   mock_watch_users, mock_render):
-  #   """Test the add users get handler displays no users on initial get."""
-  #   # pylint: disable=too-many-arguments
-  #   mock_ds.return_value = None
-  #   self.testapp.get(PATHS['user_add_path'])
-
-  #   mock_ds.assert_called_once_with(MOCK_ADMIN.OAUTH_DECORATOR)
-  #   mock_get_users.assert_not_called()
-  #   mock_get_user.assert_not_called()
-  #   mock_get_by_key.assert_not_called()
-  #   mock_watch_users.assert_not_called()
-  #   mock_render.assert_called_once_with([])
-
-  # @patch('user._RenderAddUsersTemplate')
-  # @patch('google_directory_service.GoogleDirectoryService.WatchUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUserAsList')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsersByGroupKey')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.__init__')
-  # def testAddUsersGetHandlerWithGroup(self, mock_ds, mock_get_users,
-  #                                     mock_get_by_key, mock_get_user,
-  #                                     mock_watch_users, mock_render):
-  #   """Test the add users get handler displays users from a given group."""
-  #   # pylint: disable=too-many-arguments
-  #   mock_ds.return_value = None
-  #   # Email address could refer to group or user
-  #   group_key = 'foo@bar.mybusiness.com'
-  #   mock_get_by_key.return_value = FAKE_USER_ARRAY
-  #   self.testapp.get(PATHS['user_add_path'] + '?group_key=' + group_key)
-
-  #   mock_get_users.assert_not_called()
-  #   mock_get_user.assert_not_called()
-  #   mock_ds.assert_called_once_with(MOCK_ADMIN.OAUTH_DECORATOR)
-  #   mock_get_by_key.assert_called_once_with(group_key)
-  #   mock_watch_users.assert_any_call('delete')
-  #   mock_watch_users.assert_any_call('makeAdmin')
-  #   mock_watch_users.assert_any_call('undelete')
-  #   mock_watch_users.assert_any_call('update')
-  #   mock_render.assert_called_once_with(FAKE_USER_ARRAY)
+    mock_get_users.assert_not_called()
+    mock_get_user.assert_not_called()
+    mock_ds.assert_called_once_with(FAKE_CREDENTIALS)
+    mock_get_by_key.assert_called_once_with(group_key)
+    for x in range(0, len(FAKE_DIRECTORY_USER_ARRAY)):
+      self.assertEquals(
+          FAKE_DIRECTORY_USER_ARRAY[x]['primaryEmail'] in result,
+          True)
 
   # @patch('user._RenderAddUsersTemplate')
   # @patch('google_directory_service.GoogleDirectoryService.WatchUsers')
@@ -243,43 +200,73 @@ class UserTest(TestCase):
   #   mock_watch_users.assert_not_called()
   #   mock_render.assert_called_once_with([], fake_error)
 
-  # @patch('user.User.InsertUsers')
-  # def testAddUsersPostHandler(self, mock_insert):
-  #   """Test the add users post handler calls to insert the specified users."""
-  #   user_1 = {}
-  #   user_1['primaryEmail'] = FAKE_EMAIL_1
-  #   user_1['name'] = {}
-  #   user_1['name']['fullName'] = FAKE_EMAIL_1
-  #   user_2 = {}
-  #   user_2['primaryEmail'] = FAKE_EMAIL_2
-  #   user_2['name'] = {}
-  #   user_2['name']['fullName'] = FAKE_EMAIL_2
-  #   user_array = []
-  #   user_array.append(user_1)
-  #   user_array.append(user_2)
-  #   data = '?selected_user={0}&selected_user={1}'.format(user_1, user_2)
-  #   response = self.testapp.post(PATHS['user_add_path'] + data)
+  @patch.object(models.User, 'GetAll')
+  def testListUsersHandler(self, mock_get_all):
+    """Test the list user handler displays users from the database."""
+    mock_users = []
+    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
+      mock_user = MagicMock(id=x + 1, email=FAKE_EMAILS_AND_NAMES[x]['email'],
+                            name=FAKE_EMAILS_AND_NAMES[x]['name'])
+      mock_users.append(mock_user)
+    mock_get_all.return_value = mock_users
 
-  #   mock_insert.assert_called_once_with(user_array)
-  #   self.assertEqual(response.status_int, 302)
-  #   self.assertTrue(PATHS['user_page_path'] in response.location)
+    resp = self.client.get(flask.url_for('user_list'))
+    user_list_output = resp.data
 
-  # @patch('user.User.InsertUsers')
-  # def testAddUsersPostManualHandler(self, mock_insert):
-  #   """Test add users manually calls to insert the specified user."""
-  #   user_1 = {}
-  #   user_1['primaryEmail'] = FAKE_EMAIL
-  #   user_1['name'] = {}
-  #   user_1['name']['fullName'] = FAKE_NAME
-  #   user_array = []
-  #   user_array.append(user_1)
-  #   data = '?manual=true&user_name={0}&user_email={1}'.format(FAKE_NAME,
-  #                                                             FAKE_EMAIL)
-  #   response = self.testapp.post(PATHS['user_add_path'] + data)
+    self.assertEquals('Add Users' in user_list_output, True)
+    click_user_string = 'Click a user below to view more details.'
+    self.assertEquals(click_user_string in user_list_output, True)
 
-  #   mock_insert.assert_called_once_with(user_array)
-  #   self.assertEqual(response.status_int, 302)
-  #   self.assertTrue(PATHS['user_page_path'] in response.location)
+    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
+      self.assertEquals(FAKE_EMAILS_AND_NAMES[x]['email'] in user_list_output,
+                        True)
+      details_link = flask.url_for('user_details', user_id=mock_users[x].id)
+      self.assertEquals(details_link in user_list_output, True)
+
+  @patch.object(user, '_RenderUserAdd')
+  def testAddUsersGetHandler(self, mock_render):
+    """Test the add users get handler returns _RenderUserAdd's result."""
+    return_text = '<html>something here </html>'
+    mock_render.return_value = return_text
+    resp = self.client.get(flask.url_for('add_user'))
+
+    self.assertEquals(resp.data, return_text)
+
+  @patch.object(models.User, 'Add')
+  def testAddUsersPostHandler(self, mock_add):
+    """Test the add users post handler calls to insert the specified users."""
+    mock_users = []
+    data = MultiDict()
+    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
+      mock_user = {}
+      mock_user['primaryEmail'] = FAKE_EMAILS_AND_NAMES[x]['email']
+      mock_user['name'] = {}
+      mock_user['name']['fullName'] = FAKE_EMAILS_AND_NAMES[x]['name']
+      mock_users.append(mock_user)
+      data.add('selected_user', json.dumps(mock_user))
+
+    data = ImmutableMultiDict(data)
+
+    response = self.client.post(flask.url_for('add_user'), data=data,
+                                follow_redirects=False)
+
+    self.assert_redirects(response, flask.url_for('user_list'))
+    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
+      mock_add.assert_any_call()
+
+  @patch.object(models.User, 'Add')
+  def testAddUsersPostManualHandler(self, mock_add):
+    """Test add users manually calls to insert the specified user."""
+    data = {}
+    data['manual'] = True
+    data['user_email'] = FAKE_EMAILS_AND_NAMES[0]['email']
+    data['user_name'] = FAKE_EMAILS_AND_NAMES[0]['name']
+
+    response = self.client.post(flask.url_for('add_user'), data=data,
+                                follow_redirects=False)
+
+    self.assert_redirects(response, flask.url_for('user_list'))
+    mock_add.assert_called_once_with()
 
 
 if __name__ == '__main__':
