@@ -1,4 +1,4 @@
-"""Base test with comment setup and teardown."""
+"""Base test with common setup and teardown."""
 
 from flask.ext.testing import TestCase
 
