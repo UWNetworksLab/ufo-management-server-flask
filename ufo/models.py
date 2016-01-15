@@ -1,5 +1,3 @@
-import base64
-
 from . import db
 
 from Crypto.PublicKey import RSA
@@ -67,8 +65,8 @@ class User(Model):
       key_pair: A dictionary with private_key and public_key in b64 value.
     """
     rsa_key = RSA.generate(2048)
-    private_key = base64.urlsafe_b64encode(rsa_key.exportKey())
-    public_key = base64.urlsafe_b64encode(rsa_key.publickey().exportKey())
+    private_key = rsa_key.exportKey()
+    public_key = rsa_key.publickey().exportKey()
 
     return {
         'private_key': private_key,

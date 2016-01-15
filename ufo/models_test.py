@@ -16,16 +16,13 @@ FAKE_PRIVATE_KEY = 'fakePrivateKey'
 class UserTest(base_test.BaseTest):
   """Test for models module functionality."""
 
-  @patch('base64.urlsafe_b64encode')
   @patch.object(models.RSA._RSAobj, 'publickey')
   @patch('ufo.models.RSA._RSAobj.exportKey')
   @patch.object(models.RSA, 'generate')
-  def testGenerateKeyPair(self, mock_rsa, mock_export_key, mock_public_key,
-                          mock_encode):
+  def testGenerateKeyPair(self, mock_rsa, mock_export_key, mock_public_key):
     # Disabling the protected access check here intentionally so we can test a
     # private method.
     # pylint: disable=protected-access
-    mock_encode.return_value = FAKE_PRIVATE_KEY
     mock_export_key.return_value = FAKE_PRIVATE_KEY
     mock_public_key.return_value.exportKey = mock_export_key
     mock_rsa.return_value.exportKey = mock_export_key
@@ -36,8 +33,6 @@ class UserTest(base_test.BaseTest):
     mock_rsa.assert_called_once_with(2048)
     self.assertEqual(mock_export_key.call_count, 2)
     mock_public_key.assert_called_once_with()
-    self.assertEqual(mock_encode.call_count, 2)
-    mock_encode.assert_any_call(FAKE_PRIVATE_KEY)
     self.assertEqual(key_pair['public_key'], FAKE_PRIVATE_KEY)
     self.assertEqual(key_pair['private_key'], FAKE_PRIVATE_KEY)
 
