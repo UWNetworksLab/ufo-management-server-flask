@@ -3,40 +3,18 @@
 from mock import MagicMock
 from mock import patch
 import os
-
-import flask
-from flask.ext.testing import TestCase
 import unittest
 
-from . import app
-from . import db
+import base_test
 import models
 import user
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 FAKE_PRIVATE_KEY = 'fakePrivateKey'
 
-class UserTest(TestCase):
+
+class UserTest(base_test.BaseTest):
   """Test for models module functionality."""
-
-  def create_app(self):
-    app.config.from_object('config.TestConfiguration')
-    return app
-
-  def setUp(self):
-    """Setup test app on which to call handlers and db to query."""
-    db.create_all()
-
-    self.config = models.Config()
-    self.config.isConfigured = True
-    self.config.id = 0
-
-    self.config.Add()
-    
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
 
   @patch('base64.urlsafe_b64encode')
   @patch.object(models.RSA._RSAobj, 'publickey')
