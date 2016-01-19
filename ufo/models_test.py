@@ -32,5 +32,15 @@ class UserTest(base_test.BaseTest):
     self.assertEqual(message, rsa_private_key.decrypt(encrypted_message))
 
 
+  def testRegenerateKeyPair(self):
+    user = models.User()
+    original_public_key = user.public_key
+    original_private_key = user.private_key
+
+    user.regenerate_key_pair()
+    self.assertNotEqual(original_public_key, user.public_key)
+    self.assertNotEqual(original_private_key, user.private_key)
+
+
 if __name__ == '__main__':
   unittest.main()
