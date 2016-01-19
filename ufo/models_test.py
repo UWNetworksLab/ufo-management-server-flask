@@ -9,6 +9,8 @@ import base_test
 import models
 import user
 
+from Crypto.PublicKey import RSA
+
 
 FAKE_PRIVATE_KEY = 'fakePrivateKey'
 
@@ -16,25 +18,19 @@ FAKE_PRIVATE_KEY = 'fakePrivateKey'
 class UserTest(base_test.BaseTest):
   """Test for models module functionality."""
 
-  @patch.object(models.RSA._RSAobj, 'publickey')
-  @patch('ufo.models.RSA._RSAobj.exportKey')
-  @patch.object(models.RSA, 'generate')
-  def testGenerateKeyPair(self, mock_rsa, mock_export_key, mock_public_key):
-    # Disabling the protected access check here intentionally so we can test a
-    # private method.
-    # pylint: disable=protected-access
-    mock_export_key.return_value = FAKE_PRIVATE_KEY
-    mock_public_key.return_value.exportKey = mock_export_key
-    mock_rsa.return_value.exportKey = mock_export_key
-    mock_rsa.return_value.publickey = mock_public_key
-
+  def testGenerateKeyPair(self):
+    """Whether the generated key_pair is valid, and with correct size."""
     key_pair = models.User._GenerateKeyPair()
+    rsa_public_key = RSA.importKey(key_pair['public_key'])
+    rsa_private_key = RSA.importKey(key_pair['private_key'])
 
-    mock_rsa.assert_called_once_with(2048)
-    self.assertEqual(mock_export_key.call_count, 2)
-    mock_public_key.assert_called_once_with()
-    self.assertEqual(key_pair['public_key'], FAKE_PRIVATE_KEY)
-    self.assertEqual(key_pair['private_key'], FAKE_PRIVATE_KEY)
+    self.assertEqual(2048, rsa_public_key.size() + 1) 
+    self.assertEqual(2048, rsa_private_key.size() + 1) 
+
+    message = os.urandom(8)
+    encrypted_message = rsa_private_key.encrypt(message, 12345)
+    self.assertEqual(message, rsa_private_key.decrypt(encrypted_message))
+
 
 if __name__ == '__main__':
   unittest.main()
