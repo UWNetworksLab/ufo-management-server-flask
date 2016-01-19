@@ -11,6 +11,7 @@ from ufo import app
 class BaseConfiguration(object):
   """Configurations for running the application in production."""
 
+  TESTING = False
   WTF_CSRF_ENABLED = True
   SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'app.db')
   SQLALCHEMY_TRACK_MODIFICATIONS = False

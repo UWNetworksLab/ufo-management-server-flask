@@ -5,6 +5,7 @@ import os
 
 import flask
 from flask.ext.testing import TestCase
+from googleapiclient import errors
 import json
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session
@@ -40,7 +41,7 @@ for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
   fake_add_user['type'] = 'USER'
   FAKE_DIRECTORY_USER_ARRAY.append(fake_add_user)
 
-FAKE_CREDENTIALS = 'Look at me, Im a credential'
+FAKE_CREDENTIALS = 'Look at me. I am a credential!'
 
 class UserTest(TestCase):
 
@@ -65,140 +66,6 @@ class UserTest(TestCase):
     db.session.delete(self.config)
     db.session.commit()
     db.session.close()
-
-  @patch.object(oauth, 'getSavedCredentials')
-  def testRenderUserAddNoCredentials(self, mock_get_saved_credentials):
-    """Test render user add displays an error when oauth isn't set."""
-    mock_get_saved_credentials.return_value = None
-
-    result = user._RenderUserAdd(None, None, None)
-
-    self.assertEquals('OAuth is not set up' in result, True)
-
-  @patch.object(oauth, 'getSavedCredentials')
-  @patch.object(gds.GoogleDirectoryService, 'GetUserAsList')
-  @patch.object(gds.GoogleDirectoryService, 'GetUsersByGroupKey')
-  @patch.object(gds.GoogleDirectoryService, 'GetUsers')
-  @patch.object(gds.GoogleDirectoryService, '__init__')
-  def testRenderUserAddNoParam(self, mock_ds, mock_get_users,
-                               mock_get_by_key, mock_get_user,
-                               mock_get_saved_credentials):
-    """Test render add users displays no users on initial get."""
-    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
-    mock_ds.return_value = None
-
-    result = user._RenderUserAdd(None, None, None)
-
-    mock_ds.assert_called_once_with(FAKE_CREDENTIALS)
-    mock_get_users.assert_not_called()
-    mock_get_user.assert_not_called()
-    mock_get_by_key.assert_not_called()
-    self.assertEquals('No users found. Try another query below.' in result,
-                      True)
-
-  @patch.object(oauth, 'getSavedCredentials')
-  @patch.object(gds.GoogleDirectoryService, 'GetUserAsList')
-  @patch.object(gds.GoogleDirectoryService, 'GetUsersByGroupKey')
-  @patch.object(gds.GoogleDirectoryService, 'GetUsers')
-  @patch.object(gds.GoogleDirectoryService, '__init__')
-  def testRenderUserAddWithGroup(self, mock_ds, mock_get_users,
-                                 mock_get_by_key, mock_get_user,
-                                 mock_get_saved_credentials):
-    """Test render add users displays users from a given group."""
-    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
-    mock_ds.return_value = None
-    # Email address could refer to group or user
-    group_key = 'foo@bar.mybusiness.com'
-    mock_get_by_key.return_value = FAKE_DIRECTORY_USER_ARRAY
-
-    result = user._RenderUserAdd(None, group_key, None)
-
-    mock_get_users.assert_not_called()
-    mock_get_user.assert_not_called()
-    mock_ds.assert_called_once_with(FAKE_CREDENTIALS)
-    mock_get_by_key.assert_called_once_with(group_key)
-    for x in range(0, len(FAKE_DIRECTORY_USER_ARRAY)):
-      self.assertEquals(
-          FAKE_DIRECTORY_USER_ARRAY[x]['primaryEmail'] in result,
-          True)
-
-  # @patch('user._RenderAddUsersTemplate')
-  # @patch('google_directory_service.GoogleDirectoryService.WatchUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUserAsList')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsersByGroupKey')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.__init__')
-  # def testAddUsersGetHandlerWithUser(self, mock_ds, mock_get_users,
-  #                                    mock_get_by_key, mock_get_user,
-  #                                    mock_watch_users, mock_render):
-  #   """Test the add users get handler displays a given user as requested."""
-  #   # pylint: disable=too-many-arguments
-  #   mock_ds.return_value = None
-  #   # Email address could refer to group or user
-  #   user_key = 'foo@bar.mybusiness.com'
-  #   mock_get_user.return_value = FAKE_USER_ARRAY
-  #   self.testapp.get(PATHS['user_add_path'] + '?user_key=' + user_key)
-
-  #   mock_get_users.assert_not_called()
-  #   mock_get_by_key.assert_not_called()
-  #   mock_ds.assert_called_once_with(MOCK_ADMIN.OAUTH_DECORATOR)
-  #   mock_get_user.assert_called_once_with(user_key)
-  #   mock_watch_users.assert_any_call('delete')
-  #   mock_watch_users.assert_any_call('makeAdmin')
-  #   mock_watch_users.assert_any_call('undelete')
-  #   mock_watch_users.assert_any_call('update')
-  #   mock_render.assert_called_once_with(FAKE_USER_ARRAY)
-
-  # @patch('user._RenderAddUsersTemplate')
-  # @patch('google_directory_service.GoogleDirectoryService.WatchUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUserAsList')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsersByGroupKey')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.__init__')
-  # def testAddUsersGetHandlerWithAll(self, mock_ds, mock_get_users,
-  #                                   mock_get_by_key, mock_get_user,
-  #                                   mock_watch_users, mock_render):
-  #   """Test the add users get handler displays all users in a domain."""
-  #   # pylint: disable=too-many-arguments
-  #   mock_ds.return_value = None
-  #   mock_get_users.return_value = FAKE_USER_ARRAY
-  #   self.testapp.get(PATHS['user_add_path'] + '?get_all=true')
-
-  #   mock_get_by_key.assert_not_called()
-  #   mock_get_user.assert_not_called()
-  #   mock_ds.assert_called_once_with(MOCK_ADMIN.OAUTH_DECORATOR)
-  #   mock_get_users.assert_called_once_with()
-  #   mock_watch_users.assert_any_call('delete')
-  #   mock_watch_users.assert_any_call('makeAdmin')
-  #   mock_watch_users.assert_any_call('undelete')
-  #   mock_watch_users.assert_any_call('update')
-  #   mock_render.assert_called_once_with(FAKE_USER_ARRAY)
-
-  # @patch('user._RenderAddUsersTemplate')
-  # @patch('google_directory_service.GoogleDirectoryService.WatchUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUserAsList')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsersByGroupKey')
-  # @patch('google_directory_service.GoogleDirectoryService.GetUsers')
-  # @patch('google_directory_service.GoogleDirectoryService.__init__')
-  # def testAddUsersGetHandlerWithError(self, mock_ds, mock_get_users,
-  #                                     mock_get_by_key, mock_get_user,
-  #                                     mock_watch_users, mock_render):
-  #   """Test the add users get handler fails gracefully."""
-  #   # pylint: disable=too-many-arguments
-  #   fake_status = '404'
-  #   fake_response = MagicMock(status=fake_status)
-  #   fake_content = b'some error content'
-  #   fake_error = errors.HttpError(fake_response, fake_content)
-  #   mock_ds.side_effect = fake_error
-  #   mock_get_users.return_value = FAKE_USER_ARRAY
-  #   self.testapp.get(PATHS['user_add_path'] + '?get_all=true')
-
-  #   mock_ds.assert_called_once_with(MOCK_ADMIN.OAUTH_DECORATOR)
-  #   mock_get_by_key.assert_not_called()
-  #   mock_get_user.assert_not_called()
-  #   mock_get_users.assert_not_called()
-  #   mock_watch_users.assert_not_called()
-  #   mock_render.assert_called_once_with([], fake_error)
 
   @patch.object(models.User, 'GetAll')
   def testListUsersHandler(self, mock_get_all):
@@ -231,6 +98,122 @@ class UserTest(TestCase):
     resp = self.client.get(flask.url_for('add_user'))
 
     self.assertEquals(resp.data, return_text)
+
+  @patch('flask.render_template')
+  @patch.object(oauth, 'getSavedCredentials')
+  def testAddUsersGetNoCredentials(self, mock_get_saved_credentials,
+                                  mock_render_template):
+    """Test add user get should display an error when oauth isn't set."""
+    mock_get_saved_credentials.return_value = None
+    mock_render_template.return_value = ''
+
+    response = self.client.get(flask.url_for('add_user'))
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('add_user.html', args[0])
+    self.assertEquals([], kwargs['directory_users'])
+    self.assertEquals(kwargs['error'] is not None, True)
+
+  @patch('flask.render_template')
+  @patch.object(oauth, 'getSavedCredentials')
+  @patch.object(gds.GoogleDirectoryService, '__init__')
+  def testAddUsersGetNoParam(self, mock_ds, mock_get_saved_credentials,
+                            mock_render_template):
+    """Test add user get should display no users on initial get."""
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_ds.return_value = None
+    mock_render_template.return_value = ''
+
+    response = self.client.get(flask.url_for('add_user'))
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('add_user.html', args[0])
+    self.assertEquals([], kwargs['directory_users'])
+
+  @patch('flask.render_template')
+  @patch.object(oauth, 'getSavedCredentials')
+  @patch.object(gds.GoogleDirectoryService, 'GetUsersByGroupKey')
+  @patch.object(gds.GoogleDirectoryService, '__init__')
+  def testAddUsersGetWithGroup(self, mock_ds, mock_get_by_key,
+                              mock_get_saved_credentials,
+                              mock_render_template):
+    """Test add user get should display users from a given group."""
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_ds.return_value = None
+    # Email address could refer to group or user
+    group_key = 'foo@bar.mybusiness.com'
+    query_string = '?group_key={0}'.format(group_key)
+    mock_get_by_key.return_value = FAKE_DIRECTORY_USER_ARRAY
+    mock_render_template.return_value = ''
+
+    response = self.client.get(flask.url_for('add_user') + query_string)
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('add_user.html', args[0])
+    self.assertEquals(FAKE_DIRECTORY_USER_ARRAY, kwargs['directory_users'])
+
+  @patch('flask.render_template')
+  @patch.object(oauth, 'getSavedCredentials')
+  @patch.object(gds.GoogleDirectoryService, 'GetUserAsList')
+  @patch.object(gds.GoogleDirectoryService, '__init__')
+  def testAddUsersGetWithUser(self, mock_ds, mock_get_user,
+                             mock_get_saved_credentials,
+                             mock_render_template):
+    """Test add user get should display a given user as requested."""
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_ds.return_value = None
+    # Email address could refer to group or user
+    user_key = 'foo@bar.mybusiness.com'
+    query_string = '?user_key={0}'.format(user_key)
+    mock_get_user.return_value = FAKE_DIRECTORY_USER_ARRAY
+    mock_render_template.return_value = ''
+
+    response = self.client.get(flask.url_for('add_user') + query_string)
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('add_user.html', args[0])
+    self.assertEquals(FAKE_DIRECTORY_USER_ARRAY, kwargs['directory_users'])
+
+  @patch('flask.render_template')
+  @patch.object(oauth, 'getSavedCredentials')
+  @patch.object(gds.GoogleDirectoryService, 'GetUsers')
+  @patch.object(gds.GoogleDirectoryService, '__init__')
+  def testAddUsersGetWithAll(self, mock_ds, mock_get_users,
+                            mock_get_saved_credentials,
+                            mock_render_template):
+    """Test add user get should display all users in a domain."""
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_ds.return_value = None
+    query_string = '?get_all=true'
+    mock_get_users.return_value = FAKE_DIRECTORY_USER_ARRAY
+    mock_render_template.return_value = ''
+
+    response = self.client.get(flask.url_for('add_user') + query_string)
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('add_user.html', args[0])
+    self.assertEquals(FAKE_DIRECTORY_USER_ARRAY, kwargs['directory_users'])
+
+  @patch('flask.render_template')
+  @patch.object(oauth, 'getSavedCredentials')
+  @patch.object(gds.GoogleDirectoryService, '__init__')
+  def testAddUsersGetWithError(self, mock_ds, mock_get_saved_credentials,
+                              mock_render_template):
+    """Test add users get handler fails gracefully with an error."""
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    fake_status = '404'
+    fake_response = MagicMock(status=fake_status)
+    fake_content = b'some error content'
+    fake_error = errors.HttpError(fake_response, fake_content)
+    mock_ds.side_effect = fake_error
+    mock_render_template.return_value = ''
+
+    response = self.client.get(flask.url_for('add_user'))
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('add_user.html', args[0])
+    self.assertEquals([], kwargs['directory_users'])
+    self.assertEquals(fake_error, kwargs['error'])
 
   @patch.object(models.User, 'Add')
   def testAddUsersPostHandler(self, mock_add):
