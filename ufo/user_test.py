@@ -32,16 +32,26 @@ FAKE_EMAILS_AND_NAMES = [
 ]
 FAKE_DIRECTORY_USER_ARRAY = []
 for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
-  fake_add_user = {}
-  fake_add_user['primaryEmail'] = FAKE_EMAILS_AND_NAMES[x]['email']
-  fake_add_user['name'] = {}
-  fake_add_user['name']['fullName'] = FAKE_EMAILS_AND_NAMES[x]['name']
-  fake_add_user['email'] = FAKE_EMAILS_AND_NAMES[x]['email']
-  fake_add_user['role'] = 'MEMBER'
-  fake_add_user['type'] = 'USER'
-  FAKE_DIRECTORY_USER_ARRAY.append(fake_add_user)
+  fake_directory_user = {}
+  fake_directory_user['primaryEmail'] = FAKE_EMAILS_AND_NAMES[x]['email']
+  fake_directory_user['name'] = {}
+  fake_directory_user['name']['fullName'] = FAKE_EMAILS_AND_NAMES[x]['name']
+  fake_directory_user['email'] = FAKE_EMAILS_AND_NAMES[x]['email']
+  fake_directory_user['role'] = 'MEMBER'
+  fake_directory_user['type'] = 'USER'
+  FAKE_DIRECTORY_USER_ARRAY.append(fake_directory_user)
 
-FAKE_CREDENTIALS = 'Look at me. I am a credential!'
+FAKE_CREDENTIAL = 'Look at me. I am a credential!'
+
+FAKE_PRIVATE_KEY = 'private key foo'
+FAKE_PUBLIC_KEY = 'public key bar'
+FAKE_IS_KEY_REVOKED = False
+FAKE_MODEL_USER = MagicMock(email=FAKE_EMAILS_AND_NAMES[0]['email'],
+                            name=FAKE_EMAILS_AND_NAMES[0]['name'],
+                            private_key=FAKE_PRIVATE_KEY,
+                            public_key=FAKE_PUBLIC_KEY,
+                            is_key_revoked=FAKE_IS_KEY_REVOKED)
+FAKE_ID = 1000
 
 class UserTest(TestCase):
 
@@ -112,7 +122,7 @@ class UserTest(TestCase):
     args, kwargs = mock_render_template.call_args
     self.assertEquals('add_user.html', args[0])
     self.assertEquals([], kwargs['directory_users'])
-    self.assertEquals(kwargs['error'] is not None, True)
+    self.assertIsNotNone(kwargs['error'])
 
   @patch('flask.render_template')
   @patch.object(oauth, 'getSavedCredentials')
@@ -120,7 +130,7 @@ class UserTest(TestCase):
   def testAddUsersGetNoParam(self, mock_ds, mock_get_saved_credentials,
                             mock_render_template):
     """Test add user get should display no users on initial get."""
-    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
     mock_ds.return_value = None
     mock_render_template.return_value = ''
 
@@ -138,7 +148,7 @@ class UserTest(TestCase):
                               mock_get_saved_credentials,
                               mock_render_template):
     """Test add user get should display users from a given group."""
-    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
     mock_ds.return_value = None
     # Email address could refer to group or user
     group_key = 'foo@bar.mybusiness.com'
@@ -160,7 +170,7 @@ class UserTest(TestCase):
                              mock_get_saved_credentials,
                              mock_render_template):
     """Test add user get should display a given user as requested."""
-    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
     mock_ds.return_value = None
     # Email address could refer to group or user
     user_key = 'foo@bar.mybusiness.com'
@@ -182,7 +192,7 @@ class UserTest(TestCase):
                             mock_get_saved_credentials,
                             mock_render_template):
     """Test add user get should display all users in a domain."""
-    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
     mock_ds.return_value = None
     query_string = '?get_all=true'
     mock_get_users.return_value = FAKE_DIRECTORY_USER_ARRAY
@@ -200,7 +210,7 @@ class UserTest(TestCase):
   def testAddUsersGetWithError(self, mock_ds, mock_get_saved_credentials,
                               mock_render_template):
     """Test add users get handler fails gracefully with an error."""
-    mock_get_saved_credentials.return_value = FAKE_CREDENTIALS
+    mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
     fake_status = '404'
     fake_response = MagicMock(status=fake_status)
     fake_content = b'some error content'
@@ -250,6 +260,20 @@ class UserTest(TestCase):
 
     self.assert_redirects(response, flask.url_for('user_list'))
     mock_add.assert_called_once_with()
+
+  @patch('flask.render_template')
+  @patch.object(models.User, 'GetById')
+  def testUserDetailsGetHandler(self, mock_get_by_id, mock_render_template):
+    """Test the user details handler calls to render a user's information."""
+    mock_get_by_id.return_value = FAKE_MODEL_USER
+    mock_render_template.return_value = ''
+
+    response = self.client.get(flask.url_for('user_details', user_id=FAKE_ID))
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('user_details.html', args[0])
+    self.assertEquals(FAKE_MODEL_USER, kwargs['user'])
+    # self.assertIsNotNone(kwargs['invite_code'])
 
 
 if __name__ == '__main__':
