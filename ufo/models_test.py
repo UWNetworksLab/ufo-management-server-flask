@@ -28,7 +28,7 @@ class UserTest(base_test.BaseTest):
     self.assertEqual(2048, rsa_private_key.size() + 1) 
 
     message = os.urandom(8)
-    encrypted_message = rsa_private_key.encrypt(message, 12345)
+    encrypted_message = rsa_public_key.encrypt(message, 12345)
     self.assertEqual(message, rsa_private_key.decrypt(encrypted_message))
 
 
