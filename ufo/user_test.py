@@ -16,14 +16,14 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.datastructures import ImmutableMultiDict
 
 from . import app
-from . import base_test
+import base_test
 from . import db
 # I practically have to shorten this name so every single line doesn't go
 # over. If someone can't understand, they can use ctrl+f to look it up here.
-from . import google_directory_service as gds
-from . import models
-from . import oauth
-from . import user
+import google_directory_service as gds
+import models
+import oauth
+import user
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -45,14 +45,11 @@ for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
 
 FAKE_CREDENTIAL = 'Look at me. I am a credential!'
 
-FAKE_PRIVATE_KEY = 'private key foo'
-FAKE_PUBLIC_KEY = 'public key bar'
-FAKE_IS_KEY_REVOKED = False
 FAKE_MODEL_USER = MagicMock(email=FAKE_EMAILS_AND_NAMES[0]['email'],
                             name=FAKE_EMAILS_AND_NAMES[0]['name'],
-                            private_key=FAKE_PRIVATE_KEY,
-                            public_key=FAKE_PUBLIC_KEY,
-                            is_key_revoked=FAKE_IS_KEY_REVOKED)
+                            private_key='private key foo',
+                            public_key='public key bar',
+                            is_key_revoked=False)
 FAKE_ID = 1000
 
 class UserTest(base_test.BaseTest):
@@ -193,7 +190,14 @@ class UserTest(base_test.BaseTest):
   @patch.object(gds.GoogleDirectoryService, '__init__')
   def testAddUsersGetWithError(self, mock_ds, mock_get_saved_credentials,
                               mock_render_template):
-    """Test add users get handler fails gracefully with an error."""
+    """Test add users get fails gracefully when a resource isn't found.
+
+    We need to catch errors from the google directory service module since we
+    have not yet implemented robust error handling. Here I'm simulating an
+    exception in the directory service and asserting that we catch it and still
+    render the add_user page along with the error rather than barfing
+    completely.
+    """
     mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
     fake_status = '404'
     fake_response = MagicMock(status=fake_status)
