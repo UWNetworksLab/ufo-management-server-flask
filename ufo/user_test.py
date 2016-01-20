@@ -12,6 +12,7 @@ import unittest
 
 from . import app
 from . import db
+import base_test
 from . import models
 from . import user
 
@@ -23,29 +24,13 @@ FAKE_EMAILS_AND_NAMES = [
   {'email': 'baz@gmail.com', 'name': 'mark'}
 ]
 
-class UserTest(TestCase):
-
+class UserTest(base_test.BaseTest):
   """Test user class functionality."""
-
-  def create_app(self):
-    app.config.from_object('config.TestConfiguration')
-    return app
 
   def setUp(self):
     """Setup test app on which to call handlers and db to query."""
-    db.create_all()
-
-    self.config = models.Config()
-    self.config.isConfigured = True
-    self.config.id = 0
-
-    self.config.Add()
-
-  def tearDown(self):
-    """Teardown the test db and instances."""
-    db.session.delete(self.config)
-    db.session.commit()
-    db.session.close()
+    super(UserTest, self).setUp()
+    super(UserTest, self).setup_config()
 
   @patch.object(models.User, 'GetAll')
   def testListUsersHandler(self, mock_get_all):
