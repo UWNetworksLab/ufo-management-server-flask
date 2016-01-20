@@ -7,10 +7,13 @@ import oauth2client
 
 from googleapiclient import discovery
 
+PLEASE_CONFIGURE_TEXT = 'Please finish configuring this site.'
+DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
+NON_ADMIN_TEXT = 'Credentials do not have admin access.'
+
 @app.route('/not_setup/')
 def not_setup():
-  return flask.render_template('error.html',
-                               error_text='Please finish configuring this site')
+  return flask.render_template('error.html', error_text=PLEASE_CONFIGURE_TEXT)
 
 
 @app.route('/setup/', methods=['GET', 'POST'])
@@ -47,14 +50,14 @@ def setup():
         userId = profileResult['id']
       else:
         return flask.render_template('setup.html',
-                                     error='Credentials for another domain',
+                                     error=DOMAIN_INVALID_TEXT,
                                      config=config,
                                      oauth_url=oauth_url)
 
       userResult = adminApi.users().get(userKey=userId).execute()
       if not userResult.get('isAdmin', False):
         return flask.render_template('setup.html',
-                                     error='Credentials do not have admin access',
+                                     error=NON_ADMIN_TEXT,
                                      config=config,
                                      oauth_url=oauth_url)
     except Exception as e:
