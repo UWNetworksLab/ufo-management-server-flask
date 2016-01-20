@@ -16,6 +16,7 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.datastructures import ImmutableMultiDict
 
 from . import app
+from . import base_test
 from . import db
 # I practically have to shorten this name so every single line doesn't go
 # over. If someone can't understand, they can use ctrl+f to look it up here.
@@ -54,29 +55,13 @@ FAKE_MODEL_USER = MagicMock(email=FAKE_EMAILS_AND_NAMES[0]['email'],
                             is_key_revoked=FAKE_IS_KEY_REVOKED)
 FAKE_ID = 1000
 
-class UserTest(TestCase):
-
+class UserTest(base_test.BaseTest):
   """Test user class functionality."""
-
-  def create_app(self):
-    app.config.from_object('config.TestConfiguration')
-    return app
 
   def setUp(self):
     """Setup test app on which to call handlers and db to query."""
-    db.create_all()
-
-    self.config = models.Config()
-    self.config.isConfigured = True
-    self.config.id = 0
-
-    self.config.Add()
-
-  def tearDown(self):
-    """Teardown the test db and instances."""
-    db.session.delete(self.config)
-    db.session.commit()
-    db.session.close()
+    super(UserTest, self).setUp()
+    super(UserTest, self).setup_config()
 
   @patch.object(models.User, 'GetAll')
   def testListUsersHandler(self, mock_get_all):

@@ -1,5 +1,7 @@
 instance/*
 venv/*
+.project
+.pydevproject
 *.pyc
 ufo/static/bower_components/*
 node_modules/*
