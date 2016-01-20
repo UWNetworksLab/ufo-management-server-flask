@@ -290,7 +290,7 @@ class UserTest(base_test.BaseTest):
 
   @patch.object(models.User, 'GetById')
   def testDeleteUserPostHandler(self, mock_get_by_id):
-    """Test the add users post handler calls to insert the specified users."""
+    """Test the delete user handler calls to delete the specified user."""
     mock_get_by_id.return_value = FAKE_MODEL_USER
 
     response = self.client.post(flask.url_for('delete_user', user_id=FAKE_ID),
@@ -298,6 +298,37 @@ class UserTest(base_test.BaseTest):
 
     FAKE_MODEL_USER.Delete.assert_called_once_with()
     self.assert_redirects(response, flask.url_for('user_list'))
+
+  @patch.object(models.User, 'GetById')
+  def testUserGetNewKeyPairHandler(self, mock_get_by_id):
+    """Test get new key pair handler regenerates a key pair for the user."""
+    mock_user = MagicMock()
+    mock_get_by_id.return_value = mock_user
+
+    response = self.client.post(flask.url_for('user_get_new_key_pair',
+                                              user_id=FAKE_ID),
+                                follow_redirects=False)
+
+    mock_user.regenerate_key_pair.assert_called_once_with()
+    mock_user.Add.assert_called_once_with()
+    self.assert_redirects(response, flask.url_for('user_details',
+                                                  user_id=FAKE_ID))
+
+  @patch.object(models.User, 'GetById')
+  def testUserToggleRevokedHandler(self, mock_get_by_id):
+    """Test toggle revoked handler changes the revoked status for a user."""
+    mock_user = MagicMock(is_key_revoked=False)
+    mock_get_by_id.return_value = mock_user
+    initial_revoked_status = mock_user.is_key_revoked
+
+    response = self.client.post(flask.url_for('user_toggle_revoked',
+                                              user_id=FAKE_ID),
+                                follow_redirects=False)
+
+    self.assertEquals(not initial_revoked_status, mock_user.is_key_revoked)
+    mock_user.Add.assert_called_once_with()
+    self.assert_redirects(response, flask.url_for('user_details',
+                                                  user_id=FAKE_ID))
 
 
 if __name__ == '__main__':

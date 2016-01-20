@@ -154,10 +154,9 @@ def delete_user(user_id):
 
   return flask.redirect(flask.url_for('user_list'))
 
-@app.route('/user/<user_id>/getNewKeyPair')
+@app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
 @setup_required
 def user_get_new_key_pair(user_id):
-  #TODO yeah...should be post at least
   user = models.User.GetById(user_id)
   # TODO assert user not none
   user.regenerate_key_pair()
@@ -165,10 +164,9 @@ def user_get_new_key_pair(user_id):
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
 
-@app.route('/user/<user_id>/toggleRevoked')
+@app.route('/user/<user_id>/toggleRevoked', methods=['POST'])
 @setup_required
 def user_toggle_revoked(user_id):
-  # TODO the toggle alone means this should be a post!
   user = models.User.GetById(user_id)
   # TODO assert user not none
   user.is_key_revoked = not user.is_key_revoked
