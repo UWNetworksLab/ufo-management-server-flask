@@ -20,9 +20,9 @@ class UserTest(base_test.BaseTest):
 
   def testGenerateKeyPair(self):
     """Whether the generated key_pair is valid, and with correct size."""
-    key_pair = models.User._GenerateKeyPair()
-    rsa_public_key = RSA.importKey(key_pair['public_key'])
-    rsa_private_key = RSA.importKey(key_pair['private_key'])
+    user = models.User()
+    rsa_public_key = RSA.importKey(user.public_key)
+    rsa_private_key = RSA.importKey(user.private_key)
 
     self.assertEqual(2048, rsa_public_key.size() + 1) 
     self.assertEqual(2048, rsa_private_key.size() + 1) 
@@ -30,7 +30,6 @@ class UserTest(base_test.BaseTest):
     message = os.urandom(8)
     encrypted_message = rsa_public_key.encrypt(message, 12345)
     self.assertEqual(message, rsa_private_key.decrypt(encrypted_message))
-
 
   def testRegenerateKeyPair(self):
     user = models.User()
