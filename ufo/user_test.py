@@ -139,11 +139,10 @@ class UserTest(base_test.BaseTest):
     mock_ds.return_value = None
     # Email address could refer to group or user
     group_key = 'foo@bar.mybusiness.com'
-    query_string = '?group_key={0}'.format(group_key)
     mock_get_by_key.return_value = FAKE_DIRECTORY_USER_ARRAY
     mock_render_template.return_value = ''
 
-    response = self.client.get(flask.url_for('add_user') + query_string)
+    response = self.client.get(flask.url_for('add_user', group_key=group_key))
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('add_user.html', args[0])
@@ -161,11 +160,10 @@ class UserTest(base_test.BaseTest):
     mock_ds.return_value = None
     # Email address could refer to group or user
     user_key = 'foo@bar.mybusiness.com'
-    query_string = '?user_key={0}'.format(user_key)
     mock_get_user.return_value = FAKE_DIRECTORY_USER_ARRAY
     mock_render_template.return_value = ''
 
-    response = self.client.get(flask.url_for('add_user') + query_string)
+    response = self.client.get(flask.url_for('add_user', user_key=user_key))
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('add_user.html', args[0])
@@ -181,11 +179,10 @@ class UserTest(base_test.BaseTest):
     """Test add user get should display all users in a domain."""
     mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
     mock_ds.return_value = None
-    query_string = '?get_all=true'
     mock_get_users.return_value = FAKE_DIRECTORY_USER_ARRAY
     mock_render_template.return_value = ''
 
-    response = self.client.get(flask.url_for('add_user') + query_string)
+    response = self.client.get(flask.url_for('add_user', get_all=True))
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('add_user.html', args[0])
