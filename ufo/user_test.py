@@ -3,6 +3,7 @@ from mock import MagicMock
 from mock import patch
 import os
 
+import base64
 import flask
 from flask.ext.testing import TestCase
 from googleapiclient import errors
@@ -264,7 +265,7 @@ class UserTest(TestCase):
 
   @patch('flask.render_template')
   @patch.object(models.User, 'GetById')
-  def testUserDetailsGetHandler(self, mock_get_by_id, mock_render_template):
+  def testUserDetailsGet(self, mock_get_by_id, mock_render_template):
     """Test the user details handler calls to render a user's information."""
     mock_get_by_id.return_value = FAKE_MODEL_USER
     mock_render_template.return_value = ''
@@ -274,7 +275,36 @@ class UserTest(TestCase):
     args, kwargs = mock_render_template.call_args
     self.assertEquals('user_details.html', args[0])
     self.assertEquals(FAKE_MODEL_USER, kwargs['user'])
-    # self.assertIsNotNone(kwargs['invite_code'])
+    self.assertIsNone(kwargs['invite_code'])
+
+  @patch('flask.render_template')
+  @patch.object(models.ProxyServer, 'GetAll')
+  @patch.object(models.User, 'GetById')
+  def testUserDetailsGetWithInvite(self, mock_get_by_id, mock_get_all_proxies,
+                                   mock_render_template):
+    """Test the user details handler renders a valid invite code."""
+    fake_ip = '0.1.2.3'
+    mock_proxy_server = MagicMock(ip_address=fake_ip)
+    mock_get_by_id.return_value = FAKE_MODEL_USER
+    mock_get_all_proxies.return_value = [mock_proxy_server]
+    mock_render_template.return_value = ''
+
+    response = self.client.get(flask.url_for('user_details', user_id=FAKE_ID))
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('user_details.html', args[0])
+    self.assertEquals(FAKE_MODEL_USER, kwargs['user'])
+    self.assertIsNotNone(kwargs['invite_code'])
+
+    invite_code_json = base64.urlsafe_b64decode(kwargs['invite_code'])
+    invite_code = json.loads(invite_code_json)
+
+    self.assertEquals('Cloud', invite_code['networkName'])
+    self.assertEquals(fake_ip, invite_code['networkData']['host'])
+    self.assertEquals(FAKE_MODEL_USER.email,
+                      invite_code['networkData']['user'])
+    self.assertEquals(FAKE_MODEL_USER.private_key,
+                      invite_code['networkData']['pass'])
 
 
 if __name__ == '__main__':
