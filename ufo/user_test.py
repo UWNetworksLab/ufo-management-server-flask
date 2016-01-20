@@ -82,7 +82,8 @@ class UserTest(TestCase):
     """Test the list user handler displays users from the database."""
     mock_users = []
     for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
-      mock_user = MagicMock(id=x + 1, email=FAKE_EMAILS_AND_NAMES[x]['email'],
+      mock_user = MagicMock(id=(x + 1),
+                            email=FAKE_EMAILS_AND_NAMES[x]['email'],
                             name=FAKE_EMAILS_AND_NAMES[x]['name'])
       mock_users.append(mock_user)
     mock_get_all.return_value = mock_users
