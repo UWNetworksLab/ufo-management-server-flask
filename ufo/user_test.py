@@ -288,6 +288,17 @@ class UserTest(base_test.BaseTest):
     self.assertEquals(FAKE_MODEL_USER.private_key,
                       invite_code['networkData']['pass'])
 
+  @patch.object(models.User, 'GetById')
+  def testDeleteUserPostHandler(self, mock_get_by_id):
+    """Test the add users post handler calls to insert the specified users."""
+    mock_get_by_id.return_value = FAKE_MODEL_USER
+
+    response = self.client.post(flask.url_for('delete_user', user_id=FAKE_ID),
+                                follow_redirects=False)
+
+    FAKE_MODEL_USER.Delete.assert_called_once_with()
+    self.assert_redirects(response, flask.url_for('user_list'))
+
 
 if __name__ == '__main__':
   unittest.main()

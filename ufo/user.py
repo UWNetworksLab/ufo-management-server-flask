@@ -141,14 +141,13 @@ def user_details(user_id):
                                user=user,
                                invite_code=_MakeInviteCode(user))
 
-@app.route('/user/<user_id>/delete')
+@app.route('/user/<user_id>/delete', methods=['POST'])
 @setup_required
 def delete_user(user_id):
   """Delete the user corresponding to the passed in key.
 
   If we had access to a delete method then we would not use get here.
   """
-  #TODO guess what the comment is?  Yup, should be a post.
   user = models.User.GetById(user_id)
   #TODO assert user not none
   user.Delete()
