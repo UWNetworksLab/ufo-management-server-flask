@@ -11,6 +11,7 @@ from ufo import app
 class BaseConfiguration(object):
   """Configurations for running the application in production."""
 
+  TESTING = False
   SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'app.db')
   SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -23,8 +24,6 @@ class TestConfiguration(BaseConfiguration):
   """Configurations for testing the application in development."""
 
   TESTING = True
-  WTF_CSRF_ENABLED = False
-
 
   SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
   # Unit tests are normally run in memory for speed, but a test db
