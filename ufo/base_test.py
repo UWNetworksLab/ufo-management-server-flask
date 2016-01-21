@@ -24,7 +24,7 @@ class BaseTest(TestCase):
     self.config.isConfigured = True
     self.config.id = 0
 
-    self.config.Add()
+    self.config.save()
 
   def tearDown(self):
     db.session.remove()

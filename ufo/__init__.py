@@ -49,18 +49,18 @@ def checkCredentialChange(response):
     json_credentials = credentials.to_json()
     if config.credentials != json_credentials:
       config.credentials = json_credentials
-      config.Add()
+      config.save()
 
   return response
 
 def get_user_config():
   """Returns the current user-defined configuration from the database"""
-  config = models.Config.GetById(0)
+  config = models.Config.query.get(0)
   if config is None:
     config = models.Config()
     config.id = 0
 
-    config.Add()
+    config.save()
 
   return config
 
