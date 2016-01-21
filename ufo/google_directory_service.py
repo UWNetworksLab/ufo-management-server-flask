@@ -11,14 +11,11 @@ class GoogleDirectoryService(object):
 
   """Interact with Google Directory API."""
 
-  def __init__(self, credentials, http=None):
+  def __init__(self, credentials):
     """Create a service object for admin directory services using oauth."""
-    if http is None:
-      http = credentials.authorize(httplib2.Http())
     self.service = discovery.build(serviceName='admin',
                                    version='directory_v1',
-                                   http=http,
-                                   developerKey='myapikey1234')
+                                   http=credentials.authorize(httplib2.Http()))
 
   def GetUsers(self):
     """Get the users of a customer account.
