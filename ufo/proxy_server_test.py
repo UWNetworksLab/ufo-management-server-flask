@@ -3,16 +3,11 @@ from mock import patch
 import os
 
 import flask
-from flask.ext.testing import TestCase
-import json
 
-from . import app
 import base_test
-from . import db
 import models
 import proxy_server
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 FAKE_PROXY_SERVER_DATA = [
   {'ip_address': '111.111.111.111', 'name': 'fake server 1', 
@@ -100,7 +95,7 @@ class ProxyServerTest(base_test.BaseTest):
     """Test the edit proxy server get handler returns the form."""
     proxy_server = self._CreateFakeProxyServer()
     proxy_server.save()
-    
+
     resp = self.client.get(flask.url_for('proxyserver_edit', server_id=FAKE_ID))
 
     self.assertTrue('proxy-edit-add-form' in resp.data)
@@ -141,7 +136,7 @@ class ProxyServerTest(base_test.BaseTest):
                      updated_proxy_server_in_db.ssh_private_key)
     self.assertEqual(updated_proxy_server.fingerprint,
                      updated_proxy_server_in_db.fingerprint)
-    
+
     self.assert_redirects(resp, flask.url_for('proxyserver_list'))
 
   def testDeleteProxyServerPostHandler(self):
@@ -156,7 +151,7 @@ class ProxyServerTest(base_test.BaseTest):
 
     self.assertIsNone(models.ProxyServer.query.get(FAKE_ID))
     self.assert_redirects(response, flask.url_for('proxyserver_list'))
-    
+
   def _CreateFakeProxyServer(self):
     return models.ProxyServer(
         id=FAKE_ID,
