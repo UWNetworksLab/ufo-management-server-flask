@@ -5,8 +5,6 @@ import os
 import flask
 from flask.ext.testing import TestCase
 import json
-from werkzeug.datastructures import MultiDict
-from werkzeug.datastructures import ImmutableMultiDict
 
 from . import app
 import base_test
