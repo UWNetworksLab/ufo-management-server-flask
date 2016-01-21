@@ -81,6 +81,38 @@ class SetupTest(base_test.BaseTest):
     self.assertEquals(self.config, kwargs['config'])
     self.assertEquals(FAKE_OAUTH_URL, kwargs['oauth_url'])
 
+  @patch.object(discovery, 'build')
+  @patch.object(oauth, 'getOauthFlow')
+  @patch('flask.render_template')
+  def testPostSetupNonAdmin(self, mock_render_template, mock_oauth_flow,
+                            mock_build):
+    """Test posting to setup as a non-admin user generates an error."""
+    mock_render_template.return_value = ''
+    flow_object = mock_oauth_flow.return_value
+    flow_object.step1_get_authorize_url.return_value = FAKE_OAUTH_URL
+    fake_id = 'user@foocompany.com'
+    # This weird looking structure is to mock out a call buried behind several
+    # objects which requires going through the method's return_value for each
+    # method down the chain, starting from the discovery module.
+    build_object = mock_build.return_value
+    people_object = build_object.people.return_value
+    get_object = people_object.get.return_value
+    get_object.execute.return_value = {'domain': FAKE_DOMAIN, 'id': fake_id}
+    users_object = build_object.users.return_value
+    users_object.get.return_value.execute.return_value = {'isAdmin': False}
+
+    form_data = {}
+    form_data['oauth_code'] = FAKE_OAUTH_CODE
+    form_data['domain'] = FAKE_DOMAIN
+
+    resp = self.client.post(flask.url_for('setup'), data=form_data)
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('setup.html', args[0])
+    self.assertEquals(setup.NON_ADMIN_TEXT, kwargs['error'])
+    self.assertEquals(self.config, kwargs['config'])
+    self.assertEquals(FAKE_OAUTH_URL, kwargs['oauth_url'])
+
   @patch.object(models.Config, 'Add')
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')

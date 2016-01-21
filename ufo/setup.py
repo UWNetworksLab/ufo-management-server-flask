@@ -55,7 +55,10 @@ def setup():
                                      oauth_url=oauth_url)
 
       userResult = adminApi.users().get(userKey=userId).execute()
-      if not userResult.get('isAdmin', False):
+      if userResult.get('isAdmin', False):
+        config.credentials = credentials.to_json()
+        config.domain = domain
+      else:
         return flask.render_template('setup.html',
                                      error=NON_ADMIN_TEXT,
                                      config=config,
@@ -66,9 +69,6 @@ def setup():
                                    error=str(e),
                                    config=config,
                                    oauth_url=oauth_url)
-
-    config.credentials = credentials.to_json()
-    config.domain = domain
 
   config.isConfigured = True
 
