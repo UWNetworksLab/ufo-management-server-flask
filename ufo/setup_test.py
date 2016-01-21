@@ -113,10 +113,10 @@ class SetupTest(base_test.BaseTest):
     self.assertEquals(self.config, kwargs['config'])
     self.assertEquals(FAKE_OAUTH_URL, kwargs['oauth_url'])
 
-  @patch.object(models.Config, 'Add')
+  @patch.object(models.Config, 'save')
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')
-  def testPostSetup(self, mock_oauth_flow, mock_build, mock_add):
+  def testPostSetup(self, mock_oauth_flow, mock_build, mock_save):
     """Test posting to setup with correct values goes through and redirects."""
     flow_object = mock_oauth_flow.return_value
     flow_object.step1_get_authorize_url.return_value = FAKE_OAUTH_URL
@@ -139,7 +139,7 @@ class SetupTest(base_test.BaseTest):
                             follow_redirects=False)
 
     self.assert_redirects(resp, flask.url_for('setup'))
-    mock_add.assert_called_once_with()
+    mock_save.assert_called_once_with()
 
 
 if __name__ == '__main__':
