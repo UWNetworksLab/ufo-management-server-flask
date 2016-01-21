@@ -43,8 +43,6 @@ FAKE_MODEL_USER = MagicMock(email=FAKE_EMAILS_AND_NAMES[0]['email'],
                             private_key='private key foo',
                             public_key='public key bar',
                             is_key_revoked=False)
-FAKE_ID = 1000
-
 class UserTest(base_test.BaseTest):
   """Test user class functionality."""
 
@@ -53,29 +51,26 @@ class UserTest(base_test.BaseTest):
     super(UserTest, self).setUp()
     super(UserTest, self).setup_config()
 
-  @patch.object(models.User, 'GetAll')
-  def testListUsersHandler(self, mock_get_all):
+  def testListUsersHandler(self):
     """Test the list user handler displays users from the database."""
-    mock_users = []
-    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
-      mock_user = MagicMock(id=(x + 1),
-                            email=FAKE_EMAILS_AND_NAMES[x]['email'],
-                            name=FAKE_EMAILS_AND_NAMES[x]['name'])
-      mock_users.append(mock_user)
-    mock_get_all.return_value = mock_users
+    users = []
+    for x in range(1, len(FAKE_EMAILS_AND_NAMES)):
+      user = models.User(email=FAKE_EMAILS_AND_NAMES[x]['email'],
+                         name=FAKE_EMAILS_AND_NAMES[x]['name'])
+      user.save()
+      users.append(user)
 
     resp = self.client.get(flask.url_for('user_list'))
     user_list_output = resp.data
 
-    self.assertEquals('Add Users' in user_list_output, True)
+    self.assertTrue('Add Users' in user_list_output)
     click_user_string = 'Click a user below to view more details.'
-    self.assertEquals(click_user_string in user_list_output, True)
+    self.assertTrue(click_user_string in user_list_output)
 
-    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
-      self.assertEquals(FAKE_EMAILS_AND_NAMES[x]['email'] in user_list_output,
-                        True)
-      details_link = flask.url_for('user_details', user_id=mock_users[x].id)
-      self.assertEquals(details_link in user_list_output, True)
+    for user in users:
+      self.assertTrue(user.email in user_list_output)
+      details_link = flask.url_for('user_details', user_id=user.id)
+      self.assertTrue(details_link in user_list_output)
 
   @patch.object(user, '_RenderUserAdd')
   def testAddUsersGetHandler(self, mock_render):
@@ -206,8 +201,7 @@ class UserTest(base_test.BaseTest):
     self.assertEquals([], kwargs['directory_users'])
     self.assertEquals(fake_error, kwargs['error'])
 
-  @patch.object(models.User, 'Add')
-  def testAddUsersPostHandler(self, mock_add):
+  def testAddUsersPostHandler(self):
     """Test the add users post handler calls to insert the specified users."""
     mock_users = []
     data = MultiDict()
@@ -224,12 +218,12 @@ class UserTest(base_test.BaseTest):
     response = self.client.post(flask.url_for('add_user'), data=data,
                                 follow_redirects=False)
 
-    self.assert_redirects(response, flask.url_for('user_list'))
-    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
-      mock_add.assert_any_call()
+    users_count = models.User.query.count()
+    self.assertEquals(len(FAKE_EMAILS_AND_NAMES), users_count)
 
-  @patch.object(models.User, 'Add')
-  def testAddUsersPostManualHandler(self, mock_add):
+    self.assert_redirects(response, flask.url_for('user_list'))
+
+  def testAddUsersPostManualHandler(self):
     """Test add users manually calls to insert the specified user."""
     data = {}
     data['manual'] = True
@@ -239,40 +233,42 @@ class UserTest(base_test.BaseTest):
     response = self.client.post(flask.url_for('add_user'), data=data,
                                 follow_redirects=False)
 
+    matched_count = models.User.query.filter_by(email=FAKE_EMAILS_AND_NAMES[0]['email']).count()
+    self.assertEqual(1, matched_count)
+
     self.assert_redirects(response, flask.url_for('user_list'))
-    mock_add.assert_called_once_with()
 
   @patch('flask.render_template')
-  @patch.object(models.User, 'GetById')
-  def testUserDetailsGet(self, mock_get_by_id, mock_render_template):
+  def testUserDetailsGet(self, mock_render_template):
     """Test the user details handler calls to render a user's information."""
-    mock_get_by_id.return_value = FAKE_MODEL_USER
+    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
+        name=FAKE_EMAILS_AND_NAMES[0]['name'])
+    user.save()
     mock_render_template.return_value = ''
 
-    response = self.client.get(flask.url_for('user_details', user_id=FAKE_ID))
+    response = self.client.get(flask.url_for('user_details', user_id=user.id))
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('user_details.html', args[0])
-    self.assertEquals(FAKE_MODEL_USER, kwargs['user'])
+    self.assertEquals(user, kwargs['user'])
     self.assertIsNone(kwargs['invite_code'])
 
   @patch('flask.render_template')
-  @patch.object(models.ProxyServer, 'GetAll')
-  @patch.object(models.User, 'GetById')
-  def testUserDetailsGetWithInvite(self, mock_get_by_id, mock_get_all_proxies,
-                                   mock_render_template):
+  def testUserDetailsGetWithInvite(self, mock_render_template):
     """Test the user details handler renders a valid invite code."""
     fake_ip = '0.1.2.3'
-    mock_proxy_server = MagicMock(ip_address=fake_ip)
-    mock_get_by_id.return_value = FAKE_MODEL_USER
-    mock_get_all_proxies.return_value = [mock_proxy_server]
+    proxy_server = models.ProxyServer(ip_address=fake_ip)
+    proxy_server.save()
+    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
+        name=FAKE_EMAILS_AND_NAMES[0]['name'])
+    user.save()
     mock_render_template.return_value = ''
 
-    response = self.client.get(flask.url_for('user_details', user_id=FAKE_ID))
+    response = self.client.get(flask.url_for('user_details', user_id=user.id))
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('user_details.html', args[0])
-    self.assertEquals(FAKE_MODEL_USER, kwargs['user'])
+    self.assertEquals(user, kwargs['user'])
     self.assertIsNotNone(kwargs['invite_code'])
 
     invite_code_json = base64.urlsafe_b64decode(kwargs['invite_code'])
@@ -280,52 +276,56 @@ class UserTest(base_test.BaseTest):
 
     self.assertEquals('Cloud', invite_code['networkName'])
     self.assertEquals(fake_ip, invite_code['networkData']['host'])
-    self.assertEquals(FAKE_MODEL_USER.email,
+    self.assertEquals(user.email,
                       invite_code['networkData']['user'])
-    self.assertEquals(FAKE_MODEL_USER.private_key,
+    self.assertEquals(user.private_key,
                       invite_code['networkData']['pass'])
 
-  @patch.object(models.User, 'GetById')
-  def testDeleteUserPostHandler(self, mock_get_by_id):
+  def testDeleteUserPostHandler(self):
     """Test the delete user handler calls to delete the specified user."""
-    mock_get_by_id.return_value = FAKE_MODEL_USER
+    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
+        name=FAKE_EMAILS_AND_NAMES[0]['name'])
+    user.save()
+    user_id = user.id
 
-    response = self.client.post(flask.url_for('delete_user', user_id=FAKE_ID),
+    response = self.client.post(flask.url_for('delete_user', user_id=user_id),
                                 follow_redirects=False)
 
-    FAKE_MODEL_USER.Delete.assert_called_once_with()
+    user = models.User.query.get(user_id)
+    self.assertIsNone(user)
     self.assert_redirects(response, flask.url_for('user_list'))
 
-  @patch.object(models.User, 'GetById')
-  def testUserGetNewKeyPairHandler(self, mock_get_by_id):
+  def testUserGetNewKeyPairHandler(self):
     """Test get new key pair handler regenerates a key pair for the user."""
-    mock_user = MagicMock()
-    mock_get_by_id.return_value = mock_user
+    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
+        name=FAKE_EMAILS_AND_NAMES[0]['name'])
+    user.save()
+    user_id = user.id
+    user_private_key = user.private_key
 
     response = self.client.post(flask.url_for('user_get_new_key_pair',
-                                              user_id=FAKE_ID),
+                                              user_id=user_id),
                                 follow_redirects=False)
 
-    mock_user.regenerate_key_pair.assert_called_once_with()
-    mock_user.Add.assert_called_once_with()
-    self.assert_redirects(response, flask.url_for('user_details',
-                                                  user_id=FAKE_ID))
+    self.assertNotEqual(user_private_key, user.private_key)
 
-  @patch.object(models.User, 'GetById')
-  def testUserToggleRevokedHandler(self, mock_get_by_id):
+    self.assert_redirects(response, flask.url_for('user_details',
+                                                  user_id=user_id))
+
+  def testUserToggleRevokedHandler(self):
     """Test toggle revoked handler changes the revoked status for a user."""
-    mock_user = MagicMock(is_key_revoked=False)
-    mock_get_by_id.return_value = mock_user
-    initial_revoked_status = mock_user.is_key_revoked
+    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
+        name=FAKE_EMAILS_AND_NAMES[0]['name'])
+    user.save()
+    initial_revoked_status = user.is_key_revoked
 
     response = self.client.post(flask.url_for('user_toggle_revoked',
-                                              user_id=FAKE_ID),
+                                              user_id=user.id),
                                 follow_redirects=False)
 
-    self.assertEquals(not initial_revoked_status, mock_user.is_key_revoked)
-    mock_user.Add.assert_called_once_with()
+    self.assertEquals(not initial_revoked_status, user.is_key_revoked)
     self.assert_redirects(response, flask.url_for('user_details',
-                                                  user_id=FAKE_ID))
+                                                  user_id=user.id))
 
 
 if __name__ == '__main__':

@@ -71,7 +71,6 @@ def setup():
                                    oauth_url=oauth_url)
 
   config.isConfigured = True
-
-  config.Add()
+  config.save()
 
   return flask.redirect(flask.url_for('setup'))
