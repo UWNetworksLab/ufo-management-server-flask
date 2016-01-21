@@ -91,5 +91,7 @@ class ProxyServer(Model):
 
   ip_address = db.Column(db.String(LONG_STRING_LENGTH))
   name = db.Column(db.String(LONG_STRING_LENGTH))
-  ssh_private_key = db.Column(db.String(LONG_STRING_LENGTH))
-  fingerprint = db.Column(db.String(LONG_STRING_LENGTH))
+  ssh_private_key = db.Column(db.LargeBinary())
+  ssh_private_key_type = db.Column(db.String(LONG_STRING_LENGTH))
+  host_public_key = db.Column(db.LargeBinary())
+  host_public_key_type = db.Column(db.String(LONG_STRING_LENGTH))
