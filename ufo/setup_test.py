@@ -14,6 +14,8 @@ import oauth
 import setup
 
 FAKE_OAUTH_URL = 'sftp://1800-oauth.com'
+FAKE_DOMAIN = 'yahoo.com'
+FAKE_OAUTH_CODE = 'foobar'
 
 class SetupTest(base_test.BaseTest):
   """Test setup class functionality."""
@@ -58,9 +60,7 @@ class SetupTest(base_test.BaseTest):
     mock_render_template.return_value = ''
     flow_object = mock_oauth_flow.return_value
     flow_object.step1_get_authorize_url.return_value = FAKE_OAUTH_URL
-    fake_domain = 'yahoo.com'
     domain_that_doesnt_match = 'google.com'
-    fake_oauth_code = 'foobar'
     # This weird looking structure is to mock out a call buried behind several
     # objects which requires going through the method's return_value for each
     # method down the chain, starting from the discovery module.
@@ -70,8 +70,8 @@ class SetupTest(base_test.BaseTest):
     get_object.execute.return_value = {'domain': domain_that_doesnt_match}
 
     form_data = {}
-    form_data['oauth_code'] = fake_oauth_code
-    form_data['domain'] = fake_domain
+    form_data['oauth_code'] = FAKE_OAUTH_CODE
+    form_data['domain'] = FAKE_DOMAIN
 
     resp = self.client.post(flask.url_for('setup'), data=form_data)
 
@@ -80,6 +80,34 @@ class SetupTest(base_test.BaseTest):
     self.assertEquals(setup.DOMAIN_INVALID_TEXT, kwargs['error'])
     self.assertEquals(self.config, kwargs['config'])
     self.assertEquals(FAKE_OAUTH_URL, kwargs['oauth_url'])
+
+  @patch.object(models.Config, 'Add')
+  @patch.object(discovery, 'build')
+  @patch.object(oauth, 'getOauthFlow')
+  def testPostSetup(self, mock_oauth_flow, mock_build, mock_add):
+    """Test posting to setup with correct values goes through and redirects."""
+    flow_object = mock_oauth_flow.return_value
+    flow_object.step1_get_authorize_url.return_value = FAKE_OAUTH_URL
+    fake_id = 'user@foocompany.com'
+    # This weird looking structure is to mock out a call buried behind several
+    # objects which requires going through the method's return_value for each
+    # method down the chain, starting from the discovery module.
+    build_object = mock_build.return_value
+    people_object = build_object.people.return_value
+    get_object = people_object.get.return_value
+    get_object.execute.return_value = {'domain': FAKE_DOMAIN, 'id': fake_id}
+    users_object = build_object.users.return_value
+    users_object.get.return_value.execute.return_value = {'isAdmin': True}
+
+    form_data = {}
+    form_data['oauth_code'] = FAKE_OAUTH_CODE
+    form_data['domain'] = FAKE_DOMAIN
+
+    resp = self.client.post(flask.url_for('setup'), data=form_data,
+                            follow_redirects=False)
+
+    self.assert_redirects(resp, flask.url_for('setup'))
+    mock_add.assert_called_once_with()
 
 
 if __name__ == '__main__':
