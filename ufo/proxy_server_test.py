@@ -1,6 +1,5 @@
 from mock import MagicMock
 from mock import patch
-import os
 
 import flask
 
