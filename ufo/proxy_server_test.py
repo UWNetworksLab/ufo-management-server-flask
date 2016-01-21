@@ -54,19 +54,20 @@ class ProxyServerTest(base_test.BaseTest):
       proxy_servers.append(proxy_server)
 
     resp = self.client.get(flask.url_for('proxyserver_list'))
-    proxy_server_list_output = resp.data
-    self.assertTrue('Add New Proxy Server' in proxy_server_list_output)
-    self.assertTrue('Show/hide SSH Key' in proxy_server_list_output)
+
+    self.assertTrue('Add New Proxy Server' in resp.data)
+    self.assertTrue('Show/hide SSH Key' in resp.data)
 
     for proxy_server in proxy_servers:
-      self.assertTrue(proxy_server.name in proxy_server_list_output)
-      self.assertTrue(proxy_server.ip_address in proxy_server_list_output)
-      self.assertTrue(proxy_server.ssh_private_key in proxy_server_list_output)
-      self.assertTrue(proxy_server.fingerprint in proxy_server_list_output)
+      self.assertTrue(proxy_server.name in resp.data)
+      self.assertTrue(proxy_server.ip_address in resp.data)
+      self.assertTrue(proxy_server.ssh_private_key in resp.data)
+      self.assertTrue(proxy_server.fingerprint in resp.data)
 
   def testAddProxyServerGetHandler(self):
     """Test the add proxy server get handler returns the form."""
     resp = self.client.get(flask.url_for('proxyserver_add'))
+
     self.assertTrue('proxy-edit-add-form' in resp.data)
 
   def testAddProxyServerPostHandler(self):
@@ -101,8 +102,8 @@ class ProxyServerTest(base_test.BaseTest):
     proxy_server.save()
     
     resp = self.client.get(flask.url_for('proxyserver_edit', server_id=FAKE_ID))
-    self.assertTrue('proxy-edit-add-form' in resp.data)
 
+    self.assertTrue('proxy-edit-add-form' in resp.data)
     self.assertTrue(proxy_server.ip_address in resp.data)
     self.assertTrue(proxy_server.name in resp.data)
     self.assertTrue(proxy_server.ssh_private_key in resp.data)
@@ -131,7 +132,7 @@ class ProxyServerTest(base_test.BaseTest):
         flask.url_for('proxyserver_edit', server_id=FAKE_ID), 
         data=form_data)
 
-    updated_proxy_server_in_db = models.ProxyServer.query.get(1000)
+    updated_proxy_server_in_db = models.ProxyServer.query.get(FAKE_ID)
     self.assertEqual(updated_proxy_server.name,
                      updated_proxy_server_in_db.name)
     self.assertEqual(updated_proxy_server.ip_address,
@@ -147,13 +148,13 @@ class ProxyServerTest(base_test.BaseTest):
     proxy_server = self._CreateFakeProxyServer()
     proxy_server.save()
 
-    self.assertIsNotNone(models.ProxyServer.query.get(1000))
+    self.assertIsNotNone(models.ProxyServer.query.get(FAKE_ID))
 
     response = self.client.get(flask.url_for('proxyserver_delete',
                                 server_id=FAKE_ID),
                                 follow_redirects=False)
 
-    self.assertIsNone(models.ProxyServer.query.get(1000))
+    self.assertIsNone(models.ProxyServer.query.get(FAKE_ID))
     self.assert_redirects(response, flask.url_for('proxyserver_list'))
     
   def _CreateFakeProxyServer(self):
