@@ -38,7 +38,7 @@ def _RenderUserAdd(get_all, group_key, user_key):
                                  error=error)
 
 def _GetRandomServerIp():
-  proxy_servers = models.ProxyServer.GetAll()
+  proxy_servers = models.ProxyServer.query.all()
   if len(proxy_servers) == 0:
     return None
 
@@ -96,7 +96,7 @@ def _MakeInviteCode(user):
 @app.route('/user')
 @setup_required
 def user_list():
-  users = models.User.GetAll()
+  users = models.User.query.all()
   user_emails = {}
   for user in users:
     user_emails[user.id] = user.email
@@ -119,7 +119,7 @@ def add_user():
     user = models.User()
     user.name = user_name
     user.email = user_email
-    user.Add()
+    user.save()
   else:
     users = flask.request.form.getlist('selected_user')
     for user in users:
@@ -128,15 +128,17 @@ def add_user():
       user = models.User()
       user.name = u['name']['fullName']
       user.email = u['primaryEmail']
-      user.Add()
+      user.save(commit=False)
+
+    if len(users) > 0:
+      db.session.commit()
 
   return flask.redirect(flask.url_for('user_list'))
 
 @app.route('/user/<user_id>/details')
 @setup_required
 def user_details(user_id):
-  user = models.User.GetById(user_id)
-  #TODO assert user not none
+  user = models.User.query.get_or_404(user_id)
   return flask.render_template('user_details.html',
                                user=user,
                                invite_code=_MakeInviteCode(user))
@@ -148,28 +150,25 @@ def delete_user(user_id):
 
   If we had access to a delete method then we would not use get here.
   """
-  user = models.User.GetById(user_id)
-  #TODO assert user not none
-  user.Delete()
+  user = models.User.query.get_or_404(user_id)
+  user.delete()
 
   return flask.redirect(flask.url_for('user_list'))
 
 @app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
 @setup_required
 def user_get_new_key_pair(user_id):
-  user = models.User.GetById(user_id)
-  # TODO assert user not none
+  user = models.User.query.get_or_404(user_id)
   user.regenerate_key_pair()
-  user.Add()
+  user.save()
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
 
 @app.route('/user/<user_id>/toggleRevoked', methods=['POST'])
 @setup_required
 def user_toggle_revoked(user_id):
-  user = models.User.GetById(user_id)
-  # TODO assert user not none
+  user = models.User.query.get_or_404(user_id)
   user.is_key_revoked = not user.is_key_revoked
-  user.Add()
+  user.save()
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))

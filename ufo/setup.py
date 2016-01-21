@@ -68,7 +68,6 @@ def setup():
     config.domain = domain
 
   config.isConfigured = True
-
-  config.Add()
+  config.save()
 
   return flask.redirect(flask.url_for('setup'))

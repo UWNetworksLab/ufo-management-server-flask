@@ -5,25 +5,26 @@ from Crypto.PublicKey import RSA
 LONG_STRING_LENGTH = 1024
 
 class Model(db.Model):
+  """Helpful functions for the database models
+
+  Most method implementations are taken from
+  https://github.com/sloria/cookiecutter-flask"""
   __abstract__ = True
 
-  @classmethod
-  def GetAll(cls):
-    return cls.query.all()
+  def update(self, commit=True, **kwargs):
+    for attr, value in kwargs.items():
+      setattr(self, attr, value)
+    return commit and self.save() or self
 
-  @classmethod
-  def GetById(cls, id):
-    return cls.query.get(id)
-
-  def Add(self):
+  def save(self, commit=True):
     db.session.add(self)
-    db.session.commit()
-
+    if commit:
+      db.session.commit()
     return self
 
-  def Delete(self):
+  def delete(self, commit=True):
     db.session.delete(self)
-    db.session.commit()
+    return commit and db.session.commit()
 
 
 class Config(Model):
@@ -54,7 +55,9 @@ class User(Model):
   public_key = db.Column(db.LargeBinary())
   is_key_revoked = db.Column(db.Boolean(), default=False)
 
-  def __init__(self):
+  def __init__(self, **kwargs):
+    super(User, self).__init__(**kwargs)
+
     self.regenerate_key_pair()
 
   @staticmethod
@@ -90,9 +93,3 @@ class ProxyServer(Model):
   name = db.Column(db.String(LONG_STRING_LENGTH))
   ssh_private_key = db.Column(db.String(LONG_STRING_LENGTH))
   fingerprint = db.Column(db.String(LONG_STRING_LENGTH))
-
-  def __init__(self, ip_address, name, ssh_private_key, fingerprint):
-    self.ip_address=ip_address
-    self.name = name
-    self.ssh_private_key = ssh_private_key
-    self.fingerprint = fingerprint
