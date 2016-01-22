@@ -13,7 +13,7 @@ def not_setup():
                                error_text='Please finish configuring this site')
 
 
-@app.route('/setup/', methods=['GET', 'POST'])
+@app.route('/setup', methods=['GET', 'POST'])
 def setup():
   """Handle showing the user the setup page and processing the response"""
   config = get_user_config()
