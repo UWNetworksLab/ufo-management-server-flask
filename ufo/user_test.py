@@ -210,11 +210,11 @@ class UserTest(base_test.BaseTest):
     """Test the add users post handler calls to insert the specified users."""
     mock_users = []
     data = MultiDict()
-    for fake_emails_and_names in FAKE_EMAILS_AND_NAMES:
+    for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
       mock_user = {}
-      mock_user['primaryEmail'] = fake_emails_and_names['email']
+      mock_user['primaryEmail'] = fake_email_and_name['email']
       mock_user['name'] = {}
-      mock_user['name']['fullName'] = fake_emails_and_names['name']
+      mock_user['name']['fullName'] = fake_email_and_name['name']
       mock_users.append(mock_user)
       data.add('selected_user', json.dumps(mock_user))
 
@@ -225,6 +225,14 @@ class UserTest(base_test.BaseTest):
 
     users_count = models.User.query.count()
     self.assertEquals(len(FAKE_EMAILS_AND_NAMES), users_count)
+
+    users_in_db = models.User.query.all()
+    self.assertEquals(len(FAKE_EMAILS_AND_NAMES), len(users_in_db))
+
+    for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
+      user_in_db = models.User.query.filter_by(
+          email=fake_email_and_name['email']).one_or_none()
+      self.assertEqual(fake_email_and_name['name'], user_in_db.name)
 
     self.assert_redirects(response, flask.url_for('user_list'))
 
