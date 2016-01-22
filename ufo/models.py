@@ -1,6 +1,10 @@
 from . import db
 
 from Crypto.PublicKey import RSA
+from paramiko import hostkeys
+from paramiko import pkey
+import StringIO
+import ssh_client
 
 LONG_STRING_LENGTH = 1024
 
@@ -95,3 +99,33 @@ class ProxyServer(Model):
   ssh_private_key_type = db.Column(db.String(LONG_STRING_LENGTH))
   host_public_key = db.Column(db.LargeBinary())
   host_public_key_type = db.Column(db.String(LONG_STRING_LENGTH))
+
+  def read_private_key_from_file_contents(self, contents):
+    pkey_instance = pkey.PKey()
+    for key_type, key_tag in ssh_client.SSHClient.key_type_to_tag_map.iteritems():
+      if key_tag not in contents:
+        continue
+
+      # Using the private implementation is, unfortunately, the best way to
+      # handle this.  If there are ever concerns about this, we can always
+      # write a simplified parser
+      self.ssh_private_key = pkey_instance._read_private_key(
+          key_tag,
+          StringIO.StringIO(contents))
+      self.ssh_private_key_type = key_type
+
+      return
+
+    raise Exception("Unrecognized private key file")
+
+  def read_public_key_from_file_contents(self, contents):
+    try:
+      # this should be from a public key file which will not contain the actual
+      # host part of the "line"
+      host_key_entry = hostkeys.HostKeyEntry.from_line('0.0.0.0 ' + contents)
+    except:
+      # might be passing in a line from a host file
+      host_key_entry = hostkeys.HostKeyEntry.from_line(contents)
+
+    self.host_public_key_type = host_key_entry.key.get_name()
+    self.host_public_key = host_key_entry.key.asbytes()
