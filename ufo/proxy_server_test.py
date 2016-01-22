@@ -49,43 +49,44 @@ class ProxyServerTest(base_test.BaseTest):
 
     resp = self.client.get(flask.url_for('proxyserver_list'))
 
-    self.assertTrue('Add New Proxy Server' in resp.data)
-    self.assertTrue('Show/hide SSH Key' in resp.data)
-
     for proxy_server in proxy_servers:
       self.assertTrue(proxy_server.name in resp.data)
       self.assertTrue(proxy_server.ip_address in resp.data)
       self.assertTrue(proxy_server.ssh_private_key in resp.data)
       self.assertTrue(proxy_server.fingerprint in resp.data)
 
-  def testAddProxyServerGetHandler(self):
+  @patch('flask.render_template')
+  def testAddProxyServerGetHandler(self, mock_render_template):
     """Test the add proxy server get handler returns the form."""
+    mock_render_template.return_value = ''
     resp = self.client.get(flask.url_for('proxyserver_add'))
 
-    self.assertTrue('proxy-edit-add-form' in resp.data)
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('proxy_server_form.html', args[0])
 
-  def testAddProxyServerPostHandler(self):
+  def testAddProxyServer(self):
     """Test the add proxy server post handler inserts the proxy server."""
-    proxy_server = self._CreateFakeProxyServer()
     form_data = {
-      'ip_address': proxy_server.ip_address,
-      'name': proxy_server.name,
-      'ssh_private_key': proxy_server.ssh_private_key,
-      'fingerprint': proxy_server.fingerprint
+      'ip_address': FAKE_PROXY_SERVER_DATA[0]['ip_address'],
+      'name': FAKE_PROXY_SERVER_DATA[0]['name'],
+      'ssh_private_key': FAKE_PROXY_SERVER_DATA[0]['ssh_private_key'],
+      'fingerprint': FAKE_PROXY_SERVER_DATA[0]['fingerprint']
     }
     response = self.client.post(
         flask.url_for('proxyserver_add'),
         data=form_data,
         follow_redirects=False)
 
-    proxy_server_in_db = models.ProxyServer.query.get(1)
-    self.assertEqual(proxy_server.name,
+    query = models.ProxyServer.query
+    query.filter_by(ip_address=FAKE_PROXY_SERVER_DATA[0]['ip_address'])
+    proxy_server_in_db = query.one_or_none()
+    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['name'],
                      proxy_server_in_db.name)
-    self.assertEqual(proxy_server.ip_address,
+    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['ip_address'],
                      proxy_server_in_db.ip_address)
-    self.assertEqual(proxy_server.ssh_private_key,
+    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['ssh_private_key'],
                      proxy_server_in_db.ssh_private_key)
-    self.assertEqual(proxy_server.fingerprint,
+    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['fingerprint'],
                      proxy_server_in_db.fingerprint)
 
     self.assert_redirects(response, flask.url_for('proxyserver_list'))
@@ -95,7 +96,11 @@ class ProxyServerTest(base_test.BaseTest):
     proxy_server = self._CreateFakeProxyServer()
     proxy_server.save()
 
-    resp = self.client.get(flask.url_for('proxyserver_edit', server_id=FAKE_ID))
+    query = models.ProxyServer.query
+    query.filter_by(ip_address=FAKE_PROXY_SERVER_DATA[0]['ip_address'])
+    proxy_server_in_db = query.one_or_none()
+    resp = self.client.get(
+        flask.url_for('proxyserver_edit', server_id=proxy_server_in_db.id))
 
     self.assertTrue('proxy-edit-add-form' in resp.data)
     self.assertTrue(proxy_server.ip_address in resp.data)
