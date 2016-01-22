@@ -230,17 +230,19 @@ class UserTest(base_test.BaseTest):
 
   def testAddUsersPostManualHandler(self):
     """Test add users manually calls to insert the specified user."""
+    user = self._CreateFakeUser()
     data = {}
     data['manual'] = True
-    data['user_email'] = FAKE_EMAILS_AND_NAMES[0]['email']
-    data['user_name'] = FAKE_EMAILS_AND_NAMES[0]['name']
+    data['user_email'] = user.email
+    data['user_name'] = user.name
 
     response = self.client.post(flask.url_for('add_user'), data=data,
                                 follow_redirects=False)
 
-    matched_count = models.User.query.filter_by(
-        email=FAKE_EMAILS_AND_NAMES[0]['email']).count()
-    self.assertEqual(1, matched_count)
+    user_in_db = models.User.query.filter_by(email=user.email).one_or_none()
+    self.assertIsNotNone(user_in_db)
+    self.assertEqual(user.email, user_in_db.email)
+    self.assertEqual(user.name, user_in_db.name)
 
     self.assert_redirects(response, flask.url_for('user_list'))
 
