@@ -79,12 +79,14 @@ class UserTest(base_test.BaseTest):
       details_link = flask.url_for('user_details', user_id=user.id)
       self.assertTrue(details_link in user_list_output)
 
-  def testAddUsersGetHandler(self):
+  @patch.object(user, '_RenderUserAdd')
+  def testAddUsersGetHandler(self, mock_render):
     """Test the add users get handler returns _RenderUserAdd's result."""
+    return_text = '<html>something here </html>'
+    mock_render.return_value = return_text
     resp = self.client.get(flask.url_for('add_user'))
 
-    self.assertTrue('users-domain-form' in resp.data)
-    self.assertTrue('Fetch All Users in Domain' in resp.data)
+    self.assertEquals(resp.data, return_text)
 
   @patch('flask.render_template')
   @patch.object(oauth, 'getSavedCredentials')
