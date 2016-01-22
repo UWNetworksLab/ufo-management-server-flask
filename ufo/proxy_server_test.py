@@ -161,8 +161,7 @@ class ProxyServerTest(base_test.BaseTest):
         name=FAKE_PROXY_SERVER_DATA[0]['name'],
         ssh_private_key=FAKE_PROXY_SERVER_DATA[0]['ip_address'],
         fingerprint=FAKE_PROXY_SERVER_DATA[0]['fingerprint'])
-    proxy_server.save()
-    return proxy_server
+    return proxy_server.save()
 
 if __name__ == '__main__':
   unittest.main()
