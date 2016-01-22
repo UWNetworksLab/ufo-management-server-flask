@@ -338,8 +338,8 @@ class UserTest(base_test.BaseTest):
     """Create a fake user object, and save it into db."""
     user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
                        name=FAKE_EMAILS_AND_NAMES[0]['name'])
-    user.save()
-    return user
+    return user.save()
+
 
 if __name__ == '__main__':
   unittest.main()
