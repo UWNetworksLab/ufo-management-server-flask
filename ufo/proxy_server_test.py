@@ -93,8 +93,7 @@ class ProxyServerTest(base_test.BaseTest):
 
   def testEditProxyServerGetHandler(self):
     """Test the edit proxy server get handler returns the form."""
-    proxy_server = self._CreateFakeProxyServer()
-    proxy_server.save()
+    proxy_server = self._CreateAndSaveFakeProxyServer()
 
     query = models.ProxyServer.query
     query.filter_by(ip_address=FAKE_PROXY_SERVER_DATA[0]['ip_address'])
@@ -110,8 +109,7 @@ class ProxyServerTest(base_test.BaseTest):
 
   def testEditProxyServerPostHandler(self):
     """Test the edit proxy server post handler saves the edit."""
-    proxy_server = self._CreateFakeProxyServer()
-    proxy_server.save()
+    proxy_server = self._CreateAndSaveFakeProxyServer()
 
     updated_proxy_server = models.ProxyServer(
         id=FAKE_ID,
@@ -144,8 +142,7 @@ class ProxyServerTest(base_test.BaseTest):
     self.assert_redirects(resp, flask.url_for('proxyserver_list'))
 
   def testDeleteProxyServerPostHandler(self):
-    proxy_server = self._CreateFakeProxyServer()
-    proxy_server.save()
+    proxy_server = self._CreateAndSaveFakeProxyServer()
 
     self.assertIsNotNone(models.ProxyServer.query.get(FAKE_ID))
 
@@ -156,14 +153,16 @@ class ProxyServerTest(base_test.BaseTest):
     self.assertIsNone(models.ProxyServer.query.get(FAKE_ID))
     self.assert_redirects(response, flask.url_for('proxyserver_list'))
 
-  def _CreateFakeProxyServer(self):
-    return models.ProxyServer(
+  def _CreateAndSaveFakeProxyServer(self):
+    """Create a fake proxy server, and save it into db."""
+    proxy_server = models.ProxyServer(
         id=FAKE_ID,
         ip_address=FAKE_PROXY_SERVER_DATA[0]['ip_address'],
         name=FAKE_PROXY_SERVER_DATA[0]['name'],
         ssh_private_key=FAKE_PROXY_SERVER_DATA[0]['ip_address'],
         fingerprint=FAKE_PROXY_SERVER_DATA[0]['fingerprint'])
-
+    proxy_server.save()
+    return proxy_server
 
 if __name__ == '__main__':
   unittest.main()
