@@ -232,35 +232,33 @@ class UserTest(base_test.BaseTest):
     self.assertEquals(len(FAKE_EMAILS_AND_NAMES), len(users_in_db))
 
     for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
-      user_in_db = models.User.query.filter_by(
-          email=fake_email_and_name['email']).one_or_none()
+      query = models.User.query.filter_by(email=fake_email_and_name['email'])
+      user_in_db = query.one_or_none()
       self.assertEqual(fake_email_and_name['name'], user_in_db.name)
 
     self.assert_redirects(response, flask.url_for('user_list'))
 
   def testAddUsersPostManualHandler(self):
     """Test add users manually calls to insert the specified user."""
-    user = self._CreateFakeUser()
     data = {}
     data['manual'] = True
-    data['user_email'] = user.email
-    data['user_name'] = user.name
+    data['user_email'] = FAKE_EMAILS_AND_NAMES[0]['email']
+    data['user_name'] = FAKE_EMAILS_AND_NAMES[0]['name']
 
     response = self.client.post(flask.url_for('add_user'), data=data,
                                 follow_redirects=False)
 
-    user_in_db = models.User.query.filter_by(email=user.email).one_or_none()
+    query = models.User.query.filter_by(email=FAKE_EMAILS_AND_NAMES[0]['email'])
+    user_in_db = query.one_or_none()
     self.assertIsNotNone(user_in_db)
-    self.assertEqual(user.email, user_in_db.email)
-    self.assertEqual(user.name, user_in_db.name)
+    self.assertEqual(FAKE_EMAILS_AND_NAMES[0]['name'], user_in_db.name)
 
     self.assert_redirects(response, flask.url_for('user_list'))
 
   @patch('flask.render_template')
   def testUserDetailsGet(self, mock_render_template):
     """Test the user details handler calls to render a user's information."""
-    user = self._CreateFakeUser()
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     mock_render_template.return_value = ''
 
     response = self.client.get(flask.url_for('user_details', user_id=user.id))
@@ -276,8 +274,7 @@ class UserTest(base_test.BaseTest):
     fake_ip = '0.1.2.3'
     proxy_server = models.ProxyServer(ip_address=fake_ip)
     proxy_server.save()
-    user = self._CreateFakeUser()
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     mock_render_template.return_value = ''
 
     response = self.client.get(flask.url_for('user_details', user_id=user.id))
@@ -299,8 +296,7 @@ class UserTest(base_test.BaseTest):
 
   def testDeleteUserPostHandler(self):
     """Test the delete user handler calls to delete the specified user."""
-    user = self._CreateFakeUser()
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     user_id = user.id
 
     response = self.client.post(flask.url_for('delete_user', user_id=user_id),
@@ -312,8 +308,7 @@ class UserTest(base_test.BaseTest):
 
   def testUserGetNewKeyPairHandler(self):
     """Test get new key pair handler regenerates a key pair for the user."""
-    user = self._CreateFakeUser()
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     user_id = user.id
     user_private_key = user.private_key
 
@@ -328,8 +323,7 @@ class UserTest(base_test.BaseTest):
 
   def testUserToggleRevokedHandler(self):
     """Test toggle revoked handler changes the revoked status for a user."""
-    user = self._CreateFakeUser()
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     initial_revoked_status = user.is_key_revoked
 
     response = self.client.post(flask.url_for('user_toggle_revoked',
@@ -340,9 +334,12 @@ class UserTest(base_test.BaseTest):
     self.assert_redirects(response, flask.url_for('user_details',
                                                   user_id=user.id))
 
-  def _CreateFakeUser(self):
-    return models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
+  def _CreateAndSaveFakeUser(self):
+    """Create a fake user object, and save it into db."""
+    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
                        name=FAKE_EMAILS_AND_NAMES[0]['name'])
+    user.save()
+    return user
 
 if __name__ == '__main__':
   unittest.main()
