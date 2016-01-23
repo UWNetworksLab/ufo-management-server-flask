@@ -34,7 +34,15 @@ class ProxyServerTest(base_test.BaseTest):
     super(ProxyServerTest, self).setUp()
     super(ProxyServerTest, self).setup_config()
 
-  def testListProxyServerHandler(self):
+  @patch('flask.render_template')
+  def testListHandlerRendersTheListTemplate(self, mock_render_template):
+    mock_render_template.return_value = ''
+    resp = self.client.get(flask.url_for('proxyserver_list'))
+
+    args, kwargs = mock_render_template.call_args
+    self.assertEquals('proxy_server.html', args[0])
+
+  def testListHandlerRendersResults(self):
     """Test the list proxy server handler displays proxy server from db."""
     proxy_servers = []
 
