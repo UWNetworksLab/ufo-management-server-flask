@@ -36,6 +36,7 @@ class ProxyServerTest(base_test.BaseTest):
 
   @patch('flask.render_template')
   def testListHandlerRendersTheListTemplate(self, mock_render_template):
+    """Test the list handler renders the list page."""
     mock_render_template.return_value = ''
     resp = self.client.get(flask.url_for('proxyserver_list'))
 
