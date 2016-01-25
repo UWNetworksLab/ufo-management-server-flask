@@ -44,7 +44,7 @@ class SidebarTest(BaseTest):
                       setup_link.get_attribute('data-href'))
 
     logout_link = sidebar.GetLink(sidebar.LOGOUT_LINK)
-    self.assertEquals('/logout', logout_link.get_attribute('data-href'))
+    self.assertEquals('/logout/', logout_link.get_attribute('data-href'))
 
   def tearDown(self):
     """Teardown for test methods."""

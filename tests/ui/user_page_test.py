@@ -24,6 +24,9 @@ class UserPageTest(BaseTest):
 
   def testUserPage(self):
     """Test the user page."""
+    # TODO(eholder): Improve the checks here to be based on something more
+    # robust, such as the presence of element id's or that the page renders
+    # as expected, since this text can change in the future and is not i18ned.
     add_users = (u'Add Users').upper()
 
     self.driver.get(self.args.server_url + flask.url_for('user_list'))

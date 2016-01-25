@@ -33,7 +33,7 @@ def _SendKeysToServer(server, keys):
   #TODO implement
   pass
 
-@app.route('/proxyserver/list')
+@app.route('/proxyserver/')
 @setup_required
 def proxyserver_list():
   proxy_servers = models.ProxyServer.query.all()

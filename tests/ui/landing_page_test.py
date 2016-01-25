@@ -20,6 +20,9 @@ class LandingPageTest(BaseTest):
 
   def testLandingPage(self):
     """Test the landing page."""
+    # TODO(eholder): Improve the checks here to be based on something more
+    # robust, such as the presence of element id's or that the page renders
+    # as expected, since this text can change in the future and is not i18ned.
     title = u'Uproxy for Organizations Management Server'
     instruction = ('Click one of the links on the side to login and '
                    'administer the server.')
