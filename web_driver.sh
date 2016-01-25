@@ -11,6 +11,7 @@ ROOT_DIR="$(cd "$(dirname $0)"; pwd)";
 CHROME_DRIVER_VERSION="2.20"
 CHROME_DRIVER_FILE="chromedriver_linux64.zip"
 CHROME_DRIVER_LOCATION="http://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/${CHROME_DRIVER_FILE}"
+CHROME_DRIVER_DIR="chrome_driver"
 TEST_DIR="${ROOT_DIR}/tests/ui/"
 
 # A simple bash script to run commands to setup and install all dev
@@ -47,8 +48,8 @@ function installChromeDriver ()
   runAndAssertCmd "unzip $CHROME_DRIVER_FILE"
   runAndAssertCmd "rm $CHROME_DRIVER_FILE"
   runAndAssertCmd "chmod +x chromedriver"
-  runAndAssertCmd "mkdir lib"
-  runAndAssertCmd "mv chromedriver lib/"
+  runAndAssertCmd "mkdir $CHROME_DRIVER_DIR"
+  runAndAssertCmd "mv chromedriver ${CHROME_DRIVER_DIR}/"
 }
 
 function runUITests ()

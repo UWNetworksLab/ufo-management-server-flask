@@ -4,4 +4,4 @@
 import sys
 sys.path.append('../..')
 
-CHROME_DRIVER_LOCATION = '../../lib/chromedriver'
+CHROME_DRIVER_LOCATION = '../../chrome_driver/chromedriver'
