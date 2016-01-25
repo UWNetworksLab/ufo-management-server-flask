@@ -33,12 +33,12 @@ FAKE_EMAILS_AND_NAMES = [
   {'email': 'baz@gmail.com', 'name': 'mark'}
 ]
 FAKE_DIRECTORY_USER_ARRAY = []
-for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
+for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
   fake_directory_user = {}
-  fake_directory_user['primaryEmail'] = FAKE_EMAILS_AND_NAMES[x]['email']
+  fake_directory_user['primaryEmail'] = fake_email_and_name['email']
   fake_directory_user['name'] = {}
-  fake_directory_user['name']['fullName'] = FAKE_EMAILS_AND_NAMES[x]['name']
-  fake_directory_user['email'] = FAKE_EMAILS_AND_NAMES[x]['email']
+  fake_directory_user['name']['fullName'] = fake_email_and_name['name']
+  fake_directory_user['email'] = fake_email_and_name['email']
   fake_directory_user['role'] = 'MEMBER'
   fake_directory_user['type'] = 'USER'
   FAKE_DIRECTORY_USER_ARRAY.append(fake_directory_user)
@@ -61,9 +61,9 @@ class UserTest(base_test.BaseTest):
   def testListUsersHandler(self):
     """Test the list user handler displays users from the database."""
     users = []
-    for x in range(1, len(FAKE_EMAILS_AND_NAMES)):
-      user = models.User(email=FAKE_EMAILS_AND_NAMES[x]['email'],
-                         name=FAKE_EMAILS_AND_NAMES[x]['name'])
+    for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
+      user = models.User(email=fake_email_and_name['email'],
+                         name=fake_email_and_name['name'])
       user.save()
       users.append(user)
 
@@ -106,11 +106,11 @@ class UserTest(base_test.BaseTest):
   @patch('flask.render_template')
   @patch.object(oauth, 'getSavedCredentials')
   @patch.object(gds.GoogleDirectoryService, '__init__')
-  def testAddUsersGetNoParam(self, mock_ds, mock_get_saved_credentials,
+  def testAddUsersGetNoParam(self, mock_gds, mock_get_saved_credentials,
                             mock_render_template):
     """Test add user get should display no users on initial get."""
     mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
-    mock_ds.return_value = None
+    mock_gds.return_value = None
     mock_render_template.return_value = ''
 
     response = self.client.get(flask.url_for('add_user'))
@@ -123,12 +123,12 @@ class UserTest(base_test.BaseTest):
   @patch.object(oauth, 'getSavedCredentials')
   @patch.object(gds.GoogleDirectoryService, 'GetUsersByGroupKey')
   @patch.object(gds.GoogleDirectoryService, '__init__')
-  def testAddUsersGetWithGroup(self, mock_ds, mock_get_by_key,
+  def testAddUsersGetWithGroup(self, mock_gds, mock_get_by_key,
                               mock_get_saved_credentials,
                               mock_render_template):
     """Test add user get should display users from a given group."""
     mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
-    mock_ds.return_value = None
+    mock_gds.return_value = None
     # Email address could refer to group or user
     group_key = 'foo@bar.mybusiness.com'
     mock_get_by_key.return_value = FAKE_DIRECTORY_USER_ARRAY
@@ -144,12 +144,12 @@ class UserTest(base_test.BaseTest):
   @patch.object(oauth, 'getSavedCredentials')
   @patch.object(gds.GoogleDirectoryService, 'GetUserAsList')
   @patch.object(gds.GoogleDirectoryService, '__init__')
-  def testAddUsersGetWithUser(self, mock_ds, mock_get_user,
+  def testAddUsersGetWithUser(self, mock_gds, mock_get_user,
                              mock_get_saved_credentials,
                              mock_render_template):
     """Test add user get should display a given user as requested."""
     mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
-    mock_ds.return_value = None
+    mock_gds.return_value = None
     # Email address could refer to group or user
     user_key = 'foo@bar.mybusiness.com'
     mock_get_user.return_value = FAKE_DIRECTORY_USER_ARRAY
@@ -165,12 +165,12 @@ class UserTest(base_test.BaseTest):
   @patch.object(oauth, 'getSavedCredentials')
   @patch.object(gds.GoogleDirectoryService, 'GetUsers')
   @patch.object(gds.GoogleDirectoryService, '__init__')
-  def testAddUsersGetWithAll(self, mock_ds, mock_get_users,
+  def testAddUsersGetWithAll(self, mock_gds, mock_get_users,
                             mock_get_saved_credentials,
                             mock_render_template):
     """Test add user get should display all users in a domain."""
     mock_get_saved_credentials.return_value = FAKE_CREDENTIAL
-    mock_ds.return_value = None
+    mock_gds.return_value = None
     mock_get_users.return_value = FAKE_DIRECTORY_USER_ARRAY
     mock_render_template.return_value = ''
 
@@ -183,7 +183,7 @@ class UserTest(base_test.BaseTest):
   @patch('flask.render_template')
   @patch.object(oauth, 'getSavedCredentials')
   @patch.object(gds.GoogleDirectoryService, '__init__')
-  def testAddUsersGetWithError(self, mock_ds, mock_get_saved_credentials,
+  def testAddUsersGetWithError(self, mock_gds, mock_get_saved_credentials,
                               mock_render_template):
     """Test add users get fails gracefully when a resource isn't found.
 
@@ -198,7 +198,7 @@ class UserTest(base_test.BaseTest):
     fake_response = MagicMock(status=fake_status)
     fake_content = b'some error content'
     fake_error = errors.HttpError(fake_response, fake_content)
-    mock_ds.side_effect = fake_error
+    mock_gds.side_effect = fake_error
     mock_render_template.return_value = ''
 
     response = self.client.get(flask.url_for('add_user'))
@@ -212,11 +212,11 @@ class UserTest(base_test.BaseTest):
     """Test the add users post handler calls to insert the specified users."""
     mock_users = []
     data = MultiDict()
-    for x in range(0, len(FAKE_EMAILS_AND_NAMES)):
+    for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
       mock_user = {}
-      mock_user['primaryEmail'] = FAKE_EMAILS_AND_NAMES[x]['email']
+      mock_user['primaryEmail'] = fake_email_and_name['email']
       mock_user['name'] = {}
-      mock_user['name']['fullName'] = FAKE_EMAILS_AND_NAMES[x]['name']
+      mock_user['name']['fullName'] = fake_email_and_name['name']
       mock_users.append(mock_user)
       data.add('selected_user', json.dumps(mock_user))
 
@@ -227,6 +227,14 @@ class UserTest(base_test.BaseTest):
 
     users_count = models.User.query.count()
     self.assertEquals(len(FAKE_EMAILS_AND_NAMES), users_count)
+
+    users_in_db = models.User.query.all()
+    self.assertEquals(len(FAKE_EMAILS_AND_NAMES), len(users_in_db))
+
+    for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
+      query = models.User.query.filter_by(email=fake_email_and_name['email'])
+      user_in_db = query.one_or_none()
+      self.assertEqual(fake_email_and_name['name'], user_in_db.name)
 
     self.assert_redirects(response, flask.url_for('user_list'))
 
@@ -240,17 +248,17 @@ class UserTest(base_test.BaseTest):
     response = self.client.post(flask.url_for('add_user'), data=data,
                                 follow_redirects=False)
 
-    matched_count = models.User.query.filter_by(email=FAKE_EMAILS_AND_NAMES[0]['email']).count()
-    self.assertEqual(1, matched_count)
+    query = models.User.query.filter_by(email=FAKE_EMAILS_AND_NAMES[0]['email'])
+    user_in_db = query.one_or_none()
+    self.assertIsNotNone(user_in_db)
+    self.assertEqual(FAKE_EMAILS_AND_NAMES[0]['name'], user_in_db.name)
 
     self.assert_redirects(response, flask.url_for('user_list'))
 
   @patch('flask.render_template')
   def testUserDetailsGet(self, mock_render_template):
     """Test the user details handler calls to render a user's information."""
-    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
-        name=FAKE_EMAILS_AND_NAMES[0]['name'])
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     mock_render_template.return_value = ''
 
     response = self.client.get(flask.url_for('user_details', user_id=user.id))
@@ -266,9 +274,7 @@ class UserTest(base_test.BaseTest):
     fake_ip = '0.1.2.3'
     proxy_server = models.ProxyServer(ip_address=fake_ip)
     proxy_server.save()
-    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
-        name=FAKE_EMAILS_AND_NAMES[0]['name'])
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     mock_render_template.return_value = ''
 
     response = self.client.get(flask.url_for('user_details', user_id=user.id))
@@ -290,9 +296,7 @@ class UserTest(base_test.BaseTest):
 
   def testDeleteUserPostHandler(self):
     """Test the delete user handler calls to delete the specified user."""
-    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
-        name=FAKE_EMAILS_AND_NAMES[0]['name'])
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     user_id = user.id
 
     response = self.client.post(flask.url_for('delete_user', user_id=user_id),
@@ -304,9 +308,7 @@ class UserTest(base_test.BaseTest):
 
   def testUserGetNewKeyPairHandler(self):
     """Test get new key pair handler regenerates a key pair for the user."""
-    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
-        name=FAKE_EMAILS_AND_NAMES[0]['name'])
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     user_id = user.id
     user_private_key = user.private_key
 
@@ -321,9 +323,7 @@ class UserTest(base_test.BaseTest):
 
   def testUserToggleRevokedHandler(self):
     """Test toggle revoked handler changes the revoked status for a user."""
-    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
-        name=FAKE_EMAILS_AND_NAMES[0]['name'])
-    user.save()
+    user = self._CreateAndSaveFakeUser()
     initial_revoked_status = user.is_key_revoked
 
     response = self.client.post(flask.url_for('user_toggle_revoked',
@@ -333,6 +333,12 @@ class UserTest(base_test.BaseTest):
     self.assertEquals(not initial_revoked_status, user.is_key_revoked)
     self.assert_redirects(response, flask.url_for('user_details',
                                                   user_id=user.id))
+
+  def _CreateAndSaveFakeUser(self):
+    """Create a fake user object, and save it into db."""
+    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
+                       name=FAKE_EMAILS_AND_NAMES[0]['name'])
+    return user.save()
 
 
 if __name__ == '__main__':
