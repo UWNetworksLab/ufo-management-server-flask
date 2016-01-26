@@ -24,8 +24,8 @@ def handle_error(error):
   Args:
     error: Exception object, either python or werkzeug.
   """
-  msg = 'Request resulted in {}'.format(error)
-  current_app.logger.error(msg, exc_info=error)
+  message = 'Request resulted in {}'.format(error)
+  current_app.logger.error(message, exc_info=error)
 
   if isinstance(error, HTTPException):
     error_code = error.code

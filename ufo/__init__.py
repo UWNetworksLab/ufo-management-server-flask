@@ -14,7 +14,7 @@ if 'DATABASE_URL' in os.environ:
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
 
-# Initialize the error handlings.
+# Register the error handlers with the app.
 error_handler.init_error_handlers(app)
 
 # TODO(eholder): Move these over to javascript and i18n as appropriate once
@@ -68,7 +68,7 @@ def get_user_config():
 
   return config
 
-# import setup here
+# only import setup here to avoid circular reference
 from setup import SetupNeeded
 
 def setup_required(func):
