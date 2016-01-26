@@ -1,4 +1,4 @@
-"""An error handler module to grancefully handle all application errors.
+"""An error handler module to gracefully handle all application errors.
 
 The work here is based on the most-excellent flask development doc below.
 https://goo.gl/OWOa70
