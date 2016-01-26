@@ -5,8 +5,8 @@ https://goo.gl/OWOa70
 
 One difference here is that we will aim to handle custom exceptions.
 """
+import logging
 
-from flask import current_app
 from flask import Markup
 from flask import render_template
 from flask import request
@@ -20,12 +20,12 @@ ERROR_NAME_500 = 'Internal Server Error'
 
 def handle_error(error):
   """A handler to gracefully handle any application errors.
-  
+
   Args:
     error: Exception object, either python or werkzeug.
   """
   message = 'Request resulted in {}'.format(error)
-  current_app.logger.error(message, exc_info=error)
+  logging.error(message)
 
   if isinstance(error, HTTPException):
     error_code = error.code
@@ -40,8 +40,7 @@ def handle_error(error):
   # one it finds.  This will let us create specific error pages
   # for errors where we can provide the user some additional help.
   # (Like a 404, for example).
-  templates_to_try = ['{}_error.html'.format(error_code),
-                      'error.html']
+  templates_to_try = ['{}_error.html'.format(error_code), 'error.html']
   return render_template(templates_to_try,
                          error_code=error_code,
                          error_name=error_name,
@@ -49,7 +48,7 @@ def handle_error(error):
 
 def init_error_handlers(app):
   """Register all the default HTTP error handlers with flask.
-  
+
   Args:
     app: flask app object
   """

@@ -25,7 +25,7 @@ class ErrorHandlerTest(base_test.BaseTest):
 
   def testCustomErrorIsHandled(self):
     """Test custom error handler is registered.
-    
+
     setup_config() is not called, thus SetupNeeded error should be thrown.
     TODO(henry): see if this should be moved to setup_test.py
     """
