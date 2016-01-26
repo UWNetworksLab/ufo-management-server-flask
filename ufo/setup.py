@@ -7,10 +7,9 @@ import oauth2client
 
 from googleapiclient import discovery
 
-@app.route('/not_setup/')
-def not_setup():
-  return flask.render_template('error.html',
-                               error_text='Please finish configuring this site')
+
+class SetupNeeded(Exception):
+  message = 'Please finish configuring this site'
 
 
 @app.route('/setup/', methods=['GET', 'POST'])
