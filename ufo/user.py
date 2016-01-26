@@ -93,7 +93,7 @@ def _MakeInviteCode(user):
 
   return invite_code
 
-@app.route('/user')
+@app.route('/user/')
 @setup_required
 def user_list():
   users = models.User.query.all()

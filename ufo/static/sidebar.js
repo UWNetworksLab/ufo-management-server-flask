@@ -3,10 +3,10 @@ Polymer({
   ready: function() {
     this.pages = [
     {"href": "/", "text": "Home"},
-    {"href": "/user", "text": "Users"},
-    {"href": "/proxyserver/list", "text": "Proxy Servers"},
-    {"href": "/setup", "text": "Setup"},
-    {"href": "/logout", "text": "Logout"}
+    {"href": "/user/", "text": "Users"},
+    {"href": "/proxyserver/", "text": "Proxy Servers"},
+    {"href": "/setup/", "text": "Setup"},
+    {"href": "/logout/", "text": "Logout"}
     ];
   },
   itemClicked: function(e) {
