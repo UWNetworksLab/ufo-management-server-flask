@@ -103,7 +103,7 @@ class ProxyServer(Model):
   def read_private_key_from_file_contents(self, contents):
     pkey_instance = pkey.PKey()
     for key_type, key_tag in ssh_client.SSHClient.key_type_to_tag_map.iteritems():
-      if key_tag not in contents:
+      if ('BEGIN ' + key_tag + ' PRIVATE KEY') not in contents:
         continue
 
       # Using the private implementation is, unfortunately, the best way to
