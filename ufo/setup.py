@@ -9,6 +9,7 @@ from googleapiclient import discovery
 
 
 class SetupNeeded(Exception):
+  code = 500
   message = 'Please finish configuring this site'
 
 

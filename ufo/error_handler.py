@@ -7,15 +7,9 @@ One difference here is that we will aim to handle custom exceptions.
 """
 import logging
 
-from flask import Markup
 from flask import render_template
 from flask import request
-from werkzeug.exceptions import default_exceptions
-from werkzeug.exceptions import HTTPException
-
-
-ERROR_CODE_500 = '500'
-ERROR_NAME_500 = 'Internal Server Error'
+import werkzeug.exceptions
 
 
 def handle_error(error):
@@ -24,27 +18,17 @@ def handle_error(error):
   Args:
     error: Exception object, either python or werkzeug.
   """
-  message = 'Request resulted in {}'.format(error)
-  logging.error(message)
+  logging.error('Request resulted in {}'.format(error))
 
-  if isinstance(error, HTTPException):
-    error_code = error.code
-    error_name = error.name
-    error_text = error.get_description(request.environ)
-  else:
-    error_code = ERROR_CODE_500
-    error_name = ERROR_NAME_500
-    error_text = error.message
-
+  if not isinstance(error, werkzeug.exceptions.HTTPException):
+    error = werkzeug.exceptions.InternalServerError(error.message)
+  
   # Flask supports looking up multiple templates and rendering the first
   # one it finds.  This will let us create specific error pages
   # for errors where we can provide the user some additional help.
   # (Like a 404, for example).
-  templates_to_try = ['{}_error.html'.format(error_code), 'error.html']
-  return render_template(templates_to_try,
-                         error_code=error_code,
-                         error_name=error_name,
-                         error_text=Markup(error_text))
+  templates_to_try = ['{}_error.html'.format(error.code), 'error.html']
+  return render_template(templates_to_try, error=error)
 
 def init_error_handlers(app):
   """Register all the default HTTP error handlers with flask.
@@ -53,6 +37,6 @@ def init_error_handlers(app):
     app: flask app object
   """
 
-  for exception in default_exceptions:
+  for exception in werkzeug.exceptions.default_exceptions:
     app.register_error_handler(exception, handle_error)
   app.register_error_handler(Exception, handle_error)

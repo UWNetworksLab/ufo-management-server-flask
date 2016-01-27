@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
   <h2>Error</h2>
-  <p>{{ error_code }} - {{ error_name }}</p>
-  <p>{{ error_text }}</p>
+  <p>{{ error.code }} - {{ error.name }}</p>
+  <p>{{ error.description }}</p>
 {% endblock %}

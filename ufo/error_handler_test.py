@@ -6,8 +6,7 @@ import error_handler
 from setup import SetupNeeded
 
 import flask
-from werkzeug.exceptions import default_exceptions
-from werkzeug.exceptions import NotFound
+import werkzeug.exceptions
 
 
 class ErrorHandlerTest(base_test.BaseTest):
@@ -20,24 +19,25 @@ class ErrorHandlerTest(base_test.BaseTest):
   def testDefaultHTTPErrorHandlersAreRegistered(self):
     """Test the default HTTP error handlers are registered."""
     app_error_handlers = self.client.application.error_handler_spec[None]
-    for error_code in default_exceptions:
+    for error_code in werkzeug.exceptions.default_exceptions:
       self.assertTrue(error_code in app_error_handlers)
 
-  def testCustomErrorIsHandled(self):
-    """Test custom error handler is registered.
+  def testUnknowExceptionTypesAreHandled(self):
+    """Test that unknown exception types are handled (e.g. custom error).
 
     setup_config() is not called, thus SetupNeeded error should be thrown.
-    TODO(henry): see if this should be moved to setup_test.py
     """
+    setup_needed_error = werkzeug.exceptions.InternalServerError(
+        SetupNeeded.message)
     resp = self.client.get(flask.url_for('proxyserver_list'))
 
-    self.assertTrue(error_handler.ERROR_CODE_500 in resp.data)
-    self.assertTrue(error_handler.ERROR_NAME_500 in resp.data)
-    self.assertTrue(SetupNeeded.message in resp.data)
+    self.assertTrue(str(setup_needed_error.code) in resp.data)
+    self.assertTrue(setup_needed_error.name in resp.data)
+    self.assertTrue(setup_needed_error.get_description() in resp.data)
 
   def testErrorHandlerCanProcessHTTPError(self):
     """Test error handler can process HTTP error."""
-    error_404 = NotFound()
+    error_404 = werkzeug.exceptions.NotFound()
     resp = error_handler.handle_error(error_404)
 
     self.assertTrue(str(error_404.code) in resp)
@@ -45,12 +45,15 @@ class ErrorHandlerTest(base_test.BaseTest):
 
   def testErrorHandlerCanProcessCustomError(self):
     """Test error handler can process custom error."""
-    setup_needed = SetupNeeded()
-    resp = error_handler.handle_error(setup_needed)
+    setup_needed_error = SetupNeeded()
+    werkzeug_error = werkzeug.exceptions.InternalServerError(
+        SetupNeeded.message)
 
-    self.assertTrue(error_handler.ERROR_CODE_500 in resp)
-    self.assertTrue(error_handler.ERROR_NAME_500 in resp)
-    self.assertTrue(setup_needed.message in resp)
+    resp = error_handler.handle_error(setup_needed_error)
+
+    self.assertTrue(str(werkzeug_error.code) in resp)
+    self.assertTrue(werkzeug_error.name in resp)
+    self.assertTrue(werkzeug_error.message in resp)
 
 
 if __name__ == '__main__':
