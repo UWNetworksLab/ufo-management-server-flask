@@ -1,30 +1,32 @@
 from mock import MagicMock
 from mock import patch
 
+import base64
+from Crypto.PublicKey import RSA
 import flask
 
 import base_test
 import models
 import proxy_server
 
+def getBinaryPublicKey(rsakey):
+  """Returns the public key as stored in the database."""
+  return base64.b64decode(rsakey.publickey().exportKey('OpenSSH').split(' ')[1])
 
 FAKE_PROXY_SERVER_DATA = [
-  {'ip_address': '111.111.111.111', 'name': 'fake server 1', 
-   'ssh_private_key': '11111', 'fingerprint': '11:11:11:11'},
-  {'ip_address': '222:222:222:222', 'name': 'fake server 2', 
-   'ssh_private_key': '22222', 'fingerprint': '22:22:22:22'},
-  {'ip_address': '333:333:333:333', 'name': 'fake server 3', 
-   'ssh_private_key': '33333', 'fingerprint': '33:33:33:33'},
+  {'ip_address': '111.111.111.111', 'name': 'fake server 1'},
+  {'ip_address': '222:222:222:222', 'name': 'fake server 2'},
+  {'ip_address': '333:333:333:333', 'name': 'fake server 3'},
 ]
 
-FAKE_ID = 1000
-FAKE_MODEL_PROXY_SERVER = MagicMock(
-    id=FAKE_ID,
-    ip_address=FAKE_PROXY_SERVER_DATA[0]['ip_address'],
-    ssh_private_key=FAKE_PROXY_SERVER_DATA[0]['ssh_private_key'],
-    fingerprint=FAKE_PROXY_SERVER_DATA[0]['fingerprint'])
-FAKE_MODEL_PROXY_SERVER.name = FAKE_PROXY_SERVER_DATA[0]['name']
-
+for s in FAKE_PROXY_SERVER_DATA:
+  key = RSA.generate(1024)
+  s['key'] = key
+  s['ssh_private_key_type'] = 'ssh-rsa'
+  s['ssh_private_key'] = key.exportKey('DER')
+  # will not actually correspond in real usage, should not impact tests
+  s['host_public_key_type'] = 'ssh-rsa'
+  s['host_public_key'] = getBinaryPublicKey(key)
 
 class ProxyServerTest(base_test.BaseTest):
   """Test proxy server class functionality."""
@@ -45,24 +47,14 @@ class ProxyServerTest(base_test.BaseTest):
 
   def testListHandlerRendersResults(self):
     """Test the list proxy server handler displays proxy server from db."""
-    proxy_servers = []
-
-    for fake_proxy_server_data in FAKE_PROXY_SERVER_DATA:
-      proxy_server = models.ProxyServer(
-          ip_address=fake_proxy_server_data['ip_address'],
-          name=fake_proxy_server_data['name'],
-          ssh_private_key=fake_proxy_server_data['ip_address'],
-          fingerprint=fake_proxy_server_data['fingerprint'])
-      proxy_server.save()
-      proxy_servers.append(proxy_server)
+    for i in range(len(FAKE_PROXY_SERVER_DATA)):
+      self._CreateAndSaveFakeProxyServer(i)
 
     resp = self.client.get(flask.url_for('proxyserver_list'))
 
-    for proxy_server in proxy_servers:
-      self.assertTrue(proxy_server.name in resp.data)
-      self.assertTrue(proxy_server.ip_address in resp.data)
-      self.assertTrue(proxy_server.ssh_private_key in resp.data)
-      self.assertTrue(proxy_server.fingerprint in resp.data)
+    for proxy_server in FAKE_PROXY_SERVER_DATA:
+      self.assertTrue(proxy_server['name'] in resp.data)
+      self.assertTrue(proxy_server['ip_address'] in resp.data)
 
   @patch('flask.render_template')
   def testAddProxyServerGetHandler(self, mock_render_template):
@@ -75,101 +67,130 @@ class ProxyServerTest(base_test.BaseTest):
 
   def testAddProxyServer(self):
     """Test the add proxy server post handler inserts the proxy server."""
-    form_data = {
-      'ip_address': FAKE_PROXY_SERVER_DATA[0]['ip_address'],
-      'name': FAKE_PROXY_SERVER_DATA[0]['name'],
-      'ssh_private_key': FAKE_PROXY_SERVER_DATA[0]['ssh_private_key'],
-      'fingerprint': FAKE_PROXY_SERVER_DATA[0]['fingerprint']
-    }
+    fake_server = FAKE_PROXY_SERVER_DATA[0]
+    form_data = self._GetProxyServerFormData()
     response = self.client.post(
         flask.url_for('proxyserver_add'),
         data=form_data,
         follow_redirects=False)
 
     query = models.ProxyServer.query
-    query.filter_by(ip_address=FAKE_PROXY_SERVER_DATA[0]['ip_address'])
+    query.filter_by(ip_address=fake_server['ip_address'])
     proxy_server_in_db = query.one_or_none()
-    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['name'],
+    self.assertIsNotNone(proxy_server_in_db)
+    self.assertEqual(fake_server['name'],
                      proxy_server_in_db.name)
-    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['ip_address'],
-                     proxy_server_in_db.ip_address)
-    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['ssh_private_key'],
+    self.assertEqual(fake_server['key'].exportKey('DER'),
                      proxy_server_in_db.ssh_private_key)
-    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['fingerprint'],
-                     proxy_server_in_db.fingerprint)
+    self.assertEqual(getBinaryPublicKey(fake_server['key']),
+                     proxy_server_in_db.host_public_key)
 
-    self.assert_redirects(response, flask.url_for('proxyserver_list'))
+  def testAddingProxyServerRedirectsToList(self):
+    """Tests the redirect after adding a proxy server.
+
+    This tests that, after the user adds a proxy server, the user will be
+    redirected to the list of proxy servers.
+    """
+    fake_server = FAKE_PROXY_SERVER_DATA[0]
+    data = self._GetProxyServerFormData()
+
+    res = self.client.post(flask.url_for('proxyserver_add'), data=data)
+
+    self.assert_redirects(res, flask.url_for('proxyserver_list'))
 
   def testEditProxyServerGetHandler(self):
     """Test the edit proxy server get handler returns the form."""
-    proxy_server = self._CreateAndSaveFakeProxyServer()
+    proxy_server = self._CreateAndSaveFakeProxyServer(0)
+    fake_server = FAKE_PROXY_SERVER_DATA[0]
 
-    query = models.ProxyServer.query
-    query.filter_by(ip_address=FAKE_PROXY_SERVER_DATA[0]['ip_address'])
-    proxy_server_in_db = query.one_or_none()
     resp = self.client.get(
-        flask.url_for('proxyserver_edit', server_id=proxy_server_in_db.id))
+        flask.url_for('proxyserver_edit', server_id=proxy_server.id))
 
     self.assertTrue('proxy-edit-add-form' in resp.data)
-    self.assertTrue(proxy_server.ip_address in resp.data)
-    self.assertTrue(proxy_server.name in resp.data)
-    self.assertTrue(proxy_server.ssh_private_key in resp.data)
-    self.assertTrue(proxy_server.fingerprint in resp.data)
+    self.assertTrue(fake_server['ip_address'] in resp.data)
+    self.assertTrue(fake_server['name'] in resp.data)
 
-  def testEditProxyServerPostHandler(self):
+  def testEditServerUpdatesKeysInDb(self):
     """Test the edit proxy server post handler saves the edit."""
-    proxy_server = self._CreateAndSaveFakeProxyServer()
+    proxy_server = self._CreateAndSaveFakeProxyServer(0)
 
-    updated_proxy_server = models.ProxyServer(
-        id=FAKE_ID,
-        ip_address=proxy_server.ip_address + '2',
-        name=proxy_server.name + '2',
-        ssh_private_key=proxy_server.ssh_private_key + '2',
-        fingerprint=proxy_server.fingerprint + '2')
-
-    form_data = {
-      'ip_address': updated_proxy_server.ip_address,
-      'name': updated_proxy_server.name,
-      'ssh_private_key': updated_proxy_server.ssh_private_key,
-      'fingerprint': updated_proxy_server.fingerprint
-    }
+    form_data = self._GetProxyServerFormData(0, 1)
+    new_key = FAKE_PROXY_SERVER_DATA[1]['key']
 
     resp = self.client.post(
-        flask.url_for('proxyserver_edit', server_id=FAKE_ID), 
+        flask.url_for('proxyserver_edit', server_id=proxy_server.id), 
         data=form_data)
 
-    updated_proxy_server_in_db = models.ProxyServer.query.get(FAKE_ID)
-    self.assertEqual(updated_proxy_server.name,
-                     updated_proxy_server_in_db.name)
-    self.assertEqual(updated_proxy_server.ip_address,
-                     updated_proxy_server_in_db.ip_address)
-    self.assertEqual(updated_proxy_server.ssh_private_key,
-                     updated_proxy_server_in_db.ssh_private_key)
-    self.assertEqual(updated_proxy_server.fingerprint,
-                     updated_proxy_server_in_db.fingerprint)
+    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['name'],
+                     proxy_server.name)
+    self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['ip_address'],
+                     proxy_server.ip_address)
+    self.assertEqual(new_key.exportKey('DER'),
+                     proxy_server.ssh_private_key)
+    self.assertEqual(getBinaryPublicKey(new_key),
+                     proxy_server.host_public_key)
+
+  def testEditServerRedirectsToList(self):
+    """Tests the redirect after editing a proxy server.
+
+    This tests that, after the user edits a proxy server, the user will be
+    redirected to the list of proxy servers.
+    """
+
+    proxy_server = self._CreateAndSaveFakeProxyServer(0)
+
+    # we don't actually need to change anything
+    form_data = self._GetProxyServerFormData()
+
+    resp = self.client.post(
+        flask.url_for('proxyserver_edit', server_id=proxy_server.id), 
+        data=form_data)
 
     self.assert_redirects(resp, flask.url_for('proxyserver_list'))
 
-  def testDeleteProxyServerPostHandler(self):
+  def testDeleteProxyServerRemovesFromDb(self):
+    """Tests the proxy server is actually deleted after the user deletes it."""
     proxy_server = self._CreateAndSaveFakeProxyServer()
+    proxy_server_id = proxy_server.id
 
-    self.assertIsNotNone(models.ProxyServer.query.get(FAKE_ID))
+    response = self.client.get(
+        flask.url_for('proxyserver_delete', server_id=proxy_server_id))
 
-    response = self.client.get(flask.url_for('proxyserver_delete',
-                                server_id=FAKE_ID),
-                                follow_redirects=False)
+    self.assertIsNone(models.ProxyServer.query.get(proxy_server_id))
 
-    self.assertIsNone(models.ProxyServer.query.get(FAKE_ID))
+  def testDeleteProxyServerRedirectsToList(self):
+    """Tests the redirect after deleting a proxy server.
+
+    This tests that, after the user deletes a proxy server, the user will be
+    redirected to the list of proxy servers.
+    """
+    proxy_server = self._CreateAndSaveFakeProxyServer()
+    proxy_server_id = proxy_server.id
+
+    response = self.client.get(
+        flask.url_for('proxyserver_delete', server_id=proxy_server_id))
     self.assert_redirects(response, flask.url_for('proxyserver_list'))
 
-  def _CreateAndSaveFakeProxyServer(self):
+  def _GetProxyServerFormData(self, id_id=0, key_id=0):
+    server = FAKE_PROXY_SERVER_DATA[id_id]
+    key = FAKE_PROXY_SERVER_DATA[key_id]['key']
+    return {
+      'name': server['name'],
+      'ip_address': server['ip_address'],
+      'private_key': key.exportKey(),
+      'public_key': key.publickey().exportKey('OpenSSH'),
+    }
+
+  def _CreateAndSaveFakeProxyServer(self, i=0):
     """Create a fake proxy server, and save it into db."""
     proxy_server = models.ProxyServer(
-        id=FAKE_ID,
-        ip_address=FAKE_PROXY_SERVER_DATA[0]['ip_address'],
-        name=FAKE_PROXY_SERVER_DATA[0]['name'],
-        ssh_private_key=FAKE_PROXY_SERVER_DATA[0]['ip_address'],
-        fingerprint=FAKE_PROXY_SERVER_DATA[0]['fingerprint'])
+        ip_address=FAKE_PROXY_SERVER_DATA[i]['ip_address'],
+        name=FAKE_PROXY_SERVER_DATA[i]['name'],
+        ssh_private_key=FAKE_PROXY_SERVER_DATA[i]['ssh_private_key'],
+        ssh_private_key_type=FAKE_PROXY_SERVER_DATA[i]['ssh_private_key_type'],
+        host_public_key=FAKE_PROXY_SERVER_DATA[i]['host_public_key'],
+        host_public_key_type=FAKE_PROXY_SERVER_DATA[i]['host_public_key_type'])
+
     return proxy_server.save()
 
 if __name__ == '__main__':
