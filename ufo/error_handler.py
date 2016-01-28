@@ -9,7 +9,7 @@ import logging
 
 from flask import render_template
 from flask import request
-import werkzeug.exceptions
+from werkzeug import exceptions
 
 
 def handle_error(error):
@@ -20,8 +20,8 @@ def handle_error(error):
   """
   logging.error('Request resulted in {}'.format(error))
 
-  if not isinstance(error, werkzeug.exceptions.HTTPException):
-    error = werkzeug.exceptions.InternalServerError(error.message)
+  if not isinstance(error, exceptions.HTTPException):
+    error = exceptions.InternalServerError(error.message)
   
   # Flask supports looking up multiple templates and rendering the first
   # one it finds.  This will let us create specific error pages
@@ -37,6 +37,6 @@ def init_error_handlers(app):
     app: flask app object
   """
 
-  for exception in werkzeug.exceptions.default_exceptions:
+  for exception in exceptions.default_exceptions:
     app.register_error_handler(exception, handle_error)
   app.register_error_handler(Exception, handle_error)

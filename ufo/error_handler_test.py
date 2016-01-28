@@ -6,7 +6,7 @@ import error_handler
 from setup import SetupNeeded
 
 import flask
-import werkzeug.exceptions
+from werkzeug import exceptions
 
 
 class ErrorHandlerTest(base_test.BaseTest):
@@ -19,7 +19,7 @@ class ErrorHandlerTest(base_test.BaseTest):
   def testDefaultHTTPErrorHandlersAreRegistered(self):
     """Test the default HTTP error handlers are registered."""
     app_error_handlers = self.client.application.error_handler_spec[None]
-    for error_code in werkzeug.exceptions.default_exceptions:
+    for error_code in exceptions.default_exceptions:
       self.assertTrue(error_code in app_error_handlers)
 
   def testUnknowExceptionTypesAreHandled(self):
@@ -27,7 +27,7 @@ class ErrorHandlerTest(base_test.BaseTest):
 
     setup_config() is not called, thus SetupNeeded error should be thrown.
     """
-    setup_needed_error = werkzeug.exceptions.InternalServerError(
+    setup_needed_error = exceptions.InternalServerError(
         SetupNeeded.message)
     resp = self.client.get(flask.url_for('proxyserver_list'))
 
@@ -37,7 +37,7 @@ class ErrorHandlerTest(base_test.BaseTest):
 
   def testErrorHandlerCanProcessHTTPError(self):
     """Test error handler can process HTTP error."""
-    error_404 = werkzeug.exceptions.NotFound()
+    error_404 = exceptions.NotFound()
     resp = error_handler.handle_error(error_404)
 
     self.assertTrue(str(error_404.code) in resp)
@@ -46,7 +46,7 @@ class ErrorHandlerTest(base_test.BaseTest):
   def testErrorHandlerCanProcessCustomError(self):
     """Test error handler can process custom error."""
     setup_needed_error = SetupNeeded()
-    werkzeug_error = werkzeug.exceptions.InternalServerError(
+    werkzeug_error = exceptions.InternalServerError(
         SetupNeeded.message)
 
     resp = error_handler.handle_error(setup_needed_error)
