@@ -1,16 +1,11 @@
 """Test user module functionality."""
 from mock import MagicMock
 from mock import patch
-import os
 
 import base64
 import flask
-from flask.ext.testing import TestCase
 from googleapiclient import errors
 import json
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import sessionmaker
 import unittest
 from werkzeug.datastructures import MultiDict
 from werkzeug.datastructures import ImmutableMultiDict
@@ -24,8 +19,6 @@ import google_directory_service as gds
 import models
 import oauth
 import user
-
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 FAKE_EMAILS_AND_NAMES = [
   {'email': 'foo@aol.com', 'name': 'joe'},
