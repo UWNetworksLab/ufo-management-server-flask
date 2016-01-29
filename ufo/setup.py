@@ -11,9 +11,10 @@ PLEASE_CONFIGURE_TEXT = 'Please finish configuring this site.'
 DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
 NON_ADMIN_TEXT = 'Credentials do not have admin access.'
 
-@app.route('/not_setup/')
-def not_setup():
-  return flask.render_template('error.html', error_text=PLEASE_CONFIGURE_TEXT)
+
+class SetupNeeded(Exception):
+  code = 500
+  message = PLEASE_CONFIGURE_TEXT
 
 
 @app.route('/setup/', methods=['GET', 'POST'])

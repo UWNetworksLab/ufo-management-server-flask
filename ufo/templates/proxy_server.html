@@ -4,6 +4,8 @@
   <link rel="import" href="{{ url_for('static', filename='bower_components/iron-collapse/iron-collapse.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-input/paper-input.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-input/paper-textarea.html') }}" />
 {% endblock %}
 {% block body %}
   <a href="{{ url_for('proxyserver_add') }}">
@@ -13,11 +15,15 @@
   {% for proxy_server in proxy_servers %}
     <paper-card heading="{{ proxy_server.name }}">
       <div class="card-content">
-        <p>{{ proxy_server.ip_address }}, {{ proxy_server.fingerprint }}</p>
-        <paper-button onclick="toggleCollapse('collapse-{{loop.index}}')">Show/hide SSH Key</paper-button>
+        <p>{{ proxy_server.ip_address }}</p>
+        <paper-button onclick="toggleCollapse('collapse-{{loop.index}}')">Show/hide SSH Keys</paper-button>
         <iron-collapse id="collapse-{{loop.index}}"><div>
-          <textarea rows="20" cols="80">{{ proxy_server.ssh_private_key }}
-          </textarea></div></iron-collapse>
+          <h3>Public Key (for verification)</h3>
+          <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{proxy_server.public_key}}</pre>
+
+          <h3>Private Key (for authentication)</h3>
+          <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{proxy_server.private_key}}</pre>
+        </iron-collapse>
       </div>
       <div class="card-actions">
         <a href="{{ url_for('proxyserver_edit', server_id=proxy_server.id) }}">

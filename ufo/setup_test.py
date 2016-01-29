@@ -29,17 +29,6 @@ class SetupTest(base_test.BaseTest):
     super(SetupTest, self).setUp()
 
   @patch('flask.render_template')
-  def testNotSetupHandler(self, mock_render_template):
-    """Test the not setup handler loads the error page as called."""
-    mock_render_template.return_value = ''
-
-    resp = self.client.get(flask.url_for('not_setup'))
-
-    args, kwargs = mock_render_template.call_args
-    self.assertEquals('error.html', args[0])
-    self.assertEquals(setup.PLEASE_CONFIGURE_TEXT, kwargs['error_text'])
-
-  @patch('flask.render_template')
   def testGetSetupHandler(self, mock_render_template):
     """Test get on the setup handler loads the setup page."""
     mock_render_template.return_value = ''
