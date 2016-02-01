@@ -1,0 +1,36 @@
+<link rel="import" href="bower_components/paper-input/paper-textarea.html" />
+<!-- TODO remove once we are able to use a stock paper-textarea -->
+
+<dom-module id="ufo-textarea">
+  <template>
+    <paper-textarea id="input"
+      value="{{value}}"
+      label="[[label]]"
+      name$="paper_[[name]]"
+      required$="[[required]]"></paper-textarea>
+
+    <input type="hidden" name$="[[name]]" value="{{value}}" />
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'ufo-textarea',
+    properties: {
+      name: {
+        type: String
+      },
+      label: {
+        type: String
+      },
+      required: {
+        type: Boolean,
+        value: false
+      },
+      value: {
+        notify: true,
+        type: String
+      }
+    }
+  });
+</script>
