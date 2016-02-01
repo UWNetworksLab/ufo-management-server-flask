@@ -16,7 +16,7 @@
       <div class="card-content">
         <p>{{ proxy_server.ip_address }}</p>
         <paper-button onclick="toggleCollapse('collapse-{{loop.index}}')">Show/hide SSH Keys</paper-button>
-        <iron-collapse id="collapse-{{loop.index}}"><div>
+        <iron-collapse id="collapse-{{loop.index}}">
           <h3>Public Key (for verification)</h3>
           <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{proxy_server.public_key}}</pre>
 
