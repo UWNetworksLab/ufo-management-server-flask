@@ -3,7 +3,7 @@
 {% block head %}
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-input/paper-input.html') }}" />
-  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-input/paper-textarea.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='textarea.html') }}" />
 {% endblock %}
 {% block body %}
   <form id="proxy-edit-add-form" method="post">
@@ -17,8 +17,7 @@
       with the ability to access a proxy server.  The beginning of the file
       should resemble "-----BEGIN RSA PRIVATE KEY-----".
     </p>
-    <!-- TODO this does not actually work with the real version of paper-textarea -->
-    <paper-textarea label="SSH Private Key" name="private_key" value="{{ proxy_server.private_key }}" required></paper-textarea>
+    <ufo-textarea label="SSH Private Key" name="private_key" value="{{ proxy_server.private_key }}" required></ufo-textarea>
 
     <p>
       For the hosts public key, you can usually get this value from either
