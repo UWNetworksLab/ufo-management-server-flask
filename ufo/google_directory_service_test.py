@@ -1,6 +1,5 @@
 """Test google directory service module functionality."""
-from mock import MagicMock
-from mock import patch
+import mock
 
 import flask
 from googleapiclient import discovery
@@ -39,12 +38,28 @@ FAKE_GROUP_KEY = "my_group@mybusiness.com"
 
 
 def make_mock_directory_service():
-  """Create a mocked out google directory service."""
+  """Create a mocked out google directory service.
+
+  This is a helper method to facilitate testing the google directory service
+  module by building an instance according to what we expect in testing. It
+  mocks out calls to authorize on a fake set of credentials so that build in
+  the __init__ function will pass correctly.
+
+  Returns:
+    A mock google directory service instance using mock_credentials.
+  """
   def mock_authorize(http):
-    """Mock authorize function to return None."""
+    """Mock authorize function to return None.
+
+    Args:
+      http: Unused argument which is here purely to meet the method signature.
+
+    Returns:
+      None
+    """
     return None
 
-  mock_credentials = MagicMock()
+  mock_credentials = mock.MagicMock()
   mock_credentials.authorize = mock_authorize
   directory_service = gds.GoogleDirectoryService(mock_credentials)
   return directory_service
@@ -58,45 +73,135 @@ class GoogleDirectoryServiceTest(base_test.BaseTest):
     super(GoogleDirectoryServiceTest, self).setUp()
     super(GoogleDirectoryServiceTest, self).setup_config()
 
-  @patch.object(discovery, 'build')
+  @mock.patch.object(discovery, 'build')
   def testGetUsers(self, mock_build):
-    """Test get users request handles a valid response correctly."""
-    fake_dictionary = {}
-    fake_dictionary['users'] = FAKE_USERS
+    """Test get users request handles a multi-page response correctly.
+
+    Args:
+      mock_build: A mocked instance of discovery.build on which we create
+                  subsequent mocks in order to drive fake responses from the
+                  directory API.
+    """
+    fake_dictionary_1 = {
+        'users': FAKE_USERS,
+        'nextPageToken': FAKE_PAGE_TOKEN
+    }
+    fake_extra_user = mock.MagicMock()
+    fake_dictionary_2 = {
+        'users': [fake_extra_user]
+    }
+    expected_list = FAKE_USERS + [fake_extra_user]
+
+
+    def _ReturnDomainUsersForPageToken(customer, maxResults, pageToken,
+                                       projection, orderBy):
+      """Mock list function to return different mock execute calls.
+
+      Args:
+        customer: Unused argument which is purely here to meet the list method
+                  signature.
+        maxResults: Unused argument which is purely here to meet the list
+                    method signature.
+        pageToken: A string token representing which page of a long list of
+                   data should be returned for a given request. We use this to
+                   determine which dictionary of users to return from mock
+                   execute.
+        projection: Unused argument which is purely here to meet the list
+                    method signature.
+        orderBy: Unused argument which is purely here to meet the list method
+                 signature.
+
+      Returns:
+        A dictionary of directory service users for the corresponding page
+        token.
+      """
+      # pylint: disable=unused-argument
+      mock_execute = mock.MagicMock()
+      if pageToken == '':
+        mock_execute.execute.return_value = fake_dictionary_1
+      else:
+        mock_execute.execute.return_value = fake_dictionary_2
+      return mock_execute
+
     # This weird looking structure is to mock out a call buried behind several
     # objects which requires going through the method's return_value for each
     # method down the chain, starting from the discovery module.
     users_object = mock_build.return_value.users.return_value
-    list_object = users_object.list.return_value
-    list_object.execute.return_value = fake_dictionary
+    users_object.list.side_effect = _ReturnDomainUsersForPageToken
 
     directory_service = make_mock_directory_service()
     users_returned = directory_service.GetUsers()
 
-    self.assertEqual(users_returned, FAKE_USERS)
+    self.assertEqual(users_returned, expected_list)
 
-  @patch.object(gds.GoogleDirectoryService, 'GetUser')
-  @patch.object(discovery, 'build')
+  @mock.patch.object(gds.GoogleDirectoryService, 'GetUser')
+  @mock.patch.object(discovery, 'build')
   def testGetUsersByGroupKey(self, mock_build, mock_get_user):
-    """Test get users by group key handles a valid response correctly."""
-    fake_dictionary = {}
-    fake_dictionary['members'] = FAKE_GROUP
-    expected_list = [FAKE_GROUP_MEMBER_USER_1, FAKE_GROUP_MEMBER_USER_2]
+    """Test get users by group key handles a multi-page response correctly.
+
+    Args:
+      mock_build: A mocked instance of discovery.build on which we create
+                  subsequent mocks in order to drive fake responses from the
+                  directory API.
+      mock_get_user: A mocked get user function so we can return fake directory
+                     user dictionaries upon a lookup from a group.
+    """
+    fake_dictionary_1 = {
+        'members': FAKE_GROUP,
+        'nextPageToken': FAKE_PAGE_TOKEN
+    }
+    fake_dictionary_2 = {
+        'members': FAKE_GROUP
+    }
+    expected_list = [FAKE_GROUP_MEMBER_USER_1, FAKE_GROUP_MEMBER_USER_2,
+                     FAKE_GROUP_MEMBER_USER_1, FAKE_GROUP_MEMBER_USER_2]
+
+
+    def _ReturnGroupsForPageToken(groupKey, pageToken=''):
+      """Mock list function to return different mock execute calls.
+
+      Args:
+        groupKey: Unused argument which is purely here to meet the list method
+                  signature.
+        pageToken: A string token representing which page of a long list of
+                   data should be returned for a given request. We use this to
+                   determine which dictionary of group members to return from
+                   mock execute.
+
+      Returns:
+        A dictionary of directory service group members for the corresponding
+        page token.
+      """
+      # pylint: disable=unused-argument
+      mock_execute = mock.MagicMock()
+      if pageToken == '':
+        mock_execute.execute.return_value = fake_dictionary_1
+      else:
+        mock_execute.execute.return_value = fake_dictionary_2
+      return mock_execute
+
     # This weird looking structure is to mock out a call buried behind several
     # objects which requires going through the method's return_value for each
     # method down the chain, starting from the discovery module.
     members_object = mock_build.return_value.members.return_value
-    list_object = members_object.list.return_value
-    list_object.execute.return_value = fake_dictionary
+    members_object.list.side_effect = _ReturnGroupsForPageToken
 
-    def SideEffect(user_key):
-      """Mock get user function to return different users after group get."""
+    def _ReturnGroupMembersForUserKey(user_key):
+      """Mock get user function to return different users after group get.
+
+      Args:
+        user_key: The key identifying a requested user. Used to determine
+                  which group member should be returned.
+
+      Returns:
+        A group member which is a user corresponding to a given user key.
+      """
       if user_key == FAKE_ID_1:
         return FAKE_GROUP_MEMBER_USER_1
       else:
         return FAKE_GROUP_MEMBER_USER_2
 
-    mock_get_user.side_effect = SideEffect
+    mock_get_user.side_effect = _ReturnGroupMembersForUserKey
 
     directory_service = make_mock_directory_service()
     users_returned = directory_service.GetUsersByGroupKey(FAKE_GROUP_KEY)
