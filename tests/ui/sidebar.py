@@ -16,6 +16,7 @@ class Sidebar(BaseDriver):
   HOME_LINK = (By.ID, 'Home')
   USERS_LINK = (By.ID, 'Users')
   PROXY_SERVERS_LINK = (By.ID, 'Proxy Servers')
+  CHROME_POLICY_LINK = (By.ID, 'Chrome Policy')
   SETUP_LINK = (By.ID, 'Setup')
   LOGOUT_LINK = (By.ID, 'Logout')
 

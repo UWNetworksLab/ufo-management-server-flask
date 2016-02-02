@@ -40,9 +40,7 @@ def _SendKeysToServer(server, keys):
   client.close()
 
 def _GetViewDataFromProxyServer(server):
-  public_key = ssh_client.SSHClient.public_key_data_to_object(
-      server.host_public_key_type,
-      server.host_public_key)
+  public_key = server._MakePublicKey()
   private_key = ssh_client.SSHClient.private_key_data_to_object(
       server.ssh_private_key_type,
       server.ssh_private_key)

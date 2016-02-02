@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Chrome Policy{% endblock %}
+{% block head %}
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
+{% endblock %}
+{% block body %}
+  <div id="chrome-policy-card-holder">
+    <paper-card heading="Chrome Policy JSON">
+      <div class="card-content">
+        <p>{{ policy_json }}</p>
+      </div>
+      <div class="card-actions">
+        <a href="data:{{policy_json}}" download="chrome_policy.json">
+          <paper-button class="anchor-button">Download</paper-button></a>
+      </div>
+    </paper-card>
+  </div>
+{% endblock %}

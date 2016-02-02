@@ -39,6 +39,10 @@ class SidebarTest(BaseTest):
     self.assertEquals(flask.url_for('proxyserver_list'),
                       proxy_servers_link.get_attribute('data-href'))
 
+    chrome_policy_link = sidebar.GetLink(sidebar.CHROME_POLICY_LINK)
+    self.assertEquals(flask.url_for('chrome_policy'),
+                      chrome_policy_link.get_attribute('data-href'))
+
     setup_link = sidebar.GetLink(sidebar.SETUP_LINK)
     self.assertEquals(flask.url_for('setup'),
                       setup_link.get_attribute('data-href'))
