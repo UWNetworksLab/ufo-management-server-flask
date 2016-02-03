@@ -23,6 +23,10 @@ class ChromePolicyTest(base_test.BaseTest):
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('chrome_policy.html', args[0])
+    json_data = json.loads(kwargs['policy_json'])
+    self.assertIn('proxy_server_keys', json_data)
+    self.assertIn('enforce_proxy_server_validity', json_data)
+    self.assertIn('enforce_network_jail', json_data)
 
   def testChromePolicyDownload(self):
     """Test the chrome policy download handler downloads json."""
