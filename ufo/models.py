@@ -141,4 +141,4 @@ class ProxyServer(Model):
     public_key = ssh_client.SSHClient.public_key_data_to_object(
         self.host_public_key_type,
         self.host_public_key)
-    return public_key
+    return public_key.get_name() + ' ' + public_key.get_base64()

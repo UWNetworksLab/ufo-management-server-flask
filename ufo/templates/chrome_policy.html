@@ -1,14 +1,40 @@
 {% extends "layout.html" %}
 {% block title %}Chrome Policy{% endblock %}
 {% block head %}
+  <link rel="import" href="{{ url_for('static', filename='bower_components/iron-collapse/iron-collapse.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
 {% endblock %}
 {% block body %}
   <div id="chrome-policy-card-holder">
-    <paper-card heading="Chrome Policy JSON">
+    <paper-card heading="Chrome Managed Policy JSON">
       <div class="card-content">
-        <p>{{ policy_json }}</p>
+        <p>Chrome policy is a feature of enterprise Google devices which can
+          be used to securely add extra configuration to the uProxy frontend.
+          If you use enterprise Google devices through Google Apps for Work,
+          you can for example turn on validation for invitation links to
+          ensure you are proxying through an endpoint controlled by the
+          management console.
+        </p>
+        <p>You can adjust the values below and save to see the managed policy
+          json update. Once you are ready, you can copy and paste the managed
+          policy json below into its own file or click the download link to
+          have one generated automatically.
+        </p>
+        <p>To push your managed policy out to your devices, visit
+          <a href="https://admin.google.com/AdminHome">Google Admin Console</a>
+           and navigate to the uProxy Chrome App/Extension under Device
+          Management -> Chrome Management -> App Management. For the App and Extension, select the entry listed, then click User settings. From
+          the list of Orgs, choose which you want the policy to apply to, then
+          enable Force Installation and select Upload Configuration File.
+          Choose the json file you just created/downloaded. You may have to
+          click override to edit Force Installation or Configure's values.
+          Finally, click Save.
+        </p>
+        <paper-button onclick="toggleCollapse('collapse-policy')">Show/hide Chrome Managed Policy</paper-button>
+        <iron-collapse id="collapse-policy">
+          <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{policy_json}}</pre>
+        </iron-collapse>
       </div>
       <div class="card-actions">
         <a href="{{ url_for('chrome_policy_download') }}" download="chrome_policy.json">
