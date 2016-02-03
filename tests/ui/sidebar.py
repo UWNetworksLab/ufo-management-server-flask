@@ -3,7 +3,7 @@ from base_driver import BaseDriver
 
 from selenium.webdriver.common.by import By
 
-class PageWithSidebar(BaseDriver):
+class Sidebar(BaseDriver):
 
   """Sidebar action methods and locators."""
 
@@ -16,11 +16,3 @@ class PageWithSidebar(BaseDriver):
   PROXY_SERVERS_LINK = (By.ID, 'Proxy Servers')
   SETUP_LINK = (By.ID, 'Setup')
   LOGOUT_LINK = (By.ID, 'Logout')
-
-  def GetSidebar(self):
-    """Get the sidebar element on the user page.
-
-    Returns:
-      The sidebar element for any page.
-    """
-    return self.driver.find_element(*self.SIDEBAR)

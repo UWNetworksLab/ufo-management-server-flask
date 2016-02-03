@@ -1,9 +1,9 @@
 """Landing page module for testing."""
-from sidebar import PageWithSidebar
+from layout import UfOPageLayout
 
 from selenium.webdriver.common.by import By
 
-class LandingPage(PageWithSidebar):
+class LandingPage(UfOPageLayout):
 
   """Home page action methods and locators."""
 

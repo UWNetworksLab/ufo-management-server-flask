@@ -1,10 +1,10 @@
 """User page module functionality for getting elements for testing."""
-from sidebar import PageWithSidebar
+from layout import UfOPageLayout
 
 from selenium.webdriver.common.by import By
 
 
-class UserPage(PageWithSidebar):
+class UserPage(UfOPageLayout):
 
   """User page action methods and locators."""
 
