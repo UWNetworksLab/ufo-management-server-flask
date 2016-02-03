@@ -2,7 +2,7 @@
 import unittest
 
 from base_test import BaseTest
-from sidebar import Sidebar
+from sidebar import PageWithSidebar
 
 import flask
 
@@ -19,7 +19,7 @@ class SidebarTest(BaseTest):
   def testLinks(self):
     """Make sure all the links are pointed to the correct paths."""
     self.driver.get(self.args.server_url)
-    sidebar = Sidebar(self.driver)
+    sidebar = PageWithSidebar(self.driver)
 
     home_link = sidebar.GetLink(sidebar.HOME_LINK)
     self.assertEquals(flask.url_for('landing'),

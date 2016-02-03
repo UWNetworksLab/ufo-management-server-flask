@@ -8,7 +8,6 @@ class BaseDriver(object):
 
   """Base driver that will be called from all pages and elements."""
 
-  SIDEBAR = (By.TAG_NAME, 'ufo-sidebar')
   GENERIC_DIV = (By.TAG_NAME, 'div')
 
   def __init__(self, driver):
@@ -42,11 +41,3 @@ class BaseDriver(object):
       A generic element if found.
     """
     return self.driver.find_element(*element_locator)
-
-  def GetSidebar(self):
-    """Get the sidebar element on the user page.
-
-    Returns:
-      The sidebar element for any page.
-    """
-    return self.driver.find_element(*BaseDriver.SIDEBAR)

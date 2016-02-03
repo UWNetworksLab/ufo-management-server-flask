@@ -1,9 +1,9 @@
 """Landing page module for testing."""
-from base_driver import BaseDriver
+from sidebar import PageWithSidebar
 
 from selenium.webdriver.common.by import By
 
-class LandingPage(BaseDriver):
+class LandingPage(PageWithSidebar):
 
   """Home page action methods and locators."""
 
