@@ -11,3 +11,4 @@ def landing():
 import setup # handlers for /setup
 import user # handlers for /user
 import proxy_server # handlers for /proxy_server
+import chrome_policy # handlers for /chrome_policy

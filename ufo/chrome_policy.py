@@ -36,3 +36,9 @@ def chrome_policy():
   policy_json = _MakeChromePolicyJson()
 
   return flask.render_template('chrome_policy.html', policy_json=policy_json)
+
+
+@app.route('/chromepolicy/download/')
+@setup_required
+def chrome_policy_download():
+  return _MakeChromePolicyJson()
