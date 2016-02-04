@@ -9,7 +9,7 @@ import models
 
 
 def _MakeChromePolicyJson():
-  """Generate the json string of chrome policy based on values in the database.
+  """Generates the json string of chrome policy based on values in the db.
 
   This policy string has the following form:
 
@@ -32,7 +32,12 @@ def _MakeChromePolicyJson():
 
 @app.route('/chromepolicy/')
 @setup_required
-def chrome_policy():
+def display_chrome_policy():
+  """Renders the current chrome policy as json and editable values.
+
+  Returns:
+    The rendered chrom_policy.html template with policy values as variables.
+  """
   policy_json = _MakeChromePolicyJson()
   config = models.Config.query.get(0)
 
@@ -44,13 +49,24 @@ def chrome_policy():
 
 @app.route('/chromepolicy/download/')
 @setup_required
-def chrome_policy_download():
+def download_chrome_policy():
+  """Outputs the managed chrome policy in json form for downloading as a file.
+
+  Returns:
+    A json file of the current managed chrome policy.
+  """
   return _MakeChromePolicyJson()
 
 @app.route('/chromepolicy/edit', methods=['POST'])
 @setup_required
 def edit_policy_config():
-  """Post the form for editing the policy config values."""
+  """Receives the posted form for editing the policy config values.
+
+  The new policy config values are stored in the database.
+
+  Returns:
+    A redirect back to display chrome policy with will display the new values.
+  """
 
   config = models.Config.query.get(0)
 
@@ -70,4 +86,4 @@ def edit_policy_config():
 
   config.save()
 
-  return flask.redirect(flask.url_for('chrome_policy'))
+  return flask.redirect(flask.url_for('display_chrome_policy'))

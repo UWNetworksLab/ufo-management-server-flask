@@ -19,7 +19,7 @@ class ChromePolicyTest(base_test.BaseTest):
   def testChromePolicyRenderTemplate(self, mock_render_template):
     """Test the chrome policy handler renders the page."""
     mock_render_template.return_value = ''
-    resp = self.client.get(flask.url_for('chrome_policy'))
+    resp = self.client.get(flask.url_for('display_chrome_policy'))
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('chrome_policy.html', args[0])
@@ -32,7 +32,7 @@ class ChromePolicyTest(base_test.BaseTest):
 
   def testChromePolicyDownload(self):
     """Test the chrome policy download handler downloads json."""
-    resp = self.client.get(flask.url_for('chrome_policy_download'))
+    resp = self.client.get(flask.url_for('download_chrome_policy'))
 
     json_data = json.loads(resp.data)
     self.assertIn('proxy_server_keys', json_data)
@@ -57,7 +57,7 @@ class ChromePolicyTest(base_test.BaseTest):
                      updated_config.proxy_server_validity)
     self.assertEqual(not initial_network_jail_config,
                      updated_config.network_jail_until_google_auth)
-    self.assert_redirects(resp, flask.url_for('chrome_policy'))
+    self.assert_redirects(resp, flask.url_for('display_chrome_policy'))
 
 if __name__ == '__main__':
   unittest.main()
