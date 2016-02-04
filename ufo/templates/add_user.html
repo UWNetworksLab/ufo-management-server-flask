@@ -26,8 +26,8 @@
           <!-- Paper checkbox doesn't work without manually collecting values
           in javascript so we aren't using that yet. -->
           <td><input type="checkbox" name="selected_user" value="{{ directory_user }}"></td>
-          <td>{{ directory_user['name']['fullName'] }}</td>
-          <td>{{ directory_user['primaryEmail'] }}</td>
+          <td>{{ directory_user['user_name'] }}</td>
+          <td>{{ directory_user['user_email'] }}</td>
         </tr>
       {% endfor %}
       </table>
