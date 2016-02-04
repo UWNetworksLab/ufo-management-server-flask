@@ -10,7 +10,7 @@
 indent-string='  '
 
 # lower_with_underscore setting for method names.
-method-rgx=([a-z_][a-z0-9]{2,30})$
+method-rgx=([a-z_][a-z0-9_]{2,30})$
 
 # lower_with_underscore setting for function names.
-function-rgx=([a-z_][a-z0-9]{2,30})$
+function-rgx=([a-z_][a-z0-9_]{2,30})$
