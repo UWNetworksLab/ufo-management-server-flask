@@ -27,6 +27,8 @@ class ChromePolicyTest(base_test.BaseTest):
     self.assertIn('proxy_server_keys', json_data)
     self.assertIn('enforce_proxy_server_validity', json_data)
     self.assertIn('enforce_network_jail', json_data)
+    self.assertIn('enforce_proxy_server_validity', kwargs)
+    self.assertIn('enforce_network_jail', kwargs)
 
   def testChromePolicyDownload(self):
     """Test the chrome policy download handler downloads json."""
@@ -36,6 +38,26 @@ class ChromePolicyTest(base_test.BaseTest):
     self.assertIn('proxy_server_keys', json_data)
     self.assertIn('enforce_proxy_server_validity', json_data)
     self.assertIn('enforce_network_jail', json_data)
+
+  def testEditValuesForPolicyConfig(self):
+    """Test posting with modified policy config values updates in the db."""
+    config = models.Config.query.get(0)
+    initial_proxy_server_config = config.proxy_server_validity
+    initial_network_jail_config = config.network_jail_until_google_auth
+    data_to_post = {
+        'enforce_proxy_server_validity': str(not initial_proxy_server_config),
+        'enforce_network_jail': str(not initial_network_jail_config),
+    }
+
+    resp = self.client.post(flask.url_for('edit_policy_config'),
+                            data=data_to_post, follow_redirects=False)
+
+    updated_config = models.Config.query.get(0)
+    self.assertEqual(not initial_proxy_server_config,
+                     updated_config.proxy_server_validity)
+    self.assertEqual(not initial_network_jail_config,
+                     updated_config.network_jail_until_google_auth)
+    self.assert_redirects(resp, flask.url_for('chrome_policy'))
 
 if __name__ == '__main__':
   unittest.main()
