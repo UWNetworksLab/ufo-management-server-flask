@@ -56,7 +56,7 @@ class GoogleDirectoryService(object):
       group_key: A string identifying a google group for querying users.
 
     Returns:
-      users: A list of group members which are users and not groups.
+      A list of group members which are users and not groups.
 
     Raises:
       googleapiclient.errors.HttpError on failure to find the group.
@@ -92,7 +92,7 @@ class GoogleDirectoryService(object):
       user_key: A string identifying an individual user.
 
     Returns:
-      users: The user if found.
+      The user if found.
 
     Raises:
       googleapiclient.errors.HttpError on failure to find the user.
@@ -112,7 +112,7 @@ class GoogleDirectoryService(object):
       user_key: A string identifying an individual user.
 
     Returns:
-      users: A list with that user in it or empty.
+      A list with that user in it or empty.
 
     Raises:
       googleapiclient.errors.HttpError on failure to find the user.
