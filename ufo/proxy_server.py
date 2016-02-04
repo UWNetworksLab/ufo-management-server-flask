@@ -20,6 +20,7 @@ def _MakeKeyString():
   Returns:
     key_string: A string of users with associated key.
   """
+  # TODO: Improve this so that we only do this if there are relevant changes.
   users = models.User.query.all()
   key_string = ''
   ssh_starting_portion = 'ssh-rsa'
