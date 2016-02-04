@@ -8,7 +8,7 @@ import json
 import models
 
 
-def _MakeChromePolicyJson():
+def _make_chrome_policy_json():
   """Generates the json string of chrome policy based on values in the db.
 
   This policy string has the following form:
@@ -38,7 +38,7 @@ def display_chrome_policy():
   Returns:
     The rendered chrom_policy.html template with policy values as variables.
   """
-  policy_json = _MakeChromePolicyJson()
+  policy_json = _make_chrome_policy_json()
   config = models.Config.query.get(0)
 
   return flask.render_template(
@@ -55,7 +55,7 @@ def download_chrome_policy():
   Returns:
     A json file of the current managed chrome policy.
   """
-  return _MakeChromePolicyJson()
+  return _make_chrome_policy_json()
 
 @app.route('/chromepolicy/edit', methods=['POST'])
 @setup_required
