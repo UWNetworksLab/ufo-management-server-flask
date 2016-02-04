@@ -5,8 +5,10 @@ from . import app, db, setup_required
 import flask
 import logging
 import models
+from rq import Queue
 import ssh_client
 import StringIO
+from worker import conn
 
 
 def _MakeKeyString():
@@ -125,12 +127,12 @@ def proxyserver_delete(server_id):
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-#TODO use task queues, split this up a bit
-@app.route('/cron/proxyserver/distributekeys')
 @setup_required
-def proxyserver_distributekeys():
+def distribute_keys():
+  """Distribute user keys to proxy servers to authenticate invite code."""
   key_string = _MakeKeyString()
   proxy_servers = models.ProxyServer.query.all()
+  queue = Queue(connection=conn)
   for proxy_server in proxy_servers:
-    _SendKeysToServer(proxy_server, key_string)
-  return 'Done!'
+    queue.enqueue(_SendKeysToServer, proxy_server, key_string)
+  return 'Done enqueuing all key distribution jobs!'
