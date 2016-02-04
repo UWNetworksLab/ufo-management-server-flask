@@ -1,13 +1,15 @@
+"""Test chrome policy module functionality."""
 
 import flask
 import json
 import mock
+import unittest
 
-import base_test
-import models
-import chrome_policy
+import ufo.base_test
+import ufo.models
 
-class ChromePolicyTest(base_test.BaseTest):
+
+class ChromePolicyTest(ufo.base_test.BaseTest):
   """Test chrome policy functionality."""
 
   def setUp(self):
@@ -19,7 +21,7 @@ class ChromePolicyTest(base_test.BaseTest):
   def testChromePolicyRenderTemplate(self, mock_render_template):
     """Test the chrome policy handler renders the page."""
     mock_render_template.return_value = ''
-    resp = self.client.get(flask.url_for('display_chrome_policy'))
+    self.client.get(flask.url_for('display_chrome_policy'))
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('chrome_policy.html', args[0])
@@ -41,7 +43,7 @@ class ChromePolicyTest(base_test.BaseTest):
 
   def testEditValuesForPolicyConfig(self):
     """Test posting with modified policy config values updates in the db."""
-    config = models.Config.query.get(0)
+    config = ufo.models.Config.query.get(0)
     initial_proxy_server_config = config.proxy_server_validity
     initial_network_jail_config = config.network_jail_until_google_auth
     data_to_post = {
@@ -52,7 +54,7 @@ class ChromePolicyTest(base_test.BaseTest):
     resp = self.client.post(flask.url_for('edit_policy_config'),
                             data=data_to_post, follow_redirects=False)
 
-    updated_config = models.Config.query.get(0)
+    updated_config = ufo.models.Config.query.get(0)
     self.assertEqual(not initial_proxy_server_config,
                      updated_config.proxy_server_validity)
     self.assertEqual(not initial_network_jail_config,

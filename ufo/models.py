@@ -132,7 +132,7 @@ class ProxyServer(Model):
     self.host_public_key_type = host_key_entry.key.get_name()
     self.host_public_key = host_key_entry.key.asbytes()
 
-  def _MakePublicKey(self):
+  def make_public_key(self):
     """Creates an output-able string of the public key for the server.
 
     Returns:
