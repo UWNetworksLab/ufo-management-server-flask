@@ -8,10 +8,6 @@ import ufo.models
 
 NUM_RETRIES = 3
 
-VALID_WATCH_EVENTS = ['add', 'delete', 'makeAdmin', 'undelete', 'update']
-
-# TODO(eholder): Write tests for these functions.
-
 class GoogleDirectoryService(object):
 
   """Interact with Google Directory API."""
