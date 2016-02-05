@@ -20,14 +20,14 @@ from rq import Queue
 from rq import Worker
 
 
-listen = ['high', 'default', 'low']
+LISTEN = ['high', 'default', 'low']
 
-redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
+REDIS_URL = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 
-conn = redis.from_url(redis_url)
+CONN = redis.from_url(REDIS_URL)
 
 
 if __name__ == '__main__':
-  with Connection(conn):
-    worker = Worker(map(Queue, listen))
+  with Connection(CONN):
+    worker = Worker(map(Queue, LISTEN))
     worker.work()

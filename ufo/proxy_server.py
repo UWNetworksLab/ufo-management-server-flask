@@ -128,9 +128,13 @@ def proxyserver_delete(server_id):
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-@setup_required
+# TODO: Move this to a different module as it not a handled request.
 def distribute_keys():
-  """Distribute user keys to proxy servers to authenticate invite code."""
+  """Distribute user keys to proxy servers to authenticate invite code.
+  
+  Returns:
+    A string that tells job is enqueued.
+  """
   key_string = _MakeKeyString()
   proxy_servers = models.ProxyServer.query.all()
   queue = Queue(connection=conn)
