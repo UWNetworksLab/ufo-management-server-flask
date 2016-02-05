@@ -5,12 +5,7 @@ import httplib2
 from googleapiclient import discovery
 
 MY_CUSTOMER_ALIAS = 'my_customer'
-
 NUM_RETRIES = 3
-
-VALID_WATCH_EVENTS = ['add', 'delete', 'makeAdmin', 'undelete', 'update']
-
-# TODO(eholder): Write tests for these functions.
 
 class GoogleDirectoryService(object):
 
