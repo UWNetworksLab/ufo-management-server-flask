@@ -26,7 +26,7 @@ FAKE_EMAILS_AND_NAMES = [
   {'email': 'baz@gmail.com', 'name': 'mark'}
 ]
 FAKE_DIRECTORY_USER_ARRAY = []
-FAKE_STRIPPED_USER_ARRAY = []
+FAKE_USERS_FOR_DISPLAY_ARRAY = []
 for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
   fake_directory_user = {}
   fake_directory_user['primaryEmail'] = fake_email_and_name['email']
@@ -35,12 +35,12 @@ for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
   fake_directory_user['email'] = fake_email_and_name['email']
   fake_directory_user['role'] = 'MEMBER'
   fake_directory_user['type'] = 'USER'
-  fake_stripped_user = {
-      'user_name': fake_email_and_name['name'],
-      'user_email': fake_email_and_name['email']
+  fake_user_for_display = {
+      'name': fake_email_and_name['name'],
+      'email': fake_email_and_name['email']
   }
   FAKE_DIRECTORY_USER_ARRAY.append(fake_directory_user)
-  FAKE_STRIPPED_USER_ARRAY.append(fake_stripped_user)
+  FAKE_USERS_FOR_DISPLAY_ARRAY.append(fake_user_for_display)
 
 FAKE_CREDENTIAL = 'Look at me. I am a credential!'
 
@@ -137,7 +137,7 @@ class UserTest(base_test.BaseTest):
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('add_user.html', args[0])
-    self.assertEquals(FAKE_STRIPPED_USER_ARRAY, kwargs['directory_users'])
+    self.assertEquals(FAKE_USERS_FOR_DISPLAY_ARRAY, kwargs['directory_users'])
 
   @patch('flask.render_template')
   @patch.object(oauth, 'getSavedCredentials')
@@ -158,7 +158,7 @@ class UserTest(base_test.BaseTest):
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('add_user.html', args[0])
-    self.assertEquals(FAKE_STRIPPED_USER_ARRAY, kwargs['directory_users'])
+    self.assertEquals(FAKE_USERS_FOR_DISPLAY_ARRAY, kwargs['directory_users'])
 
   @patch('flask.render_template')
   @patch.object(oauth, 'getSavedCredentials')
@@ -177,7 +177,7 @@ class UserTest(base_test.BaseTest):
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('add_user.html', args[0])
-    self.assertEquals(FAKE_STRIPPED_USER_ARRAY, kwargs['directory_users'])
+    self.assertEquals(FAKE_USERS_FOR_DISPLAY_ARRAY, kwargs['directory_users'])
 
   @patch('flask.render_template')
   @patch.object(oauth, 'getSavedCredentials')
@@ -213,8 +213,8 @@ class UserTest(base_test.BaseTest):
     data = MultiDict()
     for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
       mock_user = {}
-      mock_user['user_email'] = fake_email_and_name['email']
-      mock_user['user_name'] = fake_email_and_name['name']
+      mock_user['email'] = fake_email_and_name['email']
+      mock_user['name'] = fake_email_and_name['name']
       mock_users.append(mock_user)
       data.add('selected_user', json.dumps(mock_user))
 
@@ -240,8 +240,8 @@ class UserTest(base_test.BaseTest):
     """Test add users manually calls to insert the specified user."""
     data = {}
     data['manual'] = True
-    data['user_email'] = FAKE_EMAILS_AND_NAMES[0]['email']
-    data['user_name'] = FAKE_EMAILS_AND_NAMES[0]['name']
+    data['email'] = FAKE_EMAILS_AND_NAMES[0]['email']
+    data['name'] = FAKE_EMAILS_AND_NAMES[0]['name']
 
     response = self.client.post(flask.url_for('add_user'), data=data,
                                 follow_redirects=False)

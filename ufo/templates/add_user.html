@@ -26,8 +26,8 @@
           <!-- Paper checkbox doesn't work without manually collecting values
           in javascript so we aren't using that yet. -->
           <td><input type="checkbox" name="selected_user" value="{{ directory_user }}"></td>
-          <td>{{ directory_user['user_name'] }}</td>
-          <td>{{ directory_user['user_email'] }}</td>
+          <td>{{ directory_user['name'] }}</td>
+          <td>{{ directory_user['email'] }}</td>
         </tr>
       {% endfor %}
       </table>
@@ -90,10 +90,10 @@
       <form id="users-manual-form" method="post"
         action="{{ url_for('add_user') }}">
         <paper-input label="Input user name here." type="textbox"
-        name="user_name" value="{{ user_name }}" required>
+        name="user_name" value="{{ name }}" required>
         </paper-input>
         <paper-input label="Input user email here." type="email"
-        name="user_email" value="{{ user_email }}" required auto-validate
+        name="user_email" value="{{ email }}" required auto-validate
         pattern="{{EMAIL_VALIDATION_PATTERN}}"
         error-message="{{EMAIL_VALIDATION_ERROR}}">
         </paper-input>

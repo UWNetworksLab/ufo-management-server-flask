@@ -52,11 +52,11 @@ def _render_user_add(get_all, group_key, user_key):
 
     users_to_output = []
     for directory_user in directory_users:
-      stripped_user = {
-          'user_name': directory_user['name']['fullName'],
-          'user_email': directory_user['primaryEmail']
+      user_for_display = {
+          'name': directory_user['name']['fullName'],
+          'email': directory_user['primaryEmail']
       }
-      users_to_output.append(stripped_user)
+      users_to_output.append(user_for_display)
 
     return flask.render_template('add_user.html',
                                  directory_users=users_to_output)
@@ -163,8 +163,8 @@ def add_user():
 
   manual = flask.request.form.get('manual')
   if manual:
-    user_name = flask.request.form.get('user_name')
-    user_email = flask.request.form.get('user_email')
+    user_name = flask.request.form.get('name')
+    user_email = flask.request.form.get('email')
     user = ufo.models.User()
     user.name = user_name
     user.email = user_email
@@ -175,8 +175,8 @@ def add_user():
       # TODO we should be submitting data in a better format
       u = ast.literal_eval(user)
       user = ufo.models.User()
-      user.name = u['user_name']
-      user.email = u['user_email']
+      user.name = u['name']
+      user.email = u['email']
       user.save(commit=False)
 
     if len(users) > 0:

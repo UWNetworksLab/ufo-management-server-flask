@@ -4,7 +4,7 @@ import httplib2
 
 from googleapiclient import discovery
 
-import ufo.models
+import ufo
 
 NUM_RETRIES = 3
 
@@ -27,7 +27,7 @@ class GoogleDirectoryService(object):
     Raises:
       googleapiclient.errors.HttpError on failure to find the domain.
     """
-    config = ufo.models.Config.query.get(0)
+    config = ufo.get_user_config()
     users = []
     page_token = ''
     while True:
