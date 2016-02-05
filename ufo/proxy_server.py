@@ -51,7 +51,7 @@ def _GetViewDataFromProxyServer(server):
     "id": server.id,
     "name": server.name,
     "ip_address": server.ip_address,
-    "public_key": server.make_public_key(),
+    "public_key": server.get_public_key_as_authorization_file_string(),
     "private_key": private_key_text,
     }
 

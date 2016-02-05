@@ -5,11 +5,11 @@ import json
 import mock
 import unittest
 
-import ufo.base_test
-import ufo.models
+import ufo
+from ufo import base_test
 
 
-class ChromePolicyTest(ufo.base_test.BaseTest):
+class ChromePolicyTest(base_test.BaseTest):
   """Test chrome policy functionality."""
 
   def setUp(self):
@@ -43,7 +43,7 @@ class ChromePolicyTest(ufo.base_test.BaseTest):
 
   def testEditValuesForPolicyConfig(self):
     """Test posting with modified policy config values updates in the db."""
-    config = ufo.models.Config.query.get(0)
+    config = ufo.get_user_config()
     initial_proxy_server_config = config.proxy_server_validity
     initial_network_jail_config = config.network_jail_until_google_auth
     data_to_post = {
@@ -54,7 +54,7 @@ class ChromePolicyTest(ufo.base_test.BaseTest):
     resp = self.client.post(flask.url_for('edit_policy_config'),
                             data=data_to_post, follow_redirects=False)
 
-    updated_config = ufo.models.Config.query.get(0)
+    updated_config = ufo.get_user_config()
     self.assertEqual(not initial_proxy_server_config,
                      updated_config.proxy_server_validity)
     self.assertEqual(not initial_network_jail_config,

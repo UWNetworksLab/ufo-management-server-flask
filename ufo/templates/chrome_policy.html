@@ -71,8 +71,7 @@
   <script>
     var toggles = document.querySelectorAll('paper-toggle-button');
 
-    var i = 0;
-    for (; i < toggles.length; i++) {
+    for (var i in toggles) {
       toggles[i].addEventListener('change', function(event) {
           toggleElem = event.path[0];
           hiddenInput = toggleElem.querySelector('input');

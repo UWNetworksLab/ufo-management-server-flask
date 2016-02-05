@@ -5,7 +5,8 @@ from . import app, setup_required
 import flask
 import json
 
-import ufo.models
+import ufo
+from ufo import models
 
 
 def _make_chrome_policy_json():
@@ -16,10 +17,10 @@ def _make_chrome_policy_json():
   Returns:
     A json string of current chrome policy.
   """
-  proxy_servers = ufo.models.ProxyServer.query.all()
-  proxy_server_public_keys = [s.make_public_key() for s in proxy_servers]
+  proxy_servers = models.ProxyServer.query.all()
+  proxy_server_public_keys = [s.get_public_key_as_authorization_file_string() for s in proxy_servers]
 
-  config = ufo.models.Config.query.get(0)
+  config = ufo.get_user_config()
 
   policy_dictionary = {
       "proxy_server_keys": proxy_server_public_keys,
@@ -39,7 +40,7 @@ def display_chrome_policy():
     The rendered chrom_policy.html template with policy values as variables.
   """
   policy_json = _make_chrome_policy_json()
-  config = ufo.models.Config.query.get(0)
+  config = ufo.get_user_config()
 
   return flask.render_template(
       'chrome_policy.html', policy_json=policy_json,
@@ -55,7 +56,8 @@ def download_chrome_policy():
   Returns:
     A json file of the current managed chrome policy.
   """
-  return _make_chrome_policy_json()
+  return flask.Response(_make_chrome_policy_json(),
+                        mimetype='application/json')
 
 @app.route('/chromepolicy/edit', methods=['POST'])
 @setup_required
@@ -68,7 +70,7 @@ def edit_policy_config():
     A redirect back to display chrome policy with will display the new values.
   """
 
-  config = ufo.models.Config.query.get(0)
+  config = ufo.get_user_config()
 
   # TODO(eholder): The Polymer html for sending toggle button values as inputs
   # really sucks. I basically have to parse it out manually in JS then set it
