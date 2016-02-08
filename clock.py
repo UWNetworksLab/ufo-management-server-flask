@@ -10,11 +10,11 @@ import ufo
 
 SCHEDULER = BlockingScheduler()
 
-@SCHEDULER.scheduled_job('interval', seconds=5)
+@SCHEDULER.scheduled_job('interval', minutes=15)
 def distribute_user_keys_to_proxy_servers():
   """Schedule the user key distribution to proxy servers."""
-  # TODO: configure the logger to direct to stdout
-  print 'Start distributing keys to proxy server.'
+  # TODO: Configure the logger to direct to stdout.
+  print 'Start distributing user keys to proxy server.'
   ufo.proxy_server.distribute_keys()
 
 

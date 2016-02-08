@@ -35,16 +35,10 @@ def _MakeKeyString():
   return key_string
 
 def _SendKeysToServer(server, keys):
-  print '>>>>>>>>print: aaaaa'
-  logging.info('>>>>>info: bbbbb')
-  logging.error('>>>>>error: ccccc')
   client = ssh_client.SSHClient()
   client.connect(server)
 
   # TODO do stuff
-  print '>>>>>>>>print: 111111'
-  logging.info('>>>>>info: 22222')
-  logging.error('>>>>>error: 33333')
 
   client.close()
 
@@ -141,14 +135,9 @@ def distribute_keys():
   Returns:
     A string that tells job is enqueued.
   """
-  print '>>>>> print: inside proxy server to distribute key'
-  logging.info('>>>>> info: inside proxy server to distribute key')
-  logging.error('>>>>> error: inside proxy server to distribute key')
   key_string = _MakeKeyString()
   proxy_servers = models.ProxyServer.query.all()
   queue = Queue(connection=worker.CONN)
   for proxy_server in proxy_servers:
-    print '>>>>> enqueue'
     queue.enqueue(_SendKeysToServer, proxy_server, key_string)
-  print 'done enqueue all jobs'
   return 'Done enqueuing all key distribution jobs!'
