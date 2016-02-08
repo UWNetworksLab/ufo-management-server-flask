@@ -26,6 +26,7 @@
           <!-- Paper checkbox doesn't work without manually collecting values
           in javascript so we aren't using that yet. -->
           <td><input type="checkbox" name="selected_user" value="{{ directory_user }}"></td>
+          <!-- TODO(eholder): Move this to a more API like format where we are submitting via json and follow the same structure for manually added users and selected users (a list of user dictionaries/objects which contain name and email fields). -->
           <td>{{ directory_user['name'] }}</td>
           <td>{{ directory_user['email'] }}</td>
         </tr>
