@@ -35,6 +35,9 @@ def _MakeKeyString():
   return key_string
 
 def _SendKeysToServer(server, keys):
+  print '>>>>>>>>print: aaaaa'
+  logging.info('>>>>>info: bbbbb')
+  logging.error('>>>>>error: ccccc')
   client = ssh_client.SSHClient()
   client.connect(server)
 
