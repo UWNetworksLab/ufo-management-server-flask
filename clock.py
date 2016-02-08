@@ -2,11 +2,11 @@
 
 https://devcenter.heroku.com/articles/clock-processes-python
 """
-import apscheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 import ufo
 
 
-SCHEDULER = apscheduler.schedulers.blocking.BlockingScheduler()
+SCHEDULER = BlockingScheduler()
 
 @SCHEDULER.scheduled_job('interval', minutes=15)
 def distribute_user_keys_to_proxy_servers():
