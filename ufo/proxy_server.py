@@ -8,7 +8,7 @@ import models
 from rq import Queue
 import ssh_client
 import StringIO
-from worker import conn
+import worker
 
 
 def _MakeKeyString():
@@ -137,7 +137,7 @@ def distribute_keys():
   """
   key_string = _MakeKeyString()
   proxy_servers = models.ProxyServer.query.all()
-  queue = Queue(connection=conn)
+  queue = Queue(connection=worker.CONN)
   for proxy_server in proxy_servers:
     queue.enqueue(_SendKeysToServer, proxy_server, key_string)
   return 'Done enqueuing all key distribution jobs!'
