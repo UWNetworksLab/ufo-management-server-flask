@@ -4,7 +4,6 @@ https://devcenter.heroku.com/articles/clock-processes-python
 """
 # Use the default import to avoid module AttributeError (http://goo.gl/YM7kyZ)
 from apscheduler.schedulers.blocking import BlockingScheduler
-import logging
 import ufo
 
 
