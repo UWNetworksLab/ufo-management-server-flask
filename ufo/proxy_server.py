@@ -145,6 +145,7 @@ def distribute_keys():
   proxy_servers = models.ProxyServer.query.all()
   queue = Queue(connection=worker.CONN)
   for proxy_server in proxy_servers:
+    print '>>>>> enqueue'
     queue.enqueue(_SendKeysToServer, proxy_server, key_string)
   print 'done enqueue all jobs'
   return 'Done enqueuing all key distribution jobs!'
