@@ -39,6 +39,9 @@ def _SendKeysToServer(server, keys):
   client.connect(server)
 
   # TODO do stuff
+  print '>>>>>>>> 111111'
+  logging.info('>>>>> 22222')
+  logging.info('>>>>> 33333')
 
   client.close()
 
