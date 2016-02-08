@@ -13,9 +13,8 @@ SCHEDULER = BlockingScheduler()
 @SCHEDULER.scheduled_job('interval', seconds=5)
 def distribute_user_keys_to_proxy_servers():
   """Schedule the user key distribution to proxy servers."""
-  print 'running?'
-  logging.info('>>>>> logging by info')
-  logging.error('>>>>> logging by error')
+  # TODO: configure the logger to direct to stdout
+  print 'Start distributing keys to proxy server.'
   ufo.proxy_server.distribute_keys()
 
 
