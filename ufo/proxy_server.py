@@ -39,9 +39,9 @@ def _SendKeysToServer(server, keys):
   client.connect(server)
 
   # TODO do stuff
-  print '>>>>>>>> 111111'
-  logging.info('>>>>> 22222')
-  logging.info('>>>>> 33333')
+  print '>>>>>>>>print: 111111'
+  logging.info('>>>>>info: 22222')
+  logging.error('>>>>>error: 33333')
 
   client.close()
 
@@ -139,9 +139,12 @@ def distribute_keys():
     A string that tells job is enqueued.
   """
   print '>>>>> print: inside proxy server to distribute key'
+  logging.info('>>>>> info: inside proxy server to distribute key')
+  logging.error('>>>>> error: inside proxy server to distribute key')
   key_string = _MakeKeyString()
   proxy_servers = models.ProxyServer.query.all()
   queue = Queue(connection=worker.CONN)
   for proxy_server in proxy_servers:
     queue.enqueue(_SendKeysToServer, proxy_server, key_string)
+  print 'done enqueue all jobs'
   return 'Done enqueuing all key distribution jobs!'
