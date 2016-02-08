@@ -138,6 +138,7 @@ def distribute_keys():
   Returns:
     A string that tells job is enqueued.
   """
+  print '>>>>> print: inside proxy server to distribute key'
   key_string = _MakeKeyString()
   proxy_servers = models.ProxyServer.query.all()
   queue = Queue(connection=worker.CONN)
