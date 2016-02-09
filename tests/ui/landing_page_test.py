@@ -3,20 +3,11 @@ import unittest
 
 from base_test import BaseTest
 from landing_page import LandingPage
-from test_config import CHROME_DRIVER_LOCATION
-
-from selenium import webdriver
 
 
 class LandingPageTest(BaseTest):
 
   """Test landing page functionality."""
-
-  def setUp(self):
-    """Setup for test methods."""
-    self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION)
-    # TODO(eholder) Re-enable this once we have a login module again.
-    # LoginPage(self.driver).Login(self.args)
 
   def testLandingPage(self):
     """Test the landing page."""
@@ -30,13 +21,11 @@ class LandingPageTest(BaseTest):
     self.driver.get(self.args.server_url)
 
     landing_page = LandingPage(self.driver)
-    self.assertEquals(title, landing_page.GetTitle().text)
-    self.assertEquals(instruction, landing_page.GetInstruction().text)
+    title_elem = landing_page.GetElement(landing_page.TITLE)
+    instruction_elem = landing_page.GetElement(landing_page.INSTRUCTION)
+    self.assertEquals(title, title_elem.text)
+    self.assertEquals(instruction, instruction_elem.text)
     self.assertIsNotNone(landing_page.GetSidebar())
-
-  def tearDown(self):
-    """Teardown for test methods."""
-    self.driver.quit()
 
 
 if __name__ == '__main__':
