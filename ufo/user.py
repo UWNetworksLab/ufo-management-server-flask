@@ -8,9 +8,9 @@ import random
 
 from googleapiclient import errors
 
-import ufo.google_directory_service
-import ufo.models
-import ufo.oauth
+from ufo import google_directory_service
+from ufo import models
+from ufo import oauth
 
 def _render_user_add(get_all, group_key, user_key):
   """Renders the user add template with the requested users if found.
@@ -31,7 +31,7 @@ def _render_user_add(get_all, group_key, user_key):
     there is an error, that error is included in the template along with an
     empty list of users.
   """
-  credentials = ufo.oauth.getSavedCredentials()
+  credentials = oauth.getSavedCredentials()
   # TODO this should handle the case where we do not have oauth
   if not credentials:
     return flask.render_template('add_user.html',
@@ -39,7 +39,7 @@ def _render_user_add(get_all, group_key, user_key):
                                  error="OAuth is not set up")
 
   try:
-    directory_service = ufo.google_directory_service.GoogleDirectoryService(
+    directory_service = google_directory_service.GoogleDirectoryService(
         credentials)
 
     directory_users = []
@@ -71,7 +71,7 @@ def _get_random_server_ip():
   Returns:
     A randomly selected proxy server's ip address as a string.
   """
-  proxy_servers = ufo.models.ProxyServer.query.all()
+  proxy_servers = models.ProxyServer.query.all()
   if len(proxy_servers) == 0:
     return None
 
@@ -134,7 +134,7 @@ def user_list():
   Returns:
     A rendered template of user.html with the users currently in the db.
   """
-  users = ufo.models.User.query.all()
+  users = models.User.query.all()
   user_emails = {}
   for user in users:
     user_emails[user.id] = user.email
@@ -161,26 +161,16 @@ def add_user():
     user_key = flask.request.args.get('user_key')
     return _render_user_add(get_all, group_key, user_key)
 
-  manual = flask.request.form.get('manual')
-  if manual:
-    user_name = flask.request.form.get('name')
-    user_email = flask.request.form.get('email')
-    user = ufo.models.User()
-    user.name = user_name
-    user.email = user_email
-    user.save()
-  else:
-    users = flask.request.form.getlist('selected_user')
-    for user in users:
-      # TODO we should be submitting data in a better format
-      u = ast.literal_eval(user)
-      user = ufo.models.User()
-      user.name = u['name']
-      user.email = u['email']
-      user.save(commit=False)
+  json_users = flask.request.form.get('users')
+  users_list = json.loads(json_users)
+  for submitted_user in users_list:
+    db_user = models.User()
+    db_user.name = submitted_user['name']
+    db_user.email = submitted_user['email']
+    db_user.save(commit=False)
 
-    if len(users) > 0:
-      db.session.commit()
+  if len(users_list) > 0:
+    db.session.commit()
 
   return flask.redirect(flask.url_for('user_list'))
 
@@ -199,7 +189,7 @@ def user_details(user_id):
     A rendered template of user_details.html for the given user_id along with
     an invite code for that user.
   """
-  user = ufo.models.User.query.get_or_404(user_id)
+  user = models.User.query.get_or_404(user_id)
   return flask.render_template('user_details.html',
                                user=user,
                                invite_code=_make_invite_code(user))
@@ -219,7 +209,7 @@ def delete_user(user_id):
   Returns:
     A redirect to the user_list page after deleting the given user.
   """
-  user = ufo.models.User.query.get_or_404(user_id)
+  user = models.User.query.get_or_404(user_id)
   user.delete()
 
   return flask.redirect(flask.url_for('user_list'))
@@ -238,7 +228,7 @@ def user_get_new_key_pair(user_id):
   Returns:
     A redirect to the user_details page after rotating the user's keys.
   """
-  user = ufo.models.User.query.get_or_404(user_id)
+  user = models.User.query.get_or_404(user_id)
   user.regenerate_key_pair()
   user.save()
 
@@ -258,7 +248,7 @@ def user_toggle_revoked(user_id):
   Returns:
     A redirect to the user_details page after flipping is_key_revoked.
   """
-  user = ufo.models.User.query.get_or_404(user_id)
+  user = models.User.query.get_or_404(user_id)
   user.is_key_revoked = not user.is_key_revoked
   user.save()
 

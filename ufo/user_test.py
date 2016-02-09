@@ -11,14 +11,14 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.datastructures import ImmutableMultiDict
 
 from . import app
-import base_test
+from ufo import base_test
 from . import db
 # I practically have to shorten this name so every single line doesn't go
 # over. If someone can't understand, they can use ctrl+f to look it up here.
-import google_directory_service as gds
-import models
-import oauth
-import user
+from ufo import google_directory_service as gds
+from ufo import models
+from ufo import oauth
+from ufo import user
 
 FAKE_EMAILS_AND_NAMES = [
   {'email': 'foo@aol.com', 'name': 'joe'},
@@ -210,15 +210,14 @@ class UserTest(base_test.BaseTest):
   def testAddUsersPostHandler(self):
     """Test the add users post handler calls to insert the specified users."""
     mock_users = []
-    data = MultiDict()
     for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
       mock_user = {}
       mock_user['email'] = fake_email_and_name['email']
       mock_user['name'] = fake_email_and_name['name']
       mock_users.append(mock_user)
-      data.add('selected_user', json.dumps(mock_user))
 
-    data = ImmutableMultiDict(data)
+    data = {'users': json.dumps(mock_users)}
+    #json_data = json.dumps(data)
 
     response = self.client.post(flask.url_for('add_user'), data=data,
                                 follow_redirects=False)
@@ -238,15 +237,16 @@ class UserTest(base_test.BaseTest):
 
   def testAddUsersPostManualHandler(self):
     """Test add users manually calls to insert the specified user."""
-    data = {}
-    data['manual'] = True
-    data['email'] = FAKE_EMAILS_AND_NAMES[0]['email']
-    data['name'] = FAKE_EMAILS_AND_NAMES[0]['name']
+    mock_user = {}
+    mock_user['email'] = FAKE_EMAILS_AND_NAMES[0]['email']
+    mock_user['name'] = FAKE_EMAILS_AND_NAMES[0]['name']
+    data = {'users': json.dumps([mock_user])}
 
     response = self.client.post(flask.url_for('add_user'), data=data,
                                 follow_redirects=False)
 
-    query = models.User.query.filter_by(email=FAKE_EMAILS_AND_NAMES[0]['email'])
+    query = models.User.query.filter_by(
+        email=FAKE_EMAILS_AND_NAMES[0]['email'])
     user_in_db = query.one_or_none()
     self.assertIsNotNone(user_in_db)
     self.assertEqual(FAKE_EMAILS_AND_NAMES[0]['name'], user_in_db.name)
