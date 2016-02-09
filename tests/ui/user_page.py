@@ -16,8 +16,8 @@ class UserPage(UfOPageLayout):
   ADD_USERS_TABS = (By.ID, 'tabsContent')
   ADD_MANUALLY_TAB = (By.XPATH, '//div[text()="Add Manually"]')
   ADD_MANUALLY_FORM = (By.ID, 'users-manual-form')
-  ADD_MANUALLY_INPUT_NAME = (By.NAME, 'user_name')
-  ADD_MANUALLY_INPUT_EMAIL = (By.NAME, 'user_email')
+  ADD_MANUALLY_INPUT_NAME = (By.NAME, 'name')
+  ADD_MANUALLY_INPUT_EMAIL = (By.NAME, 'email')
   SUBMIT_BUTTON = (By.TAG_NAME, 'paper-button')
 
   DELETE_FORM = (By.ID, 'user-delete-form')
