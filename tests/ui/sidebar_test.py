@@ -3,11 +3,8 @@ import unittest
 
 from base_test import BaseTest
 from sidebar import Sidebar
-from test_config import CHROME_DRIVER_LOCATION
-from ufo import app
 
 import flask
-from selenium import webdriver
 
 
 class SidebarTest(BaseTest):
@@ -16,11 +13,8 @@ class SidebarTest(BaseTest):
 
   def setUp(self):
     """Setup for test methods."""
-    self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION)
-    # TODO(eholder) Re-enable this once we have a login module again.
-    # LoginPage(self.driver).Login(self.args)
-    self.context = app.test_request_context()
-    self.context.push()
+    super(SidebarTest, self).setUp()
+    super(SidebarTest, self).setContext()
 
   def testLinks(self):
     """Make sure all the links are pointed to the correct paths."""
@@ -45,10 +39,6 @@ class SidebarTest(BaseTest):
 
     logout_link = sidebar.GetLink(sidebar.LOGOUT_LINK)
     self.assertEquals('/logout/', logout_link.get_attribute('data-href'))
-
-  def tearDown(self):
-    """Teardown for test methods."""
-    self.driver.quit()
 
 
 if __name__ == '__main__':
