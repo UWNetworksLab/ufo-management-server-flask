@@ -25,7 +25,6 @@ def _make_chrome_policy_json():
   policy_dictionary = {
       "proxy_server_keys": proxy_server_public_keys,
       "enforce_proxy_server_validity": config.proxy_server_validity,
-      "enforce_network_jail": config.network_jail_until_google_auth,
   }
 
   return json.dumps(policy_dictionary)
@@ -69,6 +68,10 @@ def edit_policy_config():
   Returns:
     A redirect back to display chrome policy with will display the new values.
   """
+  # TODO(eholder): Move the display of config values and the edit handlers to
+  # something more sensible once UI review tells us what that should be. I'm
+  # envisioning a settings or options page which is underneath the overall
+  # Setup link. For now, I just want these settings to be edittable somewhere.
 
   config = ufo.get_user_config()
 

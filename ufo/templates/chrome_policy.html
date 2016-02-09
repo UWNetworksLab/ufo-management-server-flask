@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block title %}Chrome Policy{% endblock %}
 {% block head %}
-  <link rel="import" href="{{ url_for('static', filename='bower_components/iron-collapse/iron-collapse.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-toggle-button/paper-toggle-button.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='collapseButton.html') }}" />
 {% endblock %}
 {% block body %}
   <div id="chrome-policy-card-holder">
@@ -32,10 +32,7 @@
           click override to edit Force Installation or Configure's values.
           Finally, click Save.
         </p>
-        <paper-button onclick="toggleCollapse('collapse-policy')">Show/hide Chrome Managed Policy</paper-button>
-        <iron-collapse id="collapse-policy">
-          <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{policy_json}}</pre>
-        </iron-collapse>
+        <ufo-collapse-button label="Managed Policy JSON" button-text="Show/hide Chrome Managed Policy" collapse-text="{{ policy_json }}"></ufo-collapse-button>
       </div>
       <div class="card-actions">
         <a href="{{ url_for('download_chrome_policy') }}" download="chrome_policy.json">

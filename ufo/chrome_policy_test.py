@@ -28,7 +28,7 @@ class ChromePolicyTest(base_test.BaseTest):
     json_data = json.loads(kwargs['policy_json'])
     self.assertIn('proxy_server_keys', json_data)
     self.assertIn('enforce_proxy_server_validity', json_data)
-    self.assertIn('enforce_network_jail', json_data)
+    self.assertNotIn('enforce_network_jail', json_data)
     self.assertIn('enforce_proxy_server_validity', kwargs)
     self.assertIn('enforce_network_jail', kwargs)
 
@@ -39,7 +39,7 @@ class ChromePolicyTest(base_test.BaseTest):
     json_data = json.loads(resp.data)
     self.assertIn('proxy_server_keys', json_data)
     self.assertIn('enforce_proxy_server_validity', json_data)
-    self.assertIn('enforce_network_jail', json_data)
+    self.assertNotIn('enforce_network_jail', json_data)
 
   def testEditValuesForPolicyConfig(self):
     """Test posting with modified policy config values updates in the db."""
