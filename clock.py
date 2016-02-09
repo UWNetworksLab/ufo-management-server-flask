@@ -9,7 +9,7 @@ import ufo
 
 SCHEDULER = BlockingScheduler()
 
-@SCHEDULER.scheduled_job('interval', seconds=15)
+@SCHEDULER.scheduled_job('interval', minutes=15)
 def distribute_user_keys_to_proxy_servers():
   """Schedule the user key distribution to proxy servers."""
   # TODO: Configure the logger to direct to stdout.
