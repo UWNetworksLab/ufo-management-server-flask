@@ -3,8 +3,8 @@
 {% block head %}
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
-  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-toggle-button/paper-toggle-button.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='collapseButton.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='toggleInput.html') }}" />
 {% endblock %}
 {% block body %}
   <div id="chrome-policy-card-holder">
@@ -44,15 +44,9 @@
       <div class="card-content">
         <form id="policy-config-form" method="post"
           action="{{ url_for('edit_policy_config') }}">
-          <paper-toggle-button {% if enforce_proxy_server_validity %}checked{% endif %}>
-            Enforce Proxy Server Check from Invitation Link
-            <input type="hidden" name="enforce_proxy_server_validity" value="{{ enforce_proxy_server_validity }}">
-          </paper-toggle-button>
+          <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="Enforce Proxy Server Check from Invitation Link" {% if enforce_proxy_server_validity %}checked{% endif %}></ufo-toggle-input>
           <br>
-          <paper-toggle-button {% if enforce_network_jail %}checked{% endif %}>
-            Enforce Network Jail Before Google Login
-            <input type="hidden" name="enforce_network_jail" value="{{ enforce_network_jail }}">
-          </paper-toggle-button>
+          <ufo-toggle-input input-name="enforce_network_jail" button-text="Enforce Network Jail Before Google Login" {% if enforce_network_jail %}checked{% endif %}></ufo-toggle-input>
           <br>
           <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
         </form>
@@ -64,16 +58,4 @@
       </div>
     </paper-card>
   </div>
-
-  <script>
-    var toggles = document.querySelectorAll('paper-toggle-button');
-
-    for (var i in toggles) {
-      toggles[i].addEventListener('change', function(event) {
-          toggleElem = event.path[0];
-          hiddenInput = toggleElem.querySelector('input');
-          hiddenInput.value = toggleElem.checked;
-      });
-    }
-  </script>
 {% endblock %}

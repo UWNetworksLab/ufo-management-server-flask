@@ -47,8 +47,8 @@ class ChromePolicyTest(base_test.BaseTest):
     initial_proxy_server_config = config.proxy_server_validity
     initial_network_jail_config = config.network_jail_until_google_auth
     data_to_post = {
-        'enforce_proxy_server_validity': str(not initial_proxy_server_config),
-        'enforce_network_jail': str(not initial_network_jail_config),
+        'enforce_proxy_server_validity': json.dumps(not initial_proxy_server_config),
+        'enforce_network_jail': json.dumps(not initial_network_jail_config),
     }
 
     resp = self.client.post(flask.url_for('edit_policy_config'),

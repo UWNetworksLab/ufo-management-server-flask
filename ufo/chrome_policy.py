@@ -75,19 +75,10 @@ def edit_policy_config():
 
   config = ufo.get_user_config()
 
-  # TODO(eholder): The Polymer html for sending toggle button values as inputs
-  # really sucks. I basically have to parse it out manually in JS then set it
-  # to a hidden input value. If we used iron-form, that may help with setting
-  # those as inputs on its own. That introduces a problem with refreshing the
-  # page on response or writing the response back into the UI for an update...
-  # TODO(eholder): There has to be a better way to convert strings to bools...
   proxy_server_string = flask.request.form.get('enforce_proxy_server_validity')
   network_jail_string = flask.request.form.get('enforce_network_jail')
-
-  config.proxy_server_validity = (proxy_server_string == 'true' or
-                                  proxy_server_string == 'True')
-  config.network_jail_until_google_auth = (network_jail_string == 'true' or
-                                           network_jail_string == 'True')
+  config.proxy_server_validity = json.loads(proxy_server_string)
+  config.network_jail_until_google_auth = json.loads(network_jail_string)
 
   config.save()
 
