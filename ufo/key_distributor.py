@@ -11,12 +11,13 @@ import worker
 class KeyDistributor(object):
   """Distributes user keys to proxy servers"""
 
-  def _make_key_string(self):
+  # VisibleForTesting
+  def make_key_string(self):
     """Generate the key string in open ssh format for pushing to proxy servers.
-  
+
     This key string includes only the public key for each user in order to grant
     the user access to each proxy server.
-  
+
     Returns:
       key_string: A string of users with associated key.
     """
@@ -31,23 +32,23 @@ class KeyDistributor(object):
         user_string = (ssh_starting_portion + space + user.public_key + space +
                        user.email + endline)
         key_string += user_string
-  
+
     return key_string
-  
+
   def _distribute_key(self, proxy_server, key_string):
     """Distributes user keys to the proxy server.
-    
+
     Args:
       proxy_server: db representation of a proxy server.
       key_string: A string of users with associated key.
     """
     client = ssh_client.SSHClient()
     client.connect(proxy_server)
-  
+
     # TODO do stuff
-  
+
     client.close()
-  
+
   def enqueue_key_distribution_jobs(self):
     """Distribute user keys to proxy servers to authenticate invite code."""
     key_string = self._make_key_string()

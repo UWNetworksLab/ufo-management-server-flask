@@ -2,10 +2,11 @@
 
 from mock import patch
 
-import base_test
-import key_distributor
-import models
-import user_test
+import ufo
+from ufo import base_test
+from ufo import key_distributor
+from ufo import models
+from ufo import user_test
 
 
 class KeyDistributorTest(base_test.BaseTest):
@@ -20,8 +21,8 @@ class KeyDistributorTest(base_test.BaseTest):
                               is_key_revoked=False)
       fake_user.save()
       fake_users.append(fake_user)
-    
-    key_string = key_distributor.KeyDistributor()._make_key_string()
+
+    key_string = key_distributor.KeyDistributor().make_key_string()
 
     self.assertEquals(3, key_string.count('END PUBLIC KEY'))
     for fake_user in fake_users:
@@ -37,8 +38,8 @@ class KeyDistributorTest(base_test.BaseTest):
                               is_key_revoked=True)
       fake_user.save()
       fake_users.append(fake_user)
-    
-    key_string = key_distributor.KeyDistributor()._make_key_string()
+
+    key_string = key_distributor.KeyDistributor().make_key_string()
 
     self.assertFalse(key_string)
 

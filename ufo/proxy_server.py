@@ -3,9 +3,11 @@
 from . import app, db, setup_required
 
 import flask
-import models
-import ssh_client
 import StringIO
+
+import ufo
+from ufo import models
+from ufo import ssh_client
 
 
 def _GetViewDataFromProxyServer(server):
