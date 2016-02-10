@@ -1,8 +1,10 @@
 """The module for distributing user keys to proxy servers."""
 
-import models
 from rq import Queue
-import ssh_client
+
+import ufo
+from ufo import models
+from ufo import ssh_client
 import worker
 
 
