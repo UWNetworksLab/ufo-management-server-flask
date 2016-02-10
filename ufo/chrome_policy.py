@@ -1,7 +1,5 @@
 """The module for generating and outputing chrome policy."""
 
-from . import app, setup_required
-
 import flask
 import json
 
@@ -30,8 +28,8 @@ def _make_chrome_policy_json():
   return json.dumps(policy_dictionary)
 
 
-@app.route('/chromepolicy/')
-@setup_required
+@ufo.app.route('/chromepolicy/')
+@ufo.setup_required
 def display_chrome_policy():
   """Renders the current chrome policy as json and editable values.
 
@@ -47,8 +45,8 @@ def display_chrome_policy():
       enforce_network_jail=config.network_jail_until_google_auth)
 
 
-@app.route('/chromepolicy/download/')
-@setup_required
+@ufo.app.route('/chromepolicy/download/')
+@ufo.setup_required
 def download_chrome_policy():
   """Outputs the managed chrome policy in json form for downloading as a file.
 
@@ -58,8 +56,8 @@ def download_chrome_policy():
   return flask.Response(_make_chrome_policy_json(),
                         mimetype='application/json')
 
-@app.route('/chromepolicy/edit', methods=['POST'])
-@setup_required
+@ufo.app.route('/chromepolicy/edit', methods=['POST'])
+@ufo.setup_required
 def edit_policy_config():
   """Receives the posted form for editing the policy config values.
 

@@ -19,7 +19,12 @@ class ChromePolicyTest(base_test.BaseTest):
 
   @mock.patch('flask.render_template')
   def testChromePolicyRenderTemplate(self, mock_render_template):
-    """Test the chrome policy handler renders the page."""
+    """Test the chrome policy handler renders the page.
+
+    Args:
+      mock_render_template: A mocked instance of flask.render_template on
+                            which to assert about call arguments.
+    """
     mock_render_template.return_value = ''
     self.client.get(flask.url_for('display_chrome_policy'))
 
