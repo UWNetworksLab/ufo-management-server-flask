@@ -57,9 +57,12 @@ function findHtmlFilesToVulcanize ()
   runInStaticDirAndAssertCmd "rm -fr $TEMP_FILE_LIST"
   runInStaticDirAndAssertCmd "rm -fr $HTML_FILE_TO_VULCANIZE"
   runInStaticDirAndAssertCmd "touch $TEMP_FILE_LIST"
-  # This searches through the ufo/static/ directory and finds all files that
-  # match *html, but excludes index.html, basic.html, files under directories
-  # with test in the name, and files under directories with demo in the name.
+  # This searches through the ufo/static/ directory recursively and finds all
+  # files that match *html, but excludes index.html, basic.html, and files
+  # under directories with 'test' or 'demo' in the name.
+  # The bower packages and dependencies are located here on each local branch,
+  # but they are not checked in to github, so checking there will only show
+  # the custom components we have already written, such as sidebar.html.
   # It then sed's the files to remove the prepended ./ and outputs to
   # $TEMP_FILE_LIST.
   runInStaticDirAndAssertCmd "find . -name '*html' -not -name 'index.html' -not -name 'basic.html' -not -path '*test*' -not -path '*demo*' | sed 's|./||' > $TEMP_FILE_LIST"
