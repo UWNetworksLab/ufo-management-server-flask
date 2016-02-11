@@ -14,7 +14,7 @@ from ufo import models
 from ufo import oauth
 from ufo import setup_required
 
-INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/'
+INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
 def _render_user_add(get_all, group_key, user_key):
   credentials = oauth.getSavedCredentials()
