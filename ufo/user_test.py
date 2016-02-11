@@ -72,9 +72,9 @@ class UserTest(base_test.BaseTest):
       details_link = flask.url_for('user_details', user_id=user.id)
       self.assertTrue(details_link in user_list_output)
 
-  @patch.object(user, '_RenderUserAdd')
+  @patch.object(user, '_render_user_add')
   def testAddUsersGetHandler(self, mock_render):
-    """Test the add users get handler returns _RenderUserAdd's result."""
+    """Test the add users get handler returns _render_user_add's result."""
     return_text = '<html>something here </html>'
     mock_render.return_value = return_text
     resp = self.client.get(flask.url_for('add_user'))
