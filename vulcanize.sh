@@ -95,9 +95,10 @@ function vulcanizeSingleFileForImports ()
 function printHelp ()
 {
   echo
-  echo "Usage: vulcanize.sh [help|--help]"
+  echo "Usage: vulcanize.sh [help|--help|travis]"
   echo
   echo "  help, --help   - Prints this help text."
+  echo "  travis         - Creates the vulcanized file in Travis CI."
   echo
   echo "If no parameters are specified, this generates a vulcanized html file "
   echo "of bower packages and custom elements which were found under "
@@ -111,6 +112,12 @@ function printHelp ()
 
 if [ "$#" == 0 ] || [ ! "$1" == 'help' && ! "$1" == '--help' ]; then
   installVulcanize
+  updateBowerPackages
+  findHtmlFilesToVulcanize
+  createSingleHtmlFileToVulcanize
+  vulcanizeSingleFileForImports
+elif [ "$1" == 'travis' ]; then
+  runAndAssertCmd "npm install -g vulcanize"
   updateBowerPackages
   findHtmlFilesToVulcanize
   createSingleHtmlFileToVulcanize
