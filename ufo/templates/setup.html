@@ -1,9 +1,5 @@
 {% extends "layout.html" %}
 {% block title %}Setup OAuth Client{% endblock %}
-{% block head %}
-  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
-  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-input/paper-input.html') }}" />
-{% endblock %}
 {% block body %}
   <!-- TODO make a clear way to say you do not want to use Google apps -->
   {% if not config.isConfigured %}

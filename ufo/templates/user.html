@@ -1,11 +1,5 @@
 {% extends "layout.html" %}
 {% block title %}Users{% endblock %}
-{% block head %}
-  <link rel="import" href="/static/bower_components/paper-button/paper-button.html" />
-  <link rel="import" href="/static/bower_components/paper-card/paper-card.html" />
-  <link rel="import" href="/static/bower_components/paper-item/paper-item.html" />
-  <link rel="import" href="/static/bower_components/paper-listbox/paper-listbox.html" />
-{% endblock %}
 {% block body %}
   <div class="top-buttons">
     <a id='add_users' href="{{ url_for('add_user') }}">
