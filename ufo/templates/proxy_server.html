@@ -7,9 +7,12 @@
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-input/paper-input.html') }}" />
 {% endblock %}
 {% block body %}
-  <a href="{{ url_for('proxyserver_add') }}">
-    <paper-button raised class="anchor-button">Add New Proxy Server
-    </paper-button></a>
+  <div class="top-buttons">
+    <a href="{{ url_for('proxyserver_add') }}">
+      <paper-button raised class="anchor-button">Add New Proxy Server
+      </paper-button></a>
+    <br />
+  </div>
   <div id="proxy-card-holder">
   {% for proxy_server in proxy_servers %}
     <paper-card heading="{{ proxy_server.name }}">
