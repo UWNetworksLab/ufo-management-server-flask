@@ -259,7 +259,7 @@ class UserTest(base_test.BaseTest):
     args, kwargs = mock_render_template.call_args
     self.assertEquals('user_details.html', args[0])
     self.assertEquals(created_user, kwargs['user'])
-    self.assertEquals(user.INVITE_CODE_URL_PREFIX, kwargs['invite_url'])
+    self.assertNotIn('invite_url', kwargs)
 
   @patch('flask.render_template')
   def testUserDetailsGetWithInvite(self, mock_render_template):

@@ -143,10 +143,11 @@ def user_details(user_id):
   user = models.User.query.get_or_404(user_id)
   invite_code = _MakeInviteCode(user)
   if invite_code is None:
-    invite_code = ''
-  invite_url = INVITE_CODE_URL_PREFIX + invite_code
-  return flask.render_template('user_details.html', user=user,
-                               invite_url=invite_url)
+    return flask.render_template('user_details.html', user=user)
+  else:
+    invite_url = INVITE_CODE_URL_PREFIX + invite_code
+    return flask.render_template('user_details.html', user=user,
+                                 invite_url=invite_url)
 
 @app.route('/user/<user_id>/delete', methods=['POST'])
 @setup_required
