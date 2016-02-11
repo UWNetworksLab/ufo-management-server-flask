@@ -11,6 +11,8 @@ import random
 
 from googleapiclient import errors
 
+INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/'
+
 def _RenderUserAdd(get_all, group_key, user_key):
   credentials = oauth.getSavedCredentials()
   # TODO this should handle the case where we do not have oauth
@@ -139,9 +141,12 @@ def add_user():
 @setup_required
 def user_details(user_id):
   user = models.User.query.get_or_404(user_id)
-  return flask.render_template('user_details.html',
-                               user=user,
-                               invite_code=_MakeInviteCode(user))
+  invite_code = _MakeInviteCode(user)
+  if invite_code is None:
+    invite_code = ''
+  invite_url = INVITE_CODE_URL_PREFIX + invite_code
+  return flask.render_template('user_details.html', user=user,
+                               invite_url=invite_url)
 
 @app.route('/user/<user_id>/delete', methods=['POST'])
 @setup_required
