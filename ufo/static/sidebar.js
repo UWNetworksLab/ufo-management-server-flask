@@ -5,6 +5,7 @@ Polymer({
     {"href": "/", "text": "Home"},
     {"href": "/user/", "text": "Users"},
     {"href": "/proxyserver/", "text": "Proxy Servers"},
+    {"href": "/chromepolicy/", "text": "Chrome Policy"},
     {"href": "/setup/", "text": "Setup"},
     {"href": "/logout/", "text": "Logout"}
     ];
