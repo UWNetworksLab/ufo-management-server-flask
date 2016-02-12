@@ -158,7 +158,7 @@ class UserPageTest(BaseTest):
     """
     anchors = listing.find_elements(By.TAG_NAME, 'a')
     for anchor in anchors:
-      if email in anchor.text:
+      if email.lower() in anchor.text.lower():
         return anchor
     return None
 

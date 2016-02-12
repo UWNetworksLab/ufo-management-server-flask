@@ -13,12 +13,9 @@
             Enabled
           {% endif %}
         </b></p>
-        <paper-button onclick="toggleCollapse('collapse-pri')">Show/hide SSH Private Key</paper-button>
-        <iron-collapse id="collapse-pri"><div><textarea rows="20" cols="80">
-          {{ user.private_key }}</textarea></div></iron-collapse><br>
-        <paper-button onclick="toggleCollapse('collapse-pub')">Show/hide SSH Public Key</paper-button>
-        <iron-collapse id="collapse-pub"><div><textarea rows="20" cols="80">
-          {{ user.public_key }}</textarea></div></iron-collapse>
+        <ufo-collapse-button label="SSH Private Key" button-text="Show/hide SSH Private Key" collapse-text="{{ user.private_key }}"></ufo-collapse-button>
+        <br>
+        <ufo-collapse-button label="SSH Public Key" button-text="Show/hide SSH Public Key" collapse-text="{{ user.public_key }}"></ufo-collapse-button>
       </div>
       <div class="card-actions">
         <form id="user-delete-form" method="post" action="{{ url_for('delete_user', user_id=user.id) }}">

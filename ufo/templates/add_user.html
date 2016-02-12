@@ -17,14 +17,15 @@
         </tr>
       {% for directory_user in directory_users %}
         <tr>
-          <!-- Paper checkbox doesn't work without manually collecting values
-          in javascript so we aren't using that yet. -->
-          <td><input type="checkbox" name="selected_user" value="{{ directory_user }}"></td>
-          <td>{{ directory_user['name']['fullName'] }}</td>
-          <td>{{ directory_user['primaryEmail'] }}</td>
+          <td><paper-checkbox value=""></td>
+          <td class="directory-user-field name">
+            {{ directory_user['name'] }}</td>
+          <td class="directory-user-field email">
+            {{ directory_user['email'] }}</td>
         </tr>
       {% endfor %}
       </table>
+      <input type="hidden" id="selected_users_array" name="users" value="">
       <input type="hidden" name="_xsrf_token" value="{{ xsrf_token_value }}">
       <paper-button raised onclick="submitByFormId('users-add-form')" class="form-submit-button" type="submit">Add Selected Users</paper-button>
     </form>
@@ -84,17 +85,17 @@
       <form id="users-manual-form" method="post"
         action="{{ url_for('add_user') }}">
         <paper-input label="Input user name here." type="textbox"
-        name="user_name" value="{{ user_name }}" required>
+        name="name" value="" id="manualUserName" required>
         </paper-input>
         <paper-input label="Input user email here." type="email"
-        name="user_email" value="{{ user_email }}" required auto-validate
-        pattern="{{EMAIL_VALIDATION_PATTERN}}"
+        name="email" value="" id="manualUserEmail" required
+        auto-validate pattern="{{EMAIL_VALIDATION_PATTERN}}"
         error-message="{{EMAIL_VALIDATION_ERROR}}">
         </paper-input>
-        <input type="hidden" name="manual" value="true">
+        <input type="hidden" name="users" id="manualUserInput" value="">
         <input type="hidden" name="_xsrf_token" value="{{ xsrf_token_value }}">
         <br>
-        <paper-button raised onclick="submitByFormId('users-manual-form')"
+        <paper-button raised onclick="submitUsersManually()"
         class="form-submit-button" type="submit">
           Manually Add User</paper-button>
       </form>
@@ -108,5 +109,30 @@
     tabs.addEventListener('iron-select', function() {
         pages.selected = tabs.selected;
     });
+
+    var selected_users = [];
+    var checkboxes = document.querySelectorAll('paper-checkbox');
+    var input_elem = document.getElementById('selected_users_array');
+    input_elem.value = JSON.stringify(selected_users);
+
+    for (var i in checkboxes) {
+      var grandParent = checkboxes[i].parentElement.parentElement;
+      var name = grandParent.querySelector('td.directory-user-field.name').innerHTML;
+      var email = grandParent.querySelector('td.directory-user-field.email').innerHTML;
+      checkboxes[i].value = {'name': name, 'email': email};
+
+      checkboxes[i].addEventListener('change', function(event) {
+          var checkboxElem = event.path[0];
+          if (checkboxElem.checked) {
+            selected_users.push(checkboxElem.value);
+          } else {
+            var index = selected_users.indexOf(checkboxElem.value);
+            if (index != -1) {
+              selected_users.splice(index, 1);
+            }
+          }
+          input_elem.value = JSON.stringify(selected_users);
+      });
+    }
   </script>
 {% endblock %}

@@ -44,6 +44,8 @@ class Config(Model):
   credentials = db.Column(db.Text())
   domain = db.Column(db.String(LONG_STRING_LENGTH))
   dv_content = db.Column(db.String(LONG_STRING_LENGTH))
+  proxy_server_validity = db.Column(db.Boolean(), default=False)
+  network_jail_until_google_auth = db.Column(db.Boolean(), default=False)
 
 
 class User(Model):
@@ -129,3 +131,14 @@ class ProxyServer(Model):
 
     self.host_public_key_type = host_key_entry.key.get_name()
     self.host_public_key = host_key_entry.key.asbytes()
+
+  def get_public_key_as_authorization_file_string(self):
+    """Creates an output-able string of the public key for the server.
+
+    Returns:
+      A string of the public key for this proxy server.
+    """
+    public_key = ssh_client.SSHClient.public_key_data_to_object(
+        self.host_public_key_type,
+        self.host_public_key)
+    return public_key.get_name() + ' ' + public_key.get_base64()

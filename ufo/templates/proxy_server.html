@@ -1,22 +1,19 @@
 {% extends "layout.html" %}
 {% block title %}Proxy Server(s){% endblock %}
 {% block body %}
-  <a href="{{ url_for('proxyserver_add') }}">
-    <paper-button raised class="anchor-button">Add New Proxy Server
-    </paper-button></a>
+  <div class="top-buttons">
+    <a href="{{ url_for('proxyserver_add') }}">
+      <paper-button raised class="anchor-button">Add New Proxy Server
+      </paper-button></a>
+    <br />
+  </div>
   <div id="proxy-card-holder">
   {% for proxy_server in proxy_servers %}
     <paper-card heading="{{ proxy_server.name }}">
       <div class="card-content">
         <p>{{ proxy_server.ip_address }}</p>
-        <paper-button onclick="toggleCollapse('collapse-{{loop.index}}')">Show/hide SSH Keys</paper-button>
-        <iron-collapse id="collapse-{{loop.index}}">
-          <h3>Public Key (for verification)</h3>
-          <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{proxy_server.public_key}}</pre>
-
-          <h3>Private Key (for authentication)</h3>
-          <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{proxy_server.private_key}}</pre>
-        </iron-collapse>
+        <ufo-collapse-button label="Public Key (for verification)" button-text="Show/hide SSH Public Key" collapse-text="{{ proxy_server.public_key }}"></ufo-collapse-button></br>
+        <ufo-collapse-button label="Private Key (for verification)" button-text="Show/hide SSH Private Key" collapse-text="{{ proxy_server.private_key }}"></ufo-collapse-button>
       </div>
       <div class="card-actions">
         <a href="{{ url_for('proxyserver_edit', server_id=proxy_server.id) }}">

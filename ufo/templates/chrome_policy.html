@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block title %}Chrome Policy{% endblock %}
+{% block body %}
+  <div id="chrome-policy-card-holder">
+    <paper-card heading="Chrome Managed Policy JSON">
+      <div class="card-content">
+        <p>Chrome policy is a feature of enterprise Google devices which can
+          be used to securely add extra configuration to the uProxy frontend.
+          If you use enterprise Google devices through Google Apps for Work,
+          you can for example turn on validation for invitation links to
+          ensure you are proxying through an endpoint controlled by the
+          management console.
+        </p>
+        <p>You can adjust the values below and save to see the managed policy
+          json update. Once you are ready, you can copy and paste the managed
+          policy json below into its own file or click the download link to
+          have one generated automatically.
+        </p>
+        <p>To push your managed policy out to your devices, visit
+          <a href="https://admin.google.com/AdminHome">Google Admin Console</a>
+           and navigate to the uProxy Chrome App/Extension under Device
+          Management -> Chrome Management -> App Management. For the App and Extension, select the entry listed, then click User settings. From
+          the list of Orgs, choose which you want the policy to apply to, then
+          enable Force Installation and select Upload Configuration File.
+          Choose the json file you just created/downloaded. You may have to
+          click override to edit Force Installation or Configure's values.
+          Finally, click Save.
+        </p>
+        <ufo-collapse-button label="Managed Policy JSON" button-text="Show/hide Chrome Managed Policy" collapse-text="{{ policy_json }}"></ufo-collapse-button>
+      </div>
+      <div class="card-actions">
+        <a href="{{ url_for('download_chrome_policy') }}" download="chrome_policy.json">
+          <paper-button class="anchor-button">Download</paper-button></a>
+      </div>
+    </paper-card>
+    <br>
+    <paper-card heading="Adjust Config Values">
+      <div class="card-content">
+        <form id="policy-config-form" method="post"
+          action="{{ url_for('edit_policy_config') }}">
+          <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="Enforce Proxy Server Check from Invitation Link" {% if enforce_proxy_server_validity %}checked{% endif %}></ufo-toggle-input>
+          <br>
+          <ufo-toggle-input input-name="enforce_network_jail" button-text="Enforce Network Jail Before Google Login" {% if enforce_network_jail %}checked{% endif %}></ufo-toggle-input>
+          <br>
+          <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
+        </form>
+      </div>
+      <div class="card-actions">
+        <paper-button onclick="submitByFormId('policy-config-form')" class="form-submit-button" type="submit">
+          Save
+        </paper-button>
+      </div>
+    </paper-card>
+  </div>
+{% endblock %}

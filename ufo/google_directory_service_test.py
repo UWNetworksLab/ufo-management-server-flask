@@ -93,13 +93,13 @@ class GoogleDirectoryServiceTest(base_test.BaseTest):
     expected_list = FAKE_USERS + [fake_extra_user]
 
 
-    def _ReturnDomainUsersForPageToken(customer, maxResults, pageToken,
+    def _ReturnDomainUsersForPageToken(domain, maxResults, pageToken,
                                        projection, orderBy):
       """Mock list function to return different mock execute calls.
 
       Args:
-        customer: Unused argument which is purely here to meet the list method
-                  signature.
+        domain: Unused argument which is purely here to meet the list method
+                signature.
         maxResults: Unused argument which is purely here to meet the list
                     method signature.
         pageToken: A string token representing which page of a long list of
