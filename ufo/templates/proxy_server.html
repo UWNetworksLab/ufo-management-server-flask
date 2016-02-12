@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block title %}Proxy Server(s){% endblock %}
 {% block head %}
-  <link rel="import" href="{{ url_for('static', filename='bower_components/iron-collapse/iron-collapse.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-input/paper-input.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='collapseButton.html') }}" />
 {% endblock %}
 {% block body %}
   <div class="top-buttons">
@@ -18,14 +18,8 @@
     <paper-card heading="{{ proxy_server.name }}">
       <div class="card-content">
         <p>{{ proxy_server.ip_address }}</p>
-        <paper-button onclick="toggleCollapse('collapse-{{loop.index}}')">Show/hide SSH Keys</paper-button>
-        <iron-collapse id="collapse-{{loop.index}}">
-          <h3>Public Key (for verification)</h3>
-          <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{proxy_server.public_key}}</pre>
-
-          <h3>Private Key (for authentication)</h3>
-          <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{proxy_server.private_key}}</pre>
-        </iron-collapse>
+        <ufo-collapse-button label="Public Key (for verification)" button-text="Show/hide SSH Public Key" collapse-text="{{ proxy_server.public_key }}"></ufo-collapse-button></br>
+        <ufo-collapse-button label="Private Key (for verification)" button-text="Show/hide SSH Private Key" collapse-text="{{ proxy_server.private_key }}"></ufo-collapse-button>
       </div>
       <div class="card-actions">
         <a href="{{ url_for('proxyserver_edit', server_id=proxy_server.id) }}">
