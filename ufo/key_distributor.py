@@ -25,11 +25,10 @@ class KeyDistributor(object):
     users = models.User.query.all()
     key_string = ''
     ssh_starting_portion = 'ssh-rsa'
-    space = ' '
     endline = '\n'
     for user in users:
       if not user.is_key_revoked:
-        user_string = (ssh_starting_portion + space + user.public_key + space +
+        user_string = (ssh_starting_portion + ' ' + user.public_key + space +
                        user.email + endline)
         key_string += user_string
 
