@@ -28,7 +28,7 @@ class KeyDistributor(object):
     endline = '\n'
     for user in users:
       if not user.is_key_revoked:
-        user_string = (ssh_starting_portion + ' ' + user.public_key + space +
+        user_string = (ssh_starting_portion + ' ' + user.public_key + ' ' +
                        user.email + endline)
         key_string += user_string
 
