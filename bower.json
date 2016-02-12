@@ -15,6 +15,7 @@
     "paper-listbox": "PolymerElements/paper-listbox#~1.1.0",
     "paper-menu": "PolymerElements/paper-menu#~1.2.1",
     "paper-tabs": "PolymerElements/paper-tabs#~1.2.4",
+    "paper-toggle-button": "PolymerElements/paper-toggle-button#~1.0.14",
     "paper-toolbar": "PolymerElements/paper-toolbar#~1.1.2"
   }
 }
