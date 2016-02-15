@@ -7,9 +7,13 @@ import oauth2client
 
 from googleapiclient import discovery
 
+from ufo import auth
+from ufo import models
+
 PLEASE_CONFIGURE_TEXT = 'Please finish configuring this site.'
 DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
 NON_ADMIN_TEXT = 'Credentials do not have admin access.'
+NO_ADMINISTRATOR = 'Please enter an administrator username or password'
 
 
 class SetupNeeded(Exception):
@@ -18,6 +22,7 @@ class SetupNeeded(Exception):
 
 
 @app.route('/setup/', methods=['GET', 'POST'])
+@auth.login_required_if_setup
 def setup():
   """Handle showing the user the setup page and processing the response"""
   config = get_user_config()
@@ -29,6 +34,8 @@ def setup():
                                  config=config,
                                  oauth_url=oauth_url)
 
+  credentials = None
+  domain = flask.request.form.get('domain', None)
   if flask.request.form.get('oauth_code', None):
     try:
       credentials = flow.step2_exchange(flask.request.form['oauth_code'])
@@ -46,20 +53,15 @@ def setup():
     try:
       profileResult = plusApi.people().get(userId='me').execute()
 
-      if 'domain' in profileResult and profileResult['domain'] and profileResult['domain'] == flask.request.form.get('domain'):
-        domain = profileResult['domain']
-        userId = profileResult['id']
-      else:
+      if domain is None or domain != profileResult.get('domain', None):
         return flask.render_template('setup.html',
                                      error=DOMAIN_INVALID_TEXT,
                                      config=config,
                                      oauth_url=oauth_url)
 
-      userResult = adminApi.users().get(userKey=userId).execute()
-      if userResult.get('isAdmin', False):
-        config.credentials = credentials.to_json()
-        config.domain = domain
-      else:
+      user_id = profileResult['id']
+      userResult = adminApi.users().get(userKey=user_id).execute()
+      if not userResult.get('isAdmin', False):
         return flask.render_template('setup.html',
                                      error=NON_ADMIN_TEXT,
                                      config=config,
@@ -70,6 +72,28 @@ def setup():
                                    error=str(e),
                                    config=config,
                                    oauth_url=oauth_url)
+
+  if not config.isConfigured:
+    admin_username = flask.request.form.get('admin_username', None)
+    admin_password = flask.request.form.get('admin_password', None)
+
+    if admin_username is None or admin_password is None:
+      return flask.render_template('setup.html',
+          error=NO_ADMINISTRATOR,
+          config=config,
+          oauth_url=oauth_url)
+
+    admin_user = models.ManagementServerUser(username=admin_username)
+    admin_user.set_password(admin_password)
+    admin_user.save()
+
+  # if credentials were set above, moved down here to give us a chance to error
+  # out of admin user and password, could be moved inline with proper form
+  # validation for that (we also don't want to create a user if another step
+  # is going to fail)
+  if credentials is not None:
+    config.credentials = credentials.to_json()
+    config.domain = domain
 
   config.isConfigured = True
   config.save()

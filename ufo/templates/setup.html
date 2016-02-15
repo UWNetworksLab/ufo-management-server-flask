@@ -62,6 +62,12 @@
   <form id="setup-form" method="post">
     <paper-input label="Domain" name="domain"></paper-input>
     <paper-input label="OAuth Code" name="oauth_code"></paper-input>
+
+    {% if not config.isConfigured %}
+      <paper-input label="Default Admin Username" name="admin_username"></paper-input>
+      <paper-input label="Default Admin Password" name="admin_password"></paper-input>
+    {% endif %}
+
     <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}" />
     <paper-button raised onclick="submitByFormId('setup-form')" class="form-submit-button" type="submit">Submit</paper-button>
   </form>

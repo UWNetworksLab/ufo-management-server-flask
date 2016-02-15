@@ -16,6 +16,7 @@ class ChromePolicyTest(base_test.BaseTest):
     """Setup test app on which to call handlers and db to query."""
     super(ChromePolicyTest, self).setUp()
     super(ChromePolicyTest, self).setup_config()
+    super(ChromePolicyTest, self).setup_auth()
 
   @mock.patch('flask.render_template')
   def testChromePolicyRenderTemplate(self, mock_render_template):

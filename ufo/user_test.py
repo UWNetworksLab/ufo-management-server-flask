@@ -56,6 +56,7 @@ class UserTest(base_test.BaseTest):
     """Setup test app on which to call handlers and db to query."""
     super(UserTest, self).setUp()
     super(UserTest, self).setup_config()
+    super(UserTest, self).setup_auth()
 
   def testListUsersHandler(self):
     """Test the list user handler displays users from the database."""

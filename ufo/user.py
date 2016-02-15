@@ -5,6 +5,7 @@ import base64
 import flask
 import json
 import random
+from ufo import auth
 
 from googleapiclient import errors
 
@@ -128,6 +129,7 @@ def _make_invite_code(user):
 
 @app.route('/user/')
 @setup_required
+@auth.login_required
 def user_list():
   """Renders the user list template with the users currently in the db.
 
@@ -143,6 +145,7 @@ def user_list():
 
 @app.route('/user/add', methods=['GET', 'POST'])
 @setup_required
+@auth.login_required
 def add_user():
   """Renders the user add template on get and stores new user(s) on post.
 
@@ -176,6 +179,7 @@ def add_user():
 
 @app.route('/user/<user_id>/details')
 @setup_required
+@auth.login_required
 def user_details(user_id):
   """Renders the user details template for the given user_id if found.
 
@@ -196,6 +200,7 @@ def user_details(user_id):
 
 @app.route('/user/<user_id>/delete', methods=['POST'])
 @setup_required
+@auth.login_required
 def delete_user(user_id):
   """Deletes the user corresponding to the passed in user_id from the db.
 
@@ -216,6 +221,7 @@ def delete_user(user_id):
 
 @app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
 @setup_required
+@auth.login_required
 def user_get_new_key_pair(user_id):
   """Rotates the key pair (public and private keys) for the given user.
 
@@ -236,6 +242,7 @@ def user_get_new_key_pair(user_id):
 
 @app.route('/user/<user_id>/toggleRevoked', methods=['POST'])
 @setup_required
+@auth.login_required
 def user_toggle_revoked(user_id):
   """Toggles whether the given user's access is revoked or not.
 

@@ -15,6 +15,7 @@ class ErrorHandlerTest(base_test.BaseTest):
   def setUp(self):
     """Setup test app on which to call handlers and db to query."""
     super(ErrorHandlerTest, self).setUp()
+    super(ErrorHandlerTest, self).setup_auth()
 
   def testDefaultHTTPErrorHandlersAreRegistered(self):
     """Test the default HTTP error handlers are registered."""

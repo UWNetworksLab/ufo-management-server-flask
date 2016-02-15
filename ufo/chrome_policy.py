@@ -4,6 +4,7 @@ import flask
 import json
 
 import ufo
+from ufo import auth
 from ufo import models
 
 
@@ -30,6 +31,7 @@ def _make_chrome_policy_json():
 
 @ufo.app.route('/chromepolicy/')
 @ufo.setup_required
+@auth.login_required
 def display_chrome_policy():
   """Renders the current chrome policy as json and editable values.
 
@@ -47,6 +49,7 @@ def display_chrome_policy():
 
 @ufo.app.route('/chromepolicy/download/')
 @ufo.setup_required
+@auth.login_required
 def download_chrome_policy():
   """Outputs the managed chrome policy in json form for downloading as a file.
 
@@ -58,6 +61,7 @@ def download_chrome_policy():
 
 @ufo.app.route('/chromepolicy/edit', methods=['POST'])
 @ufo.setup_required
+@auth.login_required
 def edit_policy_config():
   """Receives the posted form for editing the policy config values.
 

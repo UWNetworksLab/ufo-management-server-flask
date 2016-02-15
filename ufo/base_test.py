@@ -18,6 +18,16 @@ class BaseTest(TestCase):
     """Setup test app on which to call handlers and db to query."""
     db.create_all()
 
+  def setup_auth(self):
+    user = models.ManagementServerUser()
+    user.username = 'testuser'
+    user.set_password('testpass')
+    user.save()
+
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['username'] = 'testuser'
+
   def setup_config(self):
     """Setup the config that is needed for @setup_required decorator."""
     self.config = models.Config()

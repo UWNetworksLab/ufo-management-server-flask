@@ -8,6 +8,8 @@ import models
 import ssh_client
 import StringIO
 
+from ufo import auth
+
 
 def _MakeKeyString():
   """Generate the key string in open ssh format for pushing to proxy servers.
@@ -58,6 +60,7 @@ def _GetViewDataFromProxyServer(server):
 
 @app.route('/proxyserver/')
 @setup_required
+@auth.login_required
 def proxyserver_list():
   proxy_servers_data = models.ProxyServer.query.all()
   proxy_servers = [_GetViewDataFromProxyServer(s) for s in proxy_servers_data]
@@ -67,6 +70,7 @@ def proxyserver_list():
 
 @app.route('/proxyserver/add', methods=['GET', 'POST'])
 @setup_required
+@auth.login_required
 def proxyserver_add():
   """Get the form for adding new proxy servers."""
   if flask.request.method == 'GET':
@@ -95,6 +99,7 @@ def proxyserver_add():
 
 @app.route('/proxyserver/<server_id>/edit', methods=['GET', 'POST'])
 @setup_required
+@auth.login_required
 def proxyserver_edit(server_id):
   server = models.ProxyServer.query.get_or_404(server_id)
 
@@ -114,6 +119,7 @@ def proxyserver_edit(server_id):
 
 @app.route('/proxyserver/<server_id>/delete')
 @setup_required
+@auth.login_required
 def proxyserver_delete(server_id):
   """Handler for deleting an existing proxy server."""
   #TODO should at least be post
@@ -125,6 +131,7 @@ def proxyserver_delete(server_id):
 #TODO use task queues, split this up a bit
 @app.route('/cron/proxyserver/distributekeys')
 @setup_required
+@auth.login_required
 def proxyserver_distributekeys():
   key_string = _MakeKeyString()
   proxy_servers = models.ProxyServer.query.all()

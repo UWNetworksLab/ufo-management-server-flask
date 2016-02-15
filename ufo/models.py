@@ -1,5 +1,6 @@
 from . import db
 
+import bcrypt
 from Crypto.PublicKey import RSA
 from paramiko import hostkeys
 from paramiko import pkey
@@ -142,3 +143,25 @@ class ProxyServer(Model):
         self.host_public_key_type,
         self.host_public_key)
     return public_key.get_name() + ' ' + public_key.get_base64()
+
+
+class ManagementServerUser(Model):
+  """People who have access to the management server
+  """
+  __tablename__ = "management_server_user"
+
+  id = db.Column(db.Integer, primary_key=True)
+
+  username = db.Column(db.String(LONG_STRING_LENGTH), index=True, unique=True)
+  password = db.Column(db.String(LONG_STRING_LENGTH))
+
+  @classmethod
+  def get_by_username(cls, username):
+    return cls.query.filter_by(username=username).one_or_none()
+
+  def set_password(self, password):
+    self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+  def check_password(self, password):
+    hashed = bcrypt.hashpw(password.encode('utf-8'), self.password.encode('utf-8'))
+    return hashed == self.password

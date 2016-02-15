@@ -1,4 +1,3 @@
-import error_handler
 import flask
 from flask.ext import sqlalchemy
 import functools
@@ -14,9 +13,6 @@ if 'DATABASE_URL' in os.environ:
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
 
-# Register the error handlers with the app.
-error_handler.init_error_handlers(app)
-
 # TODO(eholder): Move these over to javascript and i18n as appropriate once
 # we've decided how to structure the client side code.
 # Set jinja environment globals
@@ -30,6 +26,10 @@ app.jinja_env.globals['KEY_LOOKUP_VALIDATION_PATTERN'] = KEY_LOOKUP_PATTERN
 app.jinja_env.globals['KEY_LOOKUP_VALIDATION_ERROR'] = KEY_LOOKUP_ERROR
 
 db = sqlalchemy.SQLAlchemy(app)
+
+# Register the error handlers with the app.
+import error_handler
+error_handler.init_error_handlers(app)
 
 # Set jinja environment globals
 app.jinja_env.globals['EMAIL_VALIDATION_PATTERN'] = r'[^@]+@[^@]+.[^@]+'

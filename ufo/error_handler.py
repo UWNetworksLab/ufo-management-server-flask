@@ -7,10 +7,10 @@ One difference here is that we will aim to handle custom exceptions.
 """
 import logging
 
-from flask import render_template
-from flask import request
+import flask
 from werkzeug import exceptions
 
+from ufo import auth
 
 def handle_error(error):
   """A handler to gracefully handle any application errors.
@@ -28,7 +28,10 @@ def handle_error(error):
   # for errors where we can provide the user some additional help.
   # (Like a 404, for example).
   templates_to_try = ['{}_error.html'.format(error.code), 'error.html']
-  return render_template(templates_to_try, error=error)
+  return flask.render_template(templates_to_try, error=error)
+
+def handle_not_logged_in(error):
+  return flask.redirect(flask.url_for('login'))
 
 def init_error_handlers(app):
   """Register all the default HTTP error handlers with flask.
@@ -39,4 +42,5 @@ def init_error_handlers(app):
 
   for exception in exceptions.default_exceptions:
     app.register_error_handler(exception, handle_error)
+  app.register_error_handler(auth.NotLoggedIn, handle_not_logged_in)
   app.register_error_handler(Exception, handle_error)

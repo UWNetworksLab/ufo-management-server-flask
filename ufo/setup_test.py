@@ -27,6 +27,7 @@ class SetupTest(base_test.BaseTest):
   def setUp(self):
     """Setup test app on which to call handlers and db to query."""
     super(SetupTest, self).setUp()
+    super(SetupTest, self).setup_auth();
 
   @patch('flask.render_template')
   def testGetSetupHandler(self, mock_render_template):
