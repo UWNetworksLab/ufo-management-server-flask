@@ -50,7 +50,7 @@ class KeyDistributor(object):
 
   def enqueue_key_distribution_jobs(self):
     """Distribute user keys to proxy servers to authenticate invite code."""
-    key_string = self._make_key_string()
+    key_string = self.make_key_string()
     proxy_servers = models.ProxyServer.query.all()
     queue = Queue(connection=worker.CONN)
     for proxy_server in proxy_servers:
