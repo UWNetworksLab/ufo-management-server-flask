@@ -28,18 +28,27 @@ KEY_LOOKUP_PATTERN = r'([^@]+@[^@]+.[^@]+|[a-zA-Z0-9]+)'
 KEY_LOOKUP_ERROR = 'Please supply a valid email address or unique id.'
 app.jinja_env.globals['KEY_LOOKUP_VALIDATION_PATTERN'] = KEY_LOOKUP_PATTERN
 app.jinja_env.globals['KEY_LOOKUP_VALIDATION_ERROR'] = KEY_LOOKUP_ERROR
+PUBLIC_KEY_PATTERN = r'ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ([^@]+@[^@]+)'
+PUBLIC_KEY_ERROR = ('Please supply a valid public key in a format such as '
+                    '"ssh-rsa AAAA..."')
+app.jinja_env.globals['PUBLIC_KEY_PATTERN'] = PUBLIC_KEY_PATTERN
+app.jinja_env.globals['PUBLIC_KEY_ERROR'] = PUBLIC_KEY_ERROR
+PRIVATE_KEY_PATTERN = (r'-----BEGIN RSA PRIVATE KEY-----\s[0-9A-Za-z+\/]+'
+                       r'[=]{0,3}\s-----END RSA PRIVATE KEY-----')
+PRIVATE_KEY_ERROR = ('Please supply a valid private key in a format such as '
+                     '"-----BEGIN RSA PRIVATE KEY----- ... '
+                     '-----END RSA PRIVATE KEY-----"')
+app.jinja_env.globals['PRIVATE_KEY_PATTERN'] = PRIVATE_KEY_PATTERN
+app.jinja_env.globals['PRIVATE_KEY_ERROR'] = PRIVATE_KEY_ERROR
+# TODO(eholder): Find a regex for ipv6 then or these two together.
+IP_ADDRESS_KEY_PATTERN = (r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}'
+                          r'(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+IP_ADDRESS_KEY_ERROR = ('Please supply a valid ip address in v4 format.')
+app.jinja_env.globals['IP_ADDRESS_KEY_PATTERN'] = IP_ADDRESS_KEY_PATTERN
+app.jinja_env.globals['IP_ADDRESS_KEY_ERROR'] = IP_ADDRESS_KEY_ERROR
+
 
 db = sqlalchemy.SQLAlchemy(app)
-
-# Set jinja environment globals
-app.jinja_env.globals['EMAIL_VALIDATION_PATTERN'] = r'[^@]+@[^@]+.[^@]+'
-EMAIL_VALIDATION_ERROR = 'Please supply a valid email address.'
-app.jinja_env.globals['EMAIL_VALIDATION_ERROR'] = EMAIL_VALIDATION_ERROR
-# Key lookup for users and group allows email or unique id.
-KEY_LOOKUP_PATTERN = r'([^@]+@[^@]+.[^@]+|[a-zA-Z0-9]+)'
-KEY_LOOKUP_ERROR = 'Please supply a valid email address or unique id.'
-app.jinja_env.globals['KEY_LOOKUP_VALIDATION_PATTERN'] = KEY_LOOKUP_PATTERN
-app.jinja_env.globals['KEY_LOOKUP_VALIDATION_ERROR'] = KEY_LOOKUP_ERROR
 
 # DB needs to be defined before this point
 import models
