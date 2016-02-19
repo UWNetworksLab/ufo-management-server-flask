@@ -1,10 +1,5 @@
 {% extends "layout.html" %}
 {% block title %}User Details{% endblock %}
-{% block head %}
-  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
-  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
-  <link rel="import" href="{{ url_for('static', filename='collapseButton.html') }}" />
-{% endblock %}
 {% block body %}
   {% set xsrf_token_value = xsrf_token() %}
   <div id="user-card-holder">
