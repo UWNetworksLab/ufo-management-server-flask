@@ -1,10 +1,5 @@
 {% extends "layout.html" %}
 {% block title %}User Details{% endblock %}
-{% block head %}
-  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
-  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-card/paper-card.html') }}" />
-  <link rel="import" href="{{ url_for('static', filename='collapseButton.html') }}" />
-{% endblock %}
 {% block body %}
   {% set xsrf_token_value = xsrf_token() %}
   <div id="user-card-holder">
@@ -47,9 +42,10 @@
         </form>
       </div>
     </paper-card>
-    {% if invite_code %}
-      <paper-card heading="Invite Code Below">
-        <textarea rows="20" cols="80">{{ invite_code }}</textarea><br>
+    {% if invite_url %}
+      <paper-card heading="Invite Code URL Below">
+        <a href="{{ invite_url }}"><paper-button raised class="anchor-button">Invite Code URL</paper-button></a>
+        <p><textarea rows="20" cols="80">{{ invite_url }}</textarea></p>
       </paper-card>
     {% endif %}
   </div>

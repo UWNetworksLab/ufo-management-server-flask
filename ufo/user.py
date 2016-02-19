@@ -1,5 +1,4 @@
-from . import app, db, setup_required
-
+"""User module which provides handlers to access and edit users."""
 import ast
 import base64
 import flask
@@ -8,9 +7,15 @@ import random
 
 from googleapiclient import errors
 
+from ufo import app
+from ufo import db
 from ufo import google_directory_service
 from ufo import models
 from ufo import oauth
+from ufo import setup_required
+
+INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
+
 
 def _render_user_add(get_all, group_key, user_key):
   """Renders the user add template with the requested users if found.
@@ -187,12 +192,16 @@ def user_details(user_id):
 
   Returns:
     A rendered template of user_details.html for the given user_id along with
-    an invite code for that user.
+    an invite code for that user if available.
   """
   user = models.User.query.get_or_404(user_id)
-  return flask.render_template('user_details.html',
-                               user=user,
-                               invite_code=_make_invite_code(user))
+  invite_code = _make_invite_code(user)
+  if invite_code is None:
+    return flask.render_template('user_details.html', user=user)
+  else:
+    invite_url = INVITE_CODE_URL_PREFIX + invite_code
+    return flask.render_template('user_details.html', user=user,
+                                 invite_url=invite_url)
 
 @app.route('/user/<user_id>/delete', methods=['POST'])
 @setup_required

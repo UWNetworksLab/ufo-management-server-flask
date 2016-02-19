@@ -94,3 +94,4 @@ def setup_required(func):
 
 import xsrf
 import routes
+import key_distributor

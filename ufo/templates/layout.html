@@ -2,9 +2,7 @@
 <html lang="en">
 <head>
   <title>{% block title %}{% endblock %}</title>
-  <link rel="import" href="{{ url_for('static', filename='bower_components/polymer/polymer.html') }}" />
-  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-drawer-panel/paper-drawer-panel.html') }}" />
-  <link rel="import" href="{{ url_for('static', filename='sidebar.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='vulcanized.html') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   {% block head %}{% endblock %}
 </head>

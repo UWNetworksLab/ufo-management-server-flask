@@ -10,15 +10,16 @@ import unittest
 from werkzeug.datastructures import MultiDict
 from werkzeug.datastructures import ImmutableMultiDict
 
-from . import app
+from ufo import app
 from ufo import base_test
-from . import db
+from ufo import db
 # I practically have to shorten this name so every single line doesn't go
 # over. If someone can't understand, they can use ctrl+f to look it up here.
 from ufo import google_directory_service as gds
 from ufo import models
 from ufo import oauth
 from ufo import user
+
 
 FAKE_EMAILS_AND_NAMES = [
   {'email': 'foo@aol.com', 'name': 'joe'},
@@ -49,6 +50,8 @@ FAKE_MODEL_USER = MagicMock(email=FAKE_EMAILS_AND_NAMES[0]['email'],
                             private_key='private key foo',
                             public_key='public key bar',
                             is_key_revoked=False)
+
+
 class UserTest(base_test.BaseTest):
   """Test user class functionality."""
 
@@ -217,7 +220,6 @@ class UserTest(base_test.BaseTest):
       mock_users.append(mock_user)
 
     data = {'users': json.dumps(mock_users)}
-    #json_data = json.dumps(data)
 
     response = self.client.post(flask.url_for('add_user'), data=data,
                                 follow_redirects=False)
@@ -256,15 +258,15 @@ class UserTest(base_test.BaseTest):
   @patch('flask.render_template')
   def testUserDetailsGet(self, mock_render_template):
     """Test the user details handler calls to render a user's information."""
-    user = self._CreateAndSaveFakeUser()
+    created_user = self._CreateAndSaveFakeUser()
     mock_render_template.return_value = ''
 
-    response = self.client.get(flask.url_for('user_details', user_id=user.id))
+    response = self.client.get(flask.url_for('user_details', user_id=created_user.id))
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('user_details.html', args[0])
-    self.assertEquals(user, kwargs['user'])
-    self.assertIsNone(kwargs['invite_code'])
+    self.assertEquals(created_user, kwargs['user'])
+    self.assertNotIn('invite_url', kwargs)
 
   @patch('flask.render_template')
   def testUserDetailsGetWithInvite(self, mock_render_template):
@@ -272,24 +274,27 @@ class UserTest(base_test.BaseTest):
     fake_ip = '0.1.2.3'
     proxy_server = models.ProxyServer(ip_address=fake_ip)
     proxy_server.save()
-    user = self._CreateAndSaveFakeUser()
+    created_user = self._CreateAndSaveFakeUser()
     mock_render_template.return_value = ''
 
-    response = self.client.get(flask.url_for('user_details', user_id=user.id))
+    response = self.client.get(flask.url_for('user_details',
+                                             user_id=created_user.id))
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('user_details.html', args[0])
-    self.assertEquals(user, kwargs['user'])
-    self.assertIsNotNone(kwargs['invite_code'])
+    self.assertEquals(created_user, kwargs['user'])
+    invite_url = kwargs['invite_url']
+    self.assertIn(user.INVITE_CODE_URL_PREFIX, invite_url)
+    invite_code_base64 = invite_url[len(user.INVITE_CODE_URL_PREFIX):]
 
-    invite_code_json = base64.urlsafe_b64decode(kwargs['invite_code'])
+    invite_code_json = base64.urlsafe_b64decode(invite_code_base64)
     invite_code = json.loads(invite_code_json)
 
     self.assertEquals('Cloud', invite_code['networkName'])
     self.assertEquals(fake_ip, invite_code['networkData']['host'])
-    self.assertEquals(user.email,
+    self.assertEquals(created_user.email,
                       invite_code['networkData']['user'])
-    self.assertEquals(user.private_key,
+    self.assertEquals(created_user.private_key,
                       invite_code['networkData']['pass'])
 
   def testDeleteUserPostHandler(self):
