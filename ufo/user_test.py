@@ -20,6 +20,7 @@ from ufo import models
 from ufo import oauth
 from ufo import user
 
+
 FAKE_EMAILS_AND_NAMES = [
   {'email': 'foo@aol.com', 'name': 'joe'},
   {'email': 'bar@yahoo.com', 'name': 'bob'},
@@ -49,6 +50,8 @@ FAKE_MODEL_USER = MagicMock(email=FAKE_EMAILS_AND_NAMES[0]['email'],
                             private_key='private key foo',
                             public_key='public key bar',
                             is_key_revoked=False)
+
+
 class UserTest(base_test.BaseTest):
   """Test user class functionality."""
 

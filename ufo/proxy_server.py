@@ -3,41 +3,12 @@
 from . import app, db, setup_required
 
 import flask
-import logging
-import models
-import ssh_client
 import StringIO
 
+import ufo
+from ufo import models
+from ufo import ssh_client
 
-def _MakeKeyString():
-  """Generate the key string in open ssh format for pushing to proxy servers.
-
-  This key string includes only the public key for each user in order to grant
-  the user access to each proxy server.
-
-  Returns:
-    key_string: A string of users with associated key.
-  """
-  users = models.User.query.all()
-  key_string = ''
-  ssh_starting_portion = 'ssh-rsa'
-  space = ' '
-  endline = '\n'
-  for user in users:
-    if not user.is_key_revoked:
-      user_string = (ssh_starting_portion + space + user.public_key + space +
-                     user.email + endline)
-      key_string += user_string
-
-  return key_string
-
-def _SendKeysToServer(server, keys):
-  client = ssh_client.SSHClient()
-  client.connect(server)
-
-  # TODO do stuff
-
-  client.close()
 
 def _GetViewDataFromProxyServer(server):
   private_key = ssh_client.SSHClient.private_key_data_to_object(
@@ -121,13 +92,3 @@ def proxyserver_delete(server_id):
   server.delete()
 
   return flask.redirect(flask.url_for('proxyserver_list'))
-
-#TODO use task queues, split this up a bit
-@app.route('/cron/proxyserver/distributekeys')
-@setup_required
-def proxyserver_distributekeys():
-  key_string = _MakeKeyString()
-  proxy_servers = models.ProxyServer.query.all()
-  for proxy_server in proxy_servers:
-    _SendKeysToServer(proxy_server, key_string)
-  return 'Done!'
