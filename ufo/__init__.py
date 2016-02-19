@@ -3,10 +3,17 @@ import flask
 from flask.ext import sqlalchemy
 import functools
 import os
+import sys
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
 app.config.from_object('config.BaseConfiguration')
+
+# Register logging.  Ensure INFO level is captured by Heroku's Logplex.
+import logging
+stream_handler = logging.StreamHandler(sys.stdout)
+app.logger.addHandler(stream_handler)
+app.logger.setLevel(logging.INFO)
 
 if 'DATABASE_URL' in os.environ:
   app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
