@@ -3,6 +3,7 @@
 from rq import Queue
 
 import ufo
+from ufo import app
 from ufo import models
 from ufo import ssh_client
 import worker
@@ -41,6 +42,7 @@ class KeyDistributor(object):
       proxy_server: db representation of a proxy server.
       key_string: A string of users with associated key.
     """
+    app.logger.info('Distributing keys to proxy server: %s', proxy_server.name)
     client = ssh_client.SSHClient()
     client.connect(proxy_server)
 
@@ -50,6 +52,7 @@ class KeyDistributor(object):
 
   def enqueue_key_distribution_jobs(self):
     """Distribute user keys to proxy servers to authenticate invite code."""
+    app.logger.info('Enqueuing key distribution jobs.')
     key_string = self.make_key_string()
     proxy_servers = models.ProxyServer.query.all()
     queue = Queue(connection=worker.CONN)
