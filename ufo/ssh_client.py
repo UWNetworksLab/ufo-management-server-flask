@@ -34,10 +34,13 @@ class SSHClient(paramiko.SSHClient):
 
   def connect(self, proxy_server):
     """Establish a connection with the target proxy server.
+
     Args:
       proxy_server: db representation of a proxy server.
+
     Returns:
       A ssh client with an established connection.
+
     Raises:
       InvalidKeyTypeException: An exception that occurs if the public
           or private key is invalid.
