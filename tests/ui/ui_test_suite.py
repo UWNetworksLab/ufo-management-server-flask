@@ -8,7 +8,11 @@ from user_page_test import UserPageTest
 
 
 def _ParseArgs():
-  """Parse the arguments from the commandline."""
+  """Parse the arguments from the commandline.
+
+    Returns:
+      The parsed arguments given from the command line as an args array.
+    """
   parser = argparse.ArgumentParser()
   parser.add_argument('--server_url', action='store',
                       dest='server_url', default=None,
@@ -22,7 +26,14 @@ def _ParseArgs():
   return parser.parse_args()
 
 def MakeSuite(testcase_class):
-  """Add the test cases into suites."""
+  """Add the test cases into suites.
+
+    Args:
+      testcase_class: The class of test case to make into a test suite.
+
+    Returns:
+      A test suite for the given case.
+    """
   testloader = unittest.TestLoader()
   test_cases = testloader.getTestCaseNames(testcase_class)
   test_suite = unittest.TestSuite()

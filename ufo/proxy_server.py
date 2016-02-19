@@ -11,9 +11,6 @@ from ufo import ssh_client
 
 
 def _GetViewDataFromProxyServer(server):
-  public_key = ssh_client.SSHClient.public_key_data_to_object(
-      server.host_public_key_type,
-      server.host_public_key)
   private_key = ssh_client.SSHClient.private_key_data_to_object(
       server.ssh_private_key_type,
       server.ssh_private_key)
@@ -25,7 +22,7 @@ def _GetViewDataFromProxyServer(server):
     "id": server.id,
     "name": server.name,
     "ip_address": server.ip_address,
-    "public_key": public_key.get_name() + ' ' + public_key.get_base64(),
+    "public_key": server.get_public_key_as_authorization_file_string(),
     "private_key": private_key_text,
     }
 

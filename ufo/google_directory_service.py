@@ -4,13 +4,9 @@ import httplib2
 
 from googleapiclient import discovery
 
-MY_CUSTOMER_ALIAS = 'my_customer'
+import ufo
 
 NUM_RETRIES = 3
-
-VALID_WATCH_EVENTS = ['add', 'delete', 'makeAdmin', 'undelete', 'update']
-
-# TODO(eholder): Write tests for these functions.
 
 class GoogleDirectoryService(object):
 
@@ -23,15 +19,19 @@ class GoogleDirectoryService(object):
                                    http=credentials.authorize(httplib2.Http()))
 
   def GetUsers(self):
-    """Get the users of a customer account.
+    """Get the users of a domain.
 
     Returns:
-      users: A list of users.
+      A list of users.
+
+    Raises:
+      googleapiclient.errors.HttpError on failure to find the domain.
     """
+    config = ufo.get_user_config()
     users = []
     page_token = ''
     while True:
-      request = self.service.users().list(customer=MY_CUSTOMER_ALIAS,
+      request = self.service.users().list(domain=config.domain,
                                           maxResults=500,
                                           pageToken=page_token,
                                           projection='full',
@@ -46,13 +46,16 @@ class GoogleDirectoryService(object):
     return users
 
   def GetUsersByGroupKey(self, group_key):
-    """Get the users belonging to a group in a customer account.
+    """Get the users belonging to a group.
 
     Args:
       group_key: A string identifying a google group for querying users.
 
     Returns:
-      users: A list of group members which are users and not groups.
+      A list of group members which are users and not groups.
+
+    Raises:
+      googleapiclient.errors.HttpError on failure to find the group.
     """
     users = []
     members = []
@@ -85,7 +88,10 @@ class GoogleDirectoryService(object):
       user_key: A string identifying an individual user.
 
     Returns:
-      users: The user if found.
+      The user if found.
+
+    Raises:
+      googleapiclient.errors.HttpError on failure to find the user.
     """
     request = self.service.users().get(userKey=user_key, projection='full')
     result = request.execute(num_retries=NUM_RETRIES)
@@ -102,7 +108,10 @@ class GoogleDirectoryService(object):
       user_key: A string identifying an individual user.
 
     Returns:
-      users: A list with that user in it or empty.
+      A list with that user in it or empty.
+
+    Raises:
+      googleapiclient.errors.HttpError on failure to find the user.
     """
     users = []
     result = self.GetUser(user_key)
@@ -119,6 +128,9 @@ class GoogleDirectoryService(object):
 
     Returns:
       True or false for whether or not the user is or is not an admin.
+
+    Raises:
+      googleapiclient.errors.HttpError on failure to find the user.
     """
     result = self.GetUser(user_key)
     return result['isAdmin']
