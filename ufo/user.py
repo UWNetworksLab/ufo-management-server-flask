@@ -6,6 +6,7 @@ import json
 import random
 
 from googleapiclient import errors
+from rq import Queue
 
 from ufo import app
 from ufo import db
@@ -13,6 +14,7 @@ from ufo import google_directory_service
 from ufo import models
 from ufo import oauth
 from ufo import setup_required
+import worker
 
 INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
@@ -262,3 +264,50 @@ def user_toggle_revoked(user_id):
   user.save()
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
+
+@setup_required
+def _check_db_users_against_directory_service():
+  """Checks whether the users currently in the DB are still valid.
+
+  This gets all users in the DB, finds those that match the current domain,
+  and compares them to those found in Google Directory Service for the domain.
+  If a user in the DB is not the domain, then it is presumed to be deleted and
+  will thus be removed from our DB.
+  """
+  db_users = models.User.query.all()
+  config = ufo.get_user_config()
+  credentials = oauth.getSavedCredentials()
+  # TODO this should handle the case where we do not have oauth
+  if not credentials:
+    app.logger.info('OAuth credentials not set up. Can\'t sync users.')
+
+  try:
+    directory_service = google_directory_service.GoogleDirectoryService(
+        credentials)
+    directory_users = directory_service.GetUsers()
+    for db_user in db_users:
+      db_user_domain = db_user.email.split('@', 1)[1]
+      # Don't worry about users from another domain since they won't show up.
+      if db_user_domain is not config.domain:
+        continue
+      found = False
+      # Search for users based on email field.
+      for directory_user in directory_users:
+        if db_user.email is directory_user['primaryEmail']:
+          found = True
+          break
+      # Assume deleted if not found, so delete from our db.
+      if not found:
+        app.logger.info('User ' + db_user.email + ' was not found in '
+                        'directory service. Deleting from database.')
+        db_user.delete()
+
+  except errors.HttpError as error:
+    app.logger.info('Error encountered while requesting users from directory '
+                    'service: ' + str(error))
+
+  def enqueue_cron_user_sync():
+    """Check users currently in the DB are still valid in directory service."""
+    app.logger.info('Enqueuing cron user sync job.')
+    queue = Queue(connection=worker.CONN)
+    queue.enqueue(_check_db_users_against_directory_service)
