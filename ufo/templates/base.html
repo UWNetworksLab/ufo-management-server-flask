@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="import" href="{{ url_for('static', filename='vulcanized.html') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  {% block head %}{% endblock %}
+</head>
+<body class="fullbleed layout vertical">
+  <paper-scroll-header-panel>
+    <paper-toolbar class="tall" id="main-toolbar">
+      <div class="middle horizontal layout center flex">
+        <img src="{{ url_for('static', filename='ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
+        <paper-input class="center flex" id="search-bar">
+          <paper-icon-button icon="search" prefix></paper-icon-button>
+        </paper-input>
+        <div id="username-and-menu">
+          <div class="title" id="username-title">foo</div>
+          <paper-icon-button icon="arrow-drop-down" title="menu" id="menu-dropdown"></paper-icon-button>
+        </div>
+      </div>
+    </paper-toolbar>
+    <div class="layout vertical">
+      {% block body %}{% endblock %}
+    </div>
+  </paper-scroll-header-panel>
+
+  <script src="{{ url_for('static', filename='globalHelperFunctions.js') }}"></script>
+</body>
+</html>
