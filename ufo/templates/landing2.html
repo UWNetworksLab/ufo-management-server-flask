@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block body %}
+  <div class="horizontal center-justified layout">
+    <paper-material elevation="1">
+      <div class="heading">
+        <paper-toolbar class="medium-tall">
+          <div class="middle flex">
+            <div class="horizontal center-justified layout">
+              <div class="title">Users</div>
+              <a id='add_users' href="{{ url_for('add_user') }}">
+                <paper-button class="anchor-button"><iron-icon src="{{ url_for('static', filename='add-users.svg') }}"></iron-icon>Add Users</paper-button>
+              </a>
+            </div>
+          </div>
+        </paper-toolbar>
+      </div>
+      <div class="content">
+        <paper-listbox>
+        {% for user_id, email in user_payloads.iteritems() %}
+          <a href="{{ url_for('user_details', user_id=user_id) }}">
+            <paper-item>{{ email }}</paper-item>
+          </a>
+        {% endfor %}
+        </paper-listbox>
+      </div>
+    </paper-material>
+  </div>
+  <br>
+  <div class="horizontal center-justified layout">
+    <paper-material elevation="1">
+      <div class="heading">
+        <paper-toolbar class="medium-tall">
+          <div class="middle flex">
+            <div class="horizontal center-justified layout">
+              <div class="title">Users</div>
+              <a id='add_users' href="{{ url_for('add_user') }}">
+                <paper-button class="anchor-button"><iron-icon src="{{ url_for('static', filename='add-users.svg') }}"></iron-icon>Add Users</paper-button>
+              </a>
+            </div>
+          </div>
+        </paper-toolbar>
+      </div>
+      <div class="content">
+        <paper-listbox>
+        {% for user_id, email in user_payloads.iteritems() %}
+          <a href="{{ url_for('user_details', user_id=user_id) }}">
+            <paper-item>{{ email }}</paper-item>
+          </a>
+        {% endfor %}
+        </paper-listbox>
+      </div>
+    </paper-material>
+  </div>
+{% endblock %}
