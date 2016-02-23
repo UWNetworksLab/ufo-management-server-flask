@@ -61,7 +61,7 @@ class UserTest(base_test.BaseTest):
     super(UserTest, self).setup_config()
 
   def testListUsersHandler(self):
-    """Test the list user handler displays users from the database."""
+    """Test the list user handler gets users from the database."""
     users = []
     for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
       user = models.User(email=fake_email_and_name['email'],
@@ -72,7 +72,7 @@ class UserTest(base_test.BaseTest):
       users.append(user)
 
     resp = self.client.get(flask.url_for('user_list'))
-    user_list_output = json.loads(resp.data)['users']
+    user_list_output = json.loads(resp.data)['items']
 
     self.assertEquals(len(user_list_output), len(FAKE_EMAILS_AND_NAMES))
 

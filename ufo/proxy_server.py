@@ -3,6 +3,7 @@
 from . import app, db, setup_required
 
 import flask
+import json
 import StringIO
 
 import ufo
@@ -30,11 +31,12 @@ def _GetViewDataFromProxyServer(server):
 @app.route('/proxyserver/')
 @setup_required
 def proxyserver_list():
-  proxy_servers_data = models.ProxyServer.query.all()
-  proxy_servers = [_GetViewDataFromProxyServer(s) for s in proxy_servers_data]
-
-  return flask.render_template('proxy_server.html',
-                               proxy_servers=proxy_servers)
+  proxy_servers = models.ProxyServer.query.all()
+  proxy_server_dict_list = []
+  for proxy_server in proxy_servers:
+    proxy_server_dict_list.append(_GetViewDataFromProxyServer(proxy_server))
+  proxy_servers_json = json.dumps(({'items': proxy_server_dict_list}))
+  return flask.Response(proxy_servers_json, mimetype='application/json')
 
 @app.route('/proxyserver/add', methods=['GET', 'POST'])
 @setup_required

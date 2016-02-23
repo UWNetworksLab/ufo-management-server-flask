@@ -1,0 +1,97 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
+<link rel="import" href="bower_components/paper-material/paper-material.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
+
+<dom-module id="get-items-ajax-into-list">
+  <style>
+    .first-div {
+      width: 300px;
+    }
+    .second-div {
+      width: 250px;
+    }
+    .third-div {
+      width: 200px;
+    }
+  </style>
+  <template>
+    <div class="horizontal center-justified layout">
+      <paper-material elevation="1">
+        <div class="heading">
+          <paper-toolbar class="medium-tall">
+            <div class="middle flex">
+              <div class="horizontal center-justified layout">
+                <div class="title">{{titleText}}</div>
+                <a id='add_button' href="{{addUrl}}">
+                  <paper-button class="anchor-button"><iron-icon src="{{addIconUrl}}"></iron-icon>{{addText}}</paper-button>
+                </a>
+              </div>
+            </div>
+          </paper-toolbar>
+        </div>
+        <div>
+          <template is="dom-if" if="{{loading}}">
+            <paper-spinner active$={{loading}}></paper-spinner>
+          </template>
+          <iron-ajax auto
+            url="{{listUrl}}"
+            method="GET"
+            handle-as="json"
+            id="getItemsAjax"
+            loading="{{loading}}"
+            last-response="{{ajaxResponse}}">
+          </iron-ajax>
+          <paper-listbox id="item-list">
+            <template is="dom-repeat" items="[[ajaxResponse.items]]">
+              <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
+                <template is="dom-if" if="{{item.name}}">
+                  <div class="first-div">{{item.name}}</div>
+                </template>
+                <template is="dom-if" if="{{item.email}}">
+                  <div class="second-div">{{item.email}}</div>
+                  <div class="third-div">{{item.access}}</div>
+                </template>
+                <template is="dom-if" if="{{item.ip_address}}">
+                  <div class="second-div">{{item.ip_address}}</div>
+                  <div class="third-div"></div>
+                </template>
+                <iron-icon src="{{itemIconUrl}}" item-icon></iron-icon>
+                <paper-icon-button icon="arrow-drop-down" title="user details" id="user-details-dropdown"></paper-icon-button>
+              </paper-icon-item>
+            </template>
+          </paper-listbox>
+        </div>
+      </paper-material>
+    </div>
+    <br>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'get-items-ajax-into-list',
+      properties: {
+        addUrl: {
+          type: String,
+        },
+        addIconUrl: {
+          type: String,
+        },
+        addText: {
+          type: String,
+        },
+        listUrl: {
+          type: String,
+        },
+        titleText: {
+          type: String,
+        },
+        itemIconUrl: {
+          type: String,
+        },
+      },
+    });
+  </script>
+</dom-module>

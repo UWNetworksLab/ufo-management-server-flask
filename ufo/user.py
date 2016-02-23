@@ -143,7 +143,7 @@ def user_list():
   user_dict_list = []
   for user in users:
     user_dict_list.append(user.to_dict())
-  users_json = json.dumps(({'users': user_dict_list}))
+  users_json = json.dumps(({'items': user_dict_list}))
   return flask.Response(users_json, mimetype='application/json')
 
 @app.route('/user/add', methods=['GET', 'POST'])
