@@ -11,7 +11,7 @@
     .email-div {
       width: 250px;
     }
-    .revoked-div {
+    .access-div {
       width: 200px;
     }
   </style>
@@ -33,7 +33,7 @@
           <iron-icon src="user.svg" item-icon></iron-icon>
           <div class="name-div">{{item.name}}</div>
           <div class="email-div">{{item.email}}</div>
-          <div class="revoked-div">{{item.is_key_revoked}}</div>
+          <div class="access-div">{{item.access}}</div>
           <paper-icon-button icon="arrow-drop-down" title="user details" id="user-details-dropdown"></paper-icon-button>
         </paper-icon-item>
       </template>

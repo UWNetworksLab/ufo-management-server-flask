@@ -7,6 +7,8 @@ import StringIO
 import ssh_client
 
 LONG_STRING_LENGTH = 1024
+REVOKED_TEXT = 'Access Disabled'
+NOT_REVOKED_TEXT = 'Access Enabled'
 
 class Model(db.Model):
   """Helpful functions for the database models
@@ -93,7 +95,7 @@ class User(Model):
       'name': self.name,
       'private_key': self.private_key,
       'public_key': self.public_key,
-      'is_key_revoked': self.is_key_revoked,
+      'access': REVOKED_TEXT if self.is_key_revoked else NOT_REVOKED_TEXT,
     }
     return to_return
 

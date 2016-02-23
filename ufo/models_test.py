@@ -24,8 +24,8 @@ class UserTest(base_test.BaseTest):
     rsa_public_key = RSA.importKey(user.public_key)
     rsa_private_key = RSA.importKey(user.private_key)
 
-    self.assertEqual(2048, rsa_public_key.size() + 1) 
-    self.assertEqual(2048, rsa_private_key.size() + 1) 
+    self.assertEqual(2048, rsa_public_key.size() + 1)
+    self.assertEqual(2048, rsa_private_key.size() + 1)
 
     message = os.urandom(8)
     encrypted_message = rsa_public_key.encrypt(message, 12345)
@@ -39,6 +39,21 @@ class UserTest(base_test.BaseTest):
     user.regenerate_key_pair()
     self.assertNotEqual(original_public_key, user.public_key)
     self.assertNotEqual(original_private_key, user.private_key)
+
+  def testToDict(self):
+    user = models.User()
+    user.is_key_revoked = False
+    user_dict = user.to_dict()
+
+    self.assertEqual(user_dict['email'], user.email)
+    self.assertEqual(user_dict['name'], user.name)
+    self.assertEqual(user_dict['private_key'], user.private_key)
+    self.assertEqual(user_dict['public_key'], user.public_key)
+    self.assertEqual(user_dict['access'], models.NOT_REVOKED_TEXT)
+
+    user.is_key_revoked = True
+    user_dict = user.to_dict()
+    self.assertEqual(user_dict['access'], models.REVOKED_TEXT)
 
 
 if __name__ == '__main__':

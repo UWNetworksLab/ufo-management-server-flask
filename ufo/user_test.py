@@ -22,9 +22,9 @@ from ufo import user
 
 
 FAKE_EMAILS_AND_NAMES = [
-  {'email': 'foo@aol.com', 'name': 'joe'},
-  {'email': 'bar@yahoo.com', 'name': 'bob'},
-  {'email': 'baz@gmail.com', 'name': 'mark'}
+  {'email': 'foo@aol.com', 'name': 'joe', 'pri': 'foopri', 'pub': 'foopub'},
+  {'email': 'bar@yahoo.com', 'name': 'bob', 'pri': 'barpri', 'pub': 'barpub'},
+  {'email': 'baz@gmail.com', 'name': 'mark', 'pri': 'bazpri', 'pub': 'bazpub'}
 ]
 FAKE_DIRECTORY_USER_ARRAY = []
 FAKE_USERS_FOR_DISPLAY_ARRAY = []
@@ -65,21 +65,19 @@ class UserTest(base_test.BaseTest):
     users = []
     for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
       user = models.User(email=fake_email_and_name['email'],
-                         name=fake_email_and_name['name'])
+                         name=fake_email_and_name['name'],
+                         private_key=fake_email_and_name['pri'],
+                         public_key=fake_email_and_name['pub'])
       user.save()
       users.append(user)
 
     resp = self.client.get(flask.url_for('user_list'))
-    user_list_output = resp.data
+    user_list_output = json.loads(resp.data)['users']
 
-    self.assertTrue('Add Users' in user_list_output)
-    click_user_string = 'Click a user below to view more details.'
-    self.assertTrue(click_user_string in user_list_output)
+    self.assertEquals(len(user_list_output), len(FAKE_EMAILS_AND_NAMES))
 
     for user in users:
-      self.assertTrue(user.email in user_list_output)
-      details_link = flask.url_for('user_details', user_id=user.id)
-      self.assertTrue(details_link in user_list_output)
+      self.assertIn(user.to_dict(), user_list_output)
 
   @patch.object(user, '_render_user_add')
   def testAddUsersGetHandler(self, mock_render):
