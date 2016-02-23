@@ -131,6 +131,21 @@ def _make_invite_code(user):
 
   return invite_code
 
+@app.route('/user_json/')
+@setup_required
+def user_list_json():
+  """Retrieves a list of the users currently in the db.
+
+  Returns:
+    A json object with 'users' set to the list of users in the db.
+  """
+  users = models.User.query.all()
+  user_dict_list = []
+  for user in users:
+    user_dict_list.append(user.to_dict())
+  users_json = json.dumps(({'users': user_dict_list}))
+  return flask.Response(users_json, mimetype='application/json')
+
 @app.route('/user/')
 @setup_required
 def user_list():

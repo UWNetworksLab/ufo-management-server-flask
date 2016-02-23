@@ -51,7 +51,7 @@ paper-scroll-header-panel {
 
 paper-material {
   background-color: #fafafa;
-  width: 800px;
+  min-width: 1000px;
 }
 
 paper-toolbar {

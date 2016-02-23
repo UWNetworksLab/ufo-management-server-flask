@@ -87,6 +87,16 @@ class User(Model):
     self.private_key = key_pair['private_key']
     self.public_key = key_pair['public_key']
 
+  def to_dict(self):
+    to_return = {
+      'email': self.email,
+      'name': self.name,
+      'private_key': self.private_key,
+      'public_key': self.public_key,
+      'is_key_revoked': self.is_key_revoked,
+    }
+    return to_return
+
 
 class ProxyServer(Model):
   """Class for information about the proxy servers
