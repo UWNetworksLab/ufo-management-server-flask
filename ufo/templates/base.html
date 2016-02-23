@@ -10,13 +10,17 @@
   <paper-scroll-header-panel>
     <paper-toolbar class="tall" id="main-toolbar">
       <div class="middle horizontal layout center flex">
-        <img src="{{ url_for('static', filename='ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
-        <paper-input class="center flex" id="search-bar">
+        <div class="flex">
+          <img src="{{ url_for('static', filename='ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
+        </div>
+        <div class="flex"></div>
+        <paper-input class="center flex-4" id="search-bar">
           <paper-icon-button icon="search" prefix></paper-icon-button>
         </paper-input>
-        <div id="username-and-menu">
-          <div class="title" id="username-title">foo</div>
-          <paper-icon-button icon="arrow-drop-down" title="menu" id="menu-dropdown"></paper-icon-button>
+        <div class="flex"></div>
+        <div id="username-and-menu" class="horizontal layout center flex">
+          <div class="title flex" id="main-toolbar-title">foo</div>
+          <paper-icon-button icon="arrow-drop-down" title="menu" id="menu-dropdown" class="flex"></paper-icon-button>
         </div>
       </div>
     </paper-toolbar>

@@ -71,6 +71,10 @@ paper-toolbar {
   background-color: #009788!important;
 }
 
+#main-toolbar-title {
+  color: white!important;
+}
+
 #search-bar {
   background-color: #4DB6AB;
 }

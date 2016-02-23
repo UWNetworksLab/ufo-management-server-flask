@@ -73,8 +73,6 @@ class UserTest(base_test.BaseTest):
     user_list_output = resp.data
 
     self.assertTrue('Add Users' in user_list_output)
-    click_user_string = 'Click a user below to view more details.'
-    self.assertTrue(click_user_string in user_list_output)
 
     for user in users:
       self.assertTrue(user.email in user_list_output)
