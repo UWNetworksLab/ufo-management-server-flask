@@ -20,13 +20,21 @@
         <div class="flex"></div>
         <div id="username-and-menu" class="horizontal layout center flex">
           <div class="title flex" id="main-toolbar-title">foo</div>
-          <paper-icon-button icon="arrow-drop-down" title="menu" id="menu-dropdown" class="flex"></paper-icon-button>
+          <paper-icon-button icon="expand-more" title="menu" id="menu-dropdown" class="flex"></paper-icon-button>
         </div>
       </div>
     </paper-toolbar>
     <div class="layout vertical">
       {% block body %}{% endblock %}
     </div>
+    <br>
+    <div class="horizontal center-justified layout">
+      <div id="jigsaw-logo-holder">
+        <img src="{{ url_for('static', filename='jigsaw_small_2x.png') }}" alt="Jigsaw Logo" height="30" id="jigsaw-logo">
+      </div>
+    </div>
+    <br>
+    <br>
   </paper-scroll-header-panel>
 
   <script src="{{ url_for('static', filename='globalHelperFunctions.js') }}"></script>

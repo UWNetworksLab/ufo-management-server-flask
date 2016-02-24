@@ -1,0 +1,40 @@
+<link rel="import" href="bower_components/paper-material/paper-material.html" />
+<link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
+
+<dom-module id="paper-display-template">
+  <template>
+    <div class="horizontal center-justified layout">
+      <paper-material elevation="1">
+        <div class="heading">
+          <paper-toolbar class="medium-tall">
+            <div class="middle flex">
+              <div class="horizontal center-justified layout">
+                <div class="title">{{resources.titleText}}</div>
+                <template is="dom-if" if="{{!resources.isChromePolicy}}">
+                  <a id='add_button' href="{{resources.addUrl}}">
+                    <paper-button class="anchor-button"><iron-icon src="{{resources.addIconUrl}}"></iron-icon>{{resources.addText}}</paper-button>
+                  </a>
+                </template>
+              </div>
+            </div>
+          </paper-toolbar>
+        </div>
+        <div>
+          <content></content>
+        </div>
+      </paper-material>
+    </div>
+    <br>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'paper-display-template',
+      properties: {
+        resources: {
+          type: Object,
+        },
+      },
+    });
+  </script>
+</dom-module>

@@ -19,7 +19,6 @@ def new_landing():
     'titleText': 'Users',
     'itemIconUrl': flask.url_for('static', filename='user.svg'),
     'isUser': True,
-    'isProxyServer': False,
   }
   proxy_resources_dict = {
     'addUrl': flask.url_for('proxyserver_add'),
@@ -28,13 +27,17 @@ def new_landing():
     'listUrl': flask.url_for('proxyserver_list'),
     'titleText': 'Servers',
     'itemIconUrl': flask.url_for('static', filename='server.svg'),
-    'isUser': False,
     'isProxyServer': True,
+  }
+  policy_resources_dict = {
+    'titleText': 'Chrome Policy',
+    'isChromePolicy': True,
   }
   return flask.render_template(
   	  'landing2.html',
   	  user_resources=json.dumps((user_resources_dict)),
-  	  proxy_resources=json.dumps((proxy_resources_dict)))
+  	  proxy_resources=json.dumps((proxy_resources_dict)),
+  	  policy_resources=json.dumps((policy_resources_dict)))
 
 import setup # handlers for /setup
 import user # handlers for /user

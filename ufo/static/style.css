@@ -51,7 +51,10 @@ paper-scroll-header-panel {
 
 paper-material {
   background-color: #fafafa;
-  min-width: 1000px;
+}
+
+paper-material, #jigsaw-logo-holder {
+  width: 1200px;
 }
 
 paper-toolbar {
@@ -65,6 +68,14 @@ paper-toolbar {
 .anchor-button {
   color: white;
   background-color: #25CFB9;
+}
+
+#jigsaw-logo {
+  opacity: 53;
+}
+
+#jigsaw-logo:hover {
+  opacity: 86;
 }
 
 #main-toolbar {
