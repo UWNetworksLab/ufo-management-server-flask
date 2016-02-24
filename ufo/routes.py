@@ -34,10 +34,10 @@ def new_landing():
     'isChromePolicy': True,
   }
   return flask.render_template(
-  	  'landing2.html',
-  	  user_resources=json.dumps((user_resources_dict)),
-  	  proxy_resources=json.dumps((proxy_resources_dict)),
-  	  policy_resources=json.dumps((policy_resources_dict)))
+      'landing2.html',
+      user_resources=json.dumps((user_resources_dict)),
+      proxy_resources=json.dumps((proxy_resources_dict)),
+      policy_resources=json.dumps((policy_resources_dict)))
 
 import setup # handlers for /setup
 import user # handlers for /user
