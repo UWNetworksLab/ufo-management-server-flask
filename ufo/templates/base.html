@@ -6,6 +6,20 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   {% block head %}{% endblock %}
 </head>
+<style is="custom-style">
+  paper-dropdown-menu.custom-dropdown {
+    --paper-input-container-label: {
+      color: white;
+    };
+    --paper-dropdown-menu-icon: {
+      color: white;
+    };
+  }
+  .dropdown-icon {
+    width: 20px;
+    --iron-icon-fill-color: #009788;
+  }
+</style>
 <body class="fullbleed layout vertical">
   <paper-scroll-header-panel>
     <paper-toolbar class="tall" id="main-toolbar">
@@ -18,10 +32,21 @@
           <paper-icon-button icon="search" prefix></paper-icon-button>
         </paper-input>
         <div class="flex"></div>
-        <div id="username-and-menu" class="horizontal layout center flex">
-          <div class="title flex" id="main-toolbar-title">foo</div>
-          <paper-icon-button icon="arrow-drop-down" title="menu" id="menu-dropdown" class="flex"></paper-icon-button>
-        </div>
+        <paper-dropdown-menu label="foo" id="username-and-menu" class="custom-dropdown flex">
+          <paper-listbox class="dropdown-content">
+            <paper-icon-item class="dropdown-button">
+              <iron-icon class="dropdown-icon" src="{{url_for('static', filename='add-users.svg')}}" item-icon></iron-icon>
+              Add an Admin
+            </paper-icon-item>
+            <paper-icon-item class="dropdown-button">
+              <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
+              Settings
+            </paper-icon-item>
+            <paper-item class="dropdown-button">
+              Log Out
+            </paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
       </div>
     </paper-toolbar>
     <div class="layout vertical">

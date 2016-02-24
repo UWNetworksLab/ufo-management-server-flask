@@ -53,7 +53,7 @@ paper-material {
   background-color: #fafafa;
 }
 
-paper-material, #jigsaw-logo-holder {
+paper-material:not(.dropdown-content), #jigsaw-logo-holder {
   width: 1200px;
 }
 
@@ -74,6 +74,16 @@ paper-toolbar {
   color: #25CFB9;
   text-decoration: underline;
   text-transform: none;
+}
+
+.dropdown-button {
+  color: #009788;
+  text-transform: uppercase;
+  font-weight: 500!important;
+}
+
+.paper-input-container.underline {
+  display: none;
 }
 
 #jigsaw-logo {
