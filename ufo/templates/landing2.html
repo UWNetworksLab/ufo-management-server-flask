@@ -10,32 +10,7 @@
     </list-items>
   </paper-display-template>
   <paper-display-template resources="{{policy_resources}}">
-    <paper-listbox>
-      <paper-item><p>Chrome policy is a feature of enterprise Google devices which can
-        be used to securely add extra configuration to the uProxy frontend.
-        If you use enterprise Google devices through Google Apps for Work,
-        you can for example turn on validation for invitation links to
-        ensure you are proxying through an endpoint controlled by the
-        management console.
-      </p></paper-item>
-      <paper-item><p>You can adjust the values below and save to see the managed policy
-        json update. Once you are ready, you can copy and paste the managed
-        policy json below into its own file or click the download link to
-        have one generated automatically.
-      </p></paper-item>
-      <paper-item><p>To push your managed policy out to your devices, visit
-        <a href="https://admin.google.com/AdminHome" class="anchor-no-button">Google Admin Console</a>
-         and navigate to the uProxy Chrome App/Extension under Device
-        Management -> Chrome Management -> App Management. For the App and Extension, select the entry listed, then click User settings. From
-        the list of Orgs, choose which you want the policy to apply to, then
-        enable Force Installation and select Upload Configuration File.
-        Choose the json file you just created/downloaded. You may have to
-        click override to edit Force Installation or Configure's values.
-        Finally, click Save.
-      </p></paper-item>
-      <paper-item><a href="{{ url_for('download_chrome_policy') }}" download="chrome_policy.json">
-        <paper-button class="anchor-button"><iron-icon icon="file-download"></iron-icon> Download Policy</paper-button>
-      </a></paper-item>
-    </paper-listbox>
+    <chrome-policy resources="{{policy_resources}}">
+    </chrome-policy>
   </paper-display-template>
 {% endblock %}

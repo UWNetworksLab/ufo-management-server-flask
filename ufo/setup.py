@@ -1,7 +1,10 @@
-from . import app, get_user_config
+from ufo import app
+from ufo import component_resources
+from ufo import get_user_config
 
 import flask
 import httplib2
+import json
 import oauth
 import oauth2client
 
@@ -27,7 +30,8 @@ def setup():
   if flask.request.method == 'GET':
     return flask.render_template('setup.html',
                                  config=config,
-                                 oauth_url=oauth_url)
+                                 oauth_url=oauth_url,
+                                 policy_resources=json.dumps((component_resources._get_policy_resources_dict())))
 
   if flask.request.form.get('oauth_code', None):
     try:
@@ -60,6 +64,7 @@ def setup():
         config.credentials = credentials.to_json()
         config.domain = domain
       else:
+        print component_resources._get_policy_resources_dict()
         return flask.render_template('setup.html',
                                      error=NON_ADMIN_TEXT,
                                      config=config,

@@ -1,64 +1,94 @@
-{% extends "layout.html" %}
-{% block title %}Setup OAuth Client{% endblock %}
+{% extends "base.html" %}
+{% block title %}Setup{% endblock %}
 {% block body %}
-  <!-- TODO make a clear way to say you do not want to use Google apps -->
-  {% if not config.isConfigured %}
-    <p>
-      Hey there!  Welcome to the uProxy for Organizations management server!
-      To start, we want to get a bit of information from you to get everything
-      set up.
-    </p>
-
-    <p>
-      First of all, if you are planning on using this application with a Google
-      apps domain, we're going to need to get permission from you to access
-      that.  This will be used to keep the list of users in your domain in sync
-      with who is allowed to access the uProxy servers.  The credentials you
-      authorize will be shared by any administrators who log into this server.
-      If you do not plan on using a Google apps domain with this product, you
-      can just go straight to adding users.
-    </p>
-  {% else %}
-    <p>
-      You have already successfully configured this deployment!  If you want to
-      change the settings, you may do so below.  Please note: submitting the
-      form even without filling in any parameters will cause the previous saved
-      configuration to be lost.
-    </p>
-
-    {% if config.credentials and config.domain %}
+  <paper-card>
+    <!-- TODO make a clear way to say you do not want to use Google apps -->
+    {% if not config.isConfigured %}
       <p>
-        This site is set up to work with the
-        <strong>{{config.domain}}</strong> domain.  If that is not correct,
-        please update the configuration.
+        Hey there!  Welcome to the uProxy for Organizations management server!
+        To start, we want to get a bit of information from you to get everything
+        set up.
+      </p>
+  
+      <p>
+        First of all, if you are planning on using this application with a Google
+        apps domain, we're going to need to get permission from you to access
+        that.  This will be used to keep the list of users in your domain in sync
+        with who is allowed to access the uProxy servers.  The credentials you
+        authorize will be shared by any administrators who log into this server.
+        If you do not plan on using a Google apps domain with this product, you
+        can just go straight to adding users.
       </p>
     {% else %}
       <p>
-        This site is not set up to use any Google apps domain name, all users
-        will need to be manually input.
+        You have already successfully configured this deployment!  If you want to
+        change the settings, you may do so below.  Please note: submitting the
+        form even without filling in any parameters will cause the previous saved
+        configuration to be lost.
       </p>
+  
+      {% if config.credentials and config.domain %}
+        <p>
+          This site is set up to work with the
+          <strong>{{config.domain}}</strong> domain.  If that is not correct,
+          please update the configuration.
+        </p>
+      {% else %}
+        <p>
+          This site is not set up to use any Google apps domain name, all users
+          will need to be manually input.
+        </p>
+      {% endif %}
     {% endif %}
-  {% endif %}
+  
+    <p>
+      Please keep in mind that this is a much simpler version than what you
+      would actually expect to see in a finished version of the site.
+      Noteably, this page should include something about authenticating
+      yourself in the future (and actually include a way to skip)
+    </p>
+  
+    <a href="{{ oauth_url }}" target="_blank">Connect to your domain</a>
+  
+    <p>
+      Once you finish authorizing access, please paste the code you receive in
+      the box below.
+    </p>
+  
+    <!-- TODO make this form be more useful -->
+    <form id="setup-form" method="post">
+      <paper-input label="Domain" name="domain"></paper-input>
+      <paper-input label="OAuth Code" name="oauth_code"></paper-input>
+      <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}" />
+      <paper-button raised onclick="submitByFormId('setup-form')" class="form-submit-button" type="submit">Submit</paper-button>
+    </form>
+  </paper-card>
 
-  <p>
-    Please keep in mind that this is a much simpler version than what you
-    would actually expect to see in a finished version of the site.
-    Noteably, this page should include something about authenticating
-    yourself in the future (and actually include a way to skip)
-  </p>
+  <br>
 
-  <a href="{{ oauth_url }}" target="_blank">Connect to your domain</a>
+  <paper-display-template resources="{{policy_resources}}">
+    <chrome-policy resources="{{policy_resources}}">
+    </chrome-policy>
+  </paper-display-template>
 
-  <p>
-    Once you finish authorizing access, please paste the code you receive in
-    the box below.
-  </p>
+  <br>
 
-  <!-- TODO make this form be more useful -->
-  <form id="setup-form" method="post">
-    <paper-input label="Domain" name="domain"></paper-input>
-    <paper-input label="OAuth Code" name="oauth_code"></paper-input>
-    <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}" />
-    <paper-button raised onclick="submitByFormId('setup-form')" class="form-submit-button" type="submit">Submit</paper-button>
-  </form>
+  <paper-card heading="Adjust Config Values">
+    <div class="card-content">
+      <form id="policy-config-form" method="post"
+        action="{{ url_for('edit_policy_config') }}">
+        <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="Enforce Proxy Server Check from Invitation Link" {% if enforce_proxy_server_validity %}checked{% endif %}></ufo-toggle-input>
+        <br>
+        <ufo-toggle-input input-name="enforce_network_jail" button-text="Enforce Network Jail Before Google Login" {% if enforce_network_jail %}checked{% endif %}></ufo-toggle-input>
+        <br>
+        <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
+      </form>
+    </div>
+    <div class="card-actions">
+      <paper-button onclick="submitByFormId('policy-config-form')" class="form-submit-button" type="submit">
+        Save
+      </paper-button>
+    </div>
+  </paper-card>
+
 {% endblock %}
