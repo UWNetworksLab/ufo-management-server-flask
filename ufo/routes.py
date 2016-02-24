@@ -14,7 +14,6 @@ def landing():
 
 @app.route('/new')
 def new_landing():
-  
   user_resources_dict = component_resources._get_user_resources_dict()
   proxy_resources_dict = component_resources._get_proxy_resources_dict()
   policy_resources_dict = component_resources._get_policy_resources_dict()
