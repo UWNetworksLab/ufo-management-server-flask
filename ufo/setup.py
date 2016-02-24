@@ -1,7 +1,8 @@
+import json
+
 import flask
 from googleapiclient import discovery
 import httplib2
-import json
 import oauth
 import oauth2client
 
