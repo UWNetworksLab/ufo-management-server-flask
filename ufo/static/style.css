@@ -21,11 +21,6 @@ paper-tabs {
   max-width: 800px;
 }
 
-.anchor-button {
-  color: inherit;
-  background-color: inherit;
-}
-
 .top-buttons {
   margin-bottom: 16px;
 }
@@ -45,4 +40,80 @@ paper-tabs {
 
 #user-card-holder {
   max-width: 600px;
+}
+
+
+
+
+paper-scroll-header-panel {
+  height: 100%;
+}
+
+paper-material {
+  background-color: #fafafa;
+}
+
+paper-material:not(.dropdown-content), #jigsaw-logo-holder {
+  width: 1200px;
+}
+
+paper-toolbar {
+  background: #ffffff!important;
+}
+
+.title {
+  color: black!important;
+}
+
+.anchor-button {
+  color: white;
+  background-color: #25CFB9;
+}
+
+.anchor-no-button {
+  color: #25CFB9;
+  text-decoration: underline;
+  text-transform: none;
+}
+
+.dropdown-button {
+  color: #009788;
+  text-transform: uppercase;
+  font-weight: 500!important;
+}
+
+.paper-input-container.underline {
+  display: none;
+}
+
+#jigsaw-logo {
+  opacity: 53;
+}
+
+#jigsaw-logo:hover {
+  opacity: 86;
+}
+
+#main-toolbar {
+  background-color: #009788!important;
+}
+
+#main-toolbar-title {
+  color: white!important;
+}
+
+#search-bar {
+  background-color: #4DB6AB;
+}
+
+#username-and-menu {
+  float: right;
+}
+
+#username-title {
+  float: left;
+}
+
+#menu-dropdown {
+  float: right;
 }

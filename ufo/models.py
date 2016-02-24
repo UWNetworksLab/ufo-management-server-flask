@@ -4,9 +4,11 @@ from Crypto.PublicKey import RSA
 from paramiko import hostkeys
 from paramiko import pkey
 import StringIO
-import ssh_client
+from ufo import ssh_client
 
 LONG_STRING_LENGTH = 1024
+REVOKED_TEXT = 'Access Disabled'
+NOT_REVOKED_TEXT = 'Access Enabled'
 
 class Model(db.Model):
   """Helpful functions for the database models
@@ -29,6 +31,17 @@ class Model(db.Model):
   def delete(self, commit=True):
     db.session.delete(self)
     return commit and db.session.commit()
+
+  def to_dict(self):
+    return {}
+
+  @classmethod
+  def get_items_as_list_of_dict(cls):
+    items = cls.query.all()
+    to_return = []
+    for item in items:
+      to_return.append(item.to_dict())
+    return to_return
 
 
 class Config(Model):
@@ -87,6 +100,16 @@ class User(Model):
     self.private_key = key_pair['private_key']
     self.public_key = key_pair['public_key']
 
+  def to_dict(self):
+    to_return = {
+      'email': self.email,
+      'name': self.name,
+      'private_key': self.private_key,
+      'public_key': self.public_key,
+      'access': REVOKED_TEXT if self.is_key_revoked else NOT_REVOKED_TEXT,
+    }
+    return to_return
+
 
 class ProxyServer(Model):
   """Class for information about the proxy servers
@@ -142,3 +165,20 @@ class ProxyServer(Model):
         self.host_public_key_type,
         self.host_public_key)
     return public_key.get_name() + ' ' + public_key.get_base64()
+
+
+  def to_dict(self):
+    private_key = ssh_client.SSHClient.private_key_data_to_object(
+        self.ssh_private_key_type,
+        self.ssh_private_key)
+    private_key_file = StringIO.StringIO()
+    private_key.write_private_key(private_key_file)
+    private_key_text = private_key_file.getvalue()
+
+    return {
+      "id": self.id,
+      "name": self.name,
+      "ip_address": self.ip_address,
+      "public_key": self.get_public_key_as_authorization_file_string(),
+      "private_key": private_key_text,
+      }

@@ -134,17 +134,13 @@ def _make_invite_code(user):
 @app.route('/user/')
 @setup_required
 def user_list():
-  """Renders the user list template with the users currently in the db.
+  """Retrieves a list of the users currently in the db.
 
   Returns:
-    A rendered template of user.html with the users currently in the db.
+    A json object with 'users' set to the list of users in the db.
   """
-  users = models.User.query.all()
-  user_emails = {}
-  for user in users:
-    user_emails[user.id] = user.email
-  return flask.render_template('user.html',
-                               user_payloads=user_emails)
+  users_json = json.dumps(({'items': models.User.get_items_as_list_of_dict()}))
+  return flask.Response(users_json, mimetype='application/json')
 
 @app.route('/user/add', methods=['GET', 'POST'])
 @setup_required
