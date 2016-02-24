@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}New Landing{% endblock %}
 {% block body %}
-  <get-items-ajax-into-list add-url="{{ url_for('add_user') }}" add-icon-url="{{ url_for('static', filename='add-users.svg') }}" add-text="Add Users" list-url="{{url_for('user_list')}}" title-text="Users" item-icon-url="{{ url_for('static', filename='user.svg') }}">
-  </get-items-ajax-into-list>
-  <get-items-ajax-into-list add-url="{{ url_for('proxyserver_add') }}" add-icon-url="{{ url_for('static', filename='add-servers.svg') }}" add-text="Add a Server" list-url="{{url_for('proxyserver_list')}}" title-text="Servers" item-icon-url="{{ url_for('static', filename='server.svg') }}">
-  </get-items-ajax-into-list>
+  <list-items  resources="{{user_resources}}">
+  </list-items>
+  <list-items resources="{{proxy_resources}}">
+  </list-items>
 {% endblock %}

@@ -5,7 +5,7 @@
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
 
-<dom-module id="get-items-ajax-into-list">
+<dom-module id="list-items">
   <style>
     .first-div {
       width: 300px;
@@ -24,9 +24,9 @@
           <paper-toolbar class="medium-tall">
             <div class="middle flex">
               <div class="horizontal center-justified layout">
-                <div class="title">{{titleText}}</div>
-                <a id='add_button' href="{{addUrl}}">
-                  <paper-button class="anchor-button"><iron-icon src="{{addIconUrl}}"></iron-icon>{{addText}}</paper-button>
+                <div class="title">{{resources.titleText}}</div>
+                <a id='add_button' href="{{resources.addUrl}}">
+                  <paper-button class="anchor-button"><iron-icon src="{{resources.addIconUrl}}"></iron-icon>{{resources.addText}}</paper-button>
                 </a>
               </div>
             </div>
@@ -37,7 +37,7 @@
             <paper-spinner active$={{loading}}></paper-spinner>
           </template>
           <iron-ajax auto
-            url="{{listUrl}}"
+            url="{{resources.listUrl}}"
             method="GET"
             handle-as="json"
             id="getItemsAjax"
@@ -47,18 +47,17 @@
           <paper-listbox id="item-list">
             <template is="dom-repeat" items="[[ajaxResponse.items]]">
               <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
-                <template is="dom-if" if="{{item.name}}">
+                <template is="dom-if" if="{{resources.isUser}}">
                   <div class="first-div">{{item.name}}</div>
-                </template>
-                <template is="dom-if" if="{{item.email}}">
                   <div class="second-div">{{item.email}}</div>
                   <div class="third-div">{{item.access}}</div>
                 </template>
-                <template is="dom-if" if="{{item.ip_address}}">
+                <template is="dom-if" if="{{resources.isProxyServer}}">
+                  <div class="first-div">{{item.name}}</div>
                   <div class="second-div">{{item.ip_address}}</div>
                   <div class="third-div"></div>
                 </template>
-                <iron-icon src="{{itemIconUrl}}" item-icon></iron-icon>
+                <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
                 <paper-icon-button icon="arrow-drop-down" title="user details" id="user-details-dropdown"></paper-icon-button>
               </paper-icon-item>
             </template>
@@ -71,25 +70,10 @@
 
   <script>
     Polymer({
-      is: 'get-items-ajax-into-list',
+      is: 'list-items',
       properties: {
-        addUrl: {
-          type: String,
-        },
-        addIconUrl: {
-          type: String,
-        },
-        addText: {
-          type: String,
-        },
-        listUrl: {
-          type: String,
-        },
-        titleText: {
-          type: String,
-        },
-        itemIconUrl: {
-          type: String,
+        resources: {
+          type: Object,
         },
       },
     });
