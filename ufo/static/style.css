@@ -70,6 +70,12 @@ paper-toolbar {
   background-color: #25CFB9;
 }
 
+.anchor-no-button {
+  color: #25CFB9;
+  text-decoration: underline;
+  text-transform: none;
+}
+
 #jigsaw-logo {
   opacity: 53;
 }
