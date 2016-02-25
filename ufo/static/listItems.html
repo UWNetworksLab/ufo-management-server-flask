@@ -29,7 +29,7 @@
       last-response="{{ajaxResponse}}">
     </iron-ajax>
     <paper-listbox id="item-list">
-      <template is="dom-repeat" items="[[_limitToTen(ajaxResponse.items, showAll)]]">
+      <template is="dom-repeat" items="[[_limitResults(ajaxResponse.items, showAll)]]">
         <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
           <template is="dom-if" if="{{resources.isUser}}">
             <div class="first-div">{{item.name}}</div>
@@ -71,7 +71,7 @@
           type: Number,
         },
       },
-      _limitToTen: function(array, showAll) {
+      _limitResults: function(array, showAll) {
         var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
         if (showAll || !array || array.length <= limit) {
           return array;
