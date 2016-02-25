@@ -1,4 +1,5 @@
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
@@ -28,7 +29,7 @@
       last-response="{{ajaxResponse}}">
     </iron-ajax>
     <paper-listbox id="item-list">
-      <template is="dom-repeat" items="[[_limitToTen(ajaxResponse.items)]]">
+      <template is="dom-repeat" items="[[_limitToTen(ajaxResponse.items, showAll)]]">
         <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
           <template is="dom-if" if="{{resources.isUser}}">
             <div class="first-div">{{item.name}}</div>
@@ -44,6 +45,13 @@
           <paper-icon-button icon="expand-more" title="user details" id="user-details-dropdown"></paper-icon-button>
         </paper-icon-item>
       </template>
+      <template is="dom-if" if="[[_moreToShow(ajaxResponse.items, showAll)]]">
+        <paper-item id="showMore" class="horizontal layout start-justified">
+          <paper-button class="see-all-button" on-tap="_flipShowAll">
+          {{resources.seeAllText}}
+          </paper-button>
+        </paper-item>
+      </template>
     </paper-listbox>
   </template>
 
@@ -54,13 +62,23 @@
         resources: {
           type: Object,
         },
+        showAll: {
+          value: false,
+          type: Boolean,
+        },
       },
-      _limitToTen: function(array) {
-        if (!array || array.length < 10) {
+      _limitToTen: function(array, showAll) {
+        if (showAll || !array || array.length <= 10) {
           return array;
         } else {
           return array.slice(0, 10);
         }
+      },
+      _moreToShow: function(array, showAll) {
+        return array.length > 10 && !showAll;
+      },
+      _flipShowAll: function() {
+        this.showAll = !this.showAll;
       },
     });
   </script>
