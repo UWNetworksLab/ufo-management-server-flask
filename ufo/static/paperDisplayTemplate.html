@@ -11,9 +11,7 @@
               <div class="horizontal center-justified layout">
                 <div class="title">{{resources.titleText}}</div>
                 <template is="dom-if" if="{{!resources.isChromePolicy}}">
-                  <a id='add_button' href="{{resources.addUrl}}">
-                    <paper-button class="anchor-button"><iron-icon src="{{resources.addIconUrl}}"></iron-icon>{{resources.addText}}</paper-button>
-                  </a>
+                  <add-item-overlay resources="{{resources}}"></add-item-overlay>
                 </template>
               </div>
             </div>

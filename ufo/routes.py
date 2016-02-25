@@ -13,21 +13,25 @@ def landing():
 def new_landing():
   user_resources_dict = {
     'addUrl': flask.url_for('add_user'),
-    'addIconUrl': flask.url_for('static', filename='add-users.svg'),
+    'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
     'addText': 'Add Users',
     'listUrl': flask.url_for('user_list'),
     'titleText': 'Users',
-    'itemIconUrl': flask.url_for('static', filename='user.svg'),
+    'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
     'isUser': True,
+    'dismissText': 'Cancel',
+    'confirmText': 'Add User(s)',
   }
   proxy_resources_dict = {
     'addUrl': flask.url_for('proxyserver_add'),
-    'addIconUrl': flask.url_for('static', filename='add-servers.svg'),
+    'addIconUrl': flask.url_for('static', filename='img/add-servers.svg'),
     'addText': 'Add a Server',
     'listUrl': flask.url_for('proxyserver_list'),
     'titleText': 'Servers',
-    'itemIconUrl': flask.url_for('static', filename='server.svg'),
+    'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
     'isProxyServer': True,
+    'dismissText': 'Cancel',
+    'confirmText': 'Add Server',
   }
   policy_resources_dict = {
     'titleText': 'Chrome Policy',
