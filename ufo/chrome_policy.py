@@ -28,6 +28,19 @@ def _make_chrome_policy_json():
   return json.dumps(policy_dictionary)
 
 
+def get_policy_resources_dict():
+  """Get the resources for the chrome policy component.
+
+    Returns:
+      A dict of the resources for the chrome policy component.
+  """
+  return {
+    'download_chrome_policy': flask.url_for('download_chrome_policy'),
+    'isChromePolicy': True,
+    'policy_filename': 'chrome_policy.json',
+    'titleText': 'Chrome Policy',
+  }
+
 @ufo.app.route('/chromepolicy/')
 @ufo.setup_required
 def display_chrome_policy():

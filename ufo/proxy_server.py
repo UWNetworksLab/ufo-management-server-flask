@@ -10,6 +10,22 @@ from ufo import models
 from ufo import ssh_client
 
 
+def get_proxy_resources_dict():
+  """Get the resources for the proxy server component.
+
+    Returns:
+      A dict of the resources for the proxy server component.
+  """
+  return {
+    'addUrl': flask.url_for('proxyserver_add'),
+    'addIconUrl': flask.url_for('static', filename='add-servers.svg'),
+    'addText': 'Add a Server',
+    'listUrl': flask.url_for('proxyserver_list'),
+    'titleText': 'Servers',
+    'itemIconUrl': flask.url_for('static', filename='server.svg'),
+    'isProxyServer': True,
+  }
+
 @app.route('/proxyserver/')
 @setup_required
 def proxyserver_list():

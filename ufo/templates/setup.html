@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Setup{% endblock %}
 {% block body %}
+  <!-- TODO: Add user form here. -->
+  <!-- TODO: Add proxy server form here. -->
+  <!-- TODO: Use paper material or  paper-display-template per PR comment.-->
   <paper-card>
     <!-- TODO make a clear way to say you do not want to use Google apps -->
     {% if not config.isConfigured %}
@@ -9,7 +12,7 @@
         To start, we want to get a bit of information from you to get everything
         set up.
       </p>
-  
+ 
       <p>
         First of all, if you are planning on using this application with a Google
         apps domain, we're going to need to get permission from you to access
@@ -26,7 +29,7 @@
         form even without filling in any parameters will cause the previous saved
         configuration to be lost.
       </p>
-  
+
       {% if config.credentials and config.domain %}
         <p>
           This site is set up to work with the
@@ -40,27 +43,27 @@
         </p>
       {% endif %}
     {% endif %}
-  
+
     <p>
       Please keep in mind that this is a much simpler version than what you
       would actually expect to see in a finished version of the site.
       Noteably, this page should include something about authenticating
       yourself in the future (and actually include a way to skip)
     </p>
-  
+
     <a href="{{ oauth_url }}" target="_blank">Connect to your domain</a>
-  
+
     <p>
       Once you finish authorizing access, please paste the code you receive in
       the box below.
     </p>
-  
+
     <!-- TODO make this form be more useful -->
     <form id="setup-form" method="post">
       <paper-input label="Domain" name="domain"></paper-input>
       <paper-input label="OAuth Code" name="oauth_code"></paper-input>
       <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}" />
-      <paper-button raised onclick="submitByFormId('setup-form')" class="form-submit-button" type="submit">Submit</paper-button>
+      <paper-button class="anchor-button" onclick="submitByFormId('setup-form')" class="form-submit-button" type="submit">Submit</paper-button>
     </form>
   </paper-card>
 

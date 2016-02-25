@@ -3,7 +3,7 @@ from mock import patch
 
 import base_test
 import error_handler
-from setup import SetupNeeded
+from exceptions import SetupNeeded
 
 import flask
 from werkzeug import exceptions

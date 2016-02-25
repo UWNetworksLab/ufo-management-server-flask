@@ -131,6 +131,22 @@ def _make_invite_code(user):
 
   return invite_code
 
+def get_user_resources_dict():
+  """Get the resources for the user component.
+
+    Returns:
+      A dict of the resources for the user component.
+  """
+  return {
+    'addUrl': flask.url_for('add_user'),
+    'addIconUrl': flask.url_for('static', filename='add-users.svg'),
+    'addText': 'Add Users',
+    'listUrl': flask.url_for('user_list'),
+    'titleText': 'Users',
+    'itemIconUrl': flask.url_for('static', filename='user.svg'),
+    'isUser': True,
+  }
+
 @app.route('/user/')
 @setup_required
 def user_list():

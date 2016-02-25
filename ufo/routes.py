@@ -2,8 +2,10 @@ import flask
 import json
 
 from ufo import app
-from ufo import component_resources
+from ufo import chrome_policy
 from ufo import get_user_config
+from ufo import proxy_server
+from ufo import user
 
 
 @app.route('/')
@@ -14,9 +16,9 @@ def landing():
 
 @app.route('/new')
 def new_landing():
-  user_resources_dict = component_resources._get_user_resources_dict()
-  proxy_resources_dict = component_resources._get_proxy_resources_dict()
-  policy_resources_dict = component_resources._get_policy_resources_dict()
+  user_resources_dict = user.get_user_resources_dict()
+  proxy_resources_dict = proxy_server.get_proxy_resources_dict()
+  policy_resources_dict = chrome_policy.get_policy_resources_dict()
 
   return flask.render_template(
       'landing2.html',

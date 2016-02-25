@@ -7,18 +7,12 @@ import oauth
 import oauth2client
 
 from ufo import app
-from ufo import component_resources
+from ufo import chrome_policy
 from ufo import get_user_config
 
 
-PLEASE_CONFIGURE_TEXT = 'Please finish configuring this site.'
 DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
 NON_ADMIN_TEXT = 'Credentials do not have admin access.'
-
-
-class SetupNeeded(Exception):
-  code = 500
-  message = PLEASE_CONFIGURE_TEXT
 
 
 @app.route('/setup/', methods=['GET', 'POST'])
@@ -29,7 +23,7 @@ def setup():
   oauth_url = flow.step1_get_authorize_url()
 
   if flask.request.method == 'GET':
-    policy_resources_dict = component_resources._get_policy_resources_dict()
+    policy_resources_dict = chrome_policy.get_policy_resources_dict()
     return flask.render_template(
         'setup.html',
         config=config,
@@ -67,7 +61,6 @@ def setup():
         config.credentials = credentials.to_json()
         config.domain = domain
       else:
-        print component_resources._get_policy_resources_dict()
         return flask.render_template('setup.html',
                                      error=NON_ADMIN_TEXT,
                                      config=config,
