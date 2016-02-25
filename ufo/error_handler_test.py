@@ -2,8 +2,8 @@ from mock import MagicMock
 from mock import patch
 
 import base_test
+from custom_exceptions import SetupNeeded
 import error_handler
-from exceptions import SetupNeeded
 
 import flask
 from werkzeug import exceptions

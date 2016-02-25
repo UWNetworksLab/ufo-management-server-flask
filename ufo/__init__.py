@@ -4,8 +4,8 @@ import functools
 import os
 import sys
 
+import custom_exceptions
 import error_handler
-import exceptions
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
