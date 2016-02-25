@@ -66,16 +66,22 @@
           value: false,
           type: Boolean,
         },
+        defaultLimit: {
+          value: 10,
+          type: Number,
+        },
       },
       _limitToTen: function(array, showAll) {
-        if (showAll || !array || array.length <= 10) {
+        var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
+        if (showAll || !array || array.length <= limit) {
           return array;
         } else {
-          return array.slice(0, 10);
+          return array.slice(0, limit);
         }
       },
       _moreToShow: function(array, showAll) {
-        return array.length > 10 && !showAll;
+        var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
+        return array.length > limit && !showAll;
       },
       _flipShowAll: function() {
         this.showAll = !this.showAll;
