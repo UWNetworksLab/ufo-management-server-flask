@@ -1,3 +1,4 @@
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
 <link rel="import" href="bower_components/paper-material/paper-material.html" />
 <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
 
@@ -21,6 +22,18 @@
           <content></content>
         </div>
       </paper-material>
+      <paper-dialog id="{{resources.modalId}}" modal>
+        <h2 class="title">{{resources.addText}}</h2>
+
+        <p>{{resources.addUrl}}</p>
+        <div class="buttons">
+          <paper-button dialog-dismiss>{{resources.dismissText}}
+          </paper-button>
+          <paper-button dialog-confirm autofocus>{{resources.confirmText}}
+          </paper-button>
+        </div>
+
+      </paper-dialog>
     </div>
     <br>
   </template>

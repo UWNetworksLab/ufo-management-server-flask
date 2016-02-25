@@ -49,9 +49,9 @@
         </paper-dropdown-menu>
       </div>
     </paper-toolbar>
-    <div class="layout vertical">
-      {% block body %}{% endblock %}
-    </div>
+  </paper-scroll-header-panel>
+  <div class="layout vertical" id="main-holder">
+    {% block body %}{% endblock %}
     <br>
     <div class="horizontal center-justified layout">
       <div id="jigsaw-logo-holder">
@@ -60,7 +60,8 @@
     </div>
     <br>
     <br>
-  </paper-scroll-header-panel>
+    <p></p>
+  </div>
 
   <script src="{{ url_for('static', filename='globalHelperFunctions.js') }}"></script>
 </body>

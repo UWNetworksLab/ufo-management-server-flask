@@ -117,3 +117,7 @@ paper-toolbar {
 #menu-dropdown {
   float: right;
 }
+
+#main-holder {
+  margin-top: -300px;
+}

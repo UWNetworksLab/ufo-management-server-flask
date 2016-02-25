@@ -1,26 +1,8 @@
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
-<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
 
 <dom-module id="add-item-overlay">
-  <style>
-    #modal {
-      z-index: 103;
-    }
-  </style>
   <template>
-    <paper-button class="anchor-button" on-click="openModal"><iron-icon src="{{resources.addIconUrl}}"></iron-icon>{{resources.addText}}</paper-button>
-    <paper-dialog id="modal" modal on-iron-overlay-opened="patchOverlay">
-      <h2 class="title">{{resources.addText}}</h2>
-
-      <p>{{resources.addUrl}}</p>
-      <div class="buttons">
-        <paper-button dialog-dismiss>{{resources.dismissText}}
-        </paper-button>
-        <paper-button dialog-confirm autofocus>{{resources.confirmText}}
-        </paper-button>
-      </div>
-
-    </paper-dialog>
+    <paper-button class="anchor-button" on-click="openModal" id="dialogTrigger" data-dialog="{{resources.modalId}}"><iron-icon src="{{resources.addIconUrl}}"></iron-icon>{{resources.addText}}</paper-button>
   </template>
 
   <script>
@@ -32,16 +14,7 @@
         },
       },
       openModal: function() {
-        this.$.modal.open();
-      },
-      patchOverlay: function (e) {
-        console.log(e);
-        console.log(e.target);
-        console.log(e.target.withBackdrop);
-        if (e.target.withBackdrop) {
-          var elem = document.getElementsByTagName('paper-material')[0];
-          e.target.parentNode.insertBefore(elem, e.target);
-        }
+        document.getElementById(this.$.dialogTrigger.dataDialog).open();
       },
     });
   </script>

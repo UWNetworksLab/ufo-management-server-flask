@@ -19,6 +19,7 @@ def new_landing():
     'titleText': 'Users',
     'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
     'isUser': True,
+    'modalId': 'userModal',
     'dismissText': 'Cancel',
     'confirmText': 'Add User(s)',
   }
@@ -30,6 +31,7 @@ def new_landing():
     'titleText': 'Servers',
     'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
     'isProxyServer': True,
+    'modalId': 'serverModal',
     'dismissText': 'Cancel',
     'confirmText': 'Add Server',
   }
