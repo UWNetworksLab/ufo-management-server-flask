@@ -29,7 +29,7 @@
       last-response="{{ajaxResponse}}">
     </iron-ajax>
     <paper-listbox id="item-list">
-      <template is="dom-repeat" items="[[_limitResults(ajaxResponse.items, showAll)]]">
+      <template is="dom-repeat" items="[[_limitResults(ajaxResponse.items, isShowingAll)]]">
         <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
           <template is="dom-if" if="{{resources.isUser}}">
             <div class="first-div">{{item.name}}</div>
@@ -45,9 +45,9 @@
           <paper-icon-button icon="expand-more" title="user details" id="user-details-dropdown"></paper-icon-button>
         </paper-icon-item>
       </template>
-      <template is="dom-if" if="[[_moreToShow(ajaxResponse.items, showAll)]]">
+      <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
         <paper-item id="showMore" class="horizontal layout start-justified">
-          <paper-button class="see-all-button" on-tap="_flipShowAll">
+          <paper-button class="see-all-button" on-tap="_flipShowingAll">
           {{resources.seeAllText}}
           </paper-button>
         </paper-item>
@@ -62,7 +62,7 @@
         resources: {
           type: Object,
         },
-        showAll: {
+        isShowingAll: {
           value: false,
           type: Boolean,
         },
@@ -71,20 +71,20 @@
           type: Number,
         },
       },
-      _limitResults: function(array, showAll) {
+      _limitResults: function(array, isShowingAll) {
         var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
-        if (showAll || !array || array.length <= limit) {
+        if (isShowingAll || !array || array.length <= limit) {
           return array;
         } else {
           return array.slice(0, limit);
         }
       },
-      _moreToShow: function(array, showAll) {
+      _hasMoreToShow: function(array, isShowingAll) {
         var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
-        return array.length > limit && !showAll;
+        return array.length > limit && !isShowingAll;
       },
-      _flipShowAll: function() {
-        this.showAll = !this.showAll;
+      _flipShowingAll: function() {
+        this.isShowingAll = !this.isShowingAll;
       },
     });
   </script>
