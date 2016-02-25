@@ -76,6 +76,10 @@ paper-toolbar {
   text-transform: none;
 }
 
+.see-all-button {
+  color: #25CFB9;
+}
+
 .dropdown-button {
   color: #009788;
   text-transform: uppercase;
