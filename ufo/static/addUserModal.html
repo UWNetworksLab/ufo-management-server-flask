@@ -1,0 +1,185 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/iron-pages/iron-pages.html" />
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/paper-tabs/paper-tabs.html" />
+
+<dom-module id="add-user-modal">
+  <style is="custom-style">
+    paper-tabs {
+      --paper-tabs-selection-bar-color: #25CFB9;
+    },
+    paper-tab {
+      color: black;
+      background-color: white;
+    }
+  </style>
+  <template>
+    <paper-dialog id="{{resources.modalId}}" modal>
+      <h2 class="title">{{resources.addText}}</h2>
+
+      <!--Portion for finding users via group, individual, domain, or manual
+      specification. -->
+      <paper-tabs selected="{{ selected }}">
+        <paper-tab>Add By Group</paper-tab>
+        <paper-tab>Add Individual User</paper-tab>
+        <paper-tab>Add By Domain</paper-tab>
+        <paper-tab>Add Manually</paper-tab>
+      </paper-tabs>
+
+      <iron-pages selected="{{ selected }}">
+        <div>
+          <form id="users-group-form" method="get"
+            action="{{ url_for('add_user') }}">
+            <paper-input label="Input a group key (group email address or unique id) to fetch more users."
+            type="textbox" name="group_key" value="{{ group_key }}" required
+            auto-validate pattern="{{KEY_LOOKUP_VALIDATION_PATTERN}}"
+            error-message="{{KEY_LOOKUP_VALIDATION_ERROR}}">
+            </paper-input>
+            <br>
+            <paper-button onclick="submitByFormId('users-group-form')"
+            class="form-submit-button anchor-button" type="submit">
+              Fetch Users From Group</paper-button>
+          </form>
+        </div>
+        <div>
+          <form id="users-user-form" method="get"
+            action="{{ url_for('add_user') }}">
+            <paper-input label="Input user key (email address or unique id) to search for a specific user."
+            type="email" name="user_key" value="{{ user_key }}" required
+            auto-validate pattern="{{KEY_LOOKUP_VALIDATION_PATTERN}}"
+            error-message="{{KEY_LOOKUP_VALIDATION_ERROR}}">
+            </paper-input>
+            <br>
+            <paper-button onclick="submitByFormId('users-user-form')"
+            class="form-submit-button anchor-button" type="submit">
+              Search for Specific User</paper-button>
+          </form>
+        </div>
+        <div>
+          <form id="users-domain-form" method="get"
+            action="{{ url_for('add_user') }}">
+            <input type="hidden" name="get_all" value="true">
+            <br>
+            <paper-button onclick="submitByFormId('users-domain-form')"
+            class="form-submit-button anchor-button" type="submit">
+              Fetch All Users in Domain</paper-button>
+          </form>
+        </div>
+        <div>
+          <form id="users-manual-form" method="post"
+            action="{{ url_for('add_user') }}">
+            <paper-input label="Input user name here." type="textbox"
+            name="name" value="" id="manualUserName" required>
+            </paper-input>
+            <paper-input label="Input user email here." type="email"
+            name="email" value="" id="manualUserEmail" required
+            auto-validate pattern="{{EMAIL_VALIDATION_PATTERN}}"
+            error-message="{{EMAIL_VALIDATION_ERROR}}">
+            </paper-input>
+            <input type="hidden" name="users" id="manualUserInput" value="">
+            <input type="hidden" name="_xsrf_token" value="{{ xsrf_token_value }}">
+            <br>
+            <paper-button onclick="submitUsersManually()"
+            class="form-submit-button anchor-button" type="submit">
+              Manually Add User</paper-button>
+          </form>
+        </div>
+      </iron-pages>
+
+      <script>
+         var pages = document.querySelector('iron-pages');
+         var tabs = document.querySelector('paper-tabs');
+
+        tabs.addEventListener('iron-select', function() {
+            pages.selected = tabs.selected;
+        });
+
+        var selected_users = [];
+        var checkboxes = document.querySelectorAll('paper-checkbox');
+        var input_elem = document.getElementById('selected_users_array');
+        input_elem.value = JSON.stringify(selected_users);
+
+        for (var i in checkboxes) {
+          var grandParent = checkboxes[i].parentElement.parentElement;
+          var name = grandParent.querySelector('td.directory-user-field.name').innerHTML;
+          var email = grandParent.querySelector('td.directory-user-field.email').innerHTML;
+          checkboxes[i].value = {'name': name, 'email': email};
+
+          checkboxes[i].addEventListener('change', function(event) {
+              var checkboxElem = event.path[0];
+              if (checkboxElem.checked) {
+                selected_users.push(checkboxElem.value);
+              } else {
+                var index = selected_users.indexOf(checkboxElem.value);
+                if (index != -1) {
+                  selected_users.splice(index, 1);
+                }
+              }
+              input_elem.value = JSON.stringify(selected_users);
+          });
+        }
+      </script>
+
+      <!--Portion for selecting users to add. -->
+      <form id="users-add-form" method="post" action="{{ url_for('add_user') }}">
+        <p>Select Users to Add.</p>
+        <table class="padding-between-columns">
+          <tr>
+            <th>-</th>
+            <th>Name</th>
+            <th>Email</th>
+          </tr>
+        {% for directory_user in directory_users %}
+          <tr>
+            <td><paper-checkbox value=""></td>
+            <td class="directory-user-field name">
+              {{ directory_user['name'] }}</td>
+            <td class="directory-user-field email">
+              {{ directory_user['email'] }}</td>
+          </tr>
+        {% endfor %}
+        </table>
+        <input type="hidden" id="selected_users_array" name="users" value="">
+        <input type="hidden" name="_xsrf_token" value="{{ xsrf_token_value }}">
+        <paper-button onclick="submitByFormId('users-add-form')" class="form-submit-button anchor-button" type="submit">Add Selected Users</paper-button>
+      </form>
+
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner active$={{loading}}></paper-spinner>
+      </template>
+      <iron-ajax
+        url="{{resources.addUrl}}"
+        method="POST"
+        handle-as="json"
+        id="postItemsAjax"
+        loading="{{loading}}"
+        last-response="{{ajaxResponse}}">
+      </iron-ajax>
+      <div class="buttons">
+        <paper-button class="anchor-button" dialog-dismiss>
+        {{resources.dismissText}}
+        </paper-button>
+        <paper-button class="anchor-button" dialog-confirm autofocus>
+        {{resources.confirmText}}
+        </paper-button>
+      </div>
+
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'add-user-modal',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        selected: {
+          value: 0,
+          type: Number,
+        }
+      },
+    });
+  </script>
+</dom-module>

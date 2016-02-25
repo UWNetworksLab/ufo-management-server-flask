@@ -1,13 +1,13 @@
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 
-<dom-module id="add-item-overlay">
+<dom-module id="add-item-button">
   <template>
-    <paper-button class="anchor-button" on-click="openModal" id="dialogTrigger" data-dialog="{{resources.modalId}}"><iron-icon src="{{resources.addIconUrl}}"></iron-icon>{{resources.addText}}</paper-button>
+    <paper-button class="anchor-button" on-tap="openModal" id="dialogTrigger" data-dialog="{{resources.modalId}}"><iron-icon src="{{resources.addIconUrl}}"></iron-icon>{{resources.addText}}</paper-button>
   </template>
 
   <script>
     Polymer({
-      is: 'add-item-overlay',
+      is: 'add-item-button',
       properties: {
         resources: {
           type: Object,

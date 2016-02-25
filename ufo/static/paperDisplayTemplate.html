@@ -1,4 +1,4 @@
-<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
 <link rel="import" href="bower_components/paper-material/paper-material.html" />
 <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
 
@@ -12,7 +12,7 @@
               <div class="horizontal center-justified layout">
                 <div class="title">{{resources.titleText}}</div>
                 <template is="dom-if" if="{{!resources.isChromePolicy}}">
-                  <add-item-overlay resources="{{resources}}"></add-item-overlay>
+                  <add-item-button resources="{{resources}}"></add-item-button>
                 </template>
               </div>
             </div>
@@ -22,18 +22,12 @@
           <content></content>
         </div>
       </paper-material>
-      <paper-dialog id="{{resources.modalId}}" modal>
-        <h2 class="title">{{resources.addText}}</h2>
-
-        <p>{{resources.addUrl}}</p>
-        <div class="buttons">
-          <paper-button dialog-dismiss>{{resources.dismissText}}
-          </paper-button>
-          <paper-button dialog-confirm autofocus>{{resources.confirmText}}
-          </paper-button>
-        </div>
-
-      </paper-dialog>
+      <template is="dom-if" if="{{resources.isUser}}">
+        <add-user-modal resources="{{resources}}"></add-user-modal>
+      </template>
+      <template is="dom-if" if="{{resources.isProxyServer}}">
+        <add-server-modal resources="{{resources}}"></add-server-modal>
+      </template>
     </div>
     <br>
   </template>
