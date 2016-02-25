@@ -61,6 +61,10 @@ paper-toolbar {
   background: #ffffff!important;
 }
 
+paper-dialog {
+  width: 1000px;
+}
+
 .title {
   color: black!important;
 }
@@ -86,8 +90,16 @@ paper-toolbar {
   font-weight: 500!important;
 }
 
-.paper-input-container.underline {
+.search .paper-input-container.underline, .custom-dropdown .paper-input-container.underline {
   display: none;
+}
+
+.paper-input-container.underline .focused-line {
+  background: #25CFB9;
+}
+
+.paper-input-container.label-is-highlighted label {
+  color: #25CFB9!important;
 }
 
 #jigsaw-logo {
