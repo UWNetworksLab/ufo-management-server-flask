@@ -12,7 +12,7 @@
         To start, we want to get a bit of information from you to get everything
         set up.
       </p>
- 
+
       <p>
         First of all, if you are planning on using this application with a Google
         apps domain, we're going to need to get permission from you to access
@@ -51,7 +51,7 @@
       yourself in the future (and actually include a way to skip)
     </p>
 
-    <a href="{{ oauth_url }}" target="_blank">Connect to your domain</a>
+    <a class="anchor-no-button" href="{{ oauth_url }}" target="_blank">Connect to your domain</a>
 
     <p>
       Once you finish authorizing access, please paste the code you receive in
@@ -63,7 +63,7 @@
       <paper-input label="Domain" name="domain"></paper-input>
       <paper-input label="OAuth Code" name="oauth_code"></paper-input>
       <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}" />
-      <paper-button class="anchor-button" onclick="submitByFormId('setup-form')" class="form-submit-button" type="submit">Submit</paper-button>
+      <paper-button onclick="submitByFormId('setup-form')" class="form-submit-button anchor-button" type="submit">Submit</paper-button>
     </form>
   </paper-card>
 
