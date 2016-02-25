@@ -21,7 +21,33 @@ def new_landing():
     'isUser': True,
     'modalId': 'userModal',
     'dismissText': 'Cancel',
-    'confirmText': 'Add User(s)',
+    'addFlowTextDicts': [
+        {
+          'tab': 'Add Group',
+          'saveButton': 'Add Group',
+          'searchButton': 'Search for Users in Group',
+          'label1': ('Input a group key (group email address or unique id) '
+                     'to fetch more users.'),
+        },
+        {
+          'tab': 'Add Individual',
+          'saveButton': 'Add User',
+          'searchButton': 'Search for Specific User',
+          'label1': ('Input user key (email address or unique id) to search '
+                     'for a specific user.'),
+        },
+        {
+          'tab': 'Add by Domain',
+          'saveButton': 'Add Users',
+          'searchButton': 'Search for Users in Domain',
+        },
+        {
+          'tab': 'Add Manually',
+          'saveButton': 'Add User',
+          'label1': 'Input user name here.',
+          'label2': 'Input user email here.',
+        },
+    ],
   }
   proxy_resources_dict = {
     'addUrl': flask.url_for('proxyserver_add'),
