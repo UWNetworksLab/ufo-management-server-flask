@@ -1,13 +1,14 @@
 """The module for handling proxy servers"""
-
-from . import app, db, setup_required
-
-import flask
 import json
 
+import flask
+
 import ufo
-from ufo import models
-from ufo import ssh_client
+from ufo import app
+from ufo import db
+from ufo import setup_required
+from ufo.database import models
+from ufo.services import ssh_client
 
 
 def get_proxy_resources_dict():

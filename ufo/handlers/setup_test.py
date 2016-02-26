@@ -6,12 +6,13 @@ import flask
 from googleapiclient import discovery
 import unittest
 
-from . import app
-import base_test
-from . import db
-import models
-import oauth
-import setup
+from ufo import app
+from ufo import base_test
+from ufo import db
+from ufo.database import models
+from ufo.handlers import setup
+from ufo.services import oauth
+
 
 FAKE_OAUTH_URL = 'sftp://1800-oauth.com'
 FAKE_DOMAIN = 'yahoo.com'
@@ -20,6 +21,7 @@ FAKE_CREDENTIALS = 'I am some fake credentials.'
 MOCK_CREDENTIALS = MagicMock()
 MOCK_CREDENTIALS.authorize.return_value = None
 MOCK_CREDENTIALS.to_json.return_value = FAKE_CREDENTIALS
+
 
 class SetupTest(base_test.BaseTest):
   """Test setup class functionality."""

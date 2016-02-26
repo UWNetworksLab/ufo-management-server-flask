@@ -1,15 +1,15 @@
 """Test for models module functionality."""
 
-from mock import MagicMock
-from mock import patch
 import os
 import unittest
 
-import base_test
-import models
-import user
-
 from Crypto.PublicKey import RSA
+from mock import MagicMock
+from mock import patch
+
+from ufo import base_test
+from ufo.database import models
+from ufo.handlers import user
 
 
 FAKE_PRIVATE_KEY = 'fakePrivateKey'

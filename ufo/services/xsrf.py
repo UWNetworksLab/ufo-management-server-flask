@@ -1,8 +1,10 @@
-from . import app
-
 import binascii
-import flask
 import os
+
+import flask
+
+from ufo import app
+
 
 @app.before_request
 def xsrf_protect():

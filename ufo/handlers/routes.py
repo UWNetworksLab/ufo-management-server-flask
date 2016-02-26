@@ -1,11 +1,12 @@
-import flask
 import json
 
+import flask
+
 from ufo import app
-from ufo import chrome_policy
+from ufo.handlers import chrome_policy
 from ufo import get_user_config
-from ufo import proxy_server
-from ufo import user
+from ufo.handlers import proxy_server
+from ufo.handlers import user
 
 
 @app.route('/')
@@ -27,7 +28,7 @@ def new_landing():
       policy_resources=json.dumps(policy_resources_dict))
 
 
-from ufo import setup # handlers for /setup
-from ufo import user # handlers for /user
-from ufo import proxy_server # handlers for /proxy_server
-from ufo import chrome_policy # handlers for /chrome_policy
+from ufo.handlers import chrome_policy
+from ufo.handlers import proxy_server
+from ufo.handlers import setup
+from ufo.handlers import user

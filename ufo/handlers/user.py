@@ -9,10 +9,11 @@ from googleapiclient import errors
 
 from ufo import app
 from ufo import db
-from ufo import google_directory_service
-from ufo import models
-from ufo import oauth
 from ufo import setup_required
+from ufo.database import models
+from ufo.services import google_directory_service
+from ufo.services import oauth
+
 
 INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
