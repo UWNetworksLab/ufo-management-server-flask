@@ -32,12 +32,12 @@
       <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
         <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
           <template is="dom-if" if="{{resources.isUser}}">
-            <div class="first-div">{{item.name}}</div>
+            <div class="first-div"><strong>{{item.name}}</strong></div>
             <div class="second-div">{{item.email}}</div>
             <div class="third-div">{{item.access}}</div>
           </template>
           <template is="dom-if" if="{{resources.isProxyServer}}">
-            <div class="first-div">{{item.name}}</div>
+            <div class="first-div"><strong>{{item.name}}</strong></div>
             <div class="second-div">{{item.ip_address}}</div>
             <div class="third-div"></div>
           </template>
