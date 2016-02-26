@@ -1,14 +1,16 @@
-from . import db
+import StringIO
 
 from Crypto.PublicKey import RSA
 from paramiko import hostkeys
 from paramiko import pkey
-import StringIO
-from ufo import ssh_client
+
+from ufo import db
+from ufo.services import ssh_client
 
 LONG_STRING_LENGTH = 1024
 REVOKED_TEXT = 'Access Disabled'
 NOT_REVOKED_TEXT = 'Access Enabled'
+
 
 class Model(db.Model):
   """Helpful functions for the database models

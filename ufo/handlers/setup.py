@@ -3,12 +3,12 @@ import json
 import flask
 from googleapiclient import discovery
 import httplib2
-import oauth
 import oauth2client
 
 from ufo import app
-from ufo import chrome_policy
 from ufo import get_user_config
+from ufo.handlers import chrome_policy
+from ufo.services import oauth
 
 
 DOMAIN_INVALID_TEXT = 'Credentials for another domain.'

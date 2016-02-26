@@ -2,9 +2,9 @@
 
 from flask.ext.testing import TestCase
 
-from . import app
-from . import db
-import models
+from ufo import app
+from ufo import db
+from ufo.database import models
 
 
 class BaseTest(TestCase):

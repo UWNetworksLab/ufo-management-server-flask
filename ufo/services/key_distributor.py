@@ -4,8 +4,8 @@ from rq import Queue
 
 import ufo
 from ufo import app
-from ufo import models
-from ufo import ssh_client
+from ufo.database import models
+from ufo.services import ssh_client
 import worker
 
 

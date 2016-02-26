@@ -1,10 +1,12 @@
-from . import app, get_user_config
-
 import datetime
-import flask
 
+import flask
 from oauth2client import client
 from oauth2client import util
+
+from ufo import app
+from ufo import get_user_config
+
 
 OAUTH_SCOPES = [
     'https://www.googleapis.com/auth/admin.directory.user',
