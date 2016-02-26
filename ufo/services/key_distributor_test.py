@@ -2,7 +2,6 @@
 
 from mock import patch
 
-import ufo
 from ufo import base_test
 from ufo.database import models
 from ufo.handlers import user_test

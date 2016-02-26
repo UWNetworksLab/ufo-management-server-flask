@@ -7,7 +7,7 @@ from mock import MagicMock
 from mock import patch
 
 from ufo import base_test
-from ufo import models
+from ufo.database import models
 from ufo.handlers import proxy_server
 
 

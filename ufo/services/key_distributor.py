@@ -3,7 +3,6 @@
 from rq import Queue
 
 import ufo
-from ufo import app
 from ufo.database import models
 from ufo.services import ssh_client
 import worker
@@ -43,14 +42,15 @@ class KeyDistributor(object):
       proxy_server: db representation of a proxy server.
       key_string: A string of users with associated key.
     """
-    app.logger.info('Distributing keys to proxy server: %s', proxy_server.name)
+    ufo.app.logger.info('Distributing keys to proxy server: %s',
+                        proxy_server.name)
     client = ssh_client.SSHClient()
 
     try:
       client.connect(proxy_server)
     except (ssh_client.SSHConnectionException, 
             ssh_client.InvalidKeyTypeException):
-      app.logger.error(
+      ufo.app.logger.error(
           'Unable to connect to proxy server %s to distribute keys.',
           proxy_server.name)
       # TODO: Notify admin in some way, that the keys distribution have error.
@@ -67,18 +67,18 @@ class KeyDistributor(object):
 
     error = stderr.readlines()
     if error:
-      app.logger.error('Error when saving keys on proxy server: %s, %s',
-                      proxy_server.name, error)
+      ufo.app.logger.error('Error when saving keys on proxy server: %s, %s',
+                           proxy_server.name, error)
       # TODO: Notify admin in some way, that the keys distribution have error.
     else:
-      app.logger.info('Successfully distributed keys to proxy server: %s',
-                      proxy_server.name)
+      ufo.app.logger.info('Successfully distributed keys to proxy server: %s',
+                          proxy_server.name)
 
     client.close()
 
   def enqueue_key_distribution_jobs(self):
     """Distribute user keys to proxy servers to authenticate invite code."""
-    app.logger.info('Enqueuing key distribution jobs.')
+    ufo.app.logger.info('Enqueuing key distribution jobs.')
     key_string = self.make_key_string()
     proxy_servers = models.ProxyServer.query.all()
     queue = Queue(connection=worker.CONN)

@@ -1,9 +1,10 @@
 """Test chrome policy module functionality."""
 
-import flask
 import json
-import mock
 import unittest
+
+import flask
+import mock
 
 import ufo
 from ufo import base_test

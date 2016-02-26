@@ -1,7 +1,8 @@
 """The module for generating and outputing chrome policy."""
 
-import flask
 import json
+
+import flask
 
 import ufo
 from ufo.database import models
