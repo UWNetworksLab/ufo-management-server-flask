@@ -21,6 +21,8 @@ def get_proxy_resources_dict():
     'addIconUrl': flask.url_for('static', filename='add-servers.svg'),
     'addText': 'Add a Server',
     'listUrl': flask.url_for('proxyserver_list'),
+    'listLimit': 10,
+    'seeAllText': 'See All Servers',
     'titleText': 'Servers',
     'itemIconUrl': flask.url_for('static', filename='server.svg'),
     'isProxyServer': True,

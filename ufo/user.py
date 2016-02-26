@@ -142,6 +142,8 @@ def get_user_resources_dict():
     'addIconUrl': flask.url_for('static', filename='add-users.svg'),
     'addText': 'Add Users',
     'listUrl': flask.url_for('user_list'),
+    'listLimit': 10,
+    'seeAllText': 'See All Users',
     'titleText': 'Users',
     'itemIconUrl': flask.url_for('static', filename='user.svg'),
     'isUser': True,
