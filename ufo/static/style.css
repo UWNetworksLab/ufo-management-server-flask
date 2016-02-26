@@ -69,6 +69,10 @@ paper-dialog-scrollable {
   max-height: 300px;
 }
 
+paper-icon-item {
+  border-top: 1px solid #e5e5e5;
+}
+
 .title {
   color: black!important;
 }
