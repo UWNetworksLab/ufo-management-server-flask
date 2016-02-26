@@ -65,6 +65,10 @@ paper-dialog {
   width: 1000px;
 }
 
+paper-dialog-scrollable {
+  max-height: 300px;
+}
+
 .title {
   color: black!important;
 }

@@ -39,9 +39,9 @@ def _render_user_add(get_all, group_key, user_key):
   credentials = oauth.getSavedCredentials()
   # TODO this should handle the case where we do not have oauth
   if not credentials:
-    return flask.render_template('add_user.html',
-                                 directory_users=[],
-                                 error="OAuth is not set up")
+    dictionary = {'directory_users': [], 'error': 'OAuth is not set up'}
+    json_obj = json.dumps((dictionary))
+    return flask.Response(json_obj, mimetype='application/json')
 
   try:
     directory_service = google_directory_service.GoogleDirectoryService(
@@ -63,12 +63,12 @@ def _render_user_add(get_all, group_key, user_key):
       }
       users_to_output.append(user_for_display)
 
-    return flask.render_template('add_user.html',
-                                 directory_users=users_to_output)
+    json_obj = json.dumps(({'directory_users': users_to_output}))
+    return flask.Response(json_obj, mimetype='application/json')
+
   except errors.HttpError as error:
-    return flask.render_template('add_user.html',
-                                 directory_users=[],
-                                 error=error)
+    json_obj = json.dumps(({'directory_users': [], 'error': error}))
+    return flask.Response(json_obj, mimetype='application/json')
 
 def _get_random_server_ip():
   """Gets the ip address of a random proxy server of those in the db.
@@ -153,29 +153,41 @@ def get_user_resources_dict():
     'dismissText': 'Cancel',
     'addFlowTextDicts': [
         {
+          'id': 'groupAdd',
           'tab': 'Add Group',
           'saveButton': 'Add Group',
           'searchButton': 'Search for Users in Group',
-          'label1': ('Input a group key (group email address or unique id) '
-                     'to fetch more users.'),
+          'label1': 'Group key',
+          'definition1': ('To add users by group, please provide a valid '
+                          'group email address or unique id.'),
+          'name1': 'group_key',
+          'isManual': False,
         },
         {
+          'id': 'userAdd',
           'tab': 'Add Individual',
           'saveButton': 'Add User',
           'searchButton': 'Search for Specific User',
-          'label1': ('Input user key (email address or unique id) to search '
-                     'for a specific user.'),
+          'label1': 'User key',
+          'definition1': ('To add individual users, please provide a valid '
+                          'email address or unique id.'),
+          'name1': 'user_key',
+          'isManual': False,
         },
         {
+          'id': 'domainAdd',
           'tab': 'Add by Domain',
           'saveButton': 'Add Users',
           'searchButton': 'Search for Users in Domain',
+          'isManual': False,
         },
         {
+          'id': 'manualAdd',
           'tab': 'Add Manually',
           'saveButton': 'Add User',
           'label1': 'Input user name here.',
           'label2': 'Input user email here.',
+          'isManual': True,
         },
     ],
   }
