@@ -1,0 +1,131 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/paper-tabs/paper-tabs.html" />
+
+<dom-module id="get-user-add-form">
+  <style is="custom-style">
+  </style>
+  <template>
+    <form is="iron-form" id="form" method="get" action="{{resources.addUrl}}">
+      <template is="dom-if" if="{{showInputFields}}">
+        <content></content>
+      </template>
+      <template is="dom-if" if="{{request.loading}}">
+        <paper-spinner active$={{request.loading}}></paper-spinner>
+      </template>
+    </form>
+    <template is="dom-if" if="{{!showInputFields}}">
+      <paper-button on-tap="resetForm" class="anchor-button">{{resources.lookAgainText}}</paper-button>
+    </template>
+
+
+      <script>
+        var selected_users = [];
+        var checkboxes = document.querySelectorAll('paper-checkbox');
+        var input_elem = document.getElementById('selected_users_array');
+        input_elem.value = JSON.stringify(selected_users);
+
+        for (var i in checkboxes) {
+          var grandParent = checkboxes[i].parentElement.parentElement;
+          var name = grandParent.querySelector('td.directory-user-field.name').innerHTML;
+          var email = grandParent.querySelector('td.directory-user-field.email').innerHTML;
+          checkboxes[i].value = {'name': name, 'email': email};
+
+          checkboxes[i].addEventListener('change', function(event) {
+              var checkboxElem = event.path[0];
+              if (checkboxElem.checked) {
+                selected_users.push(checkboxElem.value);
+              } else {
+                var index = selected_users.indexOf(checkboxElem.value);
+                if (index != -1) {
+                  selected_users.splice(index, 1);
+                }
+              }
+              input_elem.value = JSON.stringify(selected_users);
+          });
+        }
+      </script>
+
+      <!--Portion for selecting users to add. -->
+      <form id="users-add-form" method="post" action="{{ url_for('add_user') }}">
+        <p>Select Users to Add.</p>
+        <table class="padding-between-columns">
+          <tr>
+            <th>-</th>
+            <th>Name</th>
+            <th>Email</th>
+          </tr>
+        {% for directory_user in directory_users %}
+          <tr>
+            <td><paper-checkbox value=""></td>
+            <td class="directory-user-field name">
+              {{ directory_user['name'] }}</td>
+            <td class="directory-user-field email">
+              {{ directory_user['email'] }}</td>
+          </tr>
+        {% endfor %}
+        </table>
+        <input type="hidden" id="selected_users_array" name="users" value="">
+        <input type="hidden" name="_xsrf_token" value="{{ xsrf_token_value }}">
+        <paper-button onclick="submitByFormId('users-add-form')" class="form-submit-button anchor-button" type="submit">Add Selected Users</paper-button>
+      </form>
+
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner active$={{loading}}></paper-spinner>
+      </template>
+      <iron-ajax
+        url="{{resources.addUrl}}"
+        method="POST"
+        handle-as="json"
+        id="postItemsAjax"
+        loading="{{loading}}"
+        last-response="{{ajaxResponse}}"
+        on-response="bubbleToList">
+      </iron-ajax>
+      <div class="buttons">
+        <paper-button class="anchor-button" dialog-dismiss>
+        {{resources.dismissText}}
+        </paper-button>
+        <paper-button class="anchor-button" dialog-confirm autofocus>
+        {{confirmText}}
+        </paper-button>
+      </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'get-user-add-form',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        showInputFields: {
+          type: Boolean,
+          value: true,
+        },
+      },
+      listeners: {
+        'iron-form-response': 'parseResponse',
+        'iron-form-presubmit': 'checkRequest',
+      },
+      parseResponse: function(e, detail) {
+        this.set('showInputFields', false);
+      },
+      checkRequest: function(e, detail) {
+        console.log(e);
+        console.log(detail);
+      },
+      resetForm: function() {
+        this.set('showInputFields', true);
+        this.$.form.reset();
+      }
+      bubbleToList: function(e, detail) {
+        var listElem = document.getElementById(this.resources.listId);
+        listElem.$.setAjaxResponse(detail.xhr.response);
+      },
+    });
+  </script>
+</dom-module>

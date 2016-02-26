@@ -1,5 +1,6 @@
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
 <link rel="import" href="bower_components/iron-pages/iron-pages.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 <link rel="import" href="bower_components/paper-tabs/paper-tabs.html" />
@@ -28,8 +29,7 @@
 
       <iron-pages id="pages" selected="{{ selected }}">
         <div>
-          <form id="users-group-form" method="get"
-            action="{{ url_for('add_user') }}">
+          <get-user-add-form id="users-group-form" resources="{{resources}}">
             <paper-input label="{{_arrayItemLabel1(resources.addFlowTextDicts, 0)}}"
             type="textbox" name="group_key" value="{{ group_key }}" required
             auto-validate pattern="{{KEY_LOOKUP_VALIDATION_PATTERN}}"
@@ -39,7 +39,7 @@
             <paper-button onclick="submitByFormId('users-group-form')"
             class="form-submit-button anchor-button" type="submit">
               [[_arrayItemSearchButton(resources.addFlowTextDicts, 0)]]</paper-button>
-          </form>
+          </get-user-add-form>
         </div>
         <div>
           <form id="users-user-form" method="get"
@@ -146,7 +146,8 @@
         handle-as="json"
         id="postItemsAjax"
         loading="{{loading}}"
-        last-response="{{ajaxResponse}}">
+        last-response="{{ajaxResponse}}"
+        on-response="bubbleToList">
       </iron-ajax>
       <div class="buttons">
         <paper-button class="anchor-button" dialog-dismiss>
@@ -189,6 +190,10 @@
       },
       _arrayItemLabel2: function(array, index) {
         return array[index].label2;
+      },
+      bubbleToList: function(e, detail) {
+        var listElem = document.getElementById(this.resources.listId);
+        listElem.$.setAjaxResponse(detail.xhr.response);
       },
     });
   </script>

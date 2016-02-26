@@ -28,8 +28,8 @@
       loading="{{loading}}"
       last-response="{{ajaxResponse}}">
     </iron-ajax>
-    <paper-listbox id="item-list">
-      <template is="dom-repeat" items="[[_limitResults(ajaxResponse.items, isShowingAll)]]">
+    <paper-listbox>
+      <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
         <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
           <template is="dom-if" if="{{resources.isUser}}">
             <div class="first-div">{{item.name}}</div>
@@ -70,6 +70,10 @@
           value: 10,
           type: Number,
         },
+        ajaxResponse: {
+          type: Object,
+          notify: true,
+        },
       },
       _limitResults: function(array, isShowingAll) {
         var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
@@ -85,6 +89,9 @@
       },
       _flipShowingAll: function() {
         this.isShowingAll = !this.isShowingAll;
+      },
+      setAjaxResponse: function(response) {
+        this.set('ajaxResponse', response);
       },
     });
   </script>

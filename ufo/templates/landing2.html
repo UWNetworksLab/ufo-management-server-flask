@@ -2,11 +2,11 @@
 {% block title %}New Landing{% endblock %}
 {% block body %}
   <paper-display-template resources="{{user_resources}}">
-    <list-items resources="{{user_resources}}">
+    <list-items resources="{{user_resources}}" id="userList">
     </list-items>
   </paper-display-template>
   <paper-display-template resources="{{proxy_resources}}">
-    <list-items resources="{{proxy_resources}}">
+    <list-items resources="{{proxy_resources}}" id="proxyList">
     </list-items>
   </paper-display-template>
   <paper-display-template resources="{{policy_resources}}">
