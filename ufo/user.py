@@ -131,6 +131,53 @@ def _make_invite_code(user):
 
   return invite_code
 
+def get_user_resources_dict():
+  """Get the resources for the user component.
+
+    Returns:
+      A dict of the resources for the user component.
+  """
+  return {
+    'addUrl': flask.url_for('add_user'),
+    'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
+    'addText': 'Add Users',
+    'listUrl': flask.url_for('user_list'),
+    'listLimit': 10,
+    'seeAllText': 'See All Users',
+    'titleText': 'Users',
+    'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
+    'isUser': True,
+    'modalId': 'userModal',
+    'dismissText': 'Cancel',
+    'addFlowTextDicts': [
+        {
+          'tab': 'Add Group',
+          'saveButton': 'Add Group',
+          'searchButton': 'Search for Users in Group',
+          'label1': ('Input a group key (group email address or unique id) '
+                     'to fetch more users.'),
+        },
+        {
+          'tab': 'Add Individual',
+          'saveButton': 'Add User',
+          'searchButton': 'Search for Specific User',
+          'label1': ('Input user key (email address or unique id) to search '
+                     'for a specific user.'),
+        },
+        {
+          'tab': 'Add by Domain',
+          'saveButton': 'Add Users',
+          'searchButton': 'Search for Users in Domain',
+        },
+        {
+          'tab': 'Add Manually',
+          'saveButton': 'Add User',
+          'label1': 'Input user name here.',
+          'label2': 'Input user email here.',
+        },
+    ],
+  }
+
 @app.route('/user/')
 @setup_required
 def user_list():

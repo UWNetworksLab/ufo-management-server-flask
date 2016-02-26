@@ -1,9 +1,11 @@
-import error_handler
 import flask
 from flask.ext import sqlalchemy
 import functools
 import os
 import sys
+
+from custom_exceptions import SetupNeeded
+import error_handler
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
@@ -74,9 +76,6 @@ def get_user_config():
     config.save()
 
   return config
-
-# only import setup here to avoid circular reference
-from setup import SetupNeeded
 
 def setup_required(func):
   """Decorator to handle routes that need setup to have been completed
