@@ -89,6 +89,6 @@ def setup_required(func):
     return func(*args, **kwargs)
   return decorated_function
 
-from ufo.handlers import routes
 from ufo.services import key_distributor
+from ufo.handlers import routes
 from ufo.services import xsrf
