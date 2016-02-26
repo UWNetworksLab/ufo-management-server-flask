@@ -17,13 +17,13 @@ from ufo import setup_required
 INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
 
-def _render_user_add(get_all, group_key, user_key):
-  """Renders the user add template with the requested users if found.
+def _get_users_to_add(get_all, group_key, user_key):
+  """Gets a json object containing the requested users if found.
 
   If users are found, they are stripped down to only their full name and
   email to avoid leaking unnecessary information. In the case that the
   users are not found, an empty list is used. If an httperror is
-  encountered, that error is caught, and the template is still rendered
+  encountered, that error is caught, and the json is still returned
   with the error inserted and an empty list of users.
 
   Args:
@@ -32,9 +32,8 @@ def _render_user_add(get_all, group_key, user_key):
     user_key: A string identifying an individual user.
 
   Returns:
-    A rendered template of add_user.html with the users requested if found. If
-    there is an error, that error is included in the template along with an
-    empty list of users.
+    A json object with 'directory_users' set to a possibly empty list of user
+    objects. If there is an error, the 'error' field will be set to its text.
   """
   credentials = oauth.getSavedCredentials()
   # TODO this should handle the case where we do not have oauth
@@ -67,7 +66,7 @@ def _render_user_add(get_all, group_key, user_key):
     return flask.Response(json_obj, mimetype='application/json')
 
   except errors.HttpError as error:
-    json_obj = json.dumps(({'directory_users': [], 'error': error}))
+    json_obj = json.dumps(({'directory_users': [], 'error': str(error)}))
     return flask.Response(json_obj, mimetype='application/json')
 
 def _get_random_server_ip():
@@ -221,7 +220,7 @@ def add_user():
     get_all = flask.request.args.get('get_all')
     group_key = flask.request.args.get('group_key')
     user_key = flask.request.args.get('user_key')
-    return _render_user_add(get_all, group_key, user_key)
+    return _get_users_to_add(get_all, group_key, user_key)
 
   json_users = flask.request.form.get('users')
   users_list = json.loads(json_users)
