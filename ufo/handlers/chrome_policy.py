@@ -4,7 +4,7 @@ import flask
 import json
 
 import ufo
-from ufo import models
+from ufo.database import models
 
 
 def _make_chrome_policy_json():
