@@ -233,7 +233,7 @@ def add_user():
   if len(users_list) > 0:
     db.session.commit()
 
-  return flask.redirect(flask.url_for('user_list'))
+  return user_list()
 
 @app.route('/user/<user_id>/details')
 @setup_required
@@ -277,7 +277,7 @@ def delete_user(user_id):
   user = models.User.query.get_or_404(user_id)
   user.delete()
 
-  return flask.redirect(flask.url_for('user_list'))
+  return user_list()
 
 @app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
 @setup_required

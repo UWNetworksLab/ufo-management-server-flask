@@ -228,8 +228,7 @@ class UserTest(base_test.BaseTest):
 
     data = {'users': json.dumps(mock_users)}
 
-    response = self.client.post(flask.url_for('add_user'), data=data,
-                                follow_redirects=False)
+    response = self.client.post(flask.url_for('add_user'), data=data)
 
     users_count = models.User.query.count()
     self.assertEquals(len(FAKE_EMAILS_AND_NAMES), users_count)
@@ -242,7 +241,7 @@ class UserTest(base_test.BaseTest):
       user_in_db = query.one_or_none()
       self.assertEqual(fake_email_and_name['name'], user_in_db.name)
 
-    self.assert_redirects(response, flask.url_for('user_list'))
+    self.assertEqual(response.data, self.client.get(flask.url_for('user_list')).data)
 
   def testAddUsersPostManualHandler(self):
     """Test add users manually calls to insert the specified user."""
@@ -251,8 +250,7 @@ class UserTest(base_test.BaseTest):
     mock_user['name'] = FAKE_EMAILS_AND_NAMES[0]['name']
     data = {'users': json.dumps([mock_user])}
 
-    response = self.client.post(flask.url_for('add_user'), data=data,
-                                follow_redirects=False)
+    response = self.client.post(flask.url_for('add_user'), data=data)
 
     query = models.User.query.filter_by(
         email=FAKE_EMAILS_AND_NAMES[0]['email'])
@@ -260,7 +258,7 @@ class UserTest(base_test.BaseTest):
     self.assertIsNotNone(user_in_db)
     self.assertEqual(FAKE_EMAILS_AND_NAMES[0]['name'], user_in_db.name)
 
-    self.assert_redirects(response, flask.url_for('user_list'))
+    self.assertEqual(response.data, self.client.get(flask.url_for('user_list')).data)
 
   @patch('flask.render_template')
   def testUserDetailsGet(self, mock_render_template):
@@ -309,12 +307,11 @@ class UserTest(base_test.BaseTest):
     user = self._CreateAndSaveFakeUser()
     user_id = user.id
 
-    response = self.client.post(flask.url_for('delete_user', user_id=user_id),
-                                follow_redirects=False)
+    response = self.client.post(flask.url_for('delete_user', user_id=user_id))
 
     user = models.User.query.get(user_id)
     self.assertIsNone(user)
-    self.assert_redirects(response, flask.url_for('user_list'))
+    self.assertEqual(response.data, self.client.get(flask.url_for('user_list')).data)
 
   def testUserGetNewKeyPairHandler(self):
     """Test get new key pair handler regenerates a key pair for the user."""

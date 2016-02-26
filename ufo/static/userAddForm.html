@@ -33,24 +33,24 @@
       </template>
       <template is="dom-if" if="{{!showInputFields}}">
         <paper-dialog-scrollable>
-          <form is="iron-form" id="postForm" method="post" action="{{resources.addUrl}}">
+          <form is="iron-form" class="addPostForm" method="post" action="{{resources.addUrl}}">
             <paper-listbox>
               <template is="dom-repeat" items="[[lastResponse.directory_users]]">
                 <paper-item id="{{item.name}}" class="horizontal layout">
-                  <paper-checkbox name="selected_user" value="{{item}}"></paper-checkbox>
+                  <paper-checkbox on-change="updateCheckedUsers" name="checkboxes" value="{{item}}"></paper-checkbox>
                   <span class="flex"><strong>{{item.name}}</strong></span>
                   <span>{{item.email}}</span>
                 </paper-item>
               </template>
             </paper-listbox>
+            <input type="hidden" name="users" value="{{usersJson}}">
+            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
           </form>
         </paper-dialog-scrollable>
         <paper-button on-tap="resetForm" class="anchor-button">{{resources.lookAgainText}}</paper-button>
         <script>
         var modal = document.getElementById('userModal');
-        console.log(modal);
         var scrollables = modal.getElementsByTagName('paper-dialog-scrollable');
-        console.log(scrollables);
         for (var i in scrollables) {
           scrollables[i].dialogElement = modal;
         }
@@ -152,6 +152,15 @@
           type: Object,
           notify: true,
         },
+        selectedUsers: {
+          type: Array,
+          notify: true,
+          value: [],
+        },
+        usersJson: {
+          type: String,
+          notify: true,
+        },
       },
       listeners: {
         'iron-form-response': 'parseResponse',
@@ -160,8 +169,6 @@
         document.getElementById(this.addFlowTextObj.id).submit();
       },
       parseResponse: function(e, detail) {
-        console.log(e);
-        console.log(e.target.request.lastResponse);
         this.set('lastResponse', e.target.request.lastResponse);
         this.set('showInputFields', false);
         this.setModal();
@@ -190,6 +197,22 @@
       },
       idMatches: function(id, string1) {
         return id === string1;
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+      updateCheckedUsers: function(e) {
+        var checkboxes = this.querySelectorAll('paper-checkbox');
+        var checkboxElem = event.path[0];
+        if (checkboxElem.checked) {
+          this.selectedUsers.push(checkboxElem.value);
+        } else {
+          var index = this.selectedUsers.indexOf(checkboxElem.value);
+          if (index != -1) {
+            this.selectedUsers.splice(index, 1);
+          }
+        }
+        this.usersJson = JSON.stringify(this.selectedUsers);
       },
     });
   </script>
