@@ -1,7 +1,12 @@
-from . import app, get_user_config
-
 import flask
 import json
+
+from ufo import app
+from ufo import chrome_policy
+from ufo import get_user_config
+from ufo import proxy_server
+from ufo import user
+
 
 @app.route('/')
 def landing():
@@ -11,39 +16,18 @@ def landing():
 
 @app.route('/new')
 def new_landing():
-  user_resources_dict = {
-    'addUrl': flask.url_for('add_user'),
-    'addIconUrl': flask.url_for('static', filename='add-users.svg'),
-    'addText': 'Add Users',
-    'listUrl': flask.url_for('user_list'),
-    'listLimit': 10,
-    'seeAllText': 'See All Users',
-    'titleText': 'Users',
-    'itemIconUrl': flask.url_for('static', filename='user.svg'),
-    'isUser': True,
-  }
-  proxy_resources_dict = {
-    'addUrl': flask.url_for('proxyserver_add'),
-    'addIconUrl': flask.url_for('static', filename='add-servers.svg'),
-    'addText': 'Add a Server',
-    'listUrl': flask.url_for('proxyserver_list'),
-    'listLimit': 10,
-    'seeAllText': 'See All Servers',
-    'titleText': 'Servers',
-    'itemIconUrl': flask.url_for('static', filename='server.svg'),
-    'isProxyServer': True,
-  }
-  policy_resources_dict = {
-    'titleText': 'Chrome Policy',
-    'isChromePolicy': True,
-  }
+  user_resources_dict = user.get_user_resources_dict()
+  proxy_resources_dict = proxy_server.get_proxy_resources_dict()
+  policy_resources_dict = chrome_policy.get_policy_resources_dict()
+
   return flask.render_template(
       'landing2.html',
-      user_resources=json.dumps((user_resources_dict)),
-      proxy_resources=json.dumps((proxy_resources_dict)),
-      policy_resources=json.dumps((policy_resources_dict)))
+      user_resources=json.dumps(user_resources_dict),
+      proxy_resources=json.dumps(proxy_resources_dict),
+      policy_resources=json.dumps(policy_resources_dict))
 
-import setup # handlers for /setup
-import user # handlers for /user
-import proxy_server # handlers for /proxy_server
-import chrome_policy # handlers for /chrome_policy
+
+from ufo import setup # handlers for /setup
+from ufo import user # handlers for /user
+from ufo import proxy_server # handlers for /proxy_server
+from ufo import chrome_policy # handlers for /chrome_policy
