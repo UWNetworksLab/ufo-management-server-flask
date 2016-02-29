@@ -11,7 +11,7 @@
             <div class="middle flex">
               <div class="horizontal center-justified layout">
                 <div class="title">{{resources.titleText}}</div>
-                <template is="dom-if" if="{{!resources.isChromePolicy}}">
+                <template is="dom-if" if="{{resources.showAddButton}}">
                   <add-item-button resources="{{resources}}"></add-item-button>
                 </template>
               </div>
@@ -23,7 +23,7 @@
         </div>
       </paper-material>
       <template is="dom-if" if="{{resources.isUser}}">
-        <add-user-modal resources="{{resources}}"></add-user-modal>
+        <user-add-modal resources="{{resources}}"></user-add-modal>
       </template>
       <template is="dom-if" if="{{resources.isProxyServer}}">
         <add-server-modal resources="{{resources}}"></add-server-modal>

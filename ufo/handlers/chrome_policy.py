@@ -38,6 +38,7 @@ def get_policy_resources_dict():
   return {
     'download_chrome_policy': flask.url_for('download_chrome_policy'),
     'isChromePolicy': True,
+    'showAddButton': False,
     'policy_filename': 'chrome_policy.json',
     'titleText': 'Chrome Policy',
   }

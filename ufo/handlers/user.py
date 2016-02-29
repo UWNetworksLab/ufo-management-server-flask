@@ -147,6 +147,7 @@ def get_user_resources_dict():
     'titleText': 'Users',
     'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
     'isUser': True,
+    'showAddButton': True,
     'modalId': 'userModal',
     'dismissText': 'Cancel',
     'addFlowTextDicts': [
