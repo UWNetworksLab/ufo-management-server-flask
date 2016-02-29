@@ -8,6 +8,7 @@ import oauth2client
 import ufo
 from ufo.handlers import chrome_policy
 from ufo.services import oauth
+from ufo.handlers import user
 
 
 DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
@@ -23,11 +24,20 @@ def setup():
 
   if flask.request.method == 'GET':
     policy_resources_dict = chrome_policy.get_policy_resources_dict()
+    setup_resources_dict = {
+      'titleText': 'OAuth Configuration',
+      'isOAuth': True,
+      'showAddButton': False,
+    }
+    user_resources_dict = user.get_user_resources_dict()
+    user_resources_dict['showAddButton'] = False
     return flask.render_template(
         'setup.html',
         config=config,
         oauth_url=oauth_url,
-        policy_resources=json.dumps(policy_resources_dict))
+        policy_resources=json.dumps(policy_resources_dict),
+        setup_resources=json.dumps(setup_resources_dict),
+        user_resources=json.dumps(user_resources_dict))
 
   if flask.request.form.get('oauth_code', None):
     try:
