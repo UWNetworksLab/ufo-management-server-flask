@@ -1,12 +1,11 @@
+import flask
 from mock import MagicMock
 from mock import patch
-
-import base_test
-from custom_exceptions import SetupNeeded
-import error_handler
-
-import flask
 from werkzeug import exceptions
+
+from ufo import base_test
+from ufo.services import error_handler
+from ufo.services.custom_exceptions import SetupNeeded
 
 
 class ErrorHandlerTest(base_test.BaseTest):

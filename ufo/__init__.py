@@ -4,8 +4,8 @@ import functools
 import os
 import sys
 
-from custom_exceptions import SetupNeeded
-import error_handler
+from ufo.services import error_handler
+from ufo.services.custom_exceptions import SetupNeeded
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
@@ -51,7 +51,7 @@ app.jinja_env.globals['KEY_LOOKUP_VALIDATION_PATTERN'] = KEY_LOOKUP_PATTERN
 app.jinja_env.globals['KEY_LOOKUP_VALIDATION_ERROR'] = KEY_LOOKUP_ERROR
 
 # DB needs to be defined before this point
-import models
+from ufo.database import models
 
 @app.after_request
 def checkCredentialChange(response):
@@ -89,6 +89,6 @@ def setup_required(func):
     return func(*args, **kwargs)
   return decorated_function
 
-import xsrf
-import routes
-import key_distributor
+from ufo.services import key_distributor
+from ufo.handlers import routes
+from ufo.services import xsrf

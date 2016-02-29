@@ -3,22 +3,21 @@ import json
 import flask
 from googleapiclient import discovery
 import httplib2
-import oauth
 import oauth2client
 
-from ufo import app
-from ufo import chrome_policy
-from ufo import get_user_config
+import ufo
+from ufo.handlers import chrome_policy
+from ufo.services import oauth
 
 
 DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
 NON_ADMIN_TEXT = 'Credentials do not have admin access.'
 
 
-@app.route('/setup/', methods=['GET', 'POST'])
+@ufo.app.route('/setup/', methods=['GET', 'POST'])
 def setup():
   """Handle showing the user the setup page and processing the response"""
-  config = get_user_config()
+  config = ufo.get_user_config()
   flow = oauth.getOauthFlow()
   oauth_url = flow.step1_get_authorize_url()
 

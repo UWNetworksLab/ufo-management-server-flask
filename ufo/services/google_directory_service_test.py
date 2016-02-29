@@ -1,15 +1,15 @@
 """Test google directory service module functionality."""
-import mock
-
-import flask
-from googleapiclient import discovery
 import json
 import unittest
 
-import base_test
+import flask
+from googleapiclient import discovery
+import mock
+
+from ufo import base_test
 # I practically have to shorten this name so every single line doesn't go
 # over. If someone can't understand, they can use ctrl+f to look it up here.
-import google_directory_service as gds
+from ufo.services import google_directory_service as gds
 
 
 FAKE_EMAIL_1 = 'foo@mybusiness.com'

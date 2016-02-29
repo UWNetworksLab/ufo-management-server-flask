@@ -2,21 +2,20 @@
 
 from flask.ext.testing import TestCase
 
-from . import app
-from . import db
-import models
+import ufo
+from ufo.database import models
 
 
 class BaseTest(TestCase):
   """Base test with comment setup and teardown."""
 
   def create_app(self):
-    app.config.from_object('config.TestConfiguration')
-    return app
+    ufo.app.config.from_object('config.TestConfiguration')
+    return ufo.app
 
   def setUp(self):
     """Setup test app on which to call handlers and db to query."""
-    db.create_all()
+    ufo.db.create_all()
 
   def setup_config(self):
     """Setup the config that is needed for @setup_required decorator."""
@@ -27,5 +26,5 @@ class BaseTest(TestCase):
     self.config.save()
 
   def tearDown(self):
-    db.session.remove()
-    db.drop_all()
+    ufo.db.session.remove()
+    ufo.db.drop_all()

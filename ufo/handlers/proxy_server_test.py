@@ -1,14 +1,15 @@
+import base64
+import json
+
+from Crypto.PublicKey import RSA
+import flask
 from mock import MagicMock
 from mock import patch
 
-import base64
-from Crypto.PublicKey import RSA
-import flask
-import json
+from ufo import base_test
+from ufo.database import models
+from ufo.handlers import proxy_server
 
-import base_test
-import models
-import proxy_server
 
 def getBinaryPublicKey(rsakey):
   """Returns the public key as stored in the database."""

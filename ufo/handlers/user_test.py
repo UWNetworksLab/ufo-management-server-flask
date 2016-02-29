@@ -1,24 +1,22 @@
 """Test user module functionality."""
-from mock import MagicMock
-from mock import patch
-
 import base64
-import flask
-from googleapiclient import errors
 import json
 import unittest
+
+import flask
+from googleapiclient import errors
+from mock import MagicMock
+from mock import patch
 from werkzeug.datastructures import MultiDict
 from werkzeug.datastructures import ImmutableMultiDict
 
-from ufo import app
 from ufo import base_test
-from ufo import db
+from ufo.database import models
+from ufo.handlers import user
 # I practically have to shorten this name so every single line doesn't go
 # over. If someone can't understand, they can use ctrl+f to look it up here.
-from ufo import google_directory_service as gds
-from ufo import models
-from ufo import oauth
-from ufo import user
+from ufo.services import google_directory_service as gds
+from ufo.services import oauth
 
 
 FAKE_EMAILS_AND_NAMES = [

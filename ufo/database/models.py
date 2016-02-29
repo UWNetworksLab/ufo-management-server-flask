@@ -1,16 +1,18 @@
-from . import db
+import StringIO
 
 from Crypto.PublicKey import RSA
 from paramiko import hostkeys
 from paramiko import pkey
-import StringIO
-from ufo import ssh_client
+
+import ufo
+from ufo.services import ssh_client
 
 LONG_STRING_LENGTH = 1024
 REVOKED_TEXT = 'Access Disabled'
 NOT_REVOKED_TEXT = 'Access Enabled'
 
-class Model(db.Model):
+
+class Model(ufo.db.Model):
   """Helpful functions for the database models
 
   Most method implementations are taken from
@@ -23,14 +25,14 @@ class Model(db.Model):
     return commit and self.save() or self
 
   def save(self, commit=True):
-    db.session.add(self)
+    ufo.db.session.add(self)
     if commit:
-      db.session.commit()
+      ufo.db.session.commit()
     return self
 
   def delete(self, commit=True):
-    db.session.delete(self)
-    return commit and db.session.commit()
+    ufo.db.session.delete(self)
+    return commit and ufo.db.session.commit()
 
   def to_dict(self):
     return {}
@@ -50,15 +52,16 @@ class Config(Model):
   """
   __tablename__ = 'config'
 
-  id = db.Column(db.Integer, primary_key=True)
+  id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
-  isConfigured = db.Column(db.Boolean(), default=False)
+  isConfigured = ufo.db.Column(ufo.db.Boolean(), default=False)
 
-  credentials = db.Column(db.Text())
-  domain = db.Column(db.String(LONG_STRING_LENGTH))
-  dv_content = db.Column(db.String(LONG_STRING_LENGTH))
-  proxy_server_validity = db.Column(db.Boolean(), default=False)
-  network_jail_until_google_auth = db.Column(db.Boolean(), default=False)
+  credentials = ufo.db.Column(ufo.db.Text())
+  domain = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  dv_content = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  proxy_server_validity = ufo.db.Column(ufo.db.Boolean(), default=False)
+  network_jail_until_google_auth = ufo.db.Column(ufo.db.Boolean(),
+                                                 default=False)
 
 
 class User(Model):
@@ -66,13 +69,13 @@ class User(Model):
   """
   __tablename__ = "user"
 
-  id = db.Column(db.Integer, primary_key=True)
+  id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
-  email = db.Column(db.String(LONG_STRING_LENGTH))
-  name = db.Column(db.String(LONG_STRING_LENGTH))
-  private_key = db.Column(db.LargeBinary())
-  public_key = db.Column(db.LargeBinary())
-  is_key_revoked = db.Column(db.Boolean(), default=False)
+  email = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  name = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  private_key = ufo.db.Column(ufo.db.LargeBinary())
+  public_key = ufo.db.Column(ufo.db.LargeBinary())
+  is_key_revoked = ufo.db.Column(ufo.db.Boolean(), default=False)
 
   def __init__(self, **kwargs):
     super(User, self).__init__(**kwargs)
@@ -116,14 +119,14 @@ class ProxyServer(Model):
   """
   __tablename__ = "proxyserver"
 
-  id = db.Column(db.Integer, primary_key=True)
+  id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
-  ip_address = db.Column(db.String(LONG_STRING_LENGTH))
-  name = db.Column(db.String(LONG_STRING_LENGTH))
-  ssh_private_key = db.Column(db.LargeBinary())
-  ssh_private_key_type = db.Column(db.String(LONG_STRING_LENGTH))
-  host_public_key = db.Column(db.LargeBinary())
-  host_public_key_type = db.Column(db.String(LONG_STRING_LENGTH))
+  ip_address = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  name = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  ssh_private_key = ufo.db.Column(ufo.db.LargeBinary())
+  ssh_private_key_type = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  host_public_key = ufo.db.Column(ufo.db.LargeBinary())
+  host_public_key_type = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
 
   def read_private_key_from_file_contents(self, contents):
     pkey_instance = pkey.PKey()

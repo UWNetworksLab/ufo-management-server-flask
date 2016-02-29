@@ -1,13 +1,11 @@
 """The module for handling proxy servers"""
-
-from . import app, db, setup_required
-
-import flask
 import json
 
+import flask
+
 import ufo
-from ufo import models
-from ufo import ssh_client
+from ufo.database import models
+from ufo.services import ssh_client
 
 
 def get_proxy_resources_dict():
@@ -32,15 +30,15 @@ def get_proxy_resources_dict():
     'confirmText': 'Add Server',
   }
 
-@app.route('/proxyserver/')
-@setup_required
+@ufo.app.route('/proxyserver/')
+@ufo.setup_required
 def proxyserver_list():
   proxy_server_dict = {'items': models.ProxyServer.get_items_as_list_of_dict()}
   proxy_servers_json = json.dumps((proxy_server_dict))
   return flask.Response(proxy_servers_json, mimetype='application/json')
 
-@app.route('/proxyserver/add', methods=['GET', 'POST'])
-@setup_required
+@ufo.app.route('/proxyserver/add', methods=['GET', 'POST'])
+@ufo.setup_required
 def proxyserver_add():
   """Get the form for adding new proxy servers."""
   if flask.request.method == 'GET':
@@ -67,8 +65,8 @@ def proxyserver_add():
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-@app.route('/proxyserver/<server_id>/edit', methods=['GET', 'POST'])
-@setup_required
+@ufo.app.route('/proxyserver/<server_id>/edit', methods=['GET', 'POST'])
+@ufo.setup_required
 def proxyserver_edit(server_id):
   server = models.ProxyServer.query.get_or_404(server_id)
 
@@ -86,8 +84,8 @@ def proxyserver_edit(server_id):
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-@app.route('/proxyserver/<server_id>/delete')
-@setup_required
+@ufo.app.route('/proxyserver/<server_id>/delete')
+@ufo.setup_required
 def proxyserver_delete(server_id):
   """Handler for deleting an existing proxy server."""
   #TODO should at least be post

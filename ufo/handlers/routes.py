@@ -1,20 +1,20 @@
-import flask
 import json
 
-from ufo import app
-from ufo import chrome_policy
-from ufo import get_user_config
-from ufo import proxy_server
-from ufo import user
+import flask
+
+import ufo
+from ufo.handlers import chrome_policy
+from ufo.handlers import proxy_server
+from ufo.handlers import user
 
 
-@app.route('/')
+@ufo.app.route('/')
 def landing():
-  config = get_user_config()
+  config = ufo.get_user_config()
   return flask.render_template('landing.html',
                                site_verification_content=config.dv_content)
 
-@app.route('/new')
+@ufo.app.route('/new')
 def new_landing():
   user_resources_dict = user.get_user_resources_dict()
   proxy_resources_dict = proxy_server.get_proxy_resources_dict()
@@ -27,7 +27,7 @@ def new_landing():
       policy_resources=json.dumps(policy_resources_dict))
 
 
-from ufo import setup # handlers for /setup
-from ufo import user # handlers for /user
-from ufo import proxy_server # handlers for /proxy_server
-from ufo import chrome_policy # handlers for /chrome_policy
+from ufo.handlers import chrome_policy
+from ufo.handlers import proxy_server
+from ufo.handlers import setup
+from ufo.handlers import user
