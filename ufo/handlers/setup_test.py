@@ -1,14 +1,13 @@
 """Test setup module functionality."""
-from mock import MagicMock
-from mock import patch
+
+import unittest
 
 import flask
 from googleapiclient import discovery
-import unittest
+from mock import MagicMock
+from mock import patch
 
-from ufo import app
 from ufo import base_test
-from ufo import db
 from ufo.database import models
 from ufo.handlers import setup
 from ufo.services import oauth

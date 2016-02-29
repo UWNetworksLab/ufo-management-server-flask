@@ -1,7 +1,6 @@
+import flask
 from mock import MagicMock
 from mock import patch
-
-import flask
 from werkzeug import exceptions
 
 from ufo import base_test

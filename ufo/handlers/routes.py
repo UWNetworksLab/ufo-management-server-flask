@@ -2,20 +2,19 @@ import json
 
 import flask
 
-from ufo import app
+import ufo
 from ufo.handlers import chrome_policy
-from ufo import get_user_config
 from ufo.handlers import proxy_server
 from ufo.handlers import user
 
 
-@app.route('/')
+@ufo.app.route('/')
 def landing():
-  config = get_user_config()
+  config = ufo.get_user_config()
   return flask.render_template('landing.html',
                                site_verification_content=config.dv_content)
 
-@app.route('/new')
+@ufo.app.route('/new')
 def new_landing():
   user_resources_dict = user.get_user_resources_dict()
   proxy_resources_dict = proxy_server.get_proxy_resources_dict()

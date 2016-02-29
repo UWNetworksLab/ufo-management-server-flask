@@ -1,18 +1,16 @@
 """Test user module functionality."""
-from mock import MagicMock
-from mock import patch
-
 import base64
-import flask
-from googleapiclient import errors
 import json
 import unittest
+
+import flask
+from googleapiclient import errors
+from mock import MagicMock
+from mock import patch
 from werkzeug.datastructures import MultiDict
 from werkzeug.datastructures import ImmutableMultiDict
 
-from ufo import app
 from ufo import base_test
-from ufo import db
 from ufo.database import models
 from ufo.handlers import user
 # I practically have to shorten this name so every single line doesn't go

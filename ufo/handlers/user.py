@@ -1,15 +1,13 @@
 """User module which provides handlers to access and edit users."""
 import ast
 import base64
-import flask
 import json
 import random
 
+import flask
 from googleapiclient import errors
 
-from ufo import app
-from ufo import db
-from ufo import setup_required
+import ufo
 from ufo.database import models
 from ufo.services import google_directory_service
 from ufo.services import oauth
@@ -150,8 +148,8 @@ def get_user_resources_dict():
     'isUser': True,
   }
 
-@app.route('/user/')
-@setup_required
+@ufo.app.route('/user/')
+@ufo.setup_required
 def user_list():
   """Retrieves a list of the users currently in the db.
 
@@ -161,8 +159,8 @@ def user_list():
   users_json = json.dumps(({'items': models.User.get_items_as_list_of_dict()}))
   return flask.Response(users_json, mimetype='application/json')
 
-@app.route('/user/add', methods=['GET', 'POST'])
-@setup_required
+@ufo.app.route('/user/add', methods=['GET', 'POST'])
+@ufo.setup_required
 def add_user():
   """Renders the user add template on get and stores new user(s) on post.
 
@@ -190,12 +188,12 @@ def add_user():
     db_user.save(commit=False)
 
   if len(users_list) > 0:
-    db.session.commit()
+    ufo.db.session.commit()
 
   return flask.redirect(flask.url_for('user_list'))
 
-@app.route('/user/<user_id>/details')
-@setup_required
+@ufo.app.route('/user/<user_id>/details')
+@ufo.setup_required
 def user_details(user_id):
   """Renders the user details template for the given user_id if found.
 
@@ -218,8 +216,8 @@ def user_details(user_id):
     return flask.render_template('user_details.html', user=user,
                                  invite_url=invite_url)
 
-@app.route('/user/<user_id>/delete', methods=['POST'])
-@setup_required
+@ufo.app.route('/user/<user_id>/delete', methods=['POST'])
+@ufo.setup_required
 def delete_user(user_id):
   """Deletes the user corresponding to the passed in user_id from the db.
 
@@ -238,8 +236,8 @@ def delete_user(user_id):
 
   return flask.redirect(flask.url_for('user_list'))
 
-@app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
-@setup_required
+@ufo.app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
+@ufo.setup_required
 def user_get_new_key_pair(user_id):
   """Rotates the key pair (public and private keys) for the given user.
 
@@ -258,8 +256,8 @@ def user_get_new_key_pair(user_id):
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
 
-@app.route('/user/<user_id>/toggleRevoked', methods=['POST'])
-@setup_required
+@ufo.app.route('/user/<user_id>/toggleRevoked', methods=['POST'])
+@ufo.setup_required
 def user_toggle_revoked(user_id):
   """Toggles whether the given user's access is revoked or not.
 

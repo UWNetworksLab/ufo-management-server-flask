@@ -3,16 +3,16 @@ import os
 
 import flask
 
-from ufo import app
+import ufo
 
 
-@app.before_request
+@ufo.app.before_request
 def xsrf_protect():
   """Verifies that an xsrf token is included for all non-get requests
 
   Slight modification of http://flask.pocoo.org/snippets/3/
   """
-  if app.config['TESTING']:
+  if ufo.app.config['TESTING']:
     return
   if flask.request.method != 'GET':
     token = flask.session.pop('_xsrf_token', None)
@@ -24,4 +24,4 @@ def generate_xsrf_token():
     flask.session['_xsrf_token'] = binascii.b2a_hex(os.urandom(16))
   return flask.session['_xsrf_token']
 
-app.jinja_env.globals['xsrf_token'] = generate_xsrf_token
+ufo.app.jinja_env.globals['xsrf_token'] = generate_xsrf_token
