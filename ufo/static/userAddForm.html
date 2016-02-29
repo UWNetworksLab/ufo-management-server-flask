@@ -1,4 +1,3 @@
-<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-checkbox/paper-checkbox.html" /
@@ -12,11 +11,20 @@
     paper-listbox {
       background: #EEE;
     }
+    #spinner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      z-index: 100000000;
+    }
   </style>
   <template>
     <div>
+      <template is="dom-if" if="{{isSpinnerOn}}">
+        <paper-spinner id="spinner" active$={{isSpinnerOn}}></paper-spinner>
+      </template>
       <template is="dom-if" if="{{showInputFields}}">
-        <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-presubmit="checkRequest">
+        <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinner">
           <template is="dom-if" if="[[!idMatches(addFlowTextObj.id, 'domainAdd')]]">
             <paper-input label="{{addFlowTextObj.label1}}" type="textbox" name="{{addFlowTextObj.name1}}" auto-validate pattern="{{KEY_LOOKUP_VALIDATION_PATTERN}}" error-message="{{KEY_LOOKUP_VALIDATION_ERROR}}"></paper-input>
             <p>{{addFlowTextObj.definition1}}</p>
@@ -26,14 +34,11 @@
             <input type="hidden" name="get_all" value="true">
           </template>
           <paper-button on-tap="submitGetForm" class="form-submit-button anchor-button" type="submit">{{addFlowTextObj.searchButton}}</paper-button>
-          <template is="dom-if" if="{{request.loading}}">
-            <paper-spinner active$={{request.loading}}></paper-spinner>
-          </template>
         </form>
       </template>
       <template is="dom-if" if="{{!showInputFields}}">
         <paper-dialog-scrollable>
-          <form is="iron-form" class="addPostForm" method="post" action="{{resources.addUrl}}">
+          <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
             <paper-listbox>
               <template is="dom-repeat" items="[[lastResponse.directory_users]]">
                 <paper-item id="{{item.name}}" class="horizontal layout">
@@ -47,7 +52,7 @@
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
           </form>
         </paper-dialog-scrollable>
-        <paper-button on-tap="resetForm" class="anchor-button">{{resources.lookAgainText}}</paper-button>
+        <paper-button on-tap="resetForms" class="anchor-button">{{resources.lookAgainText}}</paper-button>
         <script>
         var modal = document.getElementById('userModal');
         var scrollables = modal.getElementsByTagName('paper-dialog-scrollable');
@@ -57,80 +62,14 @@
         </script>
       </template>
     </div>
-
-
-      <!-- <script>
-        var selected_users = [];
-        var checkboxes = document.querySelectorAll('paper-checkbox');
-        var input_elem = document.getElementById('selected_users_array');
-        input_elem.value = JSON.stringify(selected_users);
-
-        for (var i in checkboxes) {
-          var grandParent = checkboxes[i].parentElement.parentElement;
-          var name = grandParent.querySelector('td.directory-user-field.name').innerHTML;
-          var email = grandParent.querySelector('td.directory-user-field.email').innerHTML;
-          checkboxes[i].value = {'name': name, 'email': email};
-
-          checkboxes[i].addEventListener('change', function(event) {
-              var checkboxElem = event.path[0];
-              if (checkboxElem.checked) {
-                selected_users.push(checkboxElem.value);
-              } else {
-                var index = selected_users.indexOf(checkboxElem.value);
-                if (index != -1) {
-                  selected_users.splice(index, 1);
-                }
-              }
-              input_elem.value = JSON.stringify(selected_users);
-          });
-        }
-      </script> -->
-
-      <!--Portion for selecting users to add. -->
-      <!--<form id="users-add-form" method="post" action="{{resources.addUrl}}">
-        <p>Select Users to Add.</p>
-        <table class="padding-between-columns">
-          <tr>
-            <th>-</th>
-            <th>Name</th>
-            <th>Email</th>
-          </tr>
-        {% for directory_user in directory_users %}
-          <tr>
-            <td><paper-checkbox value=""></td>
-            <td class="directory-user-field name">
-              {{ directory_user['name'] }}</td>
-            <td class="directory-user-field email">
-              {{ directory_user['email'] }}</td>
-          </tr>
-        {% endfor %}
-        </table>
-        <input type="hidden" id="selected_users_array" name="users" value="">
-        <input type="hidden" name="_xsrf_token" value="{{ xsrf_token_value }}">
-        <paper-button onclick="submitByFormId('users-add-form')" class="form-submit-button anchor-button" type="submit">Add Selected Users</paper-button>
-      </form>
-
-      <template is="dom-if" if="{{loading}}">
-        <paper-spinner active$={{loading}}></paper-spinner>
-      </template>
-      <iron-ajax
-        url="{{resources.addUrl}}"
-        method="POST"
-        handle-as="json"
-        id="postItemsAjax"
-        loading="{{loading}}"
-        last-response="{{ajaxResponse}}"
-        on-response="bubbleToList">
-      </iron-ajax>
-      <div class="buttons">
-        <paper-button class="anchor-button" dialog-dismiss>
-        {{resources.dismissText}}
-        </paper-button>
-        <paper-button class="anchor-button" dialog-confirm autofocus>
-        {{confirmText}}
-        </paper-button>
-      </div> -->
-
+    <div class="buttons">
+      <paper-button class="anchor-button" dialog-dismiss>
+      {{resources.dismissText}}
+      </paper-button>
+      <paper-button class="anchor-button" autofocus on-tap="submitPostForm">
+      {{addFlowTextObj.saveButton}}
+      </paper-button>
+    </div>
   </template>
 
   <script>
@@ -161,39 +100,39 @@
           type: String,
           notify: true,
         },
+        isSpinnerOn: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
       },
-      listeners: {
-        'iron-form-response': 'parseResponse',
+      enableSpinner: function() {
+        this.set('isSpinnerOn', true);
       },
       submitGetForm: function() {
-        document.getElementById(this.addFlowTextObj.id).submit();
+        this.querySelector('#' + this.addFlowTextObj.id).submit();
       },
-      parseResponse: function(e, detail) {
+      submitPostForm: function() {
+        this.querySelector('#addPostForm').submit();
+      },
+      parseGetResponse: function(e, detail) {
         this.set('lastResponse', e.target.request.lastResponse);
         this.set('showInputFields', false);
-        this.setModal();
+        this.set('isSpinnerOn', false);
       },
-      setModal: function() {
-        // console.log(this);
-        // var modal = document.getElementById(this.resources.modalId);
-        // console.log(modal);
-        // var scrollable = document.getElementsByTagName('paper-dialog-scrollable')[0];
-        // console.log(this.getElementsByTagName('paper-dialog-scrollable'));
-        // scrollable.dialogElement = modal;
+      parsePostResponse: function(e, detail) {
+        this.sendUsersJsonToList(detail.xhr.response);
+        this.set('isSpinnerOn', false);
+        document.getElementById('userModal').close();
       },
-      checkRequest: function(e, detail) {
-        //console.log(this);
-        //console.log(this.getElementsByTagName('input'));
-        //e.target.request.params = foo;
-      },
-      resetForm: function() {
+      resetForms: function() {
         this.set('showInputFields', true);
         document.getElementById(this.addFlowTextObj.id).reset();
-        this.$.postForm.reset();
+        this.querySelector('#addPostForm').reset();
       },
-      bubbleToList: function(e, detail) {
+      sendUsersJsonToList: function(updatedUsersJson) {
         var listElem = document.getElementById(this.resources.listId);
-        listElem.$.setAjaxResponse(detail.xhr.response);
+        listElem.setAjaxResponse(updatedUsersJson);
       },
       idMatches: function(id, string1) {
         return id === string1;
