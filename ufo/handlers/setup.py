@@ -27,10 +27,10 @@ def setup():
     setup_resources_dict = {
       'titleText': 'OAuth Configuration',
       'isOAuth': True,
-      'showAddButton': False,
+      'hasAddFlow': False,
     }
     user_resources_dict = user.get_user_resources_dict()
-    user_resources_dict['showAddButton'] = False
+    user_resources_dict['hasAddFlow'] = False
     return flask.render_template(
         'setup.html',
         config=config,
