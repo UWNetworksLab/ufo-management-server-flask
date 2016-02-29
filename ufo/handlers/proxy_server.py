@@ -16,14 +16,19 @@ def get_proxy_resources_dict():
   """
   return {
     'addUrl': flask.url_for('proxyserver_add'),
-    'addIconUrl': flask.url_for('static', filename='add-servers.svg'),
+    'addIconUrl': flask.url_for('static', filename='img/add-servers.svg'),
     'addText': 'Add a Server',
+    'listId': 'proxyList',
     'listUrl': flask.url_for('proxyserver_list'),
     'listLimit': 10,
     'seeAllText': 'See All Servers',
     'titleText': 'Servers',
-    'itemIconUrl': flask.url_for('static', filename='server.svg'),
+    'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
     'isProxyServer': True,
+    'showAddButton': True,
+    'modalId': 'serverModal',
+    'dismissText': 'Cancel',
+    'confirmText': 'Add Server',
   }
 
 @ufo.app.route('/proxyserver/')

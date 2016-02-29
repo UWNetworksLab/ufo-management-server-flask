@@ -16,13 +16,13 @@ from ufo.services import oauth
 INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
 
-def _render_user_add(get_all, group_key, user_key):
-  """Renders the user add template with the requested users if found.
+def _get_users_to_add(get_all, group_key, user_key):
+  """Gets a json object containing the requested users if found.
 
   If users are found, they are stripped down to only their full name and
   email to avoid leaking unnecessary information. In the case that the
   users are not found, an empty list is used. If an httperror is
-  encountered, that error is caught, and the template is still rendered
+  encountered, that error is caught, and the json is still returned
   with the error inserted and an empty list of users.
 
   Args:
@@ -31,16 +31,15 @@ def _render_user_add(get_all, group_key, user_key):
     user_key: A string identifying an individual user.
 
   Returns:
-    A rendered template of add_user.html with the users requested if found. If
-    there is an error, that error is included in the template along with an
-    empty list of users.
+    A json object with 'directory_users' set to a possibly empty list of user
+    objects. If there is an error, the 'error' field will be set to its text.
   """
   credentials = oauth.getSavedCredentials()
   # TODO this should handle the case where we do not have oauth
   if not credentials:
-    return flask.render_template('add_user.html',
-                                 directory_users=[],
-                                 error="OAuth is not set up")
+    dictionary = {'directory_users': [], 'error': 'OAuth is not set up'}
+    json_obj = json.dumps((dictionary))
+    return flask.Response(json_obj, mimetype='application/json')
 
   try:
     directory_service = google_directory_service.GoogleDirectoryService(
@@ -62,12 +61,12 @@ def _render_user_add(get_all, group_key, user_key):
       }
       users_to_output.append(user_for_display)
 
-    return flask.render_template('add_user.html',
-                                 directory_users=users_to_output)
+    json_obj = json.dumps(({'directory_users': users_to_output}))
+    return flask.Response(json_obj, mimetype='application/json')
+
   except errors.HttpError as error:
-    return flask.render_template('add_user.html',
-                                 directory_users=[],
-                                 error=error)
+    json_obj = json.dumps(({'directory_users': [], 'error': str(error)}))
+    return flask.Response(json_obj, mimetype='application/json')
 
 def _get_random_server_ip():
   """Gets the ip address of a random proxy server of those in the db.
@@ -138,14 +137,58 @@ def get_user_resources_dict():
   """
   return {
     'addUrl': flask.url_for('add_user'),
-    'addIconUrl': flask.url_for('static', filename='add-users.svg'),
+    'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
     'addText': 'Add Users',
+    'lookAgainText': 'Search Again',
+    'listId': 'userList',
     'listUrl': flask.url_for('user_list'),
     'listLimit': 10,
     'seeAllText': 'See All Users',
     'titleText': 'Users',
-    'itemIconUrl': flask.url_for('static', filename='user.svg'),
+    'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
     'isUser': True,
+    'showAddButton': True,
+    'modalId': 'userModal',
+    'dismissText': 'Cancel',
+    'addFlowTextDicts': [
+        {
+          'id': 'groupAdd',
+          'tab': 'Add Group',
+          'saveButton': 'Add Group',
+          'searchButton': 'Search for Users in Group',
+          'label1': 'Group key',
+          'definition1': ('To add users by group, please provide a valid '
+                          'group email address or unique id.'),
+          'name1': 'group_key',
+          'isManual': False,
+        },
+        {
+          'id': 'userAdd',
+          'tab': 'Add Individual',
+          'saveButton': 'Add User',
+          'searchButton': 'Search for Specific User',
+          'label1': 'User key',
+          'definition1': ('To add individual users, please provide a valid '
+                          'email address or unique id.'),
+          'name1': 'user_key',
+          'isManual': False,
+        },
+        {
+          'id': 'domainAdd',
+          'tab': 'Add by Domain',
+          'saveButton': 'Add Users',
+          'searchButton': 'Search for Users in Domain',
+          'isManual': False,
+        },
+        {
+          'id': 'manualAdd',
+          'tab': 'Add Manually',
+          'saveButton': 'Add User',
+          'label1': 'Input user name here.',
+          'label2': 'Input user email here.',
+          'isManual': True,
+        },
+    ],
   }
 
 @ufo.app.route('/user/')
@@ -177,7 +220,7 @@ def add_user():
     get_all = flask.request.args.get('get_all')
     group_key = flask.request.args.get('group_key')
     user_key = flask.request.args.get('user_key')
-    return _render_user_add(get_all, group_key, user_key)
+    return _get_users_to_add(get_all, group_key, user_key)
 
   json_users = flask.request.form.get('users')
   users_list = json.loads(json_users)
@@ -190,7 +233,7 @@ def add_user():
   if len(users_list) > 0:
     ufo.db.session.commit()
 
-  return flask.redirect(flask.url_for('user_list'))
+  return user_list()
 
 @ufo.app.route('/user/<user_id>/details')
 @ufo.setup_required
@@ -234,7 +277,7 @@ def delete_user(user_id):
   user = models.User.query.get_or_404(user_id)
   user.delete()
 
-  return flask.redirect(flask.url_for('user_list'))
+  return user_list()
 
 @ufo.app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
 @ufo.setup_required

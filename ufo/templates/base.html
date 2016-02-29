@@ -25,17 +25,17 @@
     <paper-toolbar class="tall" id="main-toolbar">
       <div class="middle horizontal layout center flex">
         <div class="flex">
-          <img src="{{ url_for('static', filename='ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
+          <img src="{{ url_for('static', filename='img/ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
         </div>
         <div class="flex"></div>
-        <paper-input class="center flex-4" id="search-bar">
+        <paper-input class="center flex-4 search" id="search-bar">
           <paper-icon-button icon="search" prefix></paper-icon-button>
         </paper-input>
         <div class="flex"></div>
         <paper-dropdown-menu label="foo" id="username-and-menu" class="custom-dropdown flex">
           <paper-listbox class="dropdown-content">
             <paper-icon-item class="dropdown-button">
-              <iron-icon class="dropdown-icon" src="{{url_for('static', filename='add-users.svg')}}" item-icon></iron-icon>
+              <iron-icon class="dropdown-icon" src="{{url_for('static', filename='img/add-users.svg')}}" item-icon></iron-icon>
               Add an Admin
             </paper-icon-item>
             <paper-icon-item class="dropdown-button">
@@ -49,18 +49,19 @@
         </paper-dropdown-menu>
       </div>
     </paper-toolbar>
-    <div class="layout vertical">
-      {% block body %}{% endblock %}
-    </div>
+  </paper-scroll-header-panel>
+  <div class="layout vertical" id="main-holder">
+    {% block body %}{% endblock %}
     <br>
     <div class="horizontal center-justified layout">
       <div id="jigsaw-logo-holder">
-        <img src="{{ url_for('static', filename='jigsaw_small_2x.png') }}" alt="Jigsaw Logo" height="30" id="jigsaw-logo">
+        <img src="{{ url_for('static', filename='img/jigsaw_small_2x.png') }}" alt="Jigsaw Logo" height="30" id="jigsaw-logo">
       </div>
     </div>
     <br>
     <br>
-  </paper-scroll-header-panel>
+    <p></p>
+  </div>
 
   <script src="{{ url_for('static', filename='globalHelperFunctions.js') }}"></script>
 </body>
