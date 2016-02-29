@@ -11,7 +11,7 @@
             <div class="middle flex">
               <div class="horizontal center-justified layout">
                 <div class="title">{{resources.titleText}}</div>
-                <template is="dom-if" if="{{resources.showAddButton}}">
+                <template is="dom-if" if="{{resources.hasAddFlow}}">
                   <add-item-button resources="{{resources}}"></add-item-button>
                 </template>
               </div>
@@ -22,11 +22,8 @@
           <content></content>
         </div>
       </paper-material>
-      <template is="dom-if" if="{{resources.isUser}}">
-        <user-add-modal resources="{{resources}}"></user-add-modal>
-      </template>
-      <template is="dom-if" if="{{resources.isProxyServer}}">
-        <add-server-modal resources="{{resources}}"></add-server-modal>
+      <template is="dom-if" if="{{resources.hasAddFlow}}">
+        <add-modal resources="{{resources}}"></add-modal>
       </template>
     </div>
     <br>

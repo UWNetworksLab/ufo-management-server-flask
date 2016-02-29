@@ -25,10 +25,27 @@ def get_proxy_resources_dict():
     'titleText': 'Servers',
     'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
     'isProxyServer': True,
-    'showAddButton': True,
+    'hasAddFlow': True,
     'modalId': 'serverModal',
     'dismissText': 'Cancel',
     'confirmText': 'Add Server',
+    'ipLabel': 'IP Address',
+    'nameLabel': 'Server Name',
+    'privateKeyLabel': 'SSH Private Key',
+    'publicKeyLabel': 'SSH Host Public Key',
+    'ip_address': '',
+    'name': '',
+    'private_key': '',
+    'public_key': '',
+    'privateKeyText': ('For the private key, please copy the full contents of '
+                       'a private key file with the ability to access a proxy '
+                       'server. The beginning of the file should resemble '
+                       '"-----BEGIN RSA PRIVATE KEY-----".'),
+    'publicKeyText': ('For the hosts public key, you can usually get this '
+                      'value from either /etc/ssh/ssh_host_rsa_key.pub or from'
+                      ' the line in $HOME/.ssh/known_hosts on your server.'),
+    'rsaText': ('For now, please be sure to use an RSA key (the text should '
+                'begin with ssh-rsa)'),
   }
 
 @ufo.app.route('/proxyserver/')

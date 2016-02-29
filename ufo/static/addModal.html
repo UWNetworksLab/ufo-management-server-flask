@@ -1,11 +1,11 @@
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
 
-<dom-module id="user-add-modal">
+<dom-module id="add-modal">
   <style is="custom-style">
     h2.title {
       background-color: white;
     }
-    #tabsHolder {
+    #contentHolder {
       margin-bottom: 0px;
       padding: 0px;
     }
@@ -13,15 +13,20 @@
   <template>
     <paper-dialog id="{{resources.modalId}}" modal>
       <h2 class="title">{{resources.addText}}</h2>
-      <div id="tabsHolder">
-        <user-add-tabs resources="{{resources}}"></user-add-tabs>
+      <div id="contentHolder">
+        <template is="dom-if" if="{{resources.isUser}}">
+          <user-add-tabs resources="{{resources}}"></user-add-tabs>
+        </template>
+        <template is="dom-if" if="{{resources.isProxyServer}}">
+          <server-add-form resources="{{resources}}"></server-add-form>
+        </template>
       </div>
     </paper-dialog>
   </template>
 
   <script>
     Polymer({
-      is: 'user-add-modal',
+      is: 'add-modal',
       properties: {
         resources: {
           type: Object,
