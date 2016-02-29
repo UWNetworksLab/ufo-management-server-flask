@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Setup{% endblock %}
 {% block body %}
+
+  <paper-display-template resources="{{user_resources}}">
+    <user-add-tabs resources="{{user_resources}}">
+    </user-add-tabs>
+  </paper-display-template>
+
+
   <!-- TODO: Add user form here. -->
   <!-- TODO: Add proxy server form here. -->
   <!-- TODO: Use paper material or  paper-display-template per PR comment.-->
-  <paper-card>
+  <paper-display-template resources="{{setup_resources}}">
     <!-- TODO make a clear way to say you do not want to use Google apps -->
     {% if not config.isConfigured %}
       <p>
@@ -65,7 +72,7 @@
       <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}" />
       <paper-button onclick="submitByFormId('setup-form')" class="form-submit-button anchor-button" type="submit">Submit</paper-button>
     </form>
-  </paper-card>
+  </paper-display-template>
 
   <br>
 
