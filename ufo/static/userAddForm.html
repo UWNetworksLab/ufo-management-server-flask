@@ -42,13 +42,13 @@
             <paper-listbox>
               <template is="dom-repeat" items="[[lastResponse.directory_users]]">
                 <paper-item id="{{item.name}}" class="horizontal layout">
-                  <paper-checkbox on-change="updateCheckedUsers" name="checkboxes" value="{{item}}"></paper-checkbox>
+                  <paper-checkbox name="checkboxes" value="{{item}}"></paper-checkbox>
                   <span class="flex"><strong>{{item.name}}</strong></span>
                   <span>{{item.email}}</span>
                 </paper-item>
               </template>
             </paper-listbox>
-            <input type="hidden" name="users" value="{{usersJson}}">
+            <input type="hidden" id="hiddenUsers" name="users" value="{{usersJson}}">
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
           </form>
         </paper-dialog-scrollable>
@@ -113,6 +113,7 @@
         this.querySelector('#' + this.addFlowTextObj.id).submit();
       },
       submitPostForm: function() {
+        this.setSelectedUsersFromCheckboxes();
         this.querySelector('#addPostForm').submit();
       },
       parseGetResponse: function(e, detail) {
@@ -123,16 +124,24 @@
       parsePostResponse: function(e, detail) {
         this.sendUsersJsonToList(detail.xhr.response);
         this.set('isSpinnerOn', false);
-        document.getElementById('userModal').close();
+        this.resetForms();
+        var userModal = document.getElementById('userModal');
+        if (userModal) {
+          userModal.close();
+        }
       },
       resetForms: function() {
         this.set('showInputFields', true);
         document.getElementById(this.addFlowTextObj.id).reset();
         this.querySelector('#addPostForm').reset();
+        this.set('selectedUsers', []);
+        this.set('usersJson', '');
       },
       sendUsersJsonToList: function(updatedUsersJson) {
         var listElem = document.getElementById(this.resources.listId);
-        listElem.setAjaxResponse(updatedUsersJson);
+        if (listElem) {
+          listElem.setAjaxResponse(updatedUsersJson);
+        }
       },
       idMatches: function(id, string1) {
         return id === string1;
@@ -141,7 +150,6 @@
         return document.getElementById('globalXsrf').value;
       },
       updateCheckedUsers: function(e) {
-        var checkboxes = this.querySelectorAll('paper-checkbox');
         var checkboxElem = event.path[0];
         if (checkboxElem.checked) {
           this.selectedUsers.push(checkboxElem.value);
@@ -152,6 +160,20 @@
           }
         }
         this.usersJson = JSON.stringify(this.selectedUsers);
+      },
+      setSelectedUsersFromCheckboxes: function() {
+        this.selectedUsers = [];
+        var checkboxes = this.querySelectorAll('paper-checkbox');
+        for (var i in checkboxes) {
+          if (checkboxes[i].checked) {
+            this.selectedUsers.push(checkboxes[i].value);
+          }
+        }
+        var jsonUsers = JSON.stringify(this.selectedUsers);
+        this.set('usersJson', jsonUsers);
+        var formElem = document.getElementById('addPostForm');
+        var input = formElem.querySelector('#hiddenUsers');
+        input.value = jsonUsers;
       },
     });
   </script>
