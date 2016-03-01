@@ -21,7 +21,8 @@ def distribute_user_keys_to_proxy_servers():
 def sync_users():
   """Schedule the user sync job."""
   ufo.app.logger.info('Scheduling user sync.')
-  ufo.services.user_sync.enqueue_user_sync()
+  user_sync_service = ufo.services.user_sync.UserSync()
+  user_sync_service.enqueue_user_sync()
 
 
 SCHEDULER.start()
