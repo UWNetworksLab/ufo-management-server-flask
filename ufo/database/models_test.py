@@ -79,5 +79,30 @@ class ProxyServerTest(base_test.BaseTest):
     self.assertIn('private_key', server_dict)
 
 
+class ConfigTest(base_test.BaseTest):
+  """Test for config model class functionality."""
+
+  def testConfigToDict(self):
+    """Whether the necessary fields match in a dictionary representation."""
+
+    config = models.Config()
+    config.isConfigured = True
+    config.credentials = 'fake credential'
+    config.domain = 'fake domain'
+    config.dv_content = 'fake dv content'
+    config.proxy_server_validity = True
+    config.network_jail_until_google_auth = True
+    config_dict = config.to_dict()
+
+    self.assertEqual(config_dict['is_configured'], config.isConfigured)
+    self.assertEqual(config_dict['credentials'], config.credentials)
+    self.assertEqual(config_dict['domain'], config.domain)
+    self.assertEqual(config_dict['dv_content'], config.dv_content)
+    self.assertEqual(config_dict['proxy_server_validity'],
+                     config.proxy_server_validity)
+    self.assertEqual(config_dict['network_jail_until_google_auth'],
+                     config.network_jail_until_google_auth)
+    
+
 if __name__ == '__main__':
   unittest.main()

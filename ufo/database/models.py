@@ -63,6 +63,20 @@ class Config(Model):
   network_jail_until_google_auth = ufo.db.Column(ufo.db.Boolean(),
                                                  default=False)
 
+  def to_dict(self):
+    """Get the config as a dict.
+
+      Returns: A dictionary of the config.
+    """
+    return {
+      'is_configured': self.isConfigured,
+      'credentials': self.credentials,
+      'domain': self.domain,
+      'dv_content': self.dv_content,
+      'proxy_server_validity': self.proxy_server_validity,
+      'network_jail_until_google_auth': self.network_jail_until_google_auth,
+    }
+
 
 class User(Model):
   """Class for information about the users of the proxy servers
@@ -104,14 +118,13 @@ class User(Model):
     self.public_key = key_pair['public_key']
 
   def to_dict(self):
-    to_return = {
+    return {
       'email': self.email,
       'name': self.name,
       'private_key': self.private_key,
       'public_key': self.public_key,
       'access': REVOKED_TEXT if self.is_key_revoked else NOT_REVOKED_TEXT,
     }
-    return to_return
 
 
 class ProxyServer(Model):
