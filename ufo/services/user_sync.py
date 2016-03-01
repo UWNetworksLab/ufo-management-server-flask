@@ -76,9 +76,9 @@ class UserSync(object):
           db_user.save()
         continue
 
-    def enqueue_user_sync(self):
-      """Check users currently in the DB are still valid in directory service.
-      """
-      ufo.app.logger.info('Enqueuing cron user sync job.')
-      queue = Queue(connection=worker.CONN)
-      queue.enqueue(self._check_db_users_against_directory_service)
+  def enqueue_user_sync(self):
+    """Check users currently in the DB are still valid in directory service.
+    """
+    ufo.app.logger.info('Enqueuing cron user sync job.')
+    queue = Queue(connection=worker.CONN)
+    queue.enqueue(self._check_db_users_against_directory_service)
