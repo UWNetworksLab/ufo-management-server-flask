@@ -48,7 +48,6 @@ class UserSync(object):
 
         # Lookup user in dictionary based on email field.
         directory_user = directory_users.get(db_user.email, None)
-        ufo.app.logger.info('Found user: ' + str(directory_user))
 
         # Assume deleted if not found, so delete from our db.
         if directory_user is None:
