@@ -7,7 +7,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 import ufo
 from ufo.services import key_distributor
-from ufo.services import user_sync
+from ufo.services import user_synchronizer
 
 
 SCHEDULER = BlockingScheduler()
@@ -23,7 +23,7 @@ def distribute_user_keys_to_proxy_servers():
 def sync_users():
   """Schedule the user sync job."""
   ufo.app.logger.info('Scheduling user sync.')
-  user_sync_service = user_sync.UserSync()
+  user_sync_service = user_sync.UserSynchronizer()
   user_sync_service.enqueue_user_sync()
 
 
