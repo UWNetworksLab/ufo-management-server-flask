@@ -238,6 +238,7 @@ class UserTest(base_test.BaseTest):
       query = models.User.query.filter_by(email=fake_email_and_name['email'])
       user_in_db = query.one_or_none()
       self.assertEqual(fake_email_and_name['name'], user_in_db.name)
+      self.assertEqual(user_in_db.domain, self.config.domain)
 
     self.assertEqual(response.data, self.client.get(flask.url_for('user_list')).data)
 
@@ -246,7 +247,7 @@ class UserTest(base_test.BaseTest):
     mock_user = {}
     mock_user['email'] = FAKE_EMAILS_AND_NAMES[0]['email']
     mock_user['name'] = FAKE_EMAILS_AND_NAMES[0]['name']
-    data = {'users': json.dumps([mock_user])}
+    data = {'users': json.dumps([mock_user]), 'manual': 'true'}
 
     response = self.client.post(flask.url_for('add_user'), data=data)
 
@@ -255,6 +256,8 @@ class UserTest(base_test.BaseTest):
     user_in_db = query.one_or_none()
     self.assertIsNotNone(user_in_db)
     self.assertEqual(FAKE_EMAILS_AND_NAMES[0]['name'], user_in_db.name)
+    self.assertEqual(FAKE_EMAILS_AND_NAMES[0]['email'], user_in_db.email)
+    self.assertIsNone(user_in_db.domain)
 
     self.assertEqual(response.data, self.client.get(flask.url_for('user_list')).data)
 

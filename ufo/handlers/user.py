@@ -224,11 +224,14 @@ def add_user():
     return _get_users_to_add(get_all, group_key, user_key)
 
   json_users = flask.request.form.get('users')
+  manual = flask.request.form.get('manual')
   users_list = json.loads(json_users)
+  config = ufo.get_user_config()
   for submitted_user in users_list:
     db_user = models.User()
     db_user.name = submitted_user['name']
     db_user.email = submitted_user['email']
+    db_user.domain = config.domain if manual is None else None
     db_user.save(commit=False)
 
   if len(users_list) > 0:
@@ -341,21 +344,40 @@ def _check_db_users_against_directory_service():
         credentials)
     directory_users = directory_service.GetUsers()
     for db_user in db_users:
-      db_user_domain = db_user.email.split('@', 1)[1]
       # Don't worry about users from another domain since they won't show up.
-      if db_user_domain is not config.domain:
+      if db_user.domain is not config.domain:
         continue
       found = False
+      revoked = False
       # Search for users based on email field.
       for directory_user in directory_users:
         if db_user.email is directory_user['primaryEmail']:
           found = True
+          revoked = directory_user['suspended']
           break
       # Assume deleted if not found, so delete from our db.
       if not found:
-        ufo.app.logger.info('User ' + db_user.email + ' was not found in '
-                            'directory service. Deleting from database.')
-        db_user.delete()
+        if config.user_delete_action is models.CRON_JOB_ACTIONS['delete']:
+          ufo.app.logger.info('User ' + db_user.email + ' was not found in '
+                              'directory service. Deleting from database.')
+          db_user.delete()
+        elif config.user_delete_action is models.CRON_JOB_ACTIONS['revoke']:
+          ufo.app.logger.info('User ' + db_user.email + ' was not found in '
+                              'directory service. Revoking access.')
+          db_user.is_key_revoked = True
+          db_user.save()
+        continue
+      if revoked:
+        if config.user_revoke_action is models.CRON_JOB_ACTIONS['delete']:
+          ufo.app.logger.info('User ' + db_user.email + ' was suspended in '
+                              'directory service. Deleting from database.')
+          db_user.delete()
+        elif config.user_revoke_action is models.CRON_JOB_ACTIONS['revoke']:
+          ufo.app.logger.info('User ' + db_user.email + ' was suspended in '
+                              'directory service. Revoking access.')
+          db_user.is_key_revoked = True
+          db_user.save()
+        continue
 
   except errors.HttpError as error:
     ufo.app.logger.info('Error encountered while requesting users from '
