@@ -12,7 +12,6 @@ from ufo.database import models
 from ufo.services import google_directory_service
 from ufo.services import oauth
 
-
 INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
 
@@ -223,11 +222,14 @@ def add_user():
     return _get_users_to_add(get_all, group_key, user_key)
 
   json_users = flask.request.form.get('users')
+  manual = flask.request.form.get('manual')
   users_list = json.loads(json_users)
+  config = ufo.get_user_config()
   for submitted_user in users_list:
     db_user = models.User()
     db_user.name = submitted_user['name']
     db_user.email = submitted_user['email']
+    db_user.domain = config.domain if manual is None else None
     db_user.save(commit=False)
 
   if len(users_list) > 0:
@@ -315,6 +317,7 @@ def user_toggle_revoked(user_id):
   """
   user = models.User.query.get_or_404(user_id)
   user.is_key_revoked = not user.is_key_revoked
+  user.did_cron_revoke = False
   user.save()
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))

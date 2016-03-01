@@ -10,6 +10,16 @@ from ufo.services import ssh_client
 LONG_STRING_LENGTH = 1024
 REVOKED_TEXT = 'Access Disabled'
 NOT_REVOKED_TEXT = 'Access Enabled'
+# Since we aren't using pypi, I don't think I have access to real enums.
+# We can add support using enum34 and pypi if we ever choose, but this method
+# using a dictionary should be sufficient until that time.
+# TODO(eholder): Follow up on whether to convert to pypi for real enums. See
+# here for more info: http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
+CRON_JOB_ACTIONS = {
+  'nothing': 'nothing',
+  'revoke': 'revoke',
+  'delete': 'delete',
+}
 
 
 class Model(ufo.db.Model):
@@ -62,6 +72,14 @@ class Config(Model):
   proxy_server_validity = ufo.db.Column(ufo.db.Boolean(), default=False)
   network_jail_until_google_auth = ufo.db.Column(ufo.db.Boolean(),
                                                  default=False)
+  user_revoke_action = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
+                                     default=CRON_JOB_ACTIONS['revoke'])
+  user_delete_action = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
+                                     default=CRON_JOB_ACTIONS['delete'])
+  user_unrevoke_action = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
+                                       default=CRON_JOB_ACTIONS['nothing'])
+  user_undelete_action = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
+                                       default=CRON_JOB_ACTIONS['nothing'])
 
   def to_dict(self):
     """Get the config as a dict.
@@ -90,6 +108,8 @@ class User(Model):
   private_key = ufo.db.Column(ufo.db.LargeBinary())
   public_key = ufo.db.Column(ufo.db.LargeBinary())
   is_key_revoked = ufo.db.Column(ufo.db.Boolean(), default=False)
+  domain = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  did_cron_revoke = ufo.db.Column(ufo.db.Boolean(), default=False)
 
   def __init__(self, **kwargs):
     super(User, self).__init__(**kwargs)
