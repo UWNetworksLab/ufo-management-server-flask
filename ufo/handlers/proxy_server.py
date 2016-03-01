@@ -29,6 +29,7 @@ def get_proxy_resources_dict():
     'modalId': 'serverModal',
     'dismissText': 'Cancel',
     'confirmText': 'Add Server',
+    'textAreaMaxRows': 10,
     'ipLabel': 'IP Address',
     'nameLabel': 'Server Name',
     'privateKeyLabel': 'SSH Private Key',

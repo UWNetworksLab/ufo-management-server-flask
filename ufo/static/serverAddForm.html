@@ -26,7 +26,7 @@
         <paper-input label="{{resources.ipLabel}}" type="text" name="ip_address" required></paper-input>
         <paper-input label="{{resources.nameLabel}}" type="text" name="name" required></paper-input>
         <!-- TODO add the ability to upload files -->
-        <ufo-textarea label="{{resources.privateKeyLabel}}" name="private_key" required></ufo-textarea>
+        <ufo-textarea label="{{resources.privateKeyLabel}}" name="private_key" required max-rows="{{resources.textAreaMaxRows}}"></ufo-textarea>
         <p>{{resources.privateKeyText}}</p>
 
         <paper-input label="{{resources.publicKeyLabel}}" type="text" name="public_key" required></paper-input>
