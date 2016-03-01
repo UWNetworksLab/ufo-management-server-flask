@@ -44,7 +44,7 @@ def _check_db_users_against_directory_service():
 
     # Lookup user in dictionary based on email field.
     directory_user = directory_users.get(db_user.email, default=None):
-    print 'Found user: ' + str(directory_user)
+    ufo.app.logger.info('Found user: ' + str(directory_user))
 
     # Assume deleted if not found, so delete from our db.
     if directory_user is None:
