@@ -27,9 +27,9 @@ def _get_oauth_configration_resources_dict(config, oauth_url):
   """
   return {
     'config': config.to_dict(),
+    'hasAddFlow': False,
     'oauth_url': oauth_url,
     'setup_url': flask.url_for('setup'),
-    'showAddButton': False,
     'titleText': 'Oauth Configuration',
   }
 
@@ -44,7 +44,7 @@ def setup():
 
   if flask.request.method == 'GET':
     user_resources_dict = user.get_user_resources_dict()
-    user_resources_dict['showAddButton'] = False
+    user_resources_dict['hasAddFlow'] = False
     oauth_resources_dict = _get_oauth_configration_resources_dict(config,
                                                                   oauth_url)
     policy_resources_dict = chrome_policy.get_policy_resources_dict()

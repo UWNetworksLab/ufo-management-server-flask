@@ -3,7 +3,7 @@
 
 <dom-module id="ufo-textarea">
   <template>
-    <paper-textarea id="input"
+    <paper-textarea id="input" max-rows="{{maxRows}}"
       value="{{value}}"
       label="[[label]]"
       name$="paper_[[name]]"
@@ -30,7 +30,11 @@
       value: {
         notify: true,
         type: String
-      }
+      },
+      maxRows: {
+        type: Number,
+        value: 10,
+      },
     }
   });
 </script>
