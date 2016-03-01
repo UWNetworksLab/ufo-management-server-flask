@@ -113,7 +113,7 @@
         this.querySelector('#' + this.addFlowTextObj.id).submit();
       },
       submitPostForm: function() {
-        this.setUsersFromCheckboxes();
+        this.setSelectedUsersFromCheckboxes();
         this.querySelector('#addPostForm').submit();
       },
       parseGetResponse: function(e, detail) {
@@ -161,7 +161,7 @@
         }
         this.usersJson = JSON.stringify(this.selectedUsers);
       },
-      setUsersFromCheckboxes: function() {
+      setSelectedUsersFromCheckboxes: function() {
         this.selectedUsers = [];
         var checkboxes = this.querySelectorAll('paper-checkbox');
         for (var i in checkboxes) {
