@@ -17,11 +17,11 @@ def distribute_user_keys_to_proxy_servers():
   key_distributor = ufo.services.key_distributor.KeyDistributor()
   key_distributor.enqueue_key_distribution_jobs()
 
-@SCHEDULER.scheduled_job('interval', minutes=15)
+@SCHEDULER.scheduled_job('interval', seconds=15)
 def sync_users():
-  """Schedule the cron user sync job."""
-  ufo.app.logger.info('Scheduling cron user sync.')
-  ufo.user.enqueue_cron_user_sync()
+  """Schedule the user sync job."""
+  ufo.app.logger.info('Scheduling user sync.')
+  ufo.services.user_sync.enqueue_user_sync()
 
 
 SCHEDULER.start()

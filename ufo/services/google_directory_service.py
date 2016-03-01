@@ -45,6 +45,23 @@ class GoogleDirectoryService(object):
 
     return users
 
+  def GetUsersAsDictionary(self):
+    """Get the users of a domain in dictionary form with email as the key.
+
+    Returns:
+      A dictionary of users with the email address as the key and the directory
+      user (also a dictionary) as the value.
+
+    Raises:
+      googleapiclient.errors.HttpError on failure to find the domain.
+    """
+    dictionary_users = {}
+    domain_user_list = self.GetUsers()
+    for user in domain_user_list:
+      email = user['primaryEmail']
+      dictionary_users[email] = user
+    return dictionary_users
+
   def GetUsersByGroupKey(self, group_key):
     """Get the users belonging to a group.
 
