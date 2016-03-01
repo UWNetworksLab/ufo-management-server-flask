@@ -65,7 +65,7 @@ class Config(Model):
 
   def to_dict(self):
     """Get the config as a dict.
-    
+
       Returns: A dictionary of the config.
     """
     return {

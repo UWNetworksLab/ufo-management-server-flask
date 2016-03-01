@@ -5,7 +5,8 @@
 
 <dom-module id="oauth-configuration">
   <template>
-    <!-- TODO make a clear way to say you do not want to use Google apps -->
+    <!-- TODO: Make a clear way to say you do not want to use Google apps. -->
+    <!-- TODO: Extract these strings so they can be i18n. -->
     <template is="dom-if" if="{{!resources.config.is_configured}}">
       <p>
         Hey there!  Welcome to the uProxy for Organizations management server!
@@ -22,7 +23,7 @@
         If you do not plan on using a Google apps domain with this product, you
         can just go straight to adding users.
       </p>
-    </template>    
+    </template>
 
     <template is="dom-if" if="{{resources.config.is_configured}}">
       <p>
