@@ -3,7 +3,7 @@
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
 
-<dom-module id="oauth-configuration-form">
+<dom-module id="oauth-configuration">
   <template>
     <!-- TODO make a clear way to say you do not want to use Google apps -->
     <template is="dom-if" if="{{!resources.config.is_configured}}">
@@ -76,7 +76,7 @@
 
   <script>
     Polymer({
-      is: 'oauth-configuration-form',
+      is: 'oauth-configuration',
       properties: {
         resources: {
           type: Object,
