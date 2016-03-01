@@ -319,6 +319,7 @@ def user_toggle_revoked(user_id):
   """
   user = models.User.query.get_or_404(user_id)
   user.is_key_revoked = not user.is_key_revoked
+  user.did_cron_revoke = False
   user.save()
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
@@ -365,6 +366,7 @@ def _check_db_users_against_directory_service():
           ufo.app.logger.info('User ' + db_user.email + ' was not found in '
                               'directory service. Revoking access.')
           db_user.is_key_revoked = True
+          db_user.did_cron_revoke = True
           db_user.save()
         continue
       if revoked:
@@ -376,6 +378,7 @@ def _check_db_users_against_directory_service():
           ufo.app.logger.info('User ' + db_user.email + ' was suspended in '
                               'directory service. Revoking access.')
           db_user.is_key_revoked = True
+          db_user.did_cron_revoke = True
           db_user.save()
         continue
 

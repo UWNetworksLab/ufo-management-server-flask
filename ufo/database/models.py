@@ -95,7 +95,7 @@ class User(Model):
   public_key = ufo.db.Column(ufo.db.LargeBinary())
   is_key_revoked = ufo.db.Column(ufo.db.Boolean(), default=False)
   domain = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
-  is_cron_revoked = ufo.db.Column(ufo.db.Boolean(), default=False)
+  did_cron_revoke = ufo.db.Column(ufo.db.Boolean(), default=False)
 
   def __init__(self, **kwargs):
     super(User, self).__init__(**kwargs)

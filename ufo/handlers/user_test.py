@@ -333,12 +333,15 @@ class UserTest(base_test.BaseTest):
     """Test toggle revoked handler changes the revoked status for a user."""
     user = self._CreateAndSaveFakeUser()
     initial_revoked_status = user.is_key_revoked
+    user.did_cron_revoke = True
+    user.save()
 
     response = self.client.post(flask.url_for('user_toggle_revoked',
                                               user_id=user.id),
                                 follow_redirects=False)
 
     self.assertEquals(not initial_revoked_status, user.is_key_revoked)
+    self.assertEquals(False, user.did_cron_revoke)
     self.assert_redirects(response, flask.url_for('user_details',
                                                   user_id=user.id))
 
