@@ -68,7 +68,12 @@
       parsePostResponse: function(e, detail) {
         this.sendServersJsonToList(detail.xhr.response);
         this.set('isSpinnerOn', false);
-        document.getElementById('serverModal').close();
+        serverModal = document.getElementById('serverModal');
+        if (serverModal) {
+          document.getElementById('serverModal').close();
+        } else {
+          document.getElementById('serverAddForm').reset();
+        }
       },
       sendServersJsonToList: function(updatedServersJson) {
         var listElem = document.getElementById(this.resources.listId);

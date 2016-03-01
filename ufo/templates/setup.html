@@ -7,10 +7,15 @@
     </user-add-tabs>
   </paper-display-template>
 
+  <br>
 
-  <!-- TODO: Add user form here. -->
-  <!-- TODO: Add proxy server form here. -->
-  <!-- TODO: Use paper material or  paper-display-template per PR comment.-->
+  <paper-display-template resources="{{proxy_server_resources}}">
+    <server-add-form resources="{{proxy_server_resources}}">
+    </server-add-form>
+  </paper-display-template>
+
+  <br>
+
   <paper-display-template resources="{{oauth_resources}}">
     <oauth-configuration resources="{{oauth_resources}}">
     </oauth-configuration>
