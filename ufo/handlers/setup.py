@@ -15,28 +15,45 @@ DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
 NON_ADMIN_TEXT = 'Credentials do not have admin access.'
 
 
+def _get_oauth_configration_resources_dict(config, oauth_url):
+  """Get the resources for the oauth configuration component.
+
+    Args:
+      config: A database object representing the config data.
+      oauth_url: A string of the URL to get the oauth code.
+
+    Returns:
+      A dict of the resources for the oauth configuration component.
+  """
+  return {
+    'config': config.to_dict(),
+    'oauth_url': oauth_url,
+    'setup_url': flask.url_for('setup'),
+    'showAddButton': False,
+    'titleText': 'Oauth Configuration',
+  }
+
+
 @ufo.app.route('/setup/', methods=['GET', 'POST'])
 def setup():
   """Handle showing the user the setup page and processing the response"""
+
   config = ufo.get_user_config()
   flow = oauth.getOauthFlow()
   oauth_url = flow.step1_get_authorize_url()
 
   if flask.request.method == 'GET':
-    policy_resources_dict = chrome_policy.get_policy_resources_dict()
-    setup_resources_dict = {
-      'titleText': 'OAuth Configuration',
-      'isOAuth': True,
-      'showAddButton': False,
-    }
     user_resources_dict = user.get_user_resources_dict()
     user_resources_dict['showAddButton'] = False
+    oauth_resources_dict = _get_oauth_configration_resources_dict(config,
+                                                                  oauth_url)
+    policy_resources_dict = chrome_policy.get_policy_resources_dict()
+    
     return flask.render_template(
         'setup.html',
-        config=config,
         oauth_url=oauth_url,
         policy_resources=json.dumps(policy_resources_dict),
-        setup_resources=json.dumps(setup_resources_dict),
+        oauth_resources=json.dumps(oauth_resources_dict),
         user_resources=json.dumps(user_resources_dict))
 
   if flask.request.form.get('oauth_code', None):

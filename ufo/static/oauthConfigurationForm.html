@@ -1,0 +1,90 @@
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+
+<dom-module id="oauth-configuration-form">
+  <template>
+    <!-- TODO make a clear way to say you do not want to use Google apps -->
+    <template is="dom-if" if="{{!resources.config.is_configured}}">
+      <p>
+        Hey there!  Welcome to the uProxy for Organizations management server!
+        To start, we want to get a bit of information from you to get everything
+        set up.
+      </p>
+
+      <p>
+        First of all, if you are planning on using this application with a Google
+        apps domain, we're going to need to get permission from you to access
+        that.  This will be used to keep the list of users in your domain in sync
+        with who is allowed to access the uProxy servers.  The credentials you
+        authorize will be shared by any administrators who log into this server.
+        If you do not plan on using a Google apps domain with this product, you
+        can just go straight to adding users.
+      </p>
+    </template>    
+
+    <template is="dom-if" if="{{resources.config.is_configured}}">
+      <p>
+        You have already successfully configured this deployment!  If you want to
+        change the settings, you may do so below.  Please note: submitting the
+        form even without filling in any parameters will cause the previous saved
+        configuration to be lost.
+      </p>
+
+      <template is="dom-if" if="{{isDomainConfigured(resources.config)}}">
+        <p>
+          This site is set up to work with the
+          <strong>{{resources.config.domain}}</strong> domain.  If that is not correct,
+          please update the configuration.
+        </p>
+      </template>
+
+      <template is="dom-if" if="{{!isDomainConfigured(resources.config)}}">
+        <p>
+          This site is not set up to use any Google apps domain name, all users
+          will need to be manually input.
+        </p>
+      </template>
+
+    </template>
+
+    <p>
+      Please keep in mind that this is a much simpler version than what you
+      would actually expect to see in a finished version of the site.
+      Noteably, this page should include something about authenticating
+      yourself in the future (and actually include a way to skip)
+    </p>
+
+    <a class="anchor-no-button" href="{{resources.oauth_url}}" target="_blank">Connect to your domain</a>
+
+    <p>
+      Once you finish authorizing access, please paste the code you receive in
+      the box below.
+    </p>
+
+    <!-- TODO make this form be more useful -->
+    <form id="oauth-configuration-form" method="post" action="{{resources.setup_url}}">
+      <paper-input label="Domain" name="domain"></paper-input>
+      <paper-input label="OAuth Code" name="oauth_code"></paper-input>
+      <input type="hidden" name="_xsrf_token" value="{{xsrf_token()}}" />
+      <paper-button onclick="submitByFormId('oauth-configuration-form')" class="form-submit-button anchor-button" type="submit">
+        Submit
+      </paper-button>
+    </form>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'oauth-configuration-form',
+      properties: {
+        resources: {
+          type: Object,
+        },
+      },
+      isDomainConfigured: function(config) {
+        return config.domain && config.credentials; 
+      },
+    });
+  </script>
+</dom-module>
