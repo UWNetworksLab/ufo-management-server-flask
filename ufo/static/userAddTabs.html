@@ -112,7 +112,17 @@
       parsePostResponse: function(e, detail) {
         this.sendUsersJsonToList(detail.xhr.response);
         this.set('isSpinnerOn', false);
-        document.getElementById('userModal').close();
+        this.resetForm();
+        var userModal = document.getElementById('userModal');
+        if (userModal) {
+          userModal.close();
+        }
+      },
+      resetForm: function() {
+        var formElem = document.getElementById('manualAdd');
+        formElem.querySelector('#manualUserName').value = "";
+        formElem.querySelector('#manualUserEmail').value = "";
+        formElem.reset();
       },
       sendUsersJsonToList: function(updatedUsersJson) {
         var listElem = document.getElementById(this.resources.listId);
