@@ -1,31 +1,29 @@
 """User module which provides handlers to access and edit users."""
 import ast
 import base64
-import flask
 import json
 import random
 
+import flask
 from googleapiclient import errors
 from rq import Queue
 
-from ufo import app
-from ufo import db
-from ufo import google_directory_service
-from ufo import models
-from ufo import oauth
-from ufo import setup_required
+import ufo
+from ufo.database import models
+from ufo.services import google_directory_service
+from ufo.services import oauth
 import worker
 
 INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
 
-def _render_user_add(get_all, group_key, user_key):
-  """Renders the user add template with the requested users if found.
+def _get_users_to_add(get_all, group_key, user_key):
+  """Gets a json object containing the requested users if found.
 
   If users are found, they are stripped down to only their full name and
   email to avoid leaking unnecessary information. In the case that the
   users are not found, an empty list is used. If an httperror is
-  encountered, that error is caught, and the template is still rendered
+  encountered, that error is caught, and the json is still returned
   with the error inserted and an empty list of users.
 
   Args:
@@ -34,16 +32,15 @@ def _render_user_add(get_all, group_key, user_key):
     user_key: A string identifying an individual user.
 
   Returns:
-    A rendered template of add_user.html with the users requested if found. If
-    there is an error, that error is included in the template along with an
-    empty list of users.
+    A json object with 'directory_users' set to a possibly empty list of user
+    objects. If there is an error, the 'error' field will be set to its text.
   """
   credentials = oauth.getSavedCredentials()
   # TODO this should handle the case where we do not have oauth
   if not credentials:
-    return flask.render_template('add_user.html',
-                                 directory_users=[],
-                                 error="OAuth is not set up")
+    dictionary = {'directory_users': [], 'error': 'OAuth is not set up'}
+    json_obj = json.dumps((dictionary))
+    return flask.Response(json_obj, mimetype='application/json')
 
   try:
     directory_service = google_directory_service.GoogleDirectoryService(
@@ -65,12 +62,12 @@ def _render_user_add(get_all, group_key, user_key):
       }
       users_to_output.append(user_for_display)
 
-    return flask.render_template('add_user.html',
-                                 directory_users=users_to_output)
+    json_obj = json.dumps(({'directory_users': users_to_output}))
+    return flask.Response(json_obj, mimetype='application/json')
+
   except errors.HttpError as error:
-    return flask.render_template('add_user.html',
-                                 directory_users=[],
-                                 error=error)
+    json_obj = json.dumps(({'directory_users': [], 'error': str(error)}))
+    return flask.Response(json_obj, mimetype='application/json')
 
 def _get_random_server_ip():
   """Gets the ip address of a random proxy server of those in the db.
@@ -133,23 +130,81 @@ def _make_invite_code(user):
 
   return invite_code
 
-@app.route('/user/')
-@setup_required
+def get_user_resources_dict():
+  """Get the resources for the user component.
+
+    Returns:
+      A dict of the resources for the user component.
+  """
+  return {
+    'addUrl': flask.url_for('add_user'),
+    'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
+    'addText': 'Add Users',
+    'lookAgainText': 'Search Again',
+    'listId': 'userList',
+    'listUrl': flask.url_for('user_list'),
+    'listLimit': 10,
+    'seeAllText': 'See All Users',
+    'titleText': 'Users',
+    'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
+    'isUser': True,
+    'showAddButton': True,
+    'modalId': 'userModal',
+    'dismissText': 'Cancel',
+    'addFlowTextDicts': [
+        {
+          'id': 'groupAdd',
+          'tab': 'Add Group',
+          'saveButton': 'Add Group',
+          'searchButton': 'Search for Users in Group',
+          'label1': 'Group key',
+          'definition1': ('To add users by group, please provide a valid '
+                          'group email address or unique id.'),
+          'name1': 'group_key',
+          'isManual': False,
+        },
+        {
+          'id': 'userAdd',
+          'tab': 'Add Individual',
+          'saveButton': 'Add User',
+          'searchButton': 'Search for Specific User',
+          'label1': 'User key',
+          'definition1': ('To add individual users, please provide a valid '
+                          'email address or unique id.'),
+          'name1': 'user_key',
+          'isManual': False,
+        },
+        {
+          'id': 'domainAdd',
+          'tab': 'Add by Domain',
+          'saveButton': 'Add Users',
+          'searchButton': 'Search for Users in Domain',
+          'isManual': False,
+        },
+        {
+          'id': 'manualAdd',
+          'tab': 'Add Manually',
+          'saveButton': 'Add User',
+          'label1': 'Input user name here.',
+          'label2': 'Input user email here.',
+          'isManual': True,
+        },
+    ],
+  }
+
+@ufo.app.route('/user/')
+@ufo.setup_required
 def user_list():
-  """Renders the user list template with the users currently in the db.
+  """Retrieves a list of the users currently in the db.
 
   Returns:
-    A rendered template of user.html with the users currently in the db.
+    A json object with 'users' set to the list of users in the db.
   """
-  users = models.User.query.all()
-  user_emails = {}
-  for user in users:
-    user_emails[user.id] = user.email
-  return flask.render_template('user.html',
-                               user_payloads=user_emails)
+  users_json = json.dumps(({'items': models.User.get_items_as_list_of_dict()}))
+  return flask.Response(users_json, mimetype='application/json')
 
-@app.route('/user/add', methods=['GET', 'POST'])
-@setup_required
+@ufo.app.route('/user/add', methods=['GET', 'POST'])
+@ufo.setup_required
 def add_user():
   """Renders the user add template on get and stores new user(s) on post.
 
@@ -166,7 +221,7 @@ def add_user():
     get_all = flask.request.args.get('get_all')
     group_key = flask.request.args.get('group_key')
     user_key = flask.request.args.get('user_key')
-    return _render_user_add(get_all, group_key, user_key)
+    return _get_users_to_add(get_all, group_key, user_key)
 
   json_users = flask.request.form.get('users')
   users_list = json.loads(json_users)
@@ -177,12 +232,12 @@ def add_user():
     db_user.save(commit=False)
 
   if len(users_list) > 0:
-    db.session.commit()
+    ufo.db.session.commit()
 
-  return flask.redirect(flask.url_for('user_list'))
+  return user_list()
 
-@app.route('/user/<user_id>/details')
-@setup_required
+@ufo.app.route('/user/<user_id>/details')
+@ufo.setup_required
 def user_details(user_id):
   """Renders the user details template for the given user_id if found.
 
@@ -205,8 +260,8 @@ def user_details(user_id):
     return flask.render_template('user_details.html', user=user,
                                  invite_url=invite_url)
 
-@app.route('/user/<user_id>/delete', methods=['POST'])
-@setup_required
+@ufo.app.route('/user/<user_id>/delete', methods=['POST'])
+@ufo.setup_required
 def delete_user(user_id):
   """Deletes the user corresponding to the passed in user_id from the db.
 
@@ -223,10 +278,10 @@ def delete_user(user_id):
   user = models.User.query.get_or_404(user_id)
   user.delete()
 
-  return flask.redirect(flask.url_for('user_list'))
+  return user_list()
 
-@app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
-@setup_required
+@ufo.app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
+@ufo.setup_required
 def user_get_new_key_pair(user_id):
   """Rotates the key pair (public and private keys) for the given user.
 
@@ -245,8 +300,8 @@ def user_get_new_key_pair(user_id):
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
 
-@app.route('/user/<user_id>/toggleRevoked', methods=['POST'])
-@setup_required
+@ufo.app.route('/user/<user_id>/toggleRevoked', methods=['POST'])
+@ufo.setup_required
 def user_toggle_revoked(user_id):
   """Toggles whether the given user's access is revoked or not.
 
@@ -265,7 +320,7 @@ def user_toggle_revoked(user_id):
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
 
-@setup_required
+@ufo.setup_required
 def _check_db_users_against_directory_service():
   """Checks whether the users currently in the DB are still valid.
 
@@ -279,7 +334,7 @@ def _check_db_users_against_directory_service():
   credentials = oauth.getSavedCredentials()
   # TODO this should handle the case where we do not have oauth
   if not credentials:
-    app.logger.info('OAuth credentials not set up. Can\'t sync users.')
+    ufo.app.logger.info('OAuth credentials not set up. Can\'t sync users.')
 
   try:
     directory_service = google_directory_service.GoogleDirectoryService(
@@ -298,16 +353,16 @@ def _check_db_users_against_directory_service():
           break
       # Assume deleted if not found, so delete from our db.
       if not found:
-        app.logger.info('User ' + db_user.email + ' was not found in '
-                        'directory service. Deleting from database.')
+        ufo.app.logger.info('User ' + db_user.email + ' was not found in '
+                            'directory service. Deleting from database.')
         db_user.delete()
 
   except errors.HttpError as error:
-    app.logger.info('Error encountered while requesting users from directory '
-                    'service: ' + str(error))
+    ufo.app.logger.info('Error encountered while requesting users from '
+                        'directory service: ' + str(error))
 
   def enqueue_cron_user_sync():
     """Check users currently in the DB are still valid in directory service."""
-    app.logger.info('Enqueuing cron user sync job.')
+    ufo.app.logger.info('Enqueuing cron user sync job.')
     queue = Queue(connection=worker.CONN)
     queue.enqueue(_check_db_users_against_directory_service)

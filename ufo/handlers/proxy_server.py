@@ -1,43 +1,45 @@
 """The module for handling proxy servers"""
-
-from . import app, db, setup_required
+import json
 
 import flask
-import StringIO
 
 import ufo
-from ufo import models
-from ufo import ssh_client
+from ufo.database import models
+from ufo.services import ssh_client
 
 
-def _GetViewDataFromProxyServer(server):
-  private_key = ssh_client.SSHClient.private_key_data_to_object(
-      server.ssh_private_key_type,
-      server.ssh_private_key)
-  private_key_file = StringIO.StringIO()
-  private_key.write_private_key(private_key_file)
-  private_key_text = private_key_file.getvalue()
+def get_proxy_resources_dict():
+  """Get the resources for the proxy server component.
 
+    Returns:
+      A dict of the resources for the proxy server component.
+  """
   return {
-    "id": server.id,
-    "name": server.name,
-    "ip_address": server.ip_address,
-    "public_key": server.get_public_key_as_authorization_file_string(),
-    "private_key": private_key_text,
-    }
+    'addUrl': flask.url_for('proxyserver_add'),
+    'addIconUrl': flask.url_for('static', filename='img/add-servers.svg'),
+    'addText': 'Add a Server',
+    'listId': 'proxyList',
+    'listUrl': flask.url_for('proxyserver_list'),
+    'listLimit': 10,
+    'seeAllText': 'See All Servers',
+    'titleText': 'Servers',
+    'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
+    'isProxyServer': True,
+    'showAddButton': True,
+    'modalId': 'serverModal',
+    'dismissText': 'Cancel',
+    'confirmText': 'Add Server',
+  }
 
-
-@app.route('/proxyserver/')
-@setup_required
+@ufo.app.route('/proxyserver/')
+@ufo.setup_required
 def proxyserver_list():
-  proxy_servers_data = models.ProxyServer.query.all()
-  proxy_servers = [_GetViewDataFromProxyServer(s) for s in proxy_servers_data]
+  proxy_server_dict = {'items': models.ProxyServer.get_items_as_list_of_dict()}
+  proxy_servers_json = json.dumps((proxy_server_dict))
+  return flask.Response(proxy_servers_json, mimetype='application/json')
 
-  return flask.render_template('proxy_server.html',
-                               proxy_servers=proxy_servers)
-
-@app.route('/proxyserver/add', methods=['GET', 'POST'])
-@setup_required
+@ufo.app.route('/proxyserver/add', methods=['GET', 'POST'])
+@ufo.setup_required
 def proxyserver_add():
   """Get the form for adding new proxy servers."""
   if flask.request.method == 'GET':
@@ -64,13 +66,13 @@ def proxyserver_add():
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-@app.route('/proxyserver/<server_id>/edit', methods=['GET', 'POST'])
-@setup_required
+@ufo.app.route('/proxyserver/<server_id>/edit', methods=['GET', 'POST'])
+@ufo.setup_required
 def proxyserver_edit(server_id):
   server = models.ProxyServer.query.get_or_404(server_id)
 
   if flask.request.method == 'GET':
-    server_for_view = _GetViewDataFromProxyServer(server)
+    server_for_view = server.to_dict()
     return flask.render_template('proxy_server_form.html',
                                  proxy_server=server_for_view)
 
@@ -83,8 +85,8 @@ def proxyserver_edit(server_id):
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-@app.route('/proxyserver/<server_id>/delete')
-@setup_required
+@ufo.app.route('/proxyserver/<server_id>/delete')
+@ufo.setup_required
 def proxyserver_delete(server_id):
   """Handler for deleting an existing proxy server."""
   #TODO should at least be post

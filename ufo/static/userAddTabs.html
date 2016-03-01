@@ -1,0 +1,127 @@
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/iron-pages/iron-pages.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/paper-tabs/paper-tabs.html" />
+
+<dom-module id="user-add-tabs">
+  <style is="custom-style">
+    paper-tabs {
+      --paper-tabs-selection-bar-color: #25CFB9;
+      background-color: white;
+      padding: 0px 24px;
+    }
+    paper-tab {
+      --paper-tab-ink: #25CFB9;
+      color: black;
+      background-color: white;
+    }
+    #ironPagesHolder {
+      background: #EEE;
+      margin-bottom: 0px;
+      border-bottom: 24px solid #EEE;
+      padding: 0px 24px;
+    }
+    #spinner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      z-index: 100000000;
+    }
+  </style>
+  <template>
+    <!--Portion for finding users via group, individual, domain, or manual
+    specification. -->
+    <paper-tabs id="tabs" selected="{{ selected }}">
+      <template is="dom-repeat" items="[[resources.addFlowTextDicts]]">
+        <paper-tab>{{item.tab}}</paper-tab>
+      </template>
+    </paper-tabs>
+
+    <div id="ironPagesHolder">
+      <iron-pages id="pages" selected="{{ selected }}">
+        <template is="dom-repeat" items="[[resources.addFlowTextDicts]]">
+          <template is="dom-if" if="{{item.isManual}}">
+            <div>
+              <template is="dom-if" if="{{isSpinnerOn}}">
+                <paper-spinner id="spinner" active$={{isSpinnerOn}}></paper-spinner>
+              </template>
+              <form is="iron-form" id="{{item.id}}" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
+                <paper-input label="{{item.label1}}" type="textbox" name="name" value="" id="manualUserName" required>
+                </paper-input>
+                <paper-input label="{{item.label2}}" type="email" name="email" value="" id="manualUserEmail" required
+                auto-validate pattern="{{EMAIL_VALIDATION_PATTERN}}"
+                error-message="{{EMAIL_VALIDATION_ERROR}}">
+                </paper-input>
+                <input type="hidden" name="users" id="manualUserInput" value="">
+                <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+                <br>
+              </form>
+              <div class="buttons">
+                <paper-button class="anchor-button" dialog-dismiss>
+                {{resources.dismissText}}
+                </paper-button>
+                <paper-button class="anchor-button" autofocus on-tap="submitPostForm">
+                {{item.saveButton}}
+                </paper-button>
+              </div>
+            </div>
+          </template>
+          <template is="dom-if" if="{{!item.isManual}}">
+            <user-add-form resources="{{resources}}" add-flow-text-obj="{{item}}"></user-add-form>
+          </template>
+        </template>
+      </iron-pages>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'user-add-tabs',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        selected: {
+          value: 0,
+          type: Number,
+        },
+        isSpinnerOn: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+      },
+      enableSpinner: function() {
+        this.set('isSpinnerOn', true);
+      },
+      makeManualInputsJsonArray: function() {
+        var formElem = document.getElementById('manualAdd');
+        var name = formElem.querySelector('#manualUserName').value;
+        var email = formElem.querySelector('#manualUserEmail').value;
+        var userArray = [];
+        userArray.push({'name': name, 'email': email});
+        var input = formElem.querySelector('#manualUserInput');
+        input.value = JSON.stringify(userArray);
+      },
+      submitPostForm: function() {
+        this.makeManualInputsJsonArray();
+        this.querySelector('#manualAdd').submit();
+      },
+      parsePostResponse: function(e, detail) {
+        this.sendUsersJsonToList(detail.xhr.response);
+        this.set('isSpinnerOn', false);
+        document.getElementById('userModal').close();
+      },
+      sendUsersJsonToList: function(updatedUsersJson) {
+        var listElem = document.getElementById(this.resources.listId);
+        if (listElem) {
+          listElem.setAjaxResponse(updatedUsersJson);
+        }
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+    });
+  </script>
+</dom-module>

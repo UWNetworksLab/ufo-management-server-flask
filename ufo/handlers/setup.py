@@ -1,33 +1,43 @@
-from . import app, get_user_config
+import json
 
 import flask
+from googleapiclient import discovery
 import httplib2
-import oauth
 import oauth2client
 
-from googleapiclient import discovery
+import ufo
+from ufo.handlers import chrome_policy
+from ufo.services import oauth
+from ufo.handlers import user
 
-PLEASE_CONFIGURE_TEXT = 'Please finish configuring this site.'
+
 DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
 NON_ADMIN_TEXT = 'Credentials do not have admin access.'
 
 
-class SetupNeeded(Exception):
-  code = 500
-  message = PLEASE_CONFIGURE_TEXT
-
-
-@app.route('/setup/', methods=['GET', 'POST'])
+@ufo.app.route('/setup/', methods=['GET', 'POST'])
 def setup():
   """Handle showing the user the setup page and processing the response"""
-  config = get_user_config()
+  config = ufo.get_user_config()
   flow = oauth.getOauthFlow()
   oauth_url = flow.step1_get_authorize_url()
 
   if flask.request.method == 'GET':
-    return flask.render_template('setup.html',
-                                 config=config,
-                                 oauth_url=oauth_url)
+    policy_resources_dict = chrome_policy.get_policy_resources_dict()
+    setup_resources_dict = {
+      'titleText': 'OAuth Configuration',
+      'isOAuth': True,
+      'showAddButton': False,
+    }
+    user_resources_dict = user.get_user_resources_dict()
+    user_resources_dict['showAddButton'] = False
+    return flask.render_template(
+        'setup.html',
+        config=config,
+        oauth_url=oauth_url,
+        policy_resources=json.dumps(policy_resources_dict),
+        setup_resources=json.dumps(setup_resources_dict),
+        user_resources=json.dumps(user_resources_dict))
 
   if flask.request.form.get('oauth_code', None):
     try:

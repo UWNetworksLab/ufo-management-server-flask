@@ -1,0 +1,98 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+
+<dom-module id="list-items">
+  <style>
+    .first-div {
+      width: 300px;
+    }
+    .second-div {
+      width: 250px;
+    }
+    .third-div {
+      width: 200px;
+    }
+  </style>
+  <template>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner active$={{loading}}></paper-spinner>
+    </template>
+    <iron-ajax auto
+      url="{{resources.listUrl}}"
+      method="GET"
+      handle-as="json"
+      id="getItemsAjax"
+      loading="{{loading}}"
+      last-response="{{ajaxResponse}}">
+    </iron-ajax>
+    <paper-listbox>
+      <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
+        <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
+          <template is="dom-if" if="{{resources.isUser}}">
+            <div class="first-div"><strong>{{item.name}}</strong></div>
+            <div class="second-div">{{item.email}}</div>
+            <div class="third-div">{{item.access}}</div>
+          </template>
+          <template is="dom-if" if="{{resources.isProxyServer}}">
+            <div class="first-div"><strong>{{item.name}}</strong></div>
+            <div class="second-div">{{item.ip_address}}</div>
+            <div class="third-div"></div>
+          </template>
+          <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
+          <paper-icon-button icon="expand-more" title="user details" id="user-details-dropdown"></paper-icon-button>
+        </paper-icon-item>
+      </template>
+      <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
+        <paper-item id="showMore" class="horizontal layout start-justified">
+          <paper-button class="see-all-button" on-tap="_flipShowingAll">
+          {{resources.seeAllText}}
+          </paper-button>
+        </paper-item>
+      </template>
+    </paper-listbox>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'list-items',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        isShowingAll: {
+          value: false,
+          type: Boolean,
+        },
+        defaultLimit: {
+          value: 10,
+          type: Number,
+        },
+        ajaxResponse: {
+          type: Object,
+          notify: true,
+        },
+      },
+      _limitResults: function(array, isShowingAll) {
+        var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
+        if (isShowingAll || !array || array.length <= limit) {
+          return array;
+        } else {
+          return array.slice(0, limit);
+        }
+      },
+      _hasMoreToShow: function(array, isShowingAll) {
+        var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
+        return array.length > limit && !isShowingAll;
+      },
+      _flipShowingAll: function() {
+        this.isShowingAll = !this.isShowingAll;
+      },
+      setAjaxResponse: function(response) {
+        this.set('ajaxResponse', response);
+      },
+    });
+  </script>
+</dom-module>

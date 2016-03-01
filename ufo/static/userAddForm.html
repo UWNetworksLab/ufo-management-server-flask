@@ -1,0 +1,158 @@
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-checkbox/paper-checkbox.html" /
+<link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+
+<dom-module id="user-add-form">
+  <style is="custom-style">
+    paper-listbox {
+      background: #EEE;
+    }
+    #spinner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      z-index: 100000000;
+    }
+  </style>
+  <template>
+    <div>
+      <template is="dom-if" if="{{isSpinnerOn}}">
+        <paper-spinner id="spinner" active$={{isSpinnerOn}}></paper-spinner>
+      </template>
+      <template is="dom-if" if="{{showInputFields}}">
+        <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinner">
+          <template is="dom-if" if="[[!idMatches(addFlowTextObj.id, 'domainAdd')]]">
+            <paper-input label="{{addFlowTextObj.label1}}" type="textbox" name="{{addFlowTextObj.name1}}" auto-validate pattern="{{KEY_LOOKUP_VALIDATION_PATTERN}}" error-message="{{KEY_LOOKUP_VALIDATION_ERROR}}"></paper-input>
+            <p>{{addFlowTextObj.definition1}}</p>
+            <br>
+          </template>
+          <template is="dom-if" if="[[idMatches(addFlowTextObj.id, 'domainAdd')]]">
+            <input type="hidden" name="get_all" value="true">
+          </template>
+          <paper-button on-tap="submitGetForm" class="form-submit-button anchor-button" type="submit">{{addFlowTextObj.searchButton}}</paper-button>
+        </form>
+      </template>
+      <template is="dom-if" if="{{!showInputFields}}">
+        <paper-dialog-scrollable>
+          <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
+            <paper-listbox>
+              <template is="dom-repeat" items="[[lastResponse.directory_users]]">
+                <paper-item id="{{item.name}}" class="horizontal layout">
+                  <paper-checkbox on-change="updateCheckedUsers" name="checkboxes" value="{{item}}"></paper-checkbox>
+                  <span class="flex"><strong>{{item.name}}</strong></span>
+                  <span>{{item.email}}</span>
+                </paper-item>
+              </template>
+            </paper-listbox>
+            <input type="hidden" name="users" value="{{usersJson}}">
+            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          </form>
+        </paper-dialog-scrollable>
+        <paper-button on-tap="resetForms" class="anchor-button">{{resources.lookAgainText}}</paper-button>
+        <script>
+        var modal = document.getElementById('userModal');
+        var scrollables = modal.getElementsByTagName('paper-dialog-scrollable');
+        for (var i in scrollables) {
+          scrollables[i].dialogElement = modal;
+        }
+        </script>
+      </template>
+    </div>
+    <div class="buttons">
+      <paper-button class="anchor-button" dialog-dismiss>
+      {{resources.dismissText}}
+      </paper-button>
+      <paper-button class="anchor-button" autofocus on-tap="submitPostForm">
+      {{addFlowTextObj.saveButton}}
+      </paper-button>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'user-add-form',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        addFlowTextObj: {
+          type: Object,
+        },
+        showInputFields: {
+          type: Boolean,
+          value: true,
+          notify: true,
+        },
+        lastResponse: {
+          type: Object,
+          notify: true,
+        },
+        selectedUsers: {
+          type: Array,
+          notify: true,
+          value: [],
+        },
+        usersJson: {
+          type: String,
+          notify: true,
+        },
+        isSpinnerOn: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+      },
+      enableSpinner: function() {
+        this.set('isSpinnerOn', true);
+      },
+      submitGetForm: function() {
+        this.querySelector('#' + this.addFlowTextObj.id).submit();
+      },
+      submitPostForm: function() {
+        this.querySelector('#addPostForm').submit();
+      },
+      parseGetResponse: function(e, detail) {
+        this.set('lastResponse', e.target.request.lastResponse);
+        this.set('showInputFields', false);
+        this.set('isSpinnerOn', false);
+      },
+      parsePostResponse: function(e, detail) {
+        this.sendUsersJsonToList(detail.xhr.response);
+        this.set('isSpinnerOn', false);
+        document.getElementById('userModal').close();
+      },
+      resetForms: function() {
+        this.set('showInputFields', true);
+        document.getElementById(this.addFlowTextObj.id).reset();
+        this.querySelector('#addPostForm').reset();
+      },
+      sendUsersJsonToList: function(updatedUsersJson) {
+        var listElem = document.getElementById(this.resources.listId);
+        listElem.setAjaxResponse(updatedUsersJson);
+      },
+      idMatches: function(id, string1) {
+        return id === string1;
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+      updateCheckedUsers: function(e) {
+        var checkboxes = this.querySelectorAll('paper-checkbox');
+        var checkboxElem = event.path[0];
+        if (checkboxElem.checked) {
+          this.selectedUsers.push(checkboxElem.value);
+        } else {
+          var index = this.selectedUsers.indexOf(checkboxElem.value);
+          if (index != -1) {
+            this.selectedUsers.splice(index, 1);
+          }
+        }
+        this.usersJson = JSON.stringify(this.selectedUsers);
+      },
+    });
+  </script>
+</dom-module>

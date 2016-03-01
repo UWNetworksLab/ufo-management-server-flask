@@ -65,7 +65,7 @@ function findHtmlFilesToVulcanize ()
   # the custom components we have already written, such as sidebar.html.
   # It then sed's the files to remove the prepended ./ and outputs to
   # $TEMP_FILE_LIST.
-  runInStaticDirAndAssertCmd "find . -name '*html' -not -name 'index.html' -not -name 'basic.html' -not -path '*test*' -not -path '*demo*' | sed 's|./||' > $TEMP_FILE_LIST"
+  runInStaticDirAndAssertCmd "find . -name '*html' -not -name 'index.html' -not -name 'basic.html' -not -name 'web-animations.html' -not -path '*test*' -not -path '*demo*' | sed 's|./||' > $TEMP_FILE_LIST"
 }
 
 function createSingleHtmlFileToVulcanize ()

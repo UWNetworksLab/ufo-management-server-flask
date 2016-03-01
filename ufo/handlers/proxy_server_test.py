@@ -1,13 +1,15 @@
+import base64
+import json
+
+from Crypto.PublicKey import RSA
+import flask
 from mock import MagicMock
 from mock import patch
 
-import base64
-from Crypto.PublicKey import RSA
-import flask
+from ufo import base_test
+from ufo.database import models
+from ufo.handlers import proxy_server
 
-import base_test
-import models
-import proxy_server
 
 def getBinaryPublicKey(rsakey):
   """Returns the public key as stored in the database."""
@@ -36,17 +38,21 @@ class ProxyServerTest(base_test.BaseTest):
     super(ProxyServerTest, self).setUp()
     super(ProxyServerTest, self).setup_config()
 
-  @patch('flask.render_template')
-  def testListHandlerRendersTheListTemplate(self, mock_render_template):
-    """Test the list handler renders the list page."""
-    mock_render_template.return_value = ''
-    resp = self.client.get(flask.url_for('proxyserver_list'))
+  # def testListHandlerRendersTheListTemplate(self):
+  #   """Test the list handler gets servers from the database."""
+  #   for i in range(len(FAKE_PROXY_SERVER_DATA)):
+  #     self._CreateAndSaveFakeProxyServer(i)
 
-    args, kwargs = mock_render_template.call_args
-    self.assertEquals('proxy_server.html', args[0])
+  #   resp = self.client.get(flask.url_for('proxyserver_list'))
+  #   server_list_output = json.loads(resp.data)['items']
+
+  #   self.assertEquals(len(server_list_output), len(FAKE_PROXY_SERVER_DATA))
+
+  #   for proxy_server_obj in FAKE_PROXY_SERVER_DATA:
+  #     self.assertIn(proxy_server._GetViewDataFromProxyServer(proxy_server_obj), server_list_output)
 
   def testListHandlerRendersResults(self):
-    """Test the list proxy server handler displays proxy server from db."""
+    """Test the list proxy server handler gets proxy server from db."""
     for i in range(len(FAKE_PROXY_SERVER_DATA)):
       self._CreateAndSaveFakeProxyServer(i)
 
@@ -118,7 +124,7 @@ class ProxyServerTest(base_test.BaseTest):
     new_key = FAKE_PROXY_SERVER_DATA[1]['key']
 
     resp = self.client.post(
-        flask.url_for('proxyserver_edit', server_id=proxy_server.id), 
+        flask.url_for('proxyserver_edit', server_id=proxy_server.id),
         data=form_data)
 
     self.assertEqual(FAKE_PROXY_SERVER_DATA[0]['name'],
@@ -143,7 +149,7 @@ class ProxyServerTest(base_test.BaseTest):
     form_data = self._GetProxyServerFormData()
 
     resp = self.client.post(
-        flask.url_for('proxyserver_edit', server_id=proxy_server.id), 
+        flask.url_for('proxyserver_edit', server_id=proxy_server.id),
         data=form_data)
 
     self.assert_redirects(resp, flask.url_for('proxyserver_list'))
