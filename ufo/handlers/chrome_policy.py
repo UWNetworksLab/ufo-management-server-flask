@@ -1,10 +1,11 @@
 """The module for generating and outputing chrome policy."""
 
-import flask
 import json
 
+import flask
+
 import ufo
-from ufo import models
+from ufo.database import models
 
 
 def _make_chrome_policy_json():
@@ -27,6 +28,20 @@ def _make_chrome_policy_json():
 
   return json.dumps(policy_dictionary)
 
+
+def get_policy_resources_dict():
+  """Get the resources for the chrome policy component.
+
+    Returns:
+      A dict of the resources for the chrome policy component.
+  """
+  return {
+    'download_chrome_policy': flask.url_for('download_chrome_policy'),
+    'isChromePolicy': True,
+    'hasAddFlow': False,
+    'policy_filename': 'chrome_policy.json',
+    'titleText': 'Chrome Policy',
+  }
 
 @ufo.app.route('/chromepolicy/')
 @ufo.setup_required

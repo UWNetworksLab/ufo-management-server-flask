@@ -11,7 +11,7 @@
     TODO(eholder): Follow up periodically to check when this will be working
     and update our bower component when necessary.
     -->
-    <paper-textarea id="input"
+    <paper-textarea id="input" max-rows="{{maxRows}}"
       value="{{value}}"
       label="[[label]]"
       name$="paper_[[name]]"
@@ -51,7 +51,11 @@
       value: {
         notify: true,
         type: String
-      }
+      },
+      maxRows: {
+        type: Number,
+        value: 10,
+      },
     }
   });
 </script>

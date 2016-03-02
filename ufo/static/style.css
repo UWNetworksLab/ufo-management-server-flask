@@ -12,18 +12,13 @@ form {
 }
 
 paper-tab {
-  color: #ffffff;
-  /*background-color: #00AC9B;*/
-  background-color: #3f51b5;
+  /*color: #ffffff; recent old value*/
+  /*background-color: #00AC9B; really old value*/
+  /*background-color: #3f51b5; recent old value*/
 }
 
 paper-tabs {
   max-width: 800px;
-}
-
-.anchor-button {
-  color: inherit;
-  background-color: inherit;
 }
 
 .top-buttons {
@@ -35,14 +30,118 @@ paper-tabs {
   margin-top: 16px;
 }
 
-#setup-form {
-  max-width: 800px;
-}
-
 #proxy-card-holder {
   max-width: 800px;
 }
 
 #user-card-holder {
   max-width: 600px;
+}
+
+
+
+
+paper-scroll-header-panel {
+  height: 300px;
+}
+
+paper-material {
+  background-color: #fafafa;
+}
+
+paper-material:not(.dropdown-content), #jigsaw-logo-holder {
+  width: 1200px;
+}
+
+paper-toolbar {
+  background: #ffffff!important;
+}
+
+paper-dialog {
+  width: 1000px;
+}
+
+paper-dialog-scrollable {
+  max-height: 300px;
+}
+
+paper-dialog-scrollable > div {
+  max-width: none!important;
+}
+
+paper-icon-item {
+  border-top: 1px solid #e5e5e5;
+}
+
+.title {
+  color: black!important;
+}
+
+.anchor-button {
+  color: white;
+  background-color: #25CFB9;
+}
+
+.anchor-no-button {
+  color: #25CFB9;
+  text-decoration: underline;
+  text-transform: none;
+}
+
+.see-all-button {
+  color: #25CFB9;
+}
+
+.dropdown-button {
+  color: #009788;
+  text-transform: uppercase;
+  font-weight: 500!important;
+}
+
+.search .paper-input-container.underline, .custom-dropdown .paper-input-container.underline {
+  display: none;
+}
+
+.paper-input-container.underline .focused-line {
+  background: #25CFB9;
+}
+
+.paper-input-container.label-is-highlighted label {
+  color: #25CFB9!important;
+}
+
+#jigsaw-logo {
+  opacity: 53;
+}
+
+#jigsaw-logo:hover {
+  opacity: 86;
+}
+
+#main-toolbar {
+  background-color: #009788!important;
+}
+
+#main-toolbar-title {
+  color: white!important;
+}
+
+#search-bar {
+  background-color: #4DB6AB;
+}
+
+#username-and-menu {
+  float: right;
+}
+
+#username-title {
+  float: left;
+}
+
+#menu-dropdown {
+  float: right;
+}
+
+#main-holder {
+  margin-top: -80px;
 }

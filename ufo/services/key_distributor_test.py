@@ -2,11 +2,10 @@
 
 from mock import patch
 
-import ufo
 from ufo import base_test
-from ufo import key_distributor
-from ufo import models
-from ufo import user_test
+from ufo.database import models
+from ufo.handlers import user_test
+from ufo.services import key_distributor
 
 
 class KeyDistributorTest(base_test.BaseTest):

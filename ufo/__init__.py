@@ -1,12 +1,21 @@
-import error_handler
 import flask
 from flask.ext import sqlalchemy
 import functools
 import os
+import sys
+
+from ufo.services import error_handler
+from ufo.services.custom_exceptions import SetupNeeded
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
 app.config.from_object('config.BaseConfiguration')
+
+# Register logging.  Ensure INFO level is captured by Heroku's Logplex.
+import logging
+stream_handler = logging.StreamHandler(sys.stdout)
+app.logger.addHandler(stream_handler)
+app.logger.setLevel(logging.INFO)
 
 if 'DATABASE_URL' in os.environ:
   app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -70,7 +79,7 @@ app.jinja_env.globals['IP_ADDRESS_KEY_ERROR'] = IP_ADDRESS_KEY_ERROR
 db = sqlalchemy.SQLAlchemy(app)
 
 # DB needs to be defined before this point
-import models
+from ufo.database import models
 
 @app.after_request
 def checkCredentialChange(response):
@@ -96,9 +105,6 @@ def get_user_config():
 
   return config
 
-# only import setup here to avoid circular reference
-from setup import SetupNeeded
-
 def setup_required(func):
   """Decorator to handle routes that need setup to have been completed
 
@@ -111,6 +117,6 @@ def setup_required(func):
     return func(*args, **kwargs)
   return decorated_function
 
-import xsrf
-import routes
-import key_distributor
+from ufo.services import key_distributor
+from ufo.handlers import routes
+from ufo.services import xsrf
