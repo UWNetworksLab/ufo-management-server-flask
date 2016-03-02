@@ -19,14 +19,9 @@ from ufo.services import google_directory_service as gds
 from ufo.services import oauth
 
 
-FAKE_EMAILS_AND_NAMES = [
-  {'email': 'foo@aol.com', 'name': 'joe', 'pri': 'foopri', 'pub': 'foopub'},
-  {'email': 'bar@yahoo.com', 'name': 'bob', 'pri': 'barpri', 'pub': 'barpub'},
-  {'email': 'baz@gmail.com', 'name': 'mark', 'pri': 'bazpri', 'pub': 'bazpub'}
-]
 FAKE_DIRECTORY_USER_ARRAY = []
 FAKE_USERS_FOR_DISPLAY_ARRAY = []
-for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
+for fake_email_and_name in base_test.FAKE_EMAILS_AND_NAMES:
   fake_directory_user = {}
   fake_directory_user['primaryEmail'] = fake_email_and_name['email']
   fake_directory_user['name'] = {}
@@ -43,8 +38,8 @@ for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
 
 FAKE_CREDENTIAL = 'Look at me. I am a credential!'
 
-FAKE_MODEL_USER = MagicMock(email=FAKE_EMAILS_AND_NAMES[0]['email'],
-                            name=FAKE_EMAILS_AND_NAMES[0]['name'],
+FAKE_MODEL_USER = MagicMock(email=base_test.FAKE_EMAILS_AND_NAMES[0]['email'],
+                            name=base_test.FAKE_EMAILS_AND_NAMES[0]['name'],
                             private_key='private key foo',
                             public_key='public key bar',
                             is_key_revoked=False)
@@ -61,7 +56,7 @@ class UserTest(base_test.BaseTest):
   def testListUsersHandler(self):
     """Test the list user handler gets users from the database."""
     users = []
-    for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
+    for fake_email_and_name in base_test.FAKE_EMAILS_AND_NAMES:
       user = models.User(email=fake_email_and_name['email'],
                          name=fake_email_and_name['name'],
                          private_key=fake_email_and_name['pri'],
@@ -72,7 +67,8 @@ class UserTest(base_test.BaseTest):
     resp = self.client.get(flask.url_for('user_list'))
     user_list_output = json.loads(resp.data)['items']
 
-    self.assertEquals(len(user_list_output), len(FAKE_EMAILS_AND_NAMES))
+    self.assertEquals(len(user_list_output),
+                      len(base_test.FAKE_EMAILS_AND_NAMES))
 
     for user in users:
       self.assertIn(user.to_dict(), user_list_output)
@@ -217,24 +213,15 @@ class UserTest(base_test.BaseTest):
 
   def testAddUsersPostHandler(self):
     """Test the add users post handler calls to insert the specified users."""
-    mock_users = []
-    for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
-      mock_user = {}
-      mock_user['email'] = fake_email_and_name['email']
-      mock_user['name'] = fake_email_and_name['name']
-      mock_users.append(mock_user)
-
-    data = {'users': json.dumps(mock_users)}
-
-    response = self.client.post(flask.url_for('add_user'), data=data)
+    response = self.CreateUsersWithGoogleDirectoryServicePost()
 
     users_count = models.User.query.count()
-    self.assertEquals(len(FAKE_EMAILS_AND_NAMES), users_count)
+    self.assertEquals(len(base_test.FAKE_EMAILS_AND_NAMES), users_count)
 
     users_in_db = models.User.query.all()
-    self.assertEquals(len(FAKE_EMAILS_AND_NAMES), len(users_in_db))
+    self.assertEquals(len(base_test.FAKE_EMAILS_AND_NAMES), len(users_in_db))
 
-    for fake_email_and_name in FAKE_EMAILS_AND_NAMES:
+    for fake_email_and_name in base_test.FAKE_EMAILS_AND_NAMES:
       query = models.User.query.filter_by(email=fake_email_and_name['email'])
       user_in_db = query.one_or_none()
       self.assertEqual(fake_email_and_name['name'], user_in_db.name)
@@ -244,19 +231,16 @@ class UserTest(base_test.BaseTest):
 
   def testAddUsersPostManualHandler(self):
     """Test add users manually calls to insert the specified user."""
-    mock_user = {}
-    mock_user['email'] = FAKE_EMAILS_AND_NAMES[0]['email']
-    mock_user['name'] = FAKE_EMAILS_AND_NAMES[0]['name']
-    data = {'users': json.dumps([mock_user]), 'manual': 'true'}
-
-    response = self.client.post(flask.url_for('add_user'), data=data)
+    response = self.CreateUserWithManualPost()
 
     query = models.User.query.filter_by(
-        email=FAKE_EMAILS_AND_NAMES[0]['email'])
+        email=base_test.FAKE_EMAILS_AND_NAMES[0]['email'])
     user_in_db = query.one_or_none()
     self.assertIsNotNone(user_in_db)
-    self.assertEqual(FAKE_EMAILS_AND_NAMES[0]['name'], user_in_db.name)
-    self.assertEqual(FAKE_EMAILS_AND_NAMES[0]['email'], user_in_db.email)
+    self.assertEqual(base_test.FAKE_EMAILS_AND_NAMES[0]['name'],
+                     user_in_db.name)
+    self.assertEqual(base_test.FAKE_EMAILS_AND_NAMES[0]['email'],
+                     user_in_db.email)
     self.assertIsNone(user_in_db.domain)
 
     self.assertEqual(response.data, self.client.get(flask.url_for('user_list')).data)
@@ -347,8 +331,8 @@ class UserTest(base_test.BaseTest):
 
   def _CreateAndSaveFakeUser(self):
     """Create a fake user object, and save it into db."""
-    user = models.User(email=FAKE_EMAILS_AND_NAMES[0]['email'],
-                       name=FAKE_EMAILS_AND_NAMES[0]['name'])
+    user = models.User(email=base_test.FAKE_EMAILS_AND_NAMES[0]['email'],
+                       name=base_test.FAKE_EMAILS_AND_NAMES[0]['name'])
     return user.save()
 
 
