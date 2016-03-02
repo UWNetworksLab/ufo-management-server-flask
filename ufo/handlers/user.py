@@ -149,6 +149,7 @@ def get_user_resources_dict():
     'hasAddFlow': True,
     'modalId': 'userModal',
     'dismissText': 'Cancel',
+    'regexes': ufo.REGEXES_AND_ERRORS_DICTIONARY,
     'addFlowTextDicts': [
         {
           'id': 'groupAdd',

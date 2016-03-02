@@ -51,8 +51,8 @@
                 <paper-input label="{{item.label1}}" type="textbox" name="name" value="" id="manualUserName" required>
                 </paper-input>
                 <paper-input label="{{item.label2}}" type="email" name="email" value="" id="manualUserEmail" required
-                auto-validate pattern="{{EMAIL_VALIDATION_PATTERN}}"
-                error-message="{{EMAIL_VALIDATION_ERROR}}">
+                auto-validate pattern="{{resources.regexes.emailValidationPattern}}"
+                error-message="{{resources.regexes.emailValidationError}}">
                 </paper-input>
                 <input type="hidden" name="users" id="manualUserInput" value="">
                 <input type="hidden" name="manual" value="true">

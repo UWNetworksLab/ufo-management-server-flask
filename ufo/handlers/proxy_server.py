@@ -29,6 +29,7 @@ def get_proxy_resources_dict():
     'modalId': 'serverModal',
     'dismissText': 'Cancel',
     'confirmText': 'Add Server',
+    'regexes': ufo.REGEXES_AND_ERRORS_DICTIONARY,
     'textAreaMaxRows': 10,
     'ipLabel': 'IP Address',
     'nameLabel': 'Server Name',
