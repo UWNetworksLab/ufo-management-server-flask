@@ -213,7 +213,7 @@ class UserTest(base_test.BaseTest):
 
   def testAddUsersPostHandler(self):
     """Test the add users post handler calls to insert the specified users."""
-    response = self.CreateUsersWithGoogleDirectoryServicePost()
+    response = self.create_users_with_google_directory_service_post()
 
     users_count = models.User.query.count()
     self.assertEquals(len(base_test.FAKE_EMAILS_AND_NAMES), users_count)
@@ -231,7 +231,7 @@ class UserTest(base_test.BaseTest):
 
   def testAddUsersPostManualHandler(self):
     """Test add users manually calls to insert the specified user."""
-    response = self.CreateUserWithManualPost()
+    response = self.create_user_with_manual_post()
 
     query = models.User.query.filter_by(
         email=base_test.FAKE_EMAILS_AND_NAMES[0]['email'])

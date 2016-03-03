@@ -38,7 +38,7 @@ class UserSynchronizerTest(base_test.BaseTest):
     mock_get_credentials.return_value = 'foo'
     mock_gds.return_value = None
     mock_get_users.return_value = {}
-    self.CreateUserWithManualPost()
+    self.create_user_with_manual_post()
 
     initial_db_users = models.User.get_items_as_list_of_dict()
 
@@ -53,8 +53,8 @@ class UserSynchronizerTest(base_test.BaseTest):
   @patch.object(gds.GoogleDirectoryService, 'GetUsersAsDictionary')
   @patch.object(gds.GoogleDirectoryService, '__init__')
   @patch.object(oauth, 'getSavedCredentials')
-  def testUsersNotFoundAreDeleted(self, mock_get_credentials, mock_gds,
-                                  mock_get_users):
+  def testUsersNotFoundInDirectoryAreDeleted(self, mock_get_credentials,
+                                             mock_gds, mock_get_users):
     """Test users not found but matching the current domain are deleted.
 
     Args:
@@ -65,7 +65,7 @@ class UserSynchronizerTest(base_test.BaseTest):
     mock_get_credentials.return_value = 'foo'
     mock_gds.return_value = None
     mock_get_users.return_value = {}
-    self.CreateUsersWithGoogleDirectoryServicePost()
+    self.create_users_with_google_directory_service_post()
     # I could explicitly set the config to delete here, but it is on by
     # default, so that is assumed.
 
@@ -82,7 +82,7 @@ class UserSynchronizerTest(base_test.BaseTest):
   @patch.object(gds.GoogleDirectoryService, 'GetUsersAsDictionary')
   @patch.object(gds.GoogleDirectoryService, '__init__')
   @patch.object(oauth, 'getSavedCredentials')
-  def testUsersSuspendedAreRevoked(self, mock_get_credentials, mock_gds,
+  def testSuspendedUsersAreRevoked(self, mock_get_credentials, mock_gds,
                                    mock_get_users):
     """Test users suspended in gds but matching the current domain are revoked.
 
@@ -98,7 +98,7 @@ class UserSynchronizerTest(base_test.BaseTest):
       mock_user = { 'suspended': True }
       mock_users[fake_email_and_name['email']] = mock_user
     mock_get_users.return_value = mock_users
-    self.CreateUsersWithGoogleDirectoryServicePost()
+    self.create_users_with_google_directory_service_post()
     # I could explicitly set the config to revoke here, but it is on by
     # default, so that is assumed.
 

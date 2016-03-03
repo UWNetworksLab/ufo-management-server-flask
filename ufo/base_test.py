@@ -40,7 +40,7 @@ class BaseTest(TestCase):
     ufo.db.session.remove()
     ufo.db.drop_all()
 
-  def CreateUserWithManualPost(self):
+  def create_user_with_manual_post(self):
     """Post a manually added user and return the response.
 
     Returns:
@@ -53,7 +53,7 @@ class BaseTest(TestCase):
     data = {'users': json.dumps([mock_user]), 'manual': 'true'}
     return self.client.post(flask.url_for('add_user'), data=data)
 
-  def CreateUsersWithGoogleDirectoryServicePost(self):
+  def create_users_with_google_directory_service_post(self):
     """Post several users added from GDS and return the response.
 
     Returns:
