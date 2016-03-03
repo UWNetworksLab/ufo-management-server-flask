@@ -3,15 +3,19 @@
 {% block body %}
 
   <paper-display-template resources="{{user_resources}}">
-    <user-add-tabs resources="{{user_resources}}">
-    </user-add-tabs>
+    <form-container-with-left-icon resources="{{user_resources}}">
+      <user-add-tabs resources="{{user_resources}}">
+      </user-add-tabs>
+    </form-container-with-left-icon>
   </paper-display-template>
 
   <br>
 
   <paper-display-template resources="{{proxy_server_resources}}">
-    <server-add-form resources="{{proxy_server_resources}}">
-    </server-add-form>
+    <form-container-with-left-icon resources="{{proxy_server_resources}}">
+      <server-add-form resources="{{proxy_server_resources}}">
+      </server-add-form>
+    </form-container-with-left-icon>
   </paper-display-template>
 
   <br>
