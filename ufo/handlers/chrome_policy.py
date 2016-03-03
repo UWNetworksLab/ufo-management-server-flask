@@ -43,6 +43,19 @@ def get_policy_resources_dict():
     'titleText': 'Chrome Policy',
   }
 
+
+def get_policy_configuration_resources_dict():
+  """Get the resources for the chrome policy configuration component.
+
+    Returns:
+      A dict of the resources for the chrome policy configuration component.
+  """
+  return {
+    'hasAddFlow': False,
+    'titleText': 'Chrome Policy Configurations',
+  }
+
+
 @ufo.app.route('/chromepolicy/')
 @ufo.setup_required
 def display_chrome_policy():

@@ -34,23 +34,11 @@
 
   <br>
 
-  <paper-card heading="Adjust Config Values">
-    <div class="card-content">
-      <form id="policy-config-form" method="post"
-        action="{{ url_for('edit_policy_config') }}">
-        <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="Enforce Proxy Server Check from Invitation Link" {% if enforce_proxy_server_validity %}checked{% endif %}></ufo-toggle-input>
-        <br>
-        <ufo-toggle-input input-name="enforce_network_jail" button-text="Enforce Network Jail Before Google Login" {% if enforce_network_jail %}checked{% endif %}></ufo-toggle-input>
-        <br>
-        <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
-      </form>
-    </div>
-    <div class="card-actions">
-      <paper-button onclick="submitByFormId('policy-config-form')" class="form-submit-button" type="submit">
-        Save
-      </paper-button>
-    </div>
-  </paper-card>
+  <paper-display-template resources="{{policy_config_resources}}">
+    <chrome-policy-configuration resources="{{policy_config_resources}}">
+    </chrome-policy-configuration>
+  </paper-display-template>
+
   <!-- Remove this when it's properly in the base.html or provided any other ways. -->
   <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
 {% endblock %}

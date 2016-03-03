@@ -51,10 +51,13 @@ def setup():
     oauth_resources_dict = _get_oauth_configration_resources_dict(config,
                                                                   oauth_url)
     policy_resources_dict = chrome_policy.get_policy_resources_dict()
+    policy_config_resources_dict = (
+        chrome_policy.get_policy_configuration_resources_dict())
 
     return flask.render_template(
         'setup.html',
         oauth_url=oauth_url,
+        policy_config_resources=json.dumps(policy_config_resources_dict),
         policy_resources=json.dumps(policy_resources_dict),
         proxy_server_resources=json.dumps(proxy_server_resources_dict),
         oauth_resources=json.dumps(oauth_resources_dict),
