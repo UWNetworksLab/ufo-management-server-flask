@@ -12,7 +12,13 @@ import worker
 class UserSynchronizer(object):
   """Syncs users in the db's status with Google directory service."""
 
-  def _sync_db_users_against_directory_service(self):
+  def enqueue_user_sync(self):
+    """Check users currently in the DB are still valid in directory service."""
+    ufo.app.logger.info('Enqueuing cron user sync job.')
+    queue = Queue(connection=worker.CONN)
+    queue.enqueue(self.sync_db_users_against_directory_service)
+
+  def sync_db_users_against_directory_service(self):
     """Checks whether the users currently in the DB are still valid.
 
     This gets all users in the DB, finds those that match the current domain,
@@ -28,6 +34,7 @@ class UserSynchronizer(object):
       # TODO this should handle the case where we do not have oauth
       if not credentials:
         ufo.app.logger.info('OAuth credentials not set up. Can\'t sync users.')
+        return
 
       try:
         directory_service = google_directory_service.GoogleDirectoryService(
@@ -52,33 +59,32 @@ class UserSynchronizer(object):
         # TODO(eholder): Unit test the conditionals here.
         # Assume deleted if not found, so delete from our db.
         if directory_user is None:
-          if config.user_delete_action == models.CRON_JOB_ACTIONS['delete']:
-            ufo.app.logger.info('User ' + db_user.email + ' was not found in '
-                                'directory service. Deleting from database.')
-            db_user.delete()
-          elif config.user_delete_action == models.CRON_JOB_ACTIONS['revoke']:
-            ufo.app.logger.info('User ' + db_user.email + ' was not found in '
-                                'directory service. Revoking access.')
-            db_user.is_key_revoked = True
-            db_user.did_cron_revoke = True
-            db_user.save()
+          ufo.app.logger.info('User ' + db_user.email + ' was not found in '
+                              'directory service.')
+          self.perform_configured_action_on_user(config.user_delete_action,
+                                                 db_user)
           continue
 
         if directory_user['suspended']:
-          if config.user_revoke_action == models.CRON_JOB_ACTIONS['delete']:
-            ufo.app.logger.info('User ' + db_user.email + ' was suspended in '
-                                'directory service. Deleting from database.')
-            db_user.delete()
-          elif config.user_revoke_action == models.CRON_JOB_ACTIONS['revoke']:
-            ufo.app.logger.info('User ' + db_user.email + ' was suspended in '
-                                'directory service. Revoking access.')
-            db_user.is_key_revoked = True
-            db_user.did_cron_revoke = True
-            db_user.save()
+          ufo.app.logger.info('User ' + db_user.email + ' was suspended in '
+                              'directory service.')
+          self.perform_configured_action_on_user(config.user_revoke_action,
+                                                 db_user)
           continue
 
-  def enqueue_user_sync(self):
-    """Check users currently in the DB are still valid in directory service."""
-    ufo.app.logger.info('Enqueuing cron user sync job.')
-    queue = Queue(connection=worker.CONN)
-    queue.enqueue(self._sync_db_users_against_directory_service)
+  def perform_configured_action_on_user(self, action, user):
+    """Perform the database configured action given on the specified user.
+
+    Args:
+      action: A string representing the action from the database.
+      user: A user entity from the database to perform the configured action
+            upon.
+    """
+    if action == models.CRON_JOB_ACTIONS['delete']:
+      ufo.app.logger.info('Deleting ' + user.email + ' from database.')
+      user.delete()
+    elif action == models.CRON_JOB_ACTIONS['revoke']:
+      ufo.app.logger.info('Revoking access from ' + user.email + '.')
+      user.is_key_revoked = True
+      user.did_cron_revoke = True
+      user.save()
