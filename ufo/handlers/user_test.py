@@ -320,9 +320,9 @@ class UserTest(base_test.BaseTest):
     user.did_cron_revoke = True
     user.save()
 
-    response = self.client.post(flask.url_for('user_toggle_revoked',
-                                              user_id=user.id),
-                                follow_redirects=False)
+    post_data = {'user_id': json.dumps(user.id)}
+    response = self.client.post(flask.url_for('user_toggle_revoked'),
+                                data=post_data, follow_redirects=False)
 
     self.assertEquals(not initial_revoked_status, user.is_key_revoked)
     self.assertEquals(False, user.did_cron_revoke)

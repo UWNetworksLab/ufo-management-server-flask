@@ -142,6 +142,7 @@ def get_user_resources_dict():
     'listId': 'userList',
     'listUrl': flask.url_for('user_list'),
     'listLimit': 10,
+    'revokeToggleUrl': flask.url_for('user_toggle_revoked'),
     'seeAllText': 'See All Users',
     'titleText': 'Users',
     'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
@@ -301,23 +302,22 @@ def user_get_new_key_pair(user_id):
 
   return flask.redirect(flask.url_for('user_details', user_id=user_id))
 
-@ufo.app.route('/user/<user_id>/toggleRevoked', methods=['POST'])
+@ufo.app.route('/user/toggleRevoked', methods=['POST'])
 @ufo.setup_required
-def user_toggle_revoked(user_id):
+def user_toggle_revoked():
   """Toggles whether the given user's access is revoked or not.
 
   If the user is not found, this produces a 404 error which redirects to the
   error handler.
 
-  Args:
-    user_id: A string identifying a user in the database.
-
   Returns:
     A redirect to the user_details page after flipping is_key_revoked.
   """
+  json_id = flask.request.form.get('user_id')
+  user_id = json.loads(json_id)
   user = models.User.query.get_or_404(user_id)
   user.is_key_revoked = not user.is_key_revoked
   user.did_cron_revoke = False
   user.save()
 
-  return flask.redirect(flask.url_for('user_details', user_id=user_id))
+  return flask.redirect(flask.url_for('user_list'))

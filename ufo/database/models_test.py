@@ -47,15 +47,18 @@ class UserTest(base_test.BaseTest):
     user.is_key_revoked = False
     user_dict = user.to_dict()
 
+    self.assertEqual(user_dict['id'], user.id)
     self.assertEqual(user_dict['email'], user.email)
     self.assertEqual(user_dict['name'], user.name)
     self.assertEqual(user_dict['private_key'], user.private_key)
     self.assertEqual(user_dict['public_key'], user.public_key)
     self.assertEqual(user_dict['access'], models.NOT_REVOKED_TEXT)
+    self.assertEqual(user_dict['accessChange'], models.DISABLE_TEXT)
 
     user.is_key_revoked = True
     user_dict = user.to_dict()
     self.assertEqual(user_dict['access'], models.REVOKED_TEXT)
+    self.assertEqual(user_dict['accessChange'], models.ENABLE_TEXT)
 
 
 class ProxyServerTest(base_test.BaseTest):
@@ -102,7 +105,7 @@ class ConfigTest(base_test.BaseTest):
                      config.proxy_server_validity)
     self.assertEqual(config_dict['network_jail_until_google_auth'],
                      config.network_jail_until_google_auth)
-    
+
 
 if __name__ == '__main__':
   unittest.main()
