@@ -1,0 +1,172 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+
+<dom-module id="user-details-dialog">
+  <style is="custom-style">
+    .first-div {
+      min-width: 300px;
+    }
+    .second-div {
+      min-width: 250px;
+    }
+    .third-div {
+      min-width: 200px;
+    }
+    .fourth-div {
+      min-width: 100px;
+    }
+    .revokeButton {
+      color: #25CFB9;
+      text-transform: none;
+    }
+    paper-icon-item {
+      border-bottom: 1px solid #e5e5e5;
+    }
+    paper-icon-item:focus:before {
+      opacity: 0!important;
+    }
+    paper-listbox {
+      padding: 0px;
+    }
+    paper-input {
+      --paper-input-container-underline-disabled: {
+        border-bottom: 2px solid #25CFB9;
+      }
+    }
+  </style>
+  <!-- TODO(eholder): Figure out how to make hover work with focused. -->
+  <template>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner active$={{loading}}></paper-spinner>
+    </template>
+    <paper-dialog id="{{resources.detailsOverlayId}}">
+      <paper-listbox>
+        <paper-icon-item id="topBar" class="horizontal center-justified layout">
+          <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
+          <div class="first-div"><strong>{{item.name}}</strong></div>
+          <div class="second-div">{{item.email}}</div>
+          <div class="third-div">{{item.access}}</div>
+          <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="fourth-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
+            <input type="hidden" name="user_id" value="{{item.id}}">
+            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            <paper-button on-tap="submitRevokeForm" class="revokeButton" type="submit">{{item.accessChange}}</paper-button>
+          </form>
+          <paper-icon-button icon="expand-less" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+        </paper-icon-item>
+      </paper-listbox>
+      <div id="rowHolder" class="vertical center-justified layout">
+        <div id="row1" class="horizontal around-justified layout">
+          <div class="column1 flex">
+            <p><strong>{{resources.inviteCodeLabel}}</strong></p>
+            <!-- TODO(eholder): Decide if invite code should be a property of
+            a user so that they are easier to obtain than another ajax call
+            each time.-->
+            <paper-input disabled type="text" value="{{item.email}}"></paper-input>
+          </div>
+          <div class="column2 flex">
+            <p><strong>{{resources.publicKeyLabel}}</strong></p>
+            <paper-input disabled type="text" value="{{item.public_key}}"></paper-input>
+          </div>
+        </div>
+        <div id="row2" class="horizontal around-justified layout">
+          <div class="column1 flex">
+            <paper-button on-tap="copyInviteCode" class="anchor-button"><strong>{{resources.copyLabel}}</strong></paper-button>
+            <paper-button on-tap="submitRotateKeyForm" class="anchor-button"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
+          </div>
+          <div class="column2 flex">
+            <p><strong>{{resources.privateKeyLabel}}</strong></p>
+            <paper-input disabled type="text" value="{{item.private_key}}"></paper-input>
+          </div>
+        </div>
+      </div>
+      <div class="buttons">
+        <paper-button on-tap="submitDeleteUserForm" class="delete-button">
+          <iron-icon icon="delete"></iron-icon>
+          <strong>{{resources.deleteLabel}}</strong>
+        </paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'user-details-dialog',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        item: {
+          type: Object,
+          notify: true,
+        },
+        ajaxResponse: {
+          type: Object,
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+      },
+      setAjaxResponse: function(response) {
+        this.set('ajaxResponse', response);
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+      submitRevokeForm: function(e, details) {
+        var elem = e.target;
+        while (elem.tagName.toLowerCase() != 'form') {
+          elem = elem.parentElement;
+          if (elem == document.body) {
+            break;
+          }
+        }
+        if (elem.tagName.toLowerCase() != 'form') {
+          return;
+        }
+        elem.submit();
+      },
+      parseRevokeResponse: function(e, details) {
+        this.sendUsersJsonToList(details.xhr.response);
+        this.set('loading', false);
+      },
+      sendUsersJsonToList: function(updatedUsersJson) {
+        var listElem = document.getElementById(this.resources.listId);
+        if (listElem) {
+          listElem.setAjaxResponse(updatedUsersJson);
+        }
+      },
+      openDialog: function() {
+        var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
+        dialog.open();
+      },
+      closeDialog: function() {
+        var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
+        dialog.close();
+      },
+      copyInviteCode: function(e, details) {
+        console.log(e);
+        console.log(details);
+      },
+      submitRotateKeyForm: function(e, details) {
+        console.log(e);
+        console.log(details);
+      },
+      submitDeleteUserForm: function(e, details) {
+        console.log(e);
+        console.log(details);
+      },
+    });
+  </script>
+</dom-module>

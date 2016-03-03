@@ -69,10 +69,6 @@ paper-dialog-scrollable > div {
   max-width: none!important;
 }
 
-paper-icon-item {
-  border-top: 1px solid #e5e5e5;
-}
-
 .title {
   color: black!important;
 }
@@ -80,6 +76,11 @@ paper-icon-item {
 .anchor-button {
   color: white;
   background-color: #25CFB9;
+}
+
+.delete-button {
+  color: black;
+  background-color: white;
 }
 
 .anchor-no-button {

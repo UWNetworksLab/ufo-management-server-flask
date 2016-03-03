@@ -24,6 +24,9 @@
       color: #25CFB9;
       text-transform: none;
     }
+    paper-item, paper-icon-item {
+      border-top: 1px solid #e5e5e5;
+    }
     paper-icon-item:hover {
       @apply(--paper-item-focused);
     }
@@ -47,23 +50,26 @@
     <paper-listbox>
       <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
         <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
+          <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
           <template is="dom-if" if="{{resources.isUser}}">
-            <div class="first-div"><strong>{{item.name}}</strong></div>
-            <div class="second-div">{{item.email}}</div>
+            <div class="first-div"><strong>{{_limitCharacters(item.name)}}</strong></div>
+            <div class="second-div">{{_limitCharacters(item.email)}}</div>
             <div class="third-div">{{item.access}}</div>
             <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="fourth-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
               <input type="hidden" name="user_id" value="{{item.id}}">
               <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
               <paper-button on-tap="submitRevokeForm" class="revokeButton" type="submit">{{item.accessChange}}</paper-button>
             </form>
+            <user-details-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></user-details-dialog>
           </template>
           <template is="dom-if" if="{{resources.isProxyServer}}">
             <div class="first-div"><strong>{{item.name}}</strong></div>
             <div class="second-div">{{item.ip_address}}</div>
             <div class="third-div"></div>
+            <div class="fourth-div"></div>
+            <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
           </template>
-          <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
-          <paper-icon-button icon="expand-more" title="user details" id="user-details-dropdown"></paper-icon-button>
+          <paper-icon-button icon="expand-more" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="openDetailsDialog"></paper-icon-button>
         </paper-icon-item>
       </template>
       <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
@@ -100,6 +106,17 @@
           value: false,
           notify: true,
         },
+        characterLimit: {
+          type: Number,
+          value: 25,
+        },
+      },
+      _limitCharacters: function(text) {
+        if (text.length > this.characterLimit) {
+          return text.substring(0, this.characterLimit) + '...';
+        } else {
+          return text;
+        }
       },
       _limitResults: function(array, isShowingAll) {
         var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
@@ -125,22 +142,37 @@
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
       },
-      submitRevokeForm: function(e, details) {
-        var elem = e.target;
-        while (elem.tagName.toLowerCase() != 'form') {
+      _findAncestorMatchingTagnameFromTarget: function(target, tagName) {
+        var elem = target;
+        while (elem.tagName.toLowerCase() !== tagName) {
           elem = elem.parentElement;
           if (elem == document.body) {
             break;
           }
         }
-        if (elem.tagName.toLowerCase() != 'form') {
-          return;
+        if (elem.tagName.toLowerCase() !== tagName) {
+          return null;
         }
-        elem.submit();
+        return elem;
+      },
+      submitRevokeForm: function(e, details) {
+        var name = 'form';
+        var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
+        if (elem) {
+          elem.submit();
+        }
       },
       parseRevokeResponse: function(e, detail) {
         this.set('ajaxResponse', e.target.request.lastResponse);
         this.set('loading', false);
+      },
+      openDetailsDialog: function(e, detail) {
+        var name = 'paper-icon-item';
+        var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
+        if (elem) {
+          var dialogHolder = elem.querySelector('#detailsHolder');
+          dialogHolder.openDialog();
+        }
       },
     });
   </script>
