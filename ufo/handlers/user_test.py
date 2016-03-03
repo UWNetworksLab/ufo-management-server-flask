@@ -326,8 +326,7 @@ class UserTest(base_test.BaseTest):
 
     self.assertEquals(not initial_revoked_status, user.is_key_revoked)
     self.assertEquals(False, user.did_cron_revoke)
-    self.assert_redirects(response, flask.url_for('user_details',
-                                                  user_id=user.id))
+    self.assert_redirects(response, flask.url_for('user_list'))
 
   def _CreateAndSaveFakeUser(self):
     """Create a fake user object, and save it into db."""
