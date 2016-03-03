@@ -1,0 +1,40 @@
+<dom-module id="form-container-with-left-icon">
+  <style is="custom-style">
+    #container {
+      display: table;
+    }
+    #row {
+      display: table-row;
+    }
+    #left {
+      width: 300px;
+    }
+    #left, #right {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+    }
+  </style>
+  <template>
+    <div id="container">
+      <div id="row">
+        <div id="left">
+          <img src="{{resources.addIconUrl}}">
+        </div>
+        <div id="right">
+          <content></content>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'form-container-with-left-icon',
+      properties: {
+        resources: {
+          type: Object,
+        },
+      },
+    });
+  </script>
+</dom-module>
