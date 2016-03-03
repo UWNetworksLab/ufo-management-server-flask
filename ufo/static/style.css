@@ -146,7 +146,7 @@ paper-icon-item {
   /* This is used to make the body overlap a bit with the header.
      But, it is commented out because the body tends to bleed more and
      more into the header as the body gets longer and longer.
-     So, we need to find a more robust way to do this.
+     TODO: We need to find a more robust way to do this.
   margin-top: -80px;
   */
 }
