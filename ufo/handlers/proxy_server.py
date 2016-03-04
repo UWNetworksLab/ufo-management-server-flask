@@ -5,6 +5,7 @@ import flask
 
 import ufo
 from ufo.database import models
+from ufo.services import regex
 from ufo.services import ssh_client
 
 
@@ -29,6 +30,7 @@ def get_proxy_resources_dict():
     'modalId': 'serverModal',
     'dismissText': 'Cancel',
     'confirmText': 'Add Server',
+    'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
     'textAreaMaxRows': 10,
     'ipLabel': 'IP Address',
     'nameLabel': 'Server Name',

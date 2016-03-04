@@ -3,11 +3,22 @@
 
 <dom-module id="ufo-textarea">
   <template>
+    <!--
+    Currently, paper-textarea doesn't actually support auto validation.
+    However, I'm adding this in now so that it will be here once support is
+    added. This also lets us display our error message when the field is
+    touched, but nothing is input, because of the required check.
+    TODO(eholder): Follow up periodically to check when this will be working
+    and update our bower component when necessary.
+    -->
     <paper-textarea id="input" max-rows="{{maxRows}}"
       value="{{value}}"
       label="[[label]]"
       name$="paper_[[name]]"
-      required$="[[required]]"></paper-textarea>
+      required$="[[required]]"
+      auto-validate$="[[autoValidate]]"
+      pattern$="[[pattern]]"
+      error-message$="[[errorMessage]]"></paper-textarea>
 
     <input type="hidden" name$="[[name]]" value="{{value}}" />
   </template>
@@ -26,6 +37,16 @@
       required: {
         type: Boolean,
         value: false
+      },
+      autoValidate: {
+        type: Boolean,
+        value: false
+      },
+      pattern: {
+        type: String
+      },
+      errorMessage: {
+        type: String
       },
       value: {
         notify: true,

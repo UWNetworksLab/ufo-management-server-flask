@@ -2,7 +2,7 @@
 {% block title %}Proxy Server(s){% endblock %}
 {% block body %}
   <form id="proxy-edit-add-form" method="post">
-    <paper-input label="IP Address" type="text" name="ip_address" value="{{ proxy_server.ip_address }}" required></paper-input>
+    <paper-input label="IP Address" type="text" name="ip_address" value="{{ proxy_server.ip_address }}" required auto-validate pattern="{{IP_ADDRESS_KEY_PATTERN}}" error-message="{{IP_ADDRESS_KEY_ERROR}}"></paper-input>
     <paper-input label="Name" type="text" name="name" value="{{ proxy_server.name }}" required></paper-input>
 
     <!-- TODO add the ability to upload files -->
@@ -12,7 +12,7 @@
       with the ability to access a proxy server.  The beginning of the file
       should resemble "-----BEGIN RSA PRIVATE KEY-----".
     </p>
-    <ufo-textarea label="SSH Private Key" name="private_key" value="{{ proxy_server.private_key }}" required></ufo-textarea>
+    <ufo-textarea label="SSH Private Key" name="private_key" value="{{ proxy_server.private_key }}" required auto-validate pattern="{{PRIVATE_KEY_PATTERN}}" error-message="{{PRIVATE_KEY_ERROR}}"></ufo-textarea>
 
     <p>
       For the hosts public key, you can usually get this value from either
@@ -22,7 +22,7 @@
     <p>
       For now, please be sure to use an RSA key (the text should begin with ssh-rsa).
     </p>
-    <paper-input label="SSH Host Public Key" type="text" name="public_key" value="{{ proxy_server.public_key }}" required></paper-input>
+    <paper-input label="SSH Host Public Key" type="text" name="public_key" value="{{ proxy_server.public_key }}" required auto-validate pattern="{{PUBLIC_KEY_PATTERN}}" error-message="{{PUBLIC_KEY_ERROR}}"></paper-input>
     <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
     <paper-button raised onclick="submitByFormId('proxy-edit-add-form')" class="form-submit-button" type="submit">Submit</paper-button>
   </form>
