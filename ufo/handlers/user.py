@@ -11,6 +11,7 @@ import ufo
 from ufo.database import models
 from ufo.services import google_directory_service
 from ufo.services import oauth
+from ufo.services import regex
 
 INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
@@ -149,7 +150,7 @@ def get_user_resources_dict():
     'hasAddFlow': True,
     'modalId': 'userModal',
     'dismissText': 'Cancel',
-    'regexes': ufo.REGEXES_AND_ERRORS_DICTIONARY,
+    'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
     'addFlowTextDicts': [
         {
           'id': 'groupAdd',
