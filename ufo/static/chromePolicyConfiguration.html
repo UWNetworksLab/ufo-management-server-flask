@@ -1,0 +1,35 @@
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+
+<dom-module id="chrome-policy-configuration">
+  <style is="custom-style">
+    #policy-config-form {
+      margin-left: 25px;
+      margin-bottom: 25px;
+    }
+  </style>
+  <template>
+    <form id="policy-config-form" method="post" action="{{ url_for('edit_policy_config') }}">
+      <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="Enforce Proxy Server Check from Invitation Link" {% if enforce_proxy_server_validity %}checked{% endif %}></ufo-toggle-input>
+      <br>
+      <ufo-toggle-input input-name="enforce_network_jail" button-text="Enforce Network Jail Before Google Login" {% if enforce_network_jail %}checked{% endif %}></ufo-toggle-input>
+      <br>
+      <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
+      <paper-button class="anchor-button" onclick="submitByFormId('policy-config-form')" type="submit">
+        Save
+      </paper-button>
+    </form>
+  </template>
+  <script>
+    Polymer({
+      is: 'chrome-policy-configuration',
+      properties: {
+        resources: {
+          type: Object,
+        },
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+    });
+  </script>
+</dom-module>
