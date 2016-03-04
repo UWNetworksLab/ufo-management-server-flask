@@ -290,28 +290,49 @@ class UserTest(base_test.BaseTest):
   def testDeleteUserPostHandler(self):
     """Test the delete user handler calls to delete the specified user."""
     user = self._CreateAndSaveFakeUser()
-    user_id = user.id
 
-    response = self.client.post(flask.url_for('delete_user', user_id=user_id))
+    post_data = {'user_id': json.dumps(user.id)}
+    response = self.client.post(flask.url_for('delete_user'), data=post_data)
 
-    user = models.User.query.get(user_id)
+    user = models.User.query.get(user.id)
     self.assertIsNone(user)
     self.assertEqual(response.data, self.client.get(flask.url_for('user_list')).data)
 
   def testUserGetNewKeyPairHandler(self):
     """Test get new key pair handler regenerates a key pair for the user."""
     user = self._CreateAndSaveFakeUser()
-    user_id = user.id
     user_private_key = user.private_key
 
-    response = self.client.post(flask.url_for('user_get_new_key_pair',
-                                              user_id=user_id),
-                                follow_redirects=False)
+    post_data = {'user_id': json.dumps(user.id)}
+    response = self.client.post(flask.url_for('user_get_new_key_pair'),
+                                data=post_data, follow_redirects=False)
 
     self.assertNotEqual(user_private_key, user.private_key)
 
-    self.assert_redirects(response, flask.url_for('user_details',
-                                                  user_id=user_id))
+    self.assert_redirects(response, flask.url_for('user_list'))
+
+  def testUserGetInviteCode(self):
+    """Test the user get invite code returns a valid invite code."""
+    fake_ip = '0.1.2.3'
+    proxy_server = models.ProxyServer(ip_address=fake_ip)
+    proxy_server.save()
+    created_user = self._CreateAndSaveFakeUser()
+
+    get_data = {'user_id': json.dumps(created_user.id)}
+    resp = self.client.get(flask.url_for('user_get_invite_code'),
+                           data=get_data)
+    invite_url = str(json.loads(resp.data)['invite_code'])
+
+    self.assertIn(user.INVITE_CODE_URL_PREFIX, invite_url)
+    invite_code_base64 = invite_url[len(user.INVITE_CODE_URL_PREFIX):]
+    invite_code_json = base64.urlsafe_b64decode(invite_code_base64)
+    invite_code = json.loads(invite_code_json)
+
+    self.assertEquals('Cloud', invite_code['networkName'])
+    self.assertEquals(fake_ip, invite_code['networkData']['host'])
+    self.assertEquals(created_user.email, invite_code['networkData']['user'])
+    self.assertEquals(created_user.private_key,
+                      invite_code['networkData']['pass'])
 
   def testUserToggleRevokedHandler(self):
     """Test toggle revoked handler changes the revoked status for a user."""
