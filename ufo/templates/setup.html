@@ -21,22 +21,28 @@
   <br>
 
   <paper-display-template resources="{{oauth_resources}}">
-    <oauth-configuration resources="{{oauth_resources}}">
-    </oauth-configuration>
+    <header-container resources="{{oauth_resources}}">
+      <oauth-configuration resources="{{oauth_resources}}">
+      </oauth-configuration>
+    </header-container>
   </paper-display-template>
 
   <br>
 
   <paper-display-template resources="{{policy_resources}}">
-    <chrome-policy resources="{{policy_resources}}">
-    </chrome-policy>
+    <header-container resources="{{policy_resources}}">
+      <chrome-policy resources="{{policy_resources}}">
+      </chrome-policy>
+    </header-container>
   </paper-display-template>
 
   <br>
 
   <paper-display-template resources="{{policy_config_resources}}">
-    <chrome-policy-configuration resources="{{policy_config_resources}}">
-    </chrome-policy-configuration>
+    <header-container resources="{{policy_config_resources}}">
+      <chrome-policy-configuration resources="{{policy_config_resources}}">
+      </chrome-policy-configuration>
+    </header-container>
   </paper-display-template>
 
   <!-- Remove this when it's properly in the base.html or provided any other ways. -->
