@@ -234,9 +234,8 @@ def add_user():
     user_key = flask.request.args.get('user_key')
     return _get_users_to_add(get_all, group_key, user_key)
 
-  json_users = flask.request.form.get('users')
   manual = flask.request.form.get('manual')
-  users_list = json.loads(json_users)
+  users_list = json.loads(flask.request.form.get('users'))
   config = ufo.get_user_config()
   for submitted_user in users_list:
     db_user = models.User()
@@ -286,8 +285,7 @@ def delete_user():
   Returns:
     A redirect to the user_list page after deleting the given user.
   """
-  json_id = flask.request.form.get('user_id')
-  user_id = json.loads(json_id)
+  user_id = json.loads(flask.request.form.get('user_id'))
   user = models.User.query.get_or_404(user_id)
   user.delete()
 
@@ -304,8 +302,7 @@ def user_get_new_key_pair():
   Returns:
     A redirect to the user_details page after rotating the user's keys.
   """
-  json_id = flask.request.form.get('user_id')
-  user_id = json.loads(json_id)
+  user_id = json.loads(flask.request.form.get('user_id'))
   user = models.User.query.get_or_404(user_id)
   user.regenerate_key_pair()
   user.save()
@@ -323,8 +320,7 @@ def user_get_invite_code():
   Returns:
     A json object with 'invite_code' set to the invite code string.
   """
-  json_id = flask.request.args.get('user_id')
-  user_id = json.loads(json_id)
+  user_id = json.loads(flask.request.args.get('user_id'))
   user = models.User.query.get_or_404(user_id)
   invite_code = _make_invite_code(user)
   invite_url = INVITE_CODE_URL_PREFIX + invite_code
@@ -342,8 +338,7 @@ def user_toggle_revoked():
   Returns:
     A redirect to the user_details page after flipping is_key_revoked.
   """
-  json_id = flask.request.form.get('user_id')
-  user_id = json.loads(json_id)
+  user_id = json.loads(flask.request.form.get('user_id'))
   user = models.User.query.get_or_404(user_id)
   user.is_key_revoked = not user.is_key_revoked
   user.did_cron_revoke = False
