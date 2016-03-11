@@ -211,7 +211,7 @@ def user_list():
   """Retrieves a list of the users currently in the db.
 
   Returns:
-    A json object with 'users' set to the list of users in the db.
+    A json object with 'items' set to the list of users in the db.
   """
   users_json = json.dumps(({'items': models.User.get_items_as_list_of_dict()}))
   return flask.Response(users_json, mimetype='application/json')
