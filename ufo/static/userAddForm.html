@@ -117,13 +117,13 @@
         this.setSelectedUsersFromCheckboxes();
         this.querySelector('#addPostForm').submit();
       },
-      parseGetResponse: function(e, detail) {
+      parseGetResponse: function(e, details) {
         this.set('lastResponse', e.target.request.lastResponse);
         this.set('showInputFields', false);
         this.set('isSpinnerOn', false);
       },
-      parsePostResponse: function(e, detail) {
-        this.sendUsersJsonToList(detail.xhr.response);
+      parsePostResponse: function(e, details) {
+        this.sendUsersJsonToList(details.xhr.response);
         this.set('isSpinnerOn', false);
         this.resetForms();
         var userModal = document.getElementById('userModal');

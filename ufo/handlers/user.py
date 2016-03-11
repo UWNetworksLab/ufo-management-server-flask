@@ -143,6 +143,19 @@ def get_user_resources_dict():
     'listId': 'userList',
     'listUrl': flask.url_for('user_list'),
     'listLimit': 10,
+    'revokeToggleUrl': flask.url_for('user_toggle_revoked'),
+    'rotateKeysUrl': flask.url_for('user_get_new_key_pair'),
+    'inviteCodeUrl': flask.url_for('user_get_invite_code'),
+    'deleteUrl': flask.url_for('delete_user'),
+    'detailsButtonText': 'User Details',
+    'detailsButtonId': 'userDetailsButton',
+    'detailsOverlayId': 'userDetailsOverlay',
+    'inviteCodeLabel': 'Invite Code',
+    'privateKeyLabel': 'SSH Private Key',
+    'publicKeyLabel': 'SSH Public Key',
+    'copyLabel': 'Copy Code',
+    'rotateKeysLabel': 'Create New Code',
+    'deleteLabel': 'Delete User',
     'seeAllText': 'See All Users',
     'titleText': 'Users',
     'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
@@ -223,9 +236,8 @@ def add_user():
     user_key = flask.request.args.get('user_key')
     return _get_users_to_add(get_all, group_key, user_key)
 
-  json_users = flask.request.form.get('users')
   manual = flask.request.form.get('manual')
-  users_list = json.loads(json_users)
+  users_list = json.loads(flask.request.form.get('users'))
   config = ufo.get_user_config()
   for submitted_user in users_list:
     db_user = models.User()
@@ -263,63 +275,75 @@ def user_details(user_id):
     return flask.render_template('user_details.html', user=user,
                                  invite_url=invite_url)
 
-@ufo.app.route('/user/<user_id>/delete', methods=['POST'])
+@ufo.app.route('/user/delete', methods=['POST'])
 @ufo.setup_required
-def delete_user(user_id):
+def delete_user():
   """Deletes the user corresponding to the passed in user_id from the db.
 
   If we had access to a delete method then we would not use get here.
   If the user is not found, this produces a 404 error which redirects to the
   error handler.
 
-  Args:
-    user_id: A string identifying a user in the database.
-
   Returns:
     A redirect to the user_list page after deleting the given user.
   """
+  user_id = json.loads(flask.request.form.get('user_id'))
   user = models.User.query.get_or_404(user_id)
   user.delete()
 
   return user_list()
 
-@ufo.app.route('/user/<user_id>/getNewKeyPair', methods=['POST'])
+@ufo.app.route('/user/getNewKeyPair', methods=['POST'])
 @ufo.setup_required
-def user_get_new_key_pair(user_id):
+def user_get_new_key_pair():
   """Rotates the key pair (public and private keys) for the given user.
 
   If the user is not found, this produces a 404 error which redirects to the
   error handler.
 
-  Args:
-    user_id: A string identifying a user in the database.
-
   Returns:
     A redirect to the user_details page after rotating the user's keys.
   """
+  user_id = json.loads(flask.request.form.get('user_id'))
   user = models.User.query.get_or_404(user_id)
   user.regenerate_key_pair()
   user.save()
 
-  return flask.redirect(flask.url_for('user_details', user_id=user_id))
+  return flask.redirect(flask.url_for('user_list'))
 
-@ufo.app.route('/user/<user_id>/toggleRevoked', methods=['POST'])
+@ufo.app.route('/user/getInviteCode', methods=['GET'])
 @ufo.setup_required
-def user_toggle_revoked(user_id):
+def user_get_invite_code():
+  """Get an invite code for the given user.
+
+  If the user is not found, this produces a 404 error which redirects to the
+  error handler.
+
+  Returns:
+    A json object with 'invite_code' set to the invite code string.
+  """
+  user_id = json.loads(flask.request.args.get('user_id'))
+  user = models.User.query.get_or_404(user_id)
+  invite_code = _make_invite_code(user)
+  invite_url = INVITE_CODE_URL_PREFIX + invite_code
+  code_json = json.dumps(({'invite_code': invite_url}))
+  return flask.Response(code_json, mimetype='application/json')
+
+@ufo.app.route('/user/toggleRevoked', methods=['POST'])
+@ufo.setup_required
+def user_toggle_revoked():
   """Toggles whether the given user's access is revoked or not.
 
   If the user is not found, this produces a 404 error which redirects to the
   error handler.
 
-  Args:
-    user_id: A string identifying a user in the database.
-
   Returns:
     A redirect to the user_details page after flipping is_key_revoked.
   """
+  user_id = json.loads(flask.request.form.get('user_id'))
   user = models.User.query.get_or_404(user_id)
   user.is_key_revoked = not user.is_key_revoked
   user.did_cron_revoke = False
   user.save()
 
-  return flask.redirect(flask.url_for('user_details', user_id=user_id))
+  return flask.redirect(flask.url_for('user_list'))

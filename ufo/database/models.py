@@ -10,6 +10,8 @@ from ufo.services import ssh_client
 LONG_STRING_LENGTH = 1024
 REVOKED_TEXT = 'Access Disabled'
 NOT_REVOKED_TEXT = 'Access Enabled'
+DISABLE_TEXT = 'Disable'
+ENABLE_TEXT = 'Enable'
 # Since we aren't using pypi, I don't think I have access to real enums.
 # We can add support using enum34 and pypi if we ever choose, but this method
 # using a dictionary should be sufficient until that time.
@@ -139,11 +141,13 @@ class User(Model):
 
   def to_dict(self):
     return {
+      "id": self.id,
       'email': self.email,
       'name': self.name,
       'private_key': self.private_key,
       'public_key': self.public_key,
       'access': REVOKED_TEXT if self.is_key_revoked else NOT_REVOKED_TEXT,
+      'accessChange': ENABLE_TEXT if self.is_key_revoked else DISABLE_TEXT,
     }
 
 
