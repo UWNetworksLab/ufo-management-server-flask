@@ -6,25 +6,8 @@
   <template>
     <div class="horizontal center-justified layout">
       <paper-material elevation="1">
-        <div class="heading">
-          <paper-toolbar class="medium-tall">
-            <div class="middle flex">
-              <div class="horizontal center-justified layout">
-                <div class="title">{{resources.titleText}}</div>
-                <template is="dom-if" if="{{resources.hasAddFlow}}">
-                  <add-item-button resources="{{resources}}"></add-item-button>
-                </template>
-              </div>
-            </div>
-          </paper-toolbar>
-        </div>
-        <div>
-          <content></content>
-        </div>
+        <content></content>
       </paper-material>
-      <template is="dom-if" if="{{resources.hasAddFlow}}">
-        <add-modal resources="{{resources}}"></add-modal>
-      </template>
     </div>
     <br>
   </template>
