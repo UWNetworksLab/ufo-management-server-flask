@@ -318,9 +318,9 @@ class UserTest(base_test.BaseTest):
     proxy_server.save()
     created_user = self._CreateAndSaveFakeUser()
 
-    get_data = {'user_id': json.dumps(created_user.id)}
+    get_data = {'user_id': created_user.id}
     resp = self.client.get(flask.url_for('user_get_invite_code'),
-                           data=get_data)
+                           query_string=get_data)
     invite_url = str(json.loads(resp.data)['invite_code'])
 
     self.assertIn(user.INVITE_CODE_URL_PREFIX, invite_url)

@@ -39,21 +39,19 @@
         border-bottom: 2px solid #25CFB9;
       }
     }
+    .spacer {
+      width: 20px;
+    }
   </style>
   <!-- TODO(eholder): Figure out how to make hover work with focused. -->
   <template>
     <template is="dom-if" if="{{loading}}">
       <paper-spinner active$={{loading}}></paper-spinner>
     </template>
-    <iron-ajax auto
-      url="{{resources.inviteCodeUrl}}"
-      params='{"user_id": "{{item.id}}"}'
-      method="GET"
-      handle-as="json"
-      id="getInviteCodeAjax"
-      loading="{{loading}}"
-      last-response="{{invitCodeJson}}">
     </iron-ajax>
+    <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" loading="{{loading}}" last-response="{{invitCodeJson}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax">
+      <input type="hidden" name="user_id" value="{{item.id}}">
+    </form>
     <paper-dialog id="{{resources.detailsOverlayId}}">
       <paper-listbox>
         <paper-icon-item id="topBar" class="horizontal center-justified layout">
@@ -73,26 +71,29 @@
         <div id="row1" class="horizontal around-justified layout">
           <div class="column1 flex">
             <p><strong>{{resources.inviteCodeLabel}}</strong></p>
-            <!-- TODO(eholder): Decide if invite code should be a property of
-            a user so that they are easier to obtain than another ajax call
-            each time.-->
-            <paper-input disabled type="text" value="{{invitCodeJson.invite_code}}"></paper-input>
+            <paper-input disabled type="text" id="lastInviteCode" value="{{invitCodeJson.invite_code}}"></paper-input>
           </div>
-          <div class="column2 flex">
+          <div class="column2 spacer">
+          </div>
+          <div class="column3 flex">
             <p><strong>{{resources.publicKeyLabel}}</strong></p>
             <paper-input disabled type="text" value="{{item.public_key}}"></paper-input>
           </div>
         </div>
         <div id="row2" class="horizontal around-justified layout">
           <div class="column1 flex">
-            <paper-button on-tap="copyInviteCode" class="anchor-button"><strong>{{resources.copyLabel}}</strong></paper-button>
-            <form is="iron-form" method="post" action="{{resources.rotateKeysUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="enableSpinner">
-              <input type="hidden" name="user_id" value="{{item.id}}">
-              <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-              <paper-button on-tap="submitForm" class="anchor-button" type="submit"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
-            </form>
+            <div id="innerRow" class="horizontal start-justified layout">
+              <paper-button on-tap="copyInviteCode" class="anchor-button"><strong>{{resources.copyLabel}}</strong></paper-button>
+              <form is="iron-form" method="post" action="{{resources.rotateKeysUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="enableSpinner">
+                <input type="hidden" name="user_id" value="{{item.id}}">
+                <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+                <paper-button on-tap="submitForm" class="anchor-button" type="submit"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
+              </form>
+            </div>
           </div>
-          <div class="column2 flex">
+          <div class="column2 spacer">
+          </div>
+          <div class="column3 flex">
             <p><strong>{{resources.privateKeyLabel}}</strong></p>
             <paper-input disabled type="text" value="{{item.private_key}}"></paper-input>
           </div>
@@ -131,6 +132,10 @@
           value: false,
           notify: true,
         },
+        invitCodeJson: {
+          type: Object,
+          notify: true,
+        },
       },
       setAjaxResponse: function(response) {
         this.set('ajaxResponse', response);
@@ -159,11 +164,15 @@
       },
       parseRotateResponse: function(e, details) {
         this.sendUsersJsonToList(details.xhr.response);
-        this.getInviteCodeAjax.generateRequest();
+        this.getUpdatedInviteCode();
       },
       parseDeleteResponse: function(e, details) {
         this.sendUsersJsonToList(details.xhr.response);
         this.closeDialog();
+      },
+      parseInviteCodeResponse: function(e, details) {
+        this.set('invitCodeJson', details.xhr.response);
+        this.set('loading', false);
       },
       sendUsersJsonToList: function(updatedUsersJson) {
         var listElem = document.getElementById(this.resources.listId);
@@ -175,18 +184,25 @@
       openDialog: function() {
         var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
         dialog.open();
+        this.getUpdatedInviteCode();
       },
       closeDialog: function() {
         var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
         dialog.close();
       },
       copyInviteCode: function(e, details) {
-        console.log(e);
-        console.log(details);
+        var elem = this.$.lastInviteCode;
+        var input = document.createElement('input');
+        input.style.position = 'fixed';
+        input.style.zIndex = '-1';
+        input.value = elem.value;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
       },
-      submitRotateKeyForm: function(e, details) {
-        console.log(e);
-        console.log(details);
+      getUpdatedInviteCode: function() {
+        this.$.getInviteCodeAjax.submit()
       },
     });
   </script>

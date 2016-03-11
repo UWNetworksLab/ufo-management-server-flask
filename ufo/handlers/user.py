@@ -323,7 +323,7 @@ def user_get_invite_code():
   Returns:
     A json object with 'invite_code' set to the invite code string.
   """
-  json_id = flask.request.form.get('user_id')
+  json_id = flask.request.args.get('user_id')
   user_id = json.loads(json_id)
   user = models.User.query.get_or_404(user_id)
   invite_code = _make_invite_code(user)
