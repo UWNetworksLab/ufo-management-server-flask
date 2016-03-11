@@ -3,8 +3,6 @@
 import json
 
 import flask
-# Renaming search to sa_search to avoid name conflicts.
-from sqlalchemy_searchable import search as sa_search
 
 import ufo
 from ufo.database import models
