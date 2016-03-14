@@ -8,7 +8,7 @@ paper-card {
 }
 
 form {
-  max-width: 800px;
+  max-width: 90%;
 }
 
 paper-tab {
@@ -109,6 +109,11 @@ paper-dialog-scrollable > div {
 
 .paper-input-container.label-is-highlighted label {
   color: #25CFB9!important;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
 }
 
 #jigsaw-logo {
