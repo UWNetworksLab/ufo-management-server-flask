@@ -23,7 +23,7 @@
   </style>
   <template>
 
-    <form is="iron-form" method="GET" action="{{userResources.searchUrl}}" loading="{{loading}}" last-response="{{searchJson}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseSearchResponse" id="searchForm" content-type="application/json">
+    <form is="iron-form" method="GET" action="{{userResources.searchJsonUrl}}" loading="{{loading}}" last-response="{{searchJson}}" on-iron-form-presubmit="presubmit" on-iron-form-response="parseSearchResponse" id="searchForm" content-type="application/json">
       <paper-input id="searchBar" no-label-float name="search_input" value="{{searchText}}">
         <paper-icon-button icon="search" prefix on-tap="submitForm"></paper-icon-button>
         <paper-icon-button icon="arrow-back" suffix id="suffix" class="hideSuffix" on-tap="resetLists"></paper-icon-button>
@@ -59,8 +59,18 @@
           notify: true,
         },
       },
-      enableSpinner: function() {
+      presubmit: function() {
+        var userList = document.getElementById(this.userResources.listId);
+        var serverList = document.getElementById(
+          this.proxyServerResources.listId);
+        if (!userList && !serverList) {
+          var queryString = "?search_text=" + this.$.hiddenSearch.value;
+          var locationString = this.userResources.searchPageUrl + queryString;
+          window.location.href = locationString;
+        }
         this.set('loading', true);
+        this.$.suffix.className = this.$.suffix.className.replace(
+          'hideSuffix', 'showSuffix');
       },
       submitForm: function(e, details) {
         var elem = e.target;
@@ -85,11 +95,6 @@
             this.proxyServerResources.listId);
         }
         this.set('loading', false);
-        console.log(this.$.suffix);
-        console.log(this.$.suffix.className);
-        this.$.suffix.className = this.$.suffix.className.replace(
-          'hideSuffix', 'showSuffix');
-        console.log(this.$.suffix.className);
       },
       sendJsonToList: function(updatedJson, elementId) {
         var listElem = document.getElementById(elementId);
@@ -107,11 +112,8 @@
         if (serverList) {
           serverList.resendRequest();
         }
-        console.log(this.$.suffix);
-        console.log(this.$.suffix.className);
         this.$.suffix.className = this.$.suffix.className.replace(
           'showSuffix', 'hideSuffix');
-        console.log(this.$.suffix.className);
       },
     });
   </script>
