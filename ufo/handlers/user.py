@@ -137,7 +137,7 @@ def get_user_resources_dict():
   """
   return {
     'addUrl': flask.url_for('add_user'),
-    'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
+    'addIconUrl': flask.url_for('static', filename='img/add-users-inverse.svg'),
     'addText': 'Add Users',
     'lookAgainText': 'Search Again',
     'listId': 'userList',
