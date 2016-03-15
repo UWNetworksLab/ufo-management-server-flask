@@ -9,6 +9,7 @@ import ufo
 from ufo.handlers import chrome_policy
 from ufo.handlers import user
 from ufo.handlers import proxy_server
+from ufo.handlers import settings
 from ufo.services import oauth
 
 
@@ -51,13 +52,12 @@ def setup():
     oauth_resources_dict = _get_oauth_configration_resources_dict(config,
                                                                   oauth_url)
     policy_resources_dict = chrome_policy.get_policy_resources_dict()
-    policy_config_resources_dict = (
-        chrome_policy.get_policy_configuration_resources_dict())
+    settings_resources_dict = settings.get_settings_resources_dict()
 
     return flask.render_template(
         'setup.html',
         oauth_url=oauth_url,
-        policy_config_resources=json.dumps(policy_config_resources_dict),
+        settings_resources=json.dumps(settings_resources_dict),
         policy_resources=json.dumps(policy_resources_dict),
         proxy_server_resources=json.dumps(proxy_server_resources_dict),
         oauth_resources=json.dumps(oauth_resources_dict),

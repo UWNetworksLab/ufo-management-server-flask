@@ -39,7 +39,9 @@ class SetupTest(base_test.BaseTest):
     args, kwargs = mock_render_template.call_args
     self.assertEquals('setup.html', args[0])
     self.assertIsNotNone(kwargs['oauth_resources'])
+    self.assertIsNotNone(kwargs['settings_resources'])
     self.assertIsNotNone(kwargs['policy_resources'])
+    self.assertIsNotNone(kwargs['proxy_server_resources'])
     self.assertIsNotNone(kwargs['oauth_url'])
     self.assertIsNotNone(kwargs['user_resources'])
 
