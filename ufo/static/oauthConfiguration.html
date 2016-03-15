@@ -5,15 +5,22 @@
 
 <dom-module id="oauth-configuration">
   <style is="custom-style">
-    #oauth-configuration-form {
+    #oauth-configuration, #oauth-configuration-form {
       margin-left: 25px;
+      margin-right: 25px;
       margin-bottom: 25px;
+    }
+    .buttons {
+      margin-top: 35px;
+    }
+    paper-input {
+      margin-left: -10px;
     }
   </style>
   <template>
     <!-- TODO: Make a clear way to say you do not want to use Google apps. -->
     <!-- TODO: Extract these strings so they can be i18n. -->
-    <paper-listbox id="chrome-policy">
+    <paper-listbox id="oauth-configuration">
       <template is="dom-if" if="{{!resources.config.is_configured}}">
         <paper-item>
           <p>
