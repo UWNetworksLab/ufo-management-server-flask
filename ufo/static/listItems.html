@@ -39,7 +39,7 @@
     <template is="dom-if" if="{{loading}}">
       <paper-spinner active$={{loading}}></paper-spinner>
     </template>
-    <iron-ajax auto
+    <iron-ajax auto$="[[autoGet]]"
       url="{{resources.listUrl}}"
       method="GET"
       handle-as="json"
@@ -110,6 +110,11 @@
           type: Number,
           value: 25,
         },
+        autoGet: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
       },
       _limitCharacters: function(text) {
         if (text.length > this.characterLimit) {
@@ -135,6 +140,9 @@
       },
       setAjaxResponse: function(response) {
         this.set('ajaxResponse', response);
+      },
+      resendRequest: function() {
+        this.$.getItemsAjax.generateRequest();
       },
       enableSpinner: function() {
         this.set('loading', true);

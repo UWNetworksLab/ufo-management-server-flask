@@ -1,5 +1,6 @@
 import flask
 from flask.ext import sqlalchemy
+from flask.ext import whooshalchemy
 import functools
 import os
 import sys
@@ -19,6 +20,7 @@ app.logger.setLevel(logging.INFO)
 
 if 'DATABASE_URL' in os.environ:
   app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+  app.config['WHOOSH_BASE'] = os.environ['DATABASE_URL']
 
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
@@ -30,6 +32,9 @@ db = sqlalchemy.SQLAlchemy(app)
 
 # DB needs to be defined before this point
 from ufo.database import models
+
+whooshalchemy.whoosh_index(app, models.User)
+whooshalchemy.whoosh_index(app, models.ProxyServer)
 
 @app.after_request
 def checkCredentialChange(response):

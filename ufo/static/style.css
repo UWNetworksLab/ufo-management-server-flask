@@ -99,7 +99,7 @@ paper-dialog-scrollable > div {
   font-weight: 500!important;
 }
 
-.search .paper-input-container.underline, .custom-dropdown .paper-input-container.underline {
+.custom-dropdown .paper-input-container.underline {
   display: none;
 }
 
@@ -130,10 +130,6 @@ paper-dialog-scrollable > div {
 
 #main-toolbar-title {
   color: white!important;
-}
-
-#search-bar {
-  background-color: #4DB6AB;
 }
 
 #username-and-menu {

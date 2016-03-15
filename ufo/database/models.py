@@ -51,7 +51,38 @@ class Model(ufo.db.Model):
 
   @classmethod
   def get_items_as_list_of_dict(cls):
-    items = cls.query.all()
+    """Retrieves a list of all the entities of this class in dictionary form.
+
+    Returns:
+      A list of entities in dictionary form from the database.
+    """
+    return cls.make_items_into_list_of_dict(cls.query.all())
+
+  @classmethod
+  def search(cls, search_text):
+    """Retrieves a list of the entities matching the search string.
+
+    This uses whoosh_search from the whoosh alchemy flask extension.
+
+    Args:
+      search_text: A string of the text to search for in the db.
+
+    Returns:
+      A list of entities in dictionary form matching the search string.
+    """
+    items = cls.query.whoosh_search(search_text, or_=True).all()
+    return cls.make_items_into_list_of_dict(items)
+
+  @classmethod
+  def make_items_into_list_of_dict(cls, items):
+    """Transforms a list of entities into a list of their dictionary form.
+
+    Args:
+      items: The entities in the database to transform.
+
+    Returns:
+      A list of the given entities in dictionary form.
+    """
     to_return = []
     for item in items:
       to_return.append(item.to_dict())
@@ -63,6 +94,7 @@ class Config(Model):
   configuration
   """
   __tablename__ = 'config'
+  __searchable__ = []
 
   id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
@@ -102,6 +134,7 @@ class User(Model):
   """Class for information about the users of the proxy servers
   """
   __tablename__ = "user"
+  __searchable__ = ['email', 'name', 'domain']
 
   id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
@@ -155,6 +188,7 @@ class ProxyServer(Model):
   """Class for information about the proxy servers
   """
   __tablename__ = "proxyserver"
+  __searchable__ = ['ip_address', 'name']
 
   id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 

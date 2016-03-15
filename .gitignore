@@ -1,4 +1,5 @@
 instance/*
+sqlite:/*
 venv/*
 .project
 .pydevproject

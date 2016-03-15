@@ -136,6 +136,8 @@ def get_user_resources_dict():
       A dict of the resources for the user component.
   """
   return {
+    'searchPageUrl': flask.url_for('search_page'),
+    'searchJsonUrl': flask.url_for('search'),
     'addUrl': flask.url_for('add_user'),
     'addIconUrl': flask.url_for('static', filename='img/add-users-inverse.svg'),
     'addText': 'Add Users',
@@ -211,7 +213,7 @@ def user_list():
   """Retrieves a list of the users currently in the db.
 
   Returns:
-    A json object with 'users' set to the list of users in the db.
+    A json object with 'items' set to the list of users in the db.
   """
   users_json = json.dumps(({'items': models.User.get_items_as_list_of_dict()}))
   return flask.Response(users_json, mimetype='application/json')

@@ -19,6 +19,9 @@
     width: 20px;
     --iron-icon-fill-color: #009788;
   }
+  .verticalSpacer {
+    height: 20px;
+  }
 </style>
 <body class="fullbleed layout vertical">
   <paper-scroll-header-panel>
@@ -28,9 +31,12 @@
           <img src="{{ url_for('static', filename='img/ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
         </div>
         <div class="flex"></div>
-        <paper-input class="center flex-4 search" id="search-bar">
-          <paper-icon-button icon="search" prefix></paper-icon-button>
-        </paper-input>
+        <div class="vertical layout flex-4">
+          <div class="verticalSpacer"><p></div>
+          <ufo-search-bar class="flex" user-resources="{{user_resources}}" proxy-server-resources="{{proxy_server_resources}}">
+          </ufo-search-bar>
+          <div class="verticalSpacer"></div>
+        </div>
         <div class="flex"></div>
         <paper-dropdown-menu label="foo" id="username-and-menu" class="custom-dropdown flex">
           <paper-listbox class="dropdown-content">
