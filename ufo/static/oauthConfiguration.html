@@ -5,8 +5,13 @@
 
 <dom-module id="oauth-configuration">
   <style is="custom-style">
-    #oauth-configuration, #oauth-configuration-form {
-      margin-left: 25px;
+    p, #oauth-configuration-form {
+      margin-left: 40px;
+    }
+    #oauth-configuration-form {
+      margin-left: 50px;
+    }
+    p, #oauth-configuration-form {
       margin-right: 25px;
       margin-bottom: 25px;
     }
@@ -20,75 +25,62 @@
   <template>
     <!-- TODO: Make a clear way to say you do not want to use Google apps. -->
     <!-- TODO: Extract these strings so they can be i18n. -->
-    <paper-listbox id="oauth-configuration">
       <template is="dom-if" if="{{!resources.config.is_configured}}">
-        <paper-item>
-          <p>
-            Hey there!  Welcome to the uProxy for Organizations management server!
-            To start, we want to get a bit of information from you to get everything
-            set up.
-          </p>
-          <p>
-            First of all, if you are planning on using this application with a Google
-            apps domain, we're going to need to get permission from you to access
-            that.  This will be used to keep the list of users in your domain in sync
-            with who is allowed to access the uProxy servers.  The credentials you
-            authorize will be shared by any administrators who log into this server.
-            If you do not plan on using a Google apps domain with this product, you
-            can just go straight to adding users.
-          </p>
-        </paper-item>
+        <p>
+          Hey there!  Welcome to the uProxy for Organizations management server!
+          To start, we want to get a bit of information from you to get everything
+          set up.
+        </p>
+        <p>
+          First of all, if you are planning on using this application with a Google
+          apps domain, we're going to need to get permission from you to access
+          that.  This will be used to keep the list of users in your domain in sync
+          with who is allowed to access the uProxy servers.  The credentials you
+          authorize will be shared by any administrators who log into this server.
+          If you do not plan on using a Google apps domain with this product, you
+          can just go straight to adding users.
+        </p>
       </template>
 
       <template is="dom-if" if="{{resources.config.is_configured}}">
-        <paper-item>
-          <p>
-            You have already successfully configured this deployment!  If you want to
-            change the settings, you may do so below.  Please note: submitting the
-            form even without filling in any parameters will cause the previous saved
-            configuration to be lost.
-          </p>
-        </paper-item>
+        <p>
+          You have already successfully configured this deployment!  If you want to
+          change the settings, you may do so below.  Please note: submitting the
+          form even without filling in any parameters will cause the previous saved
+          configuration to be lost.
+        </p>
   
         <template is="dom-if" if="{{isDomainConfigured(resources.config)}}">
-          <paper-item>
-            <p>
-              This site is set up to work with the
-              <strong>{{resources.config.domain}}</strong> domain.  If that is not correct,
-              please update the configuration.
-            </p>
-          </paper-item>
+          <p>
+            This site is set up to work with the
+            <strong>{{resources.config.domain}}</strong> domain.  If that is not correct,
+            please update the configuration.
+          </p>
         </template>
   
         <template is="dom-if" if="{{!isDomainConfigured(resources.config)}}">
-          <paper-item>
-            <p>
-              This site is not set up to use any Google apps domain name, all users
-              will need to be manually input.
-            </p>
-          </paper-item>
+          <p>
+            This site is not set up to use any Google apps domain name, all users
+            will need to be manually input.
+          </p>
         </template>
       </template>
 
-      <paper-item>
         <p>
           Please keep in mind that this is a much simpler version than what you
           would actually expect to see in a finished version of the site.
           Noteably, this page should include something about authenticating
           yourself in the future (and actually include a way to skip)
         </p>
-      </paper-item>
 
-      <paper-item>
-        <a class="anchor-no-button" href="{{resources.oauth_url}}" target="_blank">Connect to your domain</a>
-      </paper-item>
+        <p>
+          <a class="anchor-no-button" href="{{resources.oauth_url}}" target="_blank">Connect to your domain</a>
+        </p>
 
-      <paper-item>
          <p>
            Once you finish authorizing access, please paste the code you receive in
            the box below.
          </p>
-       </paper-item>
   
       <!-- TODO make this form be more useful -->
       <form id="oauth-configuration-form" method="post" action="{{resources.setup_url}}">
@@ -101,7 +93,6 @@
           </paper-button>
         </div>
       </form>
-    </paper-listbox>
   </template>
 
   <script>
