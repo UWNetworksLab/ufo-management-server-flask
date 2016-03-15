@@ -10,7 +10,8 @@ from ufo.handlers import user
 from ufo.handlers import proxy_server
 
 
-@ufo.app.route('/search/', methods=['GET'])
+# TODO(eholder): Add tests for these in a separate PR.
+@ufo.app.route('/searchpage/', methods=['GET'])
 @ufo.setup_required
 def search_page():
   """Renders the basic search page template.
@@ -19,8 +20,8 @@ def search_page():
     A rendered template of search.html.
   """
   search_text = json.loads(flask.request.args.get('search_text'))
-  user_items = _user_search_json_helper(search_text)
-  proxy_server_items = _server_search_json_helper(search_text)
+  user_items = _search_user(search_text)
+  proxy_server_items = _search_proxy_server(search_text)
 
   user_resources_dict = user.get_user_resources_dict()
   user_resources_dict['hasAddFlow'] = False
@@ -34,9 +35,9 @@ def search_page():
       user_items=json.dumps(user_items),
       proxy_server_items=json.dumps(proxy_server_items))
 
-@ufo.app.route('/search_results/', methods=['GET'])
+@ufo.app.route('/search/', methods=['GET'])
 @ufo.setup_required
-def search_json():
+def search():
   """Gets the database entities matching the search term.
 
   Returns:
@@ -44,26 +45,14 @@ def search_json():
     set to the proxy servers found.
   """
   search_text = json.loads(flask.request.args.get('search_text'))
-  results_json = _search_json_helper(search_text)
+  results_dict = {
+    'users': _search_user(search_text),
+    'servers': _search_proxy_server(search_text),
+  }
+  results_json = json.dumps((results_dict))
   return flask.Response(results_json, mimetype='application/json')
 
-def _search_json_helper(search_text):
-  """Gets the database entities matching the search term.
-
-  Args:
-    search_text: A string for the search term.
-
-  Returns:
-    A json object with users set to the users found and servers set to the
-    proxy servers found.
-  """
-  results_dict = {
-    'users': _user_search_json_helper(search_text),
-    'servers': _server_search_json_helper(search_text),
-  }
-  return json.dumps((results_dict))
-
-def _user_search_json_helper(search_text):
+def _search_user(search_text):
   """Gets the database users matching the search term.
 
   Args:
@@ -77,7 +66,7 @@ def _user_search_json_helper(search_text):
   }
   return results_dict
 
-def _server_search_json_helper(search_text):
+def _search_proxy_server(search_text):
   """Gets the database proxy servers matching the search term.
 
   Args:
