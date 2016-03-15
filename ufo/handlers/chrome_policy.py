@@ -53,6 +53,7 @@ def get_policy_configuration_resources_dict():
   return {
     'hasAddFlow': False,
     'titleText': 'Chrome Policy Configurations',
+    'editUrl': flask.url_for('edit_policy_config'),
   }
 
 

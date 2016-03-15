@@ -9,12 +9,12 @@
     }
   </style>
   <template>
-    <form id="policy-config-form" method="post" action="{{ url_for('edit_policy_config') }}">
+    <form id="policy-config-form" method="post" action="{{resources.editUrl}}">
       <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="Enforce Proxy Server Check from Invitation Link" {% if enforce_proxy_server_validity %}checked{% endif %}></ufo-toggle-input>
       <br>
       <ufo-toggle-input input-name="enforce_network_jail" button-text="Enforce Network Jail Before Google Login" {% if enforce_network_jail %}checked{% endif %}></ufo-toggle-input>
       <br>
-      <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
+      <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
       <div class="buttons">
         <paper-button class="anchor-button" onclick="submitByFormId('policy-config-form')" type="submit">
           Save
