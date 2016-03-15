@@ -17,7 +17,7 @@ Polymer({
   },
   flipHiddenInput: function(e) {
     var toggleElem = event.path[0];
-    var hiddenInput = toggleElem.querySelector('input');
+    var hiddenInput = this.$.hiddenToggle;
     hiddenInput.value = toggleElem.checked;
   }
 });

@@ -28,6 +28,21 @@ def _make_chrome_policy_json():
 
   return json.dumps(policy_dictionary)
 
+def _make_settings_json():
+  """Generates the json string of all settings based on values in the db.
+
+  Returns:
+    A json string of current server settings.
+  """
+  config = ufo.get_user_config()
+
+  settings_dictionary = {
+      "enforce_network_jail": config.network_jail_until_google_auth,
+      "enforce_proxy_server_validity": config.proxy_server_validity,
+  }
+
+  return json.dumps(settings_dictionary)
+
 
 def get_policy_resources_dict():
   """Get the resources for the chrome policy component.
@@ -53,7 +68,11 @@ def get_policy_configuration_resources_dict():
   return {
     'hasAddFlow': False,
     'titleText': 'Chrome Policy Configurations',
+    'getSettingsUrl': flask.url_for('get_settings'),
     'editUrl': flask.url_for('edit_policy_config'),
+    'proxyValidityText': 'Enforce Proxy Server Check from Invitation Link',
+    'networkJailText': 'Enforce Network Jail Before Google Login',
+    'saveText': 'Save',
   }
 
 
@@ -72,6 +91,17 @@ def display_chrome_policy():
       'chrome_policy.html', policy_json=policy_json,
       enforce_proxy_server_validity=config.proxy_server_validity,
       enforce_network_jail=config.network_jail_until_google_auth)
+
+
+@ufo.app.route('/settings/', methods=['GET'])
+@ufo.setup_required
+def get_settings():
+  """Gets the current settings as a json object.
+
+  Returns:
+    A flask response with the json settings.
+  """
+  return flask.Response(_make_settings_json(), mimetype='application/json')
 
 
 @ufo.app.route('/chromepolicy/download/')
@@ -109,4 +139,4 @@ def edit_policy_config():
 
   config.save()
 
-  return flask.redirect(flask.url_for('display_chrome_policy'))
+  return flask.redirect(flask.url_for('get_settings'))
