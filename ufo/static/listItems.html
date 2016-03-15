@@ -141,6 +141,9 @@
       setAjaxResponse: function(response) {
         this.set('ajaxResponse', response);
       },
+      resendRequest: function() {
+        this.$.getItemsAjax.generateRequest();
+      },
       enableSpinner: function() {
         this.set('loading', true);
       },

@@ -136,6 +136,7 @@ def get_user_resources_dict():
       A dict of the resources for the user component.
   """
   return {
+    'searchUrl': flask.url_for('search_json'),
     'addUrl': flask.url_for('add_user'),
     'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
     'addText': 'Add Users',

@@ -21,16 +21,31 @@ def search_page():
   search_text = json.loads(flask.request.args.get('search_text'))
   user_resources_dict = user.get_user_resources_dict()
   user_resources_dict['hasAddFlow'] = False
-  user_results = models.User.search(search_text)
-  user_items = json.dumps(({'items': user_results}))
   proxy_server_resources_dict = proxy_server.get_proxy_resources_dict()
   proxy_server_resources_dict['hasAddFlow'] = False
-  proxy_server_results = models.ProxyServer.search(search_text)
-  proxy_server_items = json.dumps(({'items': proxy_server_results}))
 
   return flask.render_template(
       'search.html',
       user_resources=json.dumps(user_resources_dict),
-      user_items=user_items,
-      proxy_server_resources=json.dumps(proxy_server_resources_dict),
-      proxy_server_items=proxy_server_items)
+      proxy_server_resources=json.dumps(proxy_server_resources_dict))
+
+@ufo.app.route('/search_results/', methods=['GET'])
+@ufo.setup_required
+def search_json():
+  """Gets the database entities matching the search term.
+
+  Returns:
+    A json object with users set to the users found and servers set to the
+    proxy servers found.
+  """
+  search_text = json.loads(flask.request.args.get('search_text'))
+  results_dict = {
+    'users': {
+      'items': models.User.search(search_text),
+    },
+    'servers': {
+      'items': models.ProxyServer.search(search_text),
+    },
+  }
+  results_json = json.dumps((results_dict))
+  return flask.Response(results_json, mimetype='application/json')

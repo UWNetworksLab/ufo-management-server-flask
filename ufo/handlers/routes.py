@@ -23,7 +23,7 @@ def new_landing():
   return flask.render_template(
       'landing2.html',
       user_resources=json.dumps(user_resources_dict),
-      proxy_resources=json.dumps(proxy_resources_dict),
+      proxy_server_resources=json.dumps(proxy_resources_dict),
       policy_resources=json.dumps(policy_resources_dict))
 
 
