@@ -32,6 +32,34 @@ def _get_oauth_configration_resources_dict(config, oauth_url):
     'oauth_url': oauth_url,
     'setup_url': flask.url_for('setup'),
     'titleText': 'Oauth Configuration',
+    'welcomeText': ('Hey there! Welcome to the uProxy for Organizations '
+        'management server! To start, we want to get a bit of information from'
+        ' you to get everything set up.'),
+    'googleDomainPromptText': ('First of all, if you are planning on using '
+        'this application with a Google apps domain, we\'re going to need to '
+        'get permission from you to access that. This will be used to keep '
+        'the list of users in your domain in sync with who is allowed to '
+        'access the uProxy servers. The credentials you authorize will be '
+        'shared by any administrators who log into this server. If you do not '
+        'plan on using a Google apps domain with this product, you can just go'
+        ' straight to adding users.'),
+    'successSetupText': ('You have already successfully configured this '
+        'deployment! If you want to change the settings, you may do so below. '
+        'Please note: submitting the form even without filling in any '
+        'parameters will cause the previous saved configuration to be lost.'),
+    'domainConfiguredText': ('This site is set up to work with the following '
+        'domain. If that is not correct, please update the configuration.'),
+    'noDomainConfiguredText': ('This site is not set up to use any Google apps'
+        ' domain name. All users will need to be manually input.'),
+    'betaWarningText': ('Please keep in mind that this is a much simpler '
+        'version than what you would actually expect to see in a finished '
+        'version of the site. Noteably, this page should include something '
+        'about authenticating yourself in the future (and actually include a '
+        'way to skip).'),
+    'connectYourDomainButtonText': 'Connect to Your Domain',
+    'pasteTheCodeText': ('Once you finish authorizing access, please paste the'
+        ' code you receive in the box below.'),
+    'submitButtonText': 'Submit',
   }
 
 
