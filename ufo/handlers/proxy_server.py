@@ -17,8 +17,8 @@ def get_proxy_resources_dict():
   """
   return {
     'addUrl': flask.url_for('proxyserver_add'),
-    'addInverseIconUrl': flask.url_for('static', filename='img/add-servers-inverse.svg'),
     'addIconUrl': flask.url_for('static', filename='img/add-servers.svg'),
+    'addInverseIconUrl': flask.url_for('static', filename='img/add-servers-inverse.svg'),
     'addText': 'Add a Server',
     'listId': 'proxyList',
     'listUrl': flask.url_for('proxyserver_list'),
