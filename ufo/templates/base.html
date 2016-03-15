@@ -28,7 +28,9 @@
     <paper-toolbar class="tall" id="main-toolbar">
       <div class="middle horizontal layout center flex">
         <div class="flex">
-          <img src="{{ url_for('static', filename='img/ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
+          <a href="{{ url_for('new_landing') }}">
+            <img src="{{ url_for('static', filename='img/ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
+          </a>
         </div>
         <div class="flex"></div>
         <div class="vertical layout flex-4">
