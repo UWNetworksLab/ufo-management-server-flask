@@ -26,6 +26,10 @@ def get_proxy_resources_dict():
     'detailsButtonText': 'Edit Server',
     'detailsButtonId': 'serverEditButton',
     'detailsOverlayId': 'serverEditOverlay',
+    'editText': 'Edit',
+    'deleteLabel': 'Delete Server',
+    'editUrl': flask.url_for('proxyserver_list'),
+    'deleteUrl': flask.url_for('proxyserver_delete'),
     'seeAllText': 'See All Servers',
     'titleText': 'Servers',
     'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
@@ -109,11 +113,11 @@ def proxyserver_edit(server_id):
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-@ufo.app.route('/proxyserver/<server_id>/delete')
+@ufo.app.route('/proxyserver/delete', methods=['POST'])
 @ufo.setup_required
-def proxyserver_delete(server_id):
+def proxyserver_delete():
   """Handler for deleting an existing proxy server."""
-  #TODO should at least be post
+  server_id = json.loads(flask.request.form.get('server_id'))
   server = models.ProxyServer.query.get_or_404(server_id)
   server.delete()
 
