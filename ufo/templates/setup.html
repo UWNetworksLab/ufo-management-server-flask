@@ -2,17 +2,17 @@
 {% block title %}Setup{% endblock %}
 {% block body %}
   <paper-display-template resources="{{user_resources}}">
-    <form-container-with-left-icon resources="{{user_resources}}">
+    <left-icon-container resources="{{user_resources}}">
       <user-add-tabs resources="{{user_resources}}">
       </user-add-tabs>
-    </form-container-with-left-icon>
+    </left-icon-container>
   </paper-display-template>
 
   <paper-display-template resources="{{proxy_server_resources}}">
-    <form-container-with-left-icon resources="{{proxy_server_resources}}">
+    <left-icon-container resources="{{proxy_server_resources}}">
       <server-add-form resources="{{proxy_server_resources}}">
       </server-add-form>
-    </form-container-with-left-icon>
+    </left-icon-container>
   </paper-display-template>
 
   <paper-display-template resources="{{oauth_resources}}">
