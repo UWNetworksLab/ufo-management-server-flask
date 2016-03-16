@@ -1,15 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Setup{% endblock %}
 {% block body %}
-
   <paper-display-template resources="{{user_resources}}">
     <form-container-with-left-icon resources="{{user_resources}}">
       <user-add-tabs resources="{{user_resources}}">
       </user-add-tabs>
     </form-container-with-left-icon>
   </paper-display-template>
-
-  <br>
 
   <paper-display-template resources="{{proxy_server_resources}}">
     <form-container-with-left-icon resources="{{proxy_server_resources}}">
@@ -18,16 +15,12 @@
     </form-container-with-left-icon>
   </paper-display-template>
 
-  <br>
-
   <paper-display-template resources="{{oauth_resources}}">
     <header-container resources="{{oauth_resources}}">
       <oauth-configuration resources="{{oauth_resources}}">
       </oauth-configuration>
     </header-container>
   </paper-display-template>
-
-  <br>
 
   <paper-display-template resources="{{policy_resources}}">
     <header-container resources="{{policy_resources}}">
@@ -36,12 +29,10 @@
     </header-container>
   </paper-display-template>
 
-  <br>
-
-  <paper-display-template resources="{{policy_config_resources}}">
-    <header-container resources="{{policy_config_resources}}">
-      <chrome-policy-configuration resources="{{policy_config_resources}}">
-      </chrome-policy-configuration>
+  <paper-display-template resources="{{settings_resources}}">
+    <header-container resources="{{settings_resources}}">
+      <settings-configuration resources="{{settings_resources}}">
+      </settings-configuration>
     </header-container>
   </paper-display-template>
 

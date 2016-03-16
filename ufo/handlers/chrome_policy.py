@@ -41,18 +41,27 @@ def get_policy_resources_dict():
     'hasAddFlow': False,
     'policy_filename': 'chrome_policy.json',
     'titleText': 'Chrome Policy',
-  }
-
-
-def get_policy_configuration_resources_dict():
-  """Get the resources for the chrome policy configuration component.
-
-    Returns:
-      A dict of the resources for the chrome policy configuration component.
-  """
-  return {
-    'hasAddFlow': False,
-    'titleText': 'Chrome Policy Configurations',
+    'policyExplanationText': ('Chrome policy is a feature of enterprise Google'
+        ' devices which can be used to securely add extra configuration to the'
+        ' uProxy frontend. If you use enterprise Google devices through Google'
+        ' Apps for Work, you can for example turn on validation for invitation'
+        ' links to ensure you are proxying through an endpoint controlled by '
+        'the management console.'),
+    'policyEditText': ('You can adjust the values below in the Management '
+        'Server Settings section and save to update the managed policy json.'
+        'Once you are ready, you can click the download link to get your json '
+        'policy file generated automatically.'),
+    'adminConsoleText': 'Google Admin Console',
+    'policyUploadText': ('To push your managed policy out to your devices, '
+        'visit Google Admin Console at the link above and navigate to the '
+        'uProxy Chrome App/Extension under Device Management -> Chrome '
+        'Management -> App Management. For the App and Extension, select the '
+        'entry listed, then click User settings. From the list of Orgs, choose'
+        ' which you want the policy to apply to, then enable Force '
+        'Installation and select Upload Configuration File. Choose the json '
+        'file you just downloaded. You may have to click override to edit '
+        'Force Installation or Configure\'s values. Finally, click Save.'),
+    'downloadText': 'Download',
   }
 
 
@@ -83,29 +92,3 @@ def download_chrome_policy():
   """
   return flask.Response(_make_chrome_policy_json(),
                         mimetype='application/json')
-
-@ufo.app.route('/chromepolicy/edit', methods=['POST'])
-@ufo.setup_required
-def edit_policy_config():
-  """Receives the posted form for editing the policy config values.
-
-  The new policy config values are stored in the database.
-
-  Returns:
-    A redirect back to display chrome policy with will display the new values.
-  """
-  # TODO(eholder): Move the display of config values and the edit handlers to
-  # something more sensible once UI review tells us what that should be. I'm
-  # envisioning a settings or options page which is underneath the overall
-  # Setup link. For now, I just want these settings to be edittable somewhere.
-
-  config = ufo.get_user_config()
-
-  proxy_server_string = flask.request.form.get('enforce_proxy_server_validity')
-  network_jail_string = flask.request.form.get('enforce_network_jail')
-  config.proxy_server_validity = json.loads(proxy_server_string)
-  config.network_jail_until_google_auth = json.loads(network_jail_string)
-
-  config.save()
-
-  return flask.redirect(flask.url_for('display_chrome_policy'))

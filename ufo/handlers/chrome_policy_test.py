@@ -47,25 +47,5 @@ class ChromePolicyTest(base_test.BaseTest):
     self.assertIn('enforce_proxy_server_validity', json_data)
     self.assertNotIn('enforce_network_jail', json_data)
 
-  def testEditValuesForPolicyConfig(self):
-    """Test posting with modified policy config values updates in the db."""
-    config = ufo.get_user_config()
-    initial_proxy_server_config = config.proxy_server_validity
-    initial_network_jail_config = config.network_jail_until_google_auth
-    data_to_post = {
-        'enforce_proxy_server_validity': json.dumps(not initial_proxy_server_config),
-        'enforce_network_jail': json.dumps(not initial_network_jail_config),
-    }
-
-    resp = self.client.post(flask.url_for('edit_policy_config'),
-                            data=data_to_post, follow_redirects=False)
-
-    updated_config = ufo.get_user_config()
-    self.assertEqual(not initial_proxy_server_config,
-                     updated_config.proxy_server_validity)
-    self.assertEqual(not initial_network_jail_config,
-                     updated_config.network_jail_until_google_auth)
-    self.assert_redirects(resp, flask.url_for('display_chrome_policy'))
-
 if __name__ == '__main__':
   unittest.main()

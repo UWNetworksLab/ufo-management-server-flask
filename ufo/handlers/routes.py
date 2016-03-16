@@ -31,4 +31,5 @@ from ufo.handlers import chrome_policy
 from ufo.handlers import proxy_server
 from ufo.handlers import setup
 from ufo.handlers import search
+from ufo.handlers import settings
 from ufo.handlers import user
