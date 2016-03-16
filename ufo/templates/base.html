@@ -28,46 +28,42 @@
   }
 </style>
 <body class="fullbleed layout vertical">
-    <div>
-
-  <paper-scroll-header-panel>
-    <paper-toolbar class="tall" id="main-toolbar">
-      <div class="middle horizontal layout center flex">
-        <div class="flex">
-          <a href="{{ url_for('new_landing') }}">
-            <img src="{{ url_for('static', filename='img/ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
-          </a>
+  <div>  <!-- Prevent the main-holder from pushing into the header. -->
+    <paper-scroll-header-panel>
+      <paper-toolbar class="tall" id="main-toolbar">
+        <div class="middle horizontal layout center flex">
+          <div class="flex">
+            <a href="{{ url_for('new_landing') }}">
+              <img src="{{ url_for('static', filename='img/ufo-logo.svg') }}" alt="uProxy Logo" height="80" width="80">
+            </a>
+          </div>
+          <div class="flex"></div>
+          <div class="vertical layout flex-4">
+            <div class="verticalSpacer"><p></div>
+            <ufo-search-bar class="flex" user-resources="{{user_resources}}" proxy-server-resources="{{proxy_server_resources}}">
+            </ufo-search-bar>
+            <div class="verticalSpacer"></div>
+          </div>
+          <div class="flex"></div>
+          <paper-dropdown-menu label="foo" id="username-and-menu" class="custom-dropdown flex">
+            <paper-listbox class="dropdown-content">
+              <paper-icon-item class="dropdown-button">
+                <iron-icon class="dropdown-icon" src="{{url_for('static', filename='img/add-users.svg')}}" item-icon></iron-icon>
+                Add an Admin
+              </paper-icon-item>
+              <paper-icon-item class="dropdown-button">
+                <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
+                Settings
+              </paper-icon-item>
+              <paper-item class="dropdown-button">
+                Log Out
+              </paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
         </div>
-        <div class="flex"></div>
-        <div class="vertical layout flex-4">
-          <div class="verticalSpacer"><p></div>
-          <ufo-search-bar class="flex" user-resources="{{user_resources}}" proxy-server-resources="{{proxy_server_resources}}">
-          </ufo-search-bar>
-          <div class="verticalSpacer"></div>
-        </div>
-        <div class="flex"></div>
-        <paper-dropdown-menu label="foo" id="username-and-menu" class="custom-dropdown flex">
-          <paper-listbox class="dropdown-content">
-            <paper-icon-item class="dropdown-button">
-              <iron-icon class="dropdown-icon" src="{{url_for('static', filename='img/add-users.svg')}}" item-icon></iron-icon>
-              Add an Admin
-            </paper-icon-item>
-            <paper-icon-item class="dropdown-button">
-              <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
-              Settings
-            </paper-icon-item>
-            <paper-item class="dropdown-button">
-              Log Out
-            </paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-      </div>
-    </paper-toolbar>
-  </paper-scroll-header-panel>
-
-
-
-    </div>
+      </paper-toolbar>
+    </paper-scroll-header-panel>
+  </div>
   <div class="layout vertical" id="main-holder">
     {% block body %}{% endblock %}
     <br>
