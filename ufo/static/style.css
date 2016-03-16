@@ -47,6 +47,7 @@ paper-scroll-header-panel {
 
 paper-material {
   background-color: #ffffff;
+  top: -75px;  /* Make the components or cards overlap with the page header. */
 }
 
 paper-material:not(.dropdown-content), #jigsaw-logo-holder {
