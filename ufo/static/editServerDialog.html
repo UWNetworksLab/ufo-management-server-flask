@@ -53,7 +53,7 @@
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.ip_address}}</div>
           <div class="third-div"></div>
-          <paper-button on-tap="showEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
+          <paper-button on-tap="switchToServerEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
           <paper-icon-button icon="expand-less" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
@@ -154,6 +154,14 @@
       closeDialog: function() {
         var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
         dialog.close();
+      },
+      switchToServerEdit: function(e, details) {
+        closeDialog();
+        openServerEdit();
+      },
+      openServerEdit: function() {
+        var dialog = this.querySelector('#' + this.resources.editOverlayId);
+        dialog.open();
       },
     });
   </script>

@@ -26,14 +26,14 @@
         <paper-spinner id="serverSpinner" active$={{isSpinnerOn}}></paper-spinner>
       </template>
       <form is="iron-form" id="serverAddForm" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-        <paper-input label="{{resources.ipLabel}}" type="text" name="ip_address" required auto-validate pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}"></paper-input>
-        <paper-input label="{{resources.nameLabel}}" type="text" name="name" required></paper-input>
+        <paper-input label="{{resources.ipLabel}}" type="text" name="ip_address" required auto-validate pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}">{{resources.ip_address}}</paper-input>
+        <paper-input label="{{resources.nameLabel}}" type="text" name="name" required>{{resources.name}}</paper-input>
         <!-- TODO add the ability to upload files -->
-        <ufo-textarea label="{{resources.privateKeyLabel}}" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" auto-validate pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}"></ufo-textarea>
+        <ufo-textarea label="{{resources.privateKeyLabel}}" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" auto-validate pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}">{{resources.private_key}}</ufo-textarea>
         <br>
         <p>{{resources.privateKeyText}}</p>
 
-        <paper-input label="{{resources.publicKeyLabel}}" type="text" name="public_key" required auto-validate pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}"></paper-input>
+        <paper-input label="{{resources.publicKeyLabel}}" type="text" name="public_key" required auto-validate pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}">{{resources.public_key}}</paper-input>
         <br>
         <p>{{resources.publicKeyText}}</p>
         <p>{{resources.rsaText}}</p>
