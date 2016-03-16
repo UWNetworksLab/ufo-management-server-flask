@@ -11,7 +11,7 @@
             <g id="Group-2" sketch:type="MSLayerGroup" transform="translate(8.000000, 16.000000)">
                 <g id="Page-1">
                     <g id="Group-3">
-                        <mask id="mask-2" sketch:name="Clip 2" fill="#0ED1BA">
+                        <mask id="mask-2" sketch:name="Clip 2" fill="white">
                             <use xlink:href="#path-1"></use>
                         </mask>
                         <g id="Clip-2"></g>
