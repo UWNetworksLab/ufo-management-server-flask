@@ -21,9 +21,8 @@
     .fourth-div {
       min-width: 100px;
     }
-    .revokeButton {
+    .topLineButton {
       color: #25CFB9;
-      text-transform: none;
     }
     paper-icon-item {
       border-bottom: 1px solid #e5e5e5;
@@ -48,7 +47,6 @@
     <template is="dom-if" if="{{loading}}">
       <paper-spinner active$={{loading}}></paper-spinner>
     </template>
-    </iron-ajax>
     <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" loading="{{loading}}" last-response="{{invitCodeJson}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax">
       <input type="hidden" name="user_id" value="{{item.id}}">
     </form>
@@ -62,7 +60,7 @@
           <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="fourth-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
             <input type="hidden" name="user_id" value="{{item.id}}">
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-            <paper-button on-tap="submitForm" class="revokeButton" type="submit">{{item.accessChange}}</paper-button>
+            <paper-button on-tap="submitForm" class="topLineButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
           </form>
           <paper-icon-button icon="expand-less" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
@@ -70,13 +68,13 @@
       <div id="rowHolder" class="vertical center-justified layout">
         <div id="row1" class="horizontal around-justified layout">
           <div class="column1 flex">
-            <p><strong>{{resources.inviteCodeLabel}}</strong></p>
+            <strong>{{resources.inviteCodeLabel}}</strong>
             <paper-input disabled type="text" id="lastInviteCode" value="{{invitCodeJson.invite_code}}"></paper-input>
           </div>
           <div class="column2 spacer">
           </div>
           <div class="column3 flex">
-            <p><strong>{{resources.publicKeyLabel}}</strong></p>
+            <strong>{{resources.publicKeyLabel}}</strong>
             <paper-input disabled type="text" value="{{item.public_key}}"></paper-input>
           </div>
         </div>
@@ -94,11 +92,12 @@
           <div class="column2 spacer">
           </div>
           <div class="column3 flex">
-            <p><strong>{{resources.privateKeyLabel}}</strong></p>
+            <strong>{{resources.privateKeyLabel}}</strong>
             <paper-input disabled type="text" value="{{item.private_key}}"></paper-input>
           </div>
         </div>
       </div>
+      <br>
       <div class="buttons">
         <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="user_id" value="{{item.id}}">
@@ -109,6 +108,7 @@
           </paper-button>
         </form>
       </div>
+      <br>
     </paper-dialog>
   </template>
 

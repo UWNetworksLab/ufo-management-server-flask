@@ -159,10 +159,12 @@ class ProxyServerTest(base_test.BaseTest):
     proxy_server = self._CreateAndSaveFakeProxyServer()
     proxy_server_id = proxy_server.id
 
-    response = self.client.get(
-        flask.url_for('proxyserver_delete', server_id=proxy_server_id))
+    post_data = {'server_id': json.dumps(proxy_server_id)}
+    response = self.client.post(flask.url_for('proxyserver_delete'),
+                                data=post_data)
 
     self.assertIsNone(models.ProxyServer.query.get(proxy_server_id))
+
 
   def testDeleteProxyServerRedirectsToList(self):
     """Tests the redirect after deleting a proxy server.
@@ -173,8 +175,9 @@ class ProxyServerTest(base_test.BaseTest):
     proxy_server = self._CreateAndSaveFakeProxyServer()
     proxy_server_id = proxy_server.id
 
-    response = self.client.get(
-        flask.url_for('proxyserver_delete', server_id=proxy_server_id))
+    post_data = {'server_id': json.dumps(proxy_server_id)}
+    response = self.client.post(flask.url_for('proxyserver_delete'),
+                                data=post_data)
     self.assert_redirects(response, flask.url_for('proxyserver_list'))
 
   def _GetProxyServerFormData(self, id_id=0, key_id=0):

@@ -2,13 +2,88 @@
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 
 <dom-module id="edit-server-dialog">
+  <style is="custom-style">
+    .first-div {
+      min-width: 300px;
+    }
+    .second-div {
+      min-width: 250px;
+    }
+    .third-div {
+      min-width: 200px;
+    }
+    .fourth-div {
+      min-width: 100px;
+    }
+    .topLineButton {
+      color: #25CFB9;
+    }
+    paper-icon-item {
+      border-bottom: 1px solid #e5e5e5;
+    }
+    paper-icon-item:focus:before {
+      opacity: 0!important;
+    }
+    paper-listbox {
+      padding: 0px;
+    }
+    paper-input {
+      --paper-input-container-underline-disabled: {
+        border-bottom: 2px solid #25CFB9;
+      }
+    }
+    .spacer {
+      width: 20px;
+    }
+  </style>
   <template>
-    <div></div>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner active$={{loading}}></paper-spinner>
+    </template>
+    <paper-dialog id="{{resources.detailsOverlayId}}">
+      <paper-listbox>
+        <paper-icon-item id="topBar" class="horizontal center-justified layout">
+          <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
+          <div class="first-div"><strong>{{item.name}}</strong></div>
+          <div class="second-div">{{item.ip_address}}</div>
+          <div class="third-div"></div>
+          <paper-button on-tap="showEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
+          <paper-icon-button icon="expand-less" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+        </paper-icon-item>
+      </paper-listbox>
+      <div id="rowHolder" class="vertical center-justified layout">
+        <div id="row1" class="horizontal around-justified layout">
+          <div class="column1 flex">
+            <strong>{{resources.privateKeyLabel}}</strong>
+            <paper-input disabled type="text" value="{{item.private_key}}"></paper-input>
+          </div>
+          <div class="column2 spacer">
+          </div>
+          <div class="column3 flex">
+            <strong>{{resources.publicKeyLabel}}</strong>
+            <paper-input disabled type="text" value="{{item.public_key}}"></paper-input>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="buttons">
+        <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
+          <input type="hidden" name="server_id" value="{{item.id}}">
+          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <paper-button on-tap="submitForm" class="delete-button" type="submit">
+            <iron-icon icon="delete"></iron-icon>
+            <strong>{{resources.deleteLabel}}</strong>
+          </paper-button>
+        </form>
+      </div>
+      <br>
+    </paper-dialog>
   </template>
 
   <script>
@@ -21,6 +96,64 @@
         item: {
           type: Object,
         },
+        ajaxResponse: {
+          type: Object,
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        invitCodeJson: {
+          type: Object,
+          notify: true,
+        },
+      },
+      setAjaxResponse: function(response) {
+        this.set('ajaxResponse', response);
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+      submitForm: function(e, details) {
+        var elem = e.target;
+        while (elem.tagName.toLowerCase() != 'form') {
+          elem = elem.parentElement;
+          if (elem == document.body) {
+            break;
+          }
+        }
+        if (elem.tagName.toLowerCase() != 'form') {
+          return;
+        }
+        elem.submit();
+      },
+      parseEditResponse: function(e, details) {
+        this.sendJsonToList(details.xhr.response);
+        this.set('loading', false);
+      },
+      parseDeleteResponse: function(e, details) {
+        this.sendJsonToList(details.xhr.response);
+        this.set('loading', false);
+        this.closeDialog();
+      },
+      sendJsonToList: function(updatedJson) {
+        var listElem = document.getElementById(this.resources.listId);
+        if (listElem) {
+          listElem.setAjaxResponse(updatedJson);
+        }
+      },
+      openDialog: function() {
+        var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
+        dialog.open();
+      },
+      closeDialog: function() {
+        var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
+        dialog.close();
       },
     });
   </script>
