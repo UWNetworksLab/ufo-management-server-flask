@@ -15,6 +15,10 @@
       color: white;
     };
   }
+  paper-scroll-header-panel {
+    background-color: #009788!important;
+    height: 250px;
+  }
   .dropdown-icon {
     width: 20px;
     --iron-icon-fill-color: #009788;
@@ -24,6 +28,8 @@
   }
 </style>
 <body class="fullbleed layout vertical">
+    <div>
+
   <paper-scroll-header-panel>
     <paper-toolbar class="tall" id="main-toolbar">
       <div class="middle horizontal layout center flex">
@@ -58,6 +64,10 @@
       </div>
     </paper-toolbar>
   </paper-scroll-header-panel>
+
+
+
+    </div>
   <div class="layout vertical" id="main-holder">
     {% block body %}{% endblock %}
     <br>
