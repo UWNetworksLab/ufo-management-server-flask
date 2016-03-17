@@ -234,18 +234,9 @@ class UserTest(base_test.BaseTest):
     query = models.User.query.filter_by(
         email=base_test.FAKE_EMAILS_AND_NAMES[0]['email'])
     
-    # Adding the user for the first time.
     response = self.create_user_with_manual_post()
-    user_in_db = query.one_or_none()
-    self.assertIsNotNone(user_in_db)
-    self.assertEqual(base_test.FAKE_EMAILS_AND_NAMES[0]['name'],
-                     user_in_db.name)
-    self.assertEqual(base_test.FAKE_EMAILS_AND_NAMES[0]['email'],
-                     user_in_db.email)
-    self.assertIsNone(user_in_db.domain)
+    response = self.create_user_with_manual_post()
 
-    # Adding the user for the second time.
-    response = self.create_user_with_manual_post()
     self.assertEqual(1, query.count())
     user_in_db = query.one_or_none()
     self.assertIsNotNone(user_in_db)
