@@ -23,8 +23,8 @@ class ChromePolicyTest(base_test.BaseTest):
     resp = self.client.get(flask.url_for('download_chrome_policy'))
 
     json_data = json.loads(resp.data)
-    self.assertIn('proxy_server_keys', json_data)
-    self.assertIn('enforce_proxy_server_validity', json_data)
+    self.assertIn('validProxyServers', json_data)
+    self.assertIn('enforceProxyServerValidity', json_data)
     self.assertNotIn('enforce_network_jail', json_data)
 
 if __name__ == '__main__':

@@ -23,7 +23,7 @@ class SettingsTest(base_test.BaseTest):
     resp = self.client.get(flask.url_for('get_settings'))
 
     json_data = json.loads(resp.data)
-    self.assertNotIn('proxy_server_keys', json_data)
+    self.assertNotIn('validProxyServers', json_data)
     self.assertIn('enforce_proxy_server_validity', json_data)
     self.assertIn('enforce_network_jail', json_data)
 

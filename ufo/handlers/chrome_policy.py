@@ -17,13 +17,19 @@ def _make_chrome_policy_json():
     A json string of current chrome policy.
   """
   proxy_servers = models.ProxyServer.query.all()
-  proxy_server_public_keys = [s.get_public_key_as_authorization_file_string() for s in proxy_servers]
+  proxy_server_dicts = []
+  for server in proxy_servers:
+    proxy_server_dict = {
+        'ip': server.ip_address,
+        'public_key': server.get_public_key_as_authorization_file_string(),
+    }
+    proxy_server_dicts.append(proxy_server_dict)
 
   config = ufo.get_user_config()
 
   policy_dictionary = {
-      "proxy_server_keys": proxy_server_public_keys,
-      "enforce_proxy_server_validity": config.proxy_server_validity,
+      "validProxyServers": proxy_server_dicts,
+      "enforceProxyServerValidity": config.proxy_server_validity,
   }
 
   return json.dumps(policy_dictionary)
