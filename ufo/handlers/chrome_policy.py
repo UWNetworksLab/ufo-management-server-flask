@@ -65,23 +65,6 @@ def get_policy_resources_dict():
   }
 
 
-@ufo.app.route('/chromepolicy/')
-@ufo.setup_required
-def display_chrome_policy():
-  """Renders the current chrome policy as json and editable values.
-
-  Returns:
-    The rendered chrom_policy.html template with policy values as variables.
-  """
-  policy_json = _make_chrome_policy_json()
-  config = ufo.get_user_config()
-
-  return flask.render_template(
-      'chrome_policy.html', policy_json=policy_json,
-      enforce_proxy_server_validity=config.proxy_server_validity,
-      enforce_network_jail=config.network_jail_until_google_auth)
-
-
 @ufo.app.route('/chromepolicy/download/')
 @ufo.setup_required
 def download_chrome_policy():

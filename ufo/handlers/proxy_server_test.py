@@ -104,19 +104,6 @@ class ProxyServerTest(base_test.BaseTest):
 
     self.assert_redirects(res, flask.url_for('proxyserver_list'))
 
-  def testEditProxyServerGetHandler(self):
-    """Test the edit proxy server get handler returns the form."""
-    proxy_server = self._CreateAndSaveFakeProxyServer(0)
-    fake_server = FAKE_PROXY_SERVER_DATA[0]
-
-    get_data = {'server_id': proxy_server.id}
-    resp = self.client.get(
-        flask.url_for('proxyserver_edit'), query_string=get_data)
-
-    self.assertTrue('proxy-edit-add-form' in resp.data)
-    self.assertTrue(fake_server['ip_address'] in resp.data)
-    self.assertTrue(fake_server['name'] in resp.data)
-
   def testEditServerUpdatesKeysInDb(self):
     """Test the edit proxy server post handler saves the edit."""
     proxy_server = self._CreateAndSaveFakeProxyServer(0)
