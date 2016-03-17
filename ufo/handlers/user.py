@@ -247,10 +247,7 @@ def add_user():
     db_user.name = submitted_user['name']
     db_user.email = submitted_user['email']
     db_user.domain = config.domain if manual is None else None
-    db_user.save(commit=False)
-
-  if len(users_list) > 0:
-    ufo.db.session.commit()
+    db_user.save(commit=True)
 
   return user_list()
 
