@@ -50,7 +50,7 @@
     <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" loading="{{loading}}" last-response="{{invitCodeJson}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax">
       <input type="hidden" name="user_id" value="{{item.id}}">
     </form>
-    <paper-dialog id="{{resources.detailsOverlayId}}">
+    <paper-dialog id="{{resources.detailsOverlayId}}" with-backdrop>
       <paper-listbox>
         <paper-icon-item id="topBar" class="horizontal center-justified layout">
           <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
@@ -62,43 +62,21 @@
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
             <paper-button on-tap="submitForm" class="topLineButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
           </form>
-          <paper-icon-button icon="expand-less" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+          <paper-icon-button icon="close" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
       <div id="rowHolder" class="vertical center-justified layout">
-        <div id="row1" class="horizontal around-justified layout">
-          <div class="column1 flex">
-            <strong>{{resources.inviteCodeLabel}}</strong>
-            <paper-input disabled type="text" id="lastInviteCode" value="{{invitCodeJson.invite_code}}"></paper-input>
-          </div>
-          <div class="column2 spacer">
-          </div>
-          <div class="column3 flex">
-            <strong>{{resources.publicKeyLabel}}</strong>
-            <paper-input disabled type="text" value="{{item.public_key}}"></paper-input>
-          </div>
-        </div>
-        <div id="row2" class="horizontal around-justified layout">
-          <div class="column1 flex">
-            <div id="innerRow" class="horizontal start-justified layout">
-              <paper-button on-tap="copyInviteCode" class="anchor-button"><strong>{{resources.copyLabel}}</strong></paper-button>
-              <form is="iron-form" method="post" action="{{resources.rotateKeysUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="enableSpinner">
-                <input type="hidden" name="user_id" value="{{item.id}}">
-                <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-                <paper-button on-tap="submitForm" class="anchor-button" type="submit"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
-              </form>
-            </div>
-          </div>
-          <div class="column2 spacer">
-          </div>
-          <div class="column3 flex">
-            <strong>{{resources.privateKeyLabel}}</strong>
-            <paper-input disabled type="text" value="{{item.private_key}}"></paper-input>
-          </div>
-        </div>
+        <strong>{{resources.inviteCodeLabel}}</strong>
+        <paper-input disabled type="text" id="lastInviteCode" value="{{invitCodeJson.invite_code}}"></paper-input>
       </div>
       <br>
       <div class="buttons">
+        <paper-button on-tap="copyInviteCode" class="anchor-button"><strong>{{resources.copyLabel}}</strong></paper-button>
+        <form is="iron-form" method="post" action="{{resources.rotateKeysUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="enableSpinner">
+          <input type="hidden" name="user_id" value="{{item.id}}">
+          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <paper-button on-tap="submitForm" class="anchor-button" type="submit"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
+        </form>
         <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="user_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
@@ -184,7 +162,9 @@
       openDialog: function() {
         var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
         dialog.open();
-        this.getUpdatedInviteCode();
+        if (!this.invitCodeJson) {
+          this.getUpdatedInviteCode();
+        }
       },
       closeDialog: function() {
         var dialog = this.querySelector('#' + this.resources.detailsOverlayId);

@@ -49,7 +49,7 @@
     </iron-ajax>
     <paper-listbox>
       <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
-        <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
+        <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified" on-tap="openDetailsDialog">
           <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
           <template is="dom-if" if="{{resources.isUser}}">
             <div class="first-div"><strong>{{_limitCharacters(item.name)}}</strong></div>
@@ -69,7 +69,7 @@
             <paper-button on-tap="openServerEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
             <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
           </template>
-          <paper-icon-button icon="expand-more" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="openDetailsDialog"></paper-icon-button>
+          <paper-icon-button icon="expand-more" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}"></paper-icon-button>
         </paper-icon-item>
       </template>
       <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
@@ -164,6 +164,7 @@
         return elem;
       },
       submitRevokeForm: function(e, details) {
+        e.stopPropagation();
         var name = 'form';
         var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
         if (elem) {
