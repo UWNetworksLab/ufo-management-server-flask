@@ -109,8 +109,9 @@ class ProxyServerTest(base_test.BaseTest):
     proxy_server = self._CreateAndSaveFakeProxyServer(0)
     fake_server = FAKE_PROXY_SERVER_DATA[0]
 
+    get_data = {'server_id': proxy_server.id}
     resp = self.client.get(
-        flask.url_for('proxyserver_edit', server_id=proxy_server.id))
+        flask.url_for('proxyserver_edit'), query_string=get_data)
 
     self.assertTrue('proxy-edit-add-form' in resp.data)
     self.assertTrue(fake_server['ip_address'] in resp.data)
@@ -121,6 +122,7 @@ class ProxyServerTest(base_test.BaseTest):
     proxy_server = self._CreateAndSaveFakeProxyServer(0)
 
     form_data = self._GetProxyServerFormData(0, 1)
+    form_data['server_id'] = json.dumps(proxy_server.id)
     new_key = FAKE_PROXY_SERVER_DATA[1]['key']
 
     resp = self.client.post(
@@ -147,6 +149,7 @@ class ProxyServerTest(base_test.BaseTest):
 
     # we don't actually need to change anything
     form_data = self._GetProxyServerFormData()
+    form_data['server_id'] = json.dumps(proxy_server.id)
 
     resp = self.client.post(
         flask.url_for('proxyserver_edit', server_id=proxy_server.id),
@@ -159,10 +162,12 @@ class ProxyServerTest(base_test.BaseTest):
     proxy_server = self._CreateAndSaveFakeProxyServer()
     proxy_server_id = proxy_server.id
 
-    response = self.client.get(
-        flask.url_for('proxyserver_delete', server_id=proxy_server_id))
+    post_data = {'server_id': json.dumps(proxy_server_id)}
+    response = self.client.post(flask.url_for('proxyserver_delete'),
+                                data=post_data)
 
     self.assertIsNone(models.ProxyServer.query.get(proxy_server_id))
+
 
   def testDeleteProxyServerRedirectsToList(self):
     """Tests the redirect after deleting a proxy server.
@@ -173,8 +178,9 @@ class ProxyServerTest(base_test.BaseTest):
     proxy_server = self._CreateAndSaveFakeProxyServer()
     proxy_server_id = proxy_server.id
 
-    response = self.client.get(
-        flask.url_for('proxyserver_delete', server_id=proxy_server_id))
+    post_data = {'server_id': json.dumps(proxy_server_id)}
+    response = self.client.post(flask.url_for('proxyserver_delete'),
+                                data=post_data)
     self.assert_redirects(response, flask.url_for('proxyserver_list'))
 
   def _GetProxyServerFormData(self, id_id=0, key_id=0):

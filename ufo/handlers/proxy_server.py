@@ -25,7 +25,12 @@ def get_proxy_resources_dict():
     'listLimit': 10,
     'detailsButtonText': 'Edit Server',
     'detailsButtonId': 'serverEditButton',
-    'detailsOverlayId': 'serverEditOverlay',
+    'detailsOverlayId': 'serverDetailsOverlay',
+    'editText': 'Edit',
+    'saveText': 'Save',
+    'deleteLabel': 'Delete Server',
+    'editUrl': flask.url_for('proxyserver_edit'),
+    'deleteUrl': flask.url_for('proxyserver_delete'),
     'seeAllText': 'See All Servers',
     'titleText': 'Servers',
     'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
@@ -90,16 +95,19 @@ def proxyserver_add():
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-@ufo.app.route('/proxyserver/<server_id>/edit', methods=['GET', 'POST'])
+@ufo.app.route('/proxyserver/edit', methods=['GET', 'POST'])
 @ufo.setup_required
-def proxyserver_edit(server_id):
-  server = models.ProxyServer.query.get_or_404(server_id)
+def proxyserver_edit():
 
   if flask.request.method == 'GET':
+    server_id = json.loads(flask.request.args.get('server_id'))
+    server = models.ProxyServer.query.get_or_404(server_id)
     server_for_view = server.to_dict()
     return flask.render_template('proxy_server_form.html',
                                  proxy_server=server_for_view)
 
+  server_id = json.loads(flask.request.form.get('server_id'))
+  server = models.ProxyServer.query.get_or_404(server_id)
   server.name = flask.request.form.get('name')
   server.ip_address = flask.request.form.get('ip_address')
 
@@ -109,11 +117,11 @@ def proxyserver_edit(server_id):
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-@ufo.app.route('/proxyserver/<server_id>/delete')
+@ufo.app.route('/proxyserver/delete', methods=['POST'])
 @ufo.setup_required
-def proxyserver_delete(server_id):
+def proxyserver_delete():
   """Handler for deleting an existing proxy server."""
-  #TODO should at least be post
+  server_id = json.loads(flask.request.form.get('server_id'))
   server = models.ProxyServer.query.get_or_404(server_id)
   server.delete()
 

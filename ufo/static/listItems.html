@@ -19,7 +19,7 @@
     .fourth-div {
       width: 100px;
     }
-    .revokeButton {
+    .topLineButton {
       opacity: 0.0;
       color: #25CFB9;
       text-transform: none;
@@ -30,7 +30,7 @@
     paper-icon-item:hover {
       @apply(--paper-item-focused);
     }
-    paper-icon-item:hover .revokeButton {
+    paper-icon-item:hover .topLineButton {
       opacity: 1.0;
     }
   </style>
@@ -49,7 +49,7 @@
     </iron-ajax>
     <paper-listbox>
       <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
-        <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified">
+        <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified" on-tap="openDetailsDialog">
           <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
           <template is="dom-if" if="{{resources.isUser}}">
             <div class="first-div"><strong>{{_limitCharacters(item.name)}}</strong></div>
@@ -58,7 +58,7 @@
             <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="fourth-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
               <input type="hidden" name="user_id" value="{{item.id}}">
               <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-              <paper-button on-tap="submitRevokeForm" class="revokeButton" type="submit">{{item.accessChange}}</paper-button>
+              <paper-button on-tap="submitRevokeForm" class="topLineButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
             </form>
             <user-details-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></user-details-dialog>
           </template>
@@ -66,10 +66,10 @@
             <div class="first-div"><strong>{{item.name}}</strong></div>
             <div class="second-div">{{item.ip_address}}</div>
             <div class="third-div"></div>
-            <div class="fourth-div"></div>
+            <paper-button on-tap="openServerEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
             <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
           </template>
-          <paper-icon-button icon="expand-more" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="openDetailsDialog"></paper-icon-button>
+          <paper-icon-button icon="expand-more" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}"></paper-icon-button>
         </paper-icon-item>
       </template>
       <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
@@ -164,22 +164,31 @@
         return elem;
       },
       submitRevokeForm: function(e, details) {
+        e.stopPropagation();
         var name = 'form';
         var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
         if (elem) {
           elem.submit();
         }
       },
-      parseRevokeResponse: function(e, detail) {
+      parseRevokeResponse: function(e, details) {
         this.set('ajaxResponse', e.target.request.lastResponse);
         this.set('loading', false);
       },
-      openDetailsDialog: function(e, detail) {
+      openDetailsDialog: function(e, details) {
         var name = 'paper-icon-item';
         var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
         if (elem) {
           var dialogHolder = elem.querySelector('#detailsHolder');
           dialogHolder.openDialog();
+        }
+      },
+      openServerEdit: function(e, details) {
+        var name = 'paper-icon-item';
+        var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
+        if (elem) {
+          var dialogHolder = elem.querySelector('#detailsHolder');
+          dialogHolder.openServerEdit();
         }
       },
     });
