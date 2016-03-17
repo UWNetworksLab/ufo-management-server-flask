@@ -222,7 +222,7 @@ def user_list():
 @ufo.app.route('/user/add', methods=['GET', 'POST'])
 @ufo.setup_required
 def add_user():
-  """Renders the user add template on get and stores new user(s) on post.
+  """Gets the requested users on get and stores new user(s) on post.
 
   This one handler does get and post for add user. The get method is handled
   by _render_user_add with the parameters for get_all, group_key, and user_key
@@ -230,8 +230,8 @@ def add_user():
   or users into the database and redirecting to the user_list page.
 
   Returns:
-    A rendered template of add_user.html with the requested users for a get or
-    redirects to the user_list page after inserting users for a post.
+    A list of the requested users for a get or redirects to the user_list page
+    after inserting users for a post.
   """
   if flask.request.method == 'GET':
     get_all = flask.request.args.get('get_all')
@@ -253,30 +253,6 @@ def add_user():
     ufo.db.session.commit()
 
   return user_list()
-
-@ufo.app.route('/user/<user_id>/details')
-@ufo.setup_required
-def user_details(user_id):
-  """Renders the user details template for the given user_id if found.
-
-  If the user is not found, this produces a 404 error which redirects to the
-  error handler.
-
-  Args:
-    user_id: A string identifying a user in the database.
-
-  Returns:
-    A rendered template of user_details.html for the given user_id along with
-    an invite code for that user if available.
-  """
-  user = models.User.query.get_or_404(user_id)
-  invite_code = _make_invite_code(user)
-  if invite_code is None:
-    return flask.render_template('user_details.html', user=user)
-  else:
-    invite_url = INVITE_CODE_URL_PREFIX + invite_code
-    return flask.render_template('user_details.html', user=user,
-                                 invite_url=invite_url)
 
 @ufo.app.route('/user/delete', methods=['POST'])
 @ufo.setup_required

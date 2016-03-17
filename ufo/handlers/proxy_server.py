@@ -95,16 +95,9 @@ def proxyserver_add():
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 
-@ufo.app.route('/proxyserver/edit', methods=['GET', 'POST'])
+@ufo.app.route('/proxyserver/edit', methods=['POST'])
 @ufo.setup_required
 def proxyserver_edit():
-
-  if flask.request.method == 'GET':
-    server_id = json.loads(flask.request.args.get('server_id'))
-    server = models.ProxyServer.query.get_or_404(server_id)
-    server_for_view = server.to_dict()
-    return flask.render_template('proxy_server_form.html',
-                                 proxy_server=server_for_view)
 
   server_id = json.loads(flask.request.form.get('server_id'))
   server = models.ProxyServer.query.get_or_404(server_id)

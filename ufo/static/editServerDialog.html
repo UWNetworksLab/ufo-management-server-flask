@@ -83,10 +83,10 @@
       <br>
       <div class="buttons">
         <paper-button class="editElements hideElement anchor-button" on-tap="cancelServerEdit">
-        {{resources.dismissText}}
+        <strong>{{resources.dismissText}}</strong>
         </paper-button>
         <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm">
-        {{resources.saveText}}
+        <strong>{{resources.saveText}}</strong>
         </paper-button>
         <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="server_id" value="{{item.id}}">
