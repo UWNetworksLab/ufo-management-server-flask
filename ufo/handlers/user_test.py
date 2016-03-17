@@ -231,12 +231,11 @@ class UserTest(base_test.BaseTest):
 
   def testUserCanNotBeAddedMoreThanOnce(self):
     """Test that user can not added more than once."""
-    query = models.User.query.filter_by(
-        email=base_test.FAKE_EMAILS_AND_NAMES[0]['email'])
-    
     response = self.create_user_with_manual_post()
     response = self.create_user_with_manual_post()
 
+    query = models.User.query.filter_by(
+        email=base_test.FAKE_EMAILS_AND_NAMES[0]['email'])
     self.assertEqual(1, query.count())
     user_in_db = query.one_or_none()
     self.assertIsNotNone(user_in_db)
