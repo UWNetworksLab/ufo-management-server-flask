@@ -247,6 +247,9 @@ def add_user():
     db_user.name = submitted_user['name']
     db_user.email = submitted_user['email']
     db_user.domain = config.domain if manual is None else None
+    # Save on each user so that we can let the database check if the
+    # uniqueness constraint is fulfilled.  i.e don't batch this because
+    # if one user is added more than once theh the whole session will fail.
     db_user.save(commit=True)
 
   return user_list()
