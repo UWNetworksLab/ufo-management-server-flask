@@ -7,15 +7,10 @@ import functools
 
 import ufo
 from ufo.database import models
+from ufo.services.custom_exceptions import NotLoggedIn
 
 
-class NotLoggedIn(Exception):
-  """An exception for when a user in not logged in.
-
-  To be thrown by the decorators listed below."""
-  code = 401
-  message = 'User is not logged in'
-
+# TODO(eholder): Add functional or unit tests for each decorator.
 def get_login_resources_dict():
   """Get the resources for the login page.
 

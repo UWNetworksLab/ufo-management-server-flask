@@ -149,7 +149,7 @@ def setup():
           'setup.html', error=NO_ADMINISTRATOR,
           oauth_resources=json.dumps(oauth_resources_dict))
 
-    admin_user = models.ManagementServerUser(username=admin_username)
+    admin_user = models.AdminUser(username=admin_username)
     admin_user.set_password(admin_password)
     admin_user.save()
 

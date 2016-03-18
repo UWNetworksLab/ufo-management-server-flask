@@ -300,9 +300,9 @@ class ProxyServer(Model):
       }
 
 
-class ManagementServerUser(Model):
-  """People who have access to the management server."""
-  __tablename__ = "management_server_user"
+class AdminUser(Model):
+  """People who have access to the management server, as in admins."""
+  __tablename__ = "admin_user"
   __searchable__ = ['username']
 
   id = ufo.db.Column(ufo.db.Integer, primary_key=True)
@@ -311,44 +311,45 @@ class ManagementServerUser(Model):
                                          index=True, unique=True)
   password = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
 
+  # TODO(eholder): Followup with unit tests for each of these.
   @classmethod
   def get_by_username(cls, username):
-    """Lookup a management server user by username.
+    """Lookup an admin user by username.
 
     Agrs:
-      username: The username to search for a user by.
+      username: The username to search for an admin user by.
 
     Returns:
-      The specified user or None if not found.
+      The specified admin user or None if not found.
     """
     return cls.query.filter_by(username=username).one_or_none()
 
   def set_password(self, password):
-    """Sets the password on a given management server user.
+    """Sets the password on a given admin user.
 
     Args:
-      password: The new password to set on the user.
+      password: The new password to set on the admin user.
     """
     self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
   def does_password_match(self, password):
-    """Checks if the given password matches the given user.
+    """Checks if the given password matches the given admin user.
 
     Agrs:
-      password: The password to check a user by.
+      password: The password to check an admin user by.
 
     Returns:
-      True if the password matches the user and False otherwise.
+      True if the password matches the admin user and False otherwise.
     """
     hashed = bcrypt.hashpw(password.encode('utf-8'), self.password.encode('utf-8'))
     return hashed == self.password
 
 
   def to_dict(self):
-    """Get the management server user as a dictionary.
+    """Get the admin user as a dictionary.
 
       Returns:
-        A dictionary of the management server user.
+        A dictionary of the admin user.
     """
     return {
       "id": self.id,
