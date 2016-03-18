@@ -56,9 +56,12 @@
         <paper-button on-tap="resetForms" class="anchor-button"><strong>{{resources.lookAgainText}}</strong></paper-button>
         <script>
         var modal = document.getElementById('userModal');
-        var scrollables = modal.getElementsByTagName('paper-dialog-scrollable');
-        for (var i in scrollables) {
-          scrollables[i].dialogElement = modal;
+        if (modal) {
+          var scrollables = modal.getElementsByTagName(
+            'paper-dialog-scrollable');
+          for (var i in scrollables) {
+            scrollables[i].dialogElement = modal;
+          }
         }
         </script>
       </template>
