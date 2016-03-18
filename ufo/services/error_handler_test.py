@@ -55,6 +55,8 @@ class ErrorHandlerTest(base_test.BaseTest):
     self.assertTrue(werkzeug_error.name in resp)
     self.assertTrue(werkzeug_error.message in resp)
 
+  # TODO(eholder): Add a test for the not logged in error handler.
+
 
 if __name__ == '__main__':
   unittest.main()

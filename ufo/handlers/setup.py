@@ -72,7 +72,14 @@ def _get_oauth_configration_resources_dict(config, oauth_url):
 @ufo.app.route('/setup/', methods=['GET', 'POST'])
 @auth.login_required_if_setup
 def setup():
-  """Handle showing the user the setup page and processing the response"""
+  """Handle showing the user the setup page and processing the response.
+
+  Returns:
+    On get: a rendered setup page template with appropriate resources passed
+    in. On post: a rendered setup page template with the error set in event of
+    a known error, a 403 flask.abort in the event of a FlowExchangeError
+    during oauth, or a redirect back to get the setup page on success.
+  """
 
   config = ufo.get_user_config()
   flow = oauth.getOauthFlow()

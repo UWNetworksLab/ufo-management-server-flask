@@ -17,6 +17,10 @@ def handle_error(error):
 
   Args:
     error: Exception object, either python or werkzeug.
+
+  Returns:
+    A redirect to one of the templates found along with the specified error
+    as text on the page.
   """
   logging.error('Request resulted in {}'.format(error))
 
@@ -31,6 +35,14 @@ def handle_error(error):
   return flask.render_template(templates_to_try, error=error)
 
 def handle_not_logged_in(error):
+  """A handler to gracefully handle the not logged in error.
+
+  Args:
+    error: The not logged in exception.
+
+  Returns:
+    A redirect to the login page.
+  """
   return flask.redirect(flask.url_for('login'))
 
 def init_error_handlers(app):

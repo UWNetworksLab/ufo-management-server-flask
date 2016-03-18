@@ -33,21 +33,54 @@ class Model(ufo.db.Model):
   __abstract__ = True
 
   def update(self, commit=True, **kwargs):
+    """Update the given entity by setting the given attributes and saving.
+
+    Args:
+      commit: A boolean for whether or not to commit the result immediately.
+      **kwargs: Any additional arguments for the attributes on the entity.
+
+    Returns:
+      The result of saving the new entity.
+    """
     for attr, value in kwargs.items():
       setattr(self, attr, value)
     return commit and self.save() or self
 
   def save(self, commit=True):
+    """Add the given entity and save if specified.
+
+    Args:
+      commit: A boolean for whether or not to commit the result immediately.
+
+    Returns:
+      The specified entity.
+    """
     ufo.db.session.add(self)
     if commit:
       ufo.db.session.commit()
     return self
 
   def delete(self, commit=True):
+    """Delete the given entity and save if specified.
+
+    Args:
+      commit: A boolean for whether or not to commit the result immediately.
+
+    Returns:
+      The result of committing the given entity if specified or False.
+    """
     ufo.db.session.delete(self)
     return commit and ufo.db.session.commit()
 
   def to_dict(self):
+    """Generate a dictionary representation of the given entity.
+
+    This method does nothing on the base model class, but will be implemented
+    for each child class.
+
+    Returns:
+      An empty dictionary for this class.
+    """
     return {}
 
   @classmethod
@@ -168,11 +201,17 @@ class User(Model):
     }
 
   def regenerate_key_pair(self):
+    """Call generate key pair and set the new key pair on the user."""
     key_pair = User._GenerateKeyPair()
     self.private_key = key_pair['private_key']
     self.public_key = key_pair['public_key']
 
   def to_dict(self):
+    """Get the user as a dictionary.
+
+      Returns:
+        A dictionary of the user.
+    """
     return {
       "id": self.id,
       'email': self.email,
@@ -240,6 +279,11 @@ class ProxyServer(Model):
     return public_key.get_name() + ' ' + public_key.get_base64()
 
   def to_dict(self):
+    """Get the proxy server as a dictionary.
+
+      Returns:
+        A dictionary of the proxy server.
+    """
     private_key = ssh_client.SSHClient.private_key_data_to_object(
         self.ssh_private_key_type,
         self.ssh_private_key)
@@ -269,17 +313,43 @@ class ManagementServerUser(Model):
 
   @classmethod
   def get_by_username(cls, username):
+    """Lookup a management server user by username.
+
+    Agrs:
+      username: The username to search for a user by.
+
+    Returns:
+      The specified user or None if not found.
+    """
     return cls.query.filter_by(username=username).one_or_none()
 
   def set_password(self, password):
+    """Sets the password on a given management server user.
+
+    Args:
+      password: The new password to set on the user.
+    """
     self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
   def check_password(self, password):
+    """Checks if the given password matches the given user.
+
+    Agrs:
+      password: The password to check a user by.
+
+    Returns:
+      True if the password matches the user and False otherwise.
+    """
     hashed = bcrypt.hashpw(password.encode('utf-8'), self.password.encode('utf-8'))
     return hashed == self.password
 
 
   def to_dict(self):
+    """Get the management server user as a dictionary.
+
+      Returns:
+        A dictionary of the management server user.
+    """
     return {
       "id": self.id,
       "username": self.username,

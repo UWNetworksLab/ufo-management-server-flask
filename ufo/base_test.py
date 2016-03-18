@@ -20,6 +20,11 @@ class BaseTest(TestCase):
   """Base test with comment setup and teardown."""
 
   def create_app(self):
+    """Create an app with test configurations and return it.
+
+    Returns:
+      An app for testing.
+    """
     ufo.app.config.from_object('config.TestConfiguration')
     return ufo.app
 
@@ -28,6 +33,7 @@ class BaseTest(TestCase):
     ufo.db.create_all()
 
   def setup_auth(self):
+    """Sets up a user in the database and in the current session."""
     user = models.ManagementServerUser()
     user.username = 'testuser'
     user.set_password('testpass')
@@ -47,6 +53,7 @@ class BaseTest(TestCase):
     self.config.save()
 
   def tearDown(self):
+    """Remove the current session and drop the test database."""
     ufo.db.session.remove()
     ufo.db.drop_all()
 
