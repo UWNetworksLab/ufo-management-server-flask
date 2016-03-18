@@ -35,7 +35,7 @@ def is_user_logged_in():
   if 'username' not in flask.session:
     return False
 
-  user = models.ManagementServerUser.get_by_username(flask.session['username'])
+  user = models.AdminUser.get_by_username(flask.session['username'])
   return user is not None
 
 def login_required(f):
@@ -121,7 +121,7 @@ def login():
   username = flask.request.form.get('username')
   password = flask.request.form.get('password')
 
-  user = models.ManagementServerUser.get_by_username(username)
+  user = models.AdminUser.get_by_username(username)
   if user is None:
     return flask.redirect(flask.url_for('login', error='No valid user found',))
 

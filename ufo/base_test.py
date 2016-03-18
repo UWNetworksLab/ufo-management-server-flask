@@ -34,7 +34,7 @@ class BaseTest(TestCase):
 
   def setup_auth(self):
     """Sets up a user in the database and in the current session."""
-    user = models.ManagementServerUser()
+    user = models.AdminUser()
     user.username = 'testuser'
     user.set_password('testpass')
     user.save()
