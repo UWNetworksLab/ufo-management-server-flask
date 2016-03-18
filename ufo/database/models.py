@@ -3,6 +3,7 @@ import StringIO
 from Crypto.PublicKey import RSA
 from paramiko import hostkeys
 from paramiko import pkey
+import sqlalchemy
 
 import ufo
 from ufo.services import ssh_client
@@ -39,7 +40,12 @@ class Model(ufo.db.Model):
   def save(self, commit=True):
     ufo.db.session.add(self)
     if commit:
-      ufo.db.session.commit()
+      try:
+        ufo.db.session.commit()
+      except sqlalchemy.exc.IntegrityError:
+        ufo.app.logger.error(
+          'Unable to save to database.  Check if constraint is violated.')
+        ufo.db.session.rollback()
     return self
 
   def delete(self, commit=True):
@@ -138,7 +144,7 @@ class User(Model):
 
   id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
-  email = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  email = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH), unique=True)
   name = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
   private_key = ufo.db.Column(ufo.db.LargeBinary())
   public_key = ufo.db.Column(ufo.db.LargeBinary())
