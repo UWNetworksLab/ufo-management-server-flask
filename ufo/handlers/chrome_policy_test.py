@@ -17,6 +17,7 @@ class ChromePolicyTest(base_test.BaseTest):
     """Setup test app on which to call handlers and db to query."""
     super(ChromePolicyTest, self).setUp()
     super(ChromePolicyTest, self).setup_config()
+    super(ChromePolicyTest, self).setup_auth()
 
   def testChromePolicyDownload(self):
     """Test the chrome policy download handler downloads json."""

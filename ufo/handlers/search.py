@@ -6,6 +6,7 @@ import flask
 
 import ufo
 from ufo.database import models
+from ufo.handlers import auth
 from ufo.handlers import user
 from ufo.handlers import proxy_server
 
@@ -13,6 +14,7 @@ from ufo.handlers import proxy_server
 # TODO(eholder): Add tests for these in a separate PR.
 @ufo.app.route('/searchpage/', methods=['GET'])
 @ufo.setup_required
+@auth.login_required
 def search_page():
   """Renders the basic search page template.
 
@@ -37,6 +39,7 @@ def search_page():
 
 @ufo.app.route('/search/', methods=['GET'])
 @ufo.setup_required
+@auth.login_required
 def search():
   """Gets the database entities matching the search term.
 

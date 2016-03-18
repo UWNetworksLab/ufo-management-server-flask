@@ -14,6 +14,7 @@ class ErrorHandlerTest(base_test.BaseTest):
   def setUp(self):
     """Setup test app on which to call handlers and db to query."""
     super(ErrorHandlerTest, self).setUp()
+    super(ErrorHandlerTest, self).setup_auth()
 
   def testDefaultHTTPErrorHandlersAreRegistered(self):
     """Test the default HTTP error handlers are registered."""
@@ -53,6 +54,8 @@ class ErrorHandlerTest(base_test.BaseTest):
     self.assertTrue(str(werkzeug_error.code) in resp)
     self.assertTrue(werkzeug_error.name in resp)
     self.assertTrue(werkzeug_error.message in resp)
+
+  # TODO(eholder): Add a test for the not logged in error handler.
 
 
 if __name__ == '__main__':

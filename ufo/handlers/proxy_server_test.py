@@ -37,6 +37,7 @@ class ProxyServerTest(base_test.BaseTest):
     """Setup test app on which to call handlers and db to query."""
     super(ProxyServerTest, self).setUp()
     super(ProxyServerTest, self).setup_config()
+    super(ProxyServerTest, self).setup_auth()
 
   # def testListHandlerRendersTheListTemplate(self):
   #   """Test the list handler gets servers from the database."""

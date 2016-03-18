@@ -1,5 +1,6 @@
 import StringIO
 
+import bcrypt
 from Crypto.PublicKey import RSA
 from paramiko import hostkeys
 from paramiko import pkey
@@ -33,11 +34,28 @@ class Model(ufo.db.Model):
   __abstract__ = True
 
   def update(self, commit=True, **kwargs):
+    """Update the given entity by setting the given attributes and saving.
+
+    Args:
+      commit: A boolean for whether or not to commit the result immediately.
+      **kwargs: Any additional arguments for the attributes on the entity.
+
+    Returns:
+      The result of saving the new entity.
+    """
     for attr, value in kwargs.items():
       setattr(self, attr, value)
     return commit and self.save() or self
 
   def save(self, commit=True):
+    """Add the given entity and save if specified.
+
+    Args:
+      commit: A boolean for whether or not to commit the result immediately.
+
+    Returns:
+      The specified entity.
+    """
     ufo.db.session.add(self)
     if commit:
       try:
@@ -49,10 +67,26 @@ class Model(ufo.db.Model):
     return self
 
   def delete(self, commit=True):
+    """Delete the given entity and save if specified.
+
+    Args:
+      commit: A boolean for whether or not to commit the result immediately.
+
+    Returns:
+      The result of committing the given entity if specified or False.
+    """
     ufo.db.session.delete(self)
     return commit and ufo.db.session.commit()
 
   def to_dict(self):
+    """Generate a dictionary representation of the given entity.
+
+    This method does nothing on the base model class, but will be implemented
+    for each child class.
+
+    Returns:
+      An empty dictionary for this class.
+    """
     return {}
 
   @classmethod
@@ -137,8 +171,7 @@ class Config(Model):
 
 
 class User(Model):
-  """Class for information about the users of the proxy servers
-  """
+  """Class for information about the users of the proxy servers."""
   __tablename__ = "user"
   __searchable__ = ['email', 'name', 'domain']
 
@@ -174,11 +207,17 @@ class User(Model):
     }
 
   def regenerate_key_pair(self):
+    """Call generate key pair and set the new key pair on the user."""
     key_pair = User._GenerateKeyPair()
     self.private_key = key_pair['private_key']
     self.public_key = key_pair['public_key']
 
   def to_dict(self):
+    """Get the user as a dictionary.
+
+      Returns:
+        A dictionary of the user.
+    """
     return {
       "id": self.id,
       'email': self.email,
@@ -191,8 +230,7 @@ class User(Model):
 
 
 class ProxyServer(Model):
-  """Class for information about the proxy servers
-  """
+  """Class for information about the proxy servers."""
   __tablename__ = "proxyserver"
   __searchable__ = ['ip_address', 'name']
 
@@ -246,8 +284,12 @@ class ProxyServer(Model):
         self.host_public_key)
     return public_key.get_name() + ' ' + public_key.get_base64()
 
-
   def to_dict(self):
+    """Get the proxy server as a dictionary.
+
+      Returns:
+        A dictionary of the proxy server.
+    """
     private_key = ssh_client.SSHClient.private_key_data_to_object(
         self.ssh_private_key_type,
         self.ssh_private_key)
@@ -262,3 +304,62 @@ class ProxyServer(Model):
       "public_key": self.get_public_key_as_authorization_file_string(),
       "private_key": private_key_text,
       }
+
+
+class AdminUser(Model):
+  """People who have access to the management server, as in admins."""
+  __tablename__ = "admin_user"
+  __searchable__ = ['username']
+
+  id = ufo.db.Column(ufo.db.Integer, primary_key=True)
+
+  username = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
+                                         index=True, unique=True)
+  password = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+
+  # TODO(eholder): Followup with unit tests for each of these.
+  @classmethod
+  def get_by_username(cls, username):
+    """Lookup an admin user by username.
+
+    Agrs:
+      username: The username to search for an admin user by.
+
+    Returns:
+      The specified admin user or None if not found.
+    """
+    return cls.query.filter_by(username=username).one_or_none()
+
+  def set_password(self, password):
+    """Sets the password on a given admin user.
+
+    Args:
+      password: The new password to set on the admin user.
+    """
+    self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+  def does_password_match(self, password):
+    """Checks if the given password matches the given admin user.
+
+    Agrs:
+      password: The password to check an admin user by.
+
+    Returns:
+      True if the password matches the admin user and False otherwise.
+    """
+    hashed = bcrypt.hashpw(password.encode('utf-8'), self.password.encode('utf-8'))
+    return hashed == self.password
+
+
+  def to_dict(self):
+    """Get the admin user as a dictionary.
+
+      Returns:
+        A dictionary of the admin user.
+    """
+    return {
+      "id": self.id,
+      "username": self.username,
+      "password": self.password,
+    }
+

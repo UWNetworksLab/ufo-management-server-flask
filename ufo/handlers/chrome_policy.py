@@ -6,6 +6,7 @@ import flask
 
 import ufo
 from ufo.database import models
+from ufo.handlers import auth
 
 
 def _make_chrome_policy_json():
@@ -73,6 +74,7 @@ def get_policy_resources_dict():
 
 @ufo.app.route('/chromepolicy/download/')
 @ufo.setup_required
+@auth.login_required
 def download_chrome_policy():
   """Outputs the managed chrome policy in json form for downloading as a file.
 

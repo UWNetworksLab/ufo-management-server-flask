@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body %}
+  <paper-display-template resources="{{login_resources}}">
+    <header-container resources="{{login_resources}}">
+      <login-form resources="{{login_resources}}"></login-form>
+    </header-container>
+  </paper-display-template>
+  <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
+{% endblock %}

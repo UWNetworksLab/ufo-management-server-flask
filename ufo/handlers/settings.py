@@ -6,6 +6,7 @@ import flask
 
 import ufo
 from ufo.database import models
+from ufo.handlers import auth
 
 
 def _make_settings_json():
@@ -43,6 +44,7 @@ def get_settings_resources_dict():
 
 @ufo.app.route('/settings/', methods=['GET'])
 @ufo.setup_required
+@auth.login_required
 def get_settings():
   """Gets the current settings as a json object.
 
@@ -54,6 +56,7 @@ def get_settings():
 
 @ufo.app.route('/chromepolicy/edit', methods=['POST'])
 @ufo.setup_required
+@auth.login_required
 def edit_settings():
   """Receives the posted form for editing the policy config values.
 

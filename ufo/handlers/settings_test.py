@@ -17,6 +17,7 @@ class SettingsTest(base_test.BaseTest):
     """Setup test app on which to call handlers and db to query."""
     super(SettingsTest, self).setUp()
     super(SettingsTest, self).setup_config()
+    super(SettingsTest, self).setup_auth()
 
   def testGetSettings(self):
     """Test the get settings handler downloads json."""

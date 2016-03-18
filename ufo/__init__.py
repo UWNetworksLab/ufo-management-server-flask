@@ -5,7 +5,6 @@ import functools
 import os
 import sys
 
-from ufo.services import error_handler
 from ufo.services.custom_exceptions import SetupNeeded
 
 app = flask.Flask(__name__, instance_relative_config=True)
@@ -25,10 +24,11 @@ if 'DATABASE_URL' in os.environ:
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
 
-# Register the error handlers with the app.
-error_handler.init_error_handlers(app)
-
 db = sqlalchemy.SQLAlchemy(app)
+
+# Register the error handlers with the app.
+from ufo.services import error_handler
+error_handler.init_error_handlers(app)
 
 # DB needs to be defined before this point
 from ufo.database import models

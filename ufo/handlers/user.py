@@ -9,6 +9,7 @@ from googleapiclient import errors
 
 import ufo
 from ufo.database import models
+from ufo.handlers import auth
 from ufo.services import google_directory_service
 from ufo.services import oauth
 from ufo.services import regex
@@ -210,6 +211,7 @@ def get_user_resources_dict():
 
 @ufo.app.route('/user/')
 @ufo.setup_required
+@auth.login_required
 def user_list():
   """Retrieves a list of the users currently in the db.
 
@@ -221,6 +223,7 @@ def user_list():
 
 @ufo.app.route('/user/add', methods=['GET', 'POST'])
 @ufo.setup_required
+@auth.login_required
 def add_user():
   """Gets the requested users on get and stores new user(s) on post.
 
@@ -256,6 +259,7 @@ def add_user():
 
 @ufo.app.route('/user/delete', methods=['POST'])
 @ufo.setup_required
+@auth.login_required
 def delete_user():
   """Deletes the user corresponding to the passed in user_id from the db.
 
@@ -274,6 +278,7 @@ def delete_user():
 
 @ufo.app.route('/user/getNewKeyPair', methods=['POST'])
 @ufo.setup_required
+@auth.login_required
 def user_get_new_key_pair():
   """Rotates the key pair (public and private keys) for the given user.
 
@@ -292,6 +297,7 @@ def user_get_new_key_pair():
 
 @ufo.app.route('/user/getInviteCode', methods=['GET'])
 @ufo.setup_required
+@auth.login_required
 def user_get_invite_code():
   """Get an invite code for the given user.
 
@@ -310,6 +316,7 @@ def user_get_invite_code():
 
 @ufo.app.route('/user/toggleRevoked', methods=['POST'])
 @ufo.setup_required
+@auth.login_required
 def user_toggle_revoked():
   """Toggles whether the given user's access is revoked or not.
 
