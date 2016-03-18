@@ -331,7 +331,7 @@ class ManagementServerUser(Model):
     """
     self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-  def check_password(self, password):
+  def does_password_match(self, password):
     """Checks if the given password matches the given user.
 
     Agrs:

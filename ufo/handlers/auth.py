@@ -82,7 +82,10 @@ def login_required_if_setup(f):
       currently.
     """
     config = ufo.get_user_config()
-    if (not config.isConfigured) or is_user_logged_in():
+    if not config.isConfigured:
+      return f(*args, **kwargs)
+
+    if is_user_logged_in():
       return f(*args, **kwargs)
 
     raise NotLoggedIn
@@ -108,7 +111,7 @@ def login():
   if user is None:
     return flask.redirect(flask.url_for('login', error='No valid user found'))
 
-  if not user.check_password(password):
+  if not user.does_password_match(password):
     return flask.redirect(flask.url_for('login', error='Invalid password'))
 
   flask.session['username'] = user.username
