@@ -1,8 +1,10 @@
 instance/*
+sqlite:/*
 venv/*
 .project
 .pydevproject
 *.pyc
 ufo/static/bower_components/*
+ufo/static/vulcanized.html
 node_modules/*
 chrome_driver/*

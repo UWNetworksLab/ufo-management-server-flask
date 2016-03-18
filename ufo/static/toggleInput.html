@@ -2,10 +2,10 @@
 
 <dom-module id="ufo-toggle-input">
     <template>
-        <paper-toggle-button checked$="[[checked]]">
+        <paper-toggle-button checked$={{checked}}>
           {{buttonText}}
-          <input type="hidden" name="{{inputName}}" value="[[checked]]">
         </paper-toggle-button>
+        <input type="hidden" id="hiddenToggle" name="{{inputName}}" value="{{checked}}">
     </template>
 
     <script src="toggleInput.js"></script>

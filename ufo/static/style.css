@@ -8,22 +8,17 @@ paper-card {
 }
 
 form {
-  max-width: 800px;
+  max-width: 90%;
 }
 
 paper-tab {
-  color: #ffffff;
-  /*background-color: #00AC9B;*/
-  background-color: #3f51b5;
+  /*color: #ffffff; recent old value*/
+  /*background-color: #00AC9B; really old value*/
+  /*background-color: #3f51b5; recent old value*/
 }
 
 paper-tabs {
   max-width: 800px;
-}
-
-.anchor-button {
-  color: inherit;
-  background-color: inherit;
 }
 
 .top-buttons {
@@ -35,14 +30,126 @@ paper-tabs {
   margin-top: 16px;
 }
 
-#setup-form {
-  max-width: 800px;
-}
-
 #proxy-card-holder {
   max-width: 800px;
 }
 
 #user-card-holder {
   max-width: 600px;
+}
+
+
+
+
+paper-scroll-header-panel {
+  height: 300px;
+}
+
+paper-material {
+  background-color: #ffffff;
+  top: -75px;  /* Make the components or cards overlap with the page header. */
+}
+
+paper-material:not(.dropdown-content), #jigsaw-logo-holder {
+  width: 1200px;
+}
+
+paper-toolbar {
+  background: #ffffff!important;
+}
+
+paper-dialog {
+  width: 1000px;
+}
+
+paper-dialog-scrollable {
+  max-height: 300px;
+}
+
+paper-dialog-scrollable > div {
+  max-width: none!important;
+}
+
+.title {
+  color: black!important;
+}
+
+.anchor-button {
+  color: white;
+  background-color: #25CFB9;
+}
+
+.delete-button {
+  color: black;
+  background-color: white;
+}
+
+.anchor-no-button {
+  color: #25CFB9;
+  text-decoration: underline;
+  text-transform: none;
+}
+
+.see-all-button {
+  color: #25CFB9;
+}
+
+.dropdown-button {
+  color: #009788;
+  text-transform: uppercase;
+  font-weight: 500!important;
+}
+
+.custom-dropdown .paper-input-container.underline {
+  display: none;
+}
+
+.paper-input-container.underline .focused-line {
+  background: #25CFB9;
+}
+
+.paper-input-container.label-is-highlighted label {
+  color: #25CFB9!important;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#jigsaw-logo {
+  opacity: 53;
+}
+
+#jigsaw-logo:hover {
+  opacity: 86;
+}
+
+#main-toolbar {
+  background-color: #009788!important;
+}
+
+#main-toolbar-title {
+  color: white!important;
+}
+
+#username-and-menu {
+  float: right;
+}
+
+#username-title {
+  float: left;
+}
+
+#menu-dropdown {
+  float: right;
+}
+
+#main-holder {
+  /* This is used to make the body overlap a bit with the header.
+     But, it is commented out because the body tends to bleed more and
+     more into the header as the body gets longer and longer.
+     TODO: We need to find a more robust way to do this.
+  margin-top: -80px;
+  */
 }

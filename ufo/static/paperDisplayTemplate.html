@@ -1,0 +1,25 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/paper-material/paper-material.html" />
+<link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
+
+<dom-module id="paper-display-template">
+  <template>
+    <div class="horizontal center-justified layout">
+      <paper-material elevation="1">
+        <content></content>
+      </paper-material>
+    </div>
+    <br>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'paper-display-template',
+      properties: {
+        resources: {
+          type: Object,
+        },
+      },
+    });
+  </script>
+</dom-module>

@@ -1,48 +1,40 @@
 import flask
 from flask.ext import sqlalchemy
+from flask.ext import whooshalchemy
 import functools
 import os
+import sys
+
+from ufo.services.custom_exceptions import SetupNeeded
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
 app.config.from_object('config.BaseConfiguration')
 
+# Register logging.  Ensure INFO level is captured by Heroku's Logplex.
+import logging
+stream_handler = logging.StreamHandler(sys.stdout)
+app.logger.addHandler(stream_handler)
+app.logger.setLevel(logging.INFO)
+
 if 'DATABASE_URL' in os.environ:
   app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+  app.config['WHOOSH_BASE'] = os.environ['DATABASE_URL']
 
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
 
-# TODO(eholder): Move these over to javascript and i18n as appropriate once
-# we've decided how to structure the client side code.
-# Set jinja environment globals
-app.jinja_env.globals['EMAIL_VALIDATION_PATTERN'] = r'[^@]+@[^@]+.[^@]+'
-EMAIL_VALIDATION_ERROR = 'Please supply a valid email address.'
-app.jinja_env.globals['EMAIL_VALIDATION_ERROR'] = EMAIL_VALIDATION_ERROR
-# Key lookup for users and group allows email or unique id.
-KEY_LOOKUP_PATTERN = r'([^@]+@[^@]+.[^@]+|[a-zA-Z0-9]+)'
-KEY_LOOKUP_ERROR = 'Please supply a valid email address or unique id.'
-app.jinja_env.globals['KEY_LOOKUP_VALIDATION_PATTERN'] = KEY_LOOKUP_PATTERN
-app.jinja_env.globals['KEY_LOOKUP_VALIDATION_ERROR'] = KEY_LOOKUP_ERROR
-
 db = sqlalchemy.SQLAlchemy(app)
 
 # Register the error handlers with the app.
-import error_handler
+from ufo.services import error_handler
 error_handler.init_error_handlers(app)
 
-# Set jinja environment globals
-app.jinja_env.globals['EMAIL_VALIDATION_PATTERN'] = r'[^@]+@[^@]+.[^@]+'
-EMAIL_VALIDATION_ERROR = 'Please supply a valid email address.'
-app.jinja_env.globals['EMAIL_VALIDATION_ERROR'] = EMAIL_VALIDATION_ERROR
-# Key lookup for users and group allows email or unique id.
-KEY_LOOKUP_PATTERN = r'([^@]+@[^@]+.[^@]+|[a-zA-Z0-9]+)'
-KEY_LOOKUP_ERROR = 'Please supply a valid email address or unique id.'
-app.jinja_env.globals['KEY_LOOKUP_VALIDATION_PATTERN'] = KEY_LOOKUP_PATTERN
-app.jinja_env.globals['KEY_LOOKUP_VALIDATION_ERROR'] = KEY_LOOKUP_ERROR
-
 # DB needs to be defined before this point
-import models
+from ufo.database import models
+
+whooshalchemy.whoosh_index(app, models.User)
+whooshalchemy.whoosh_index(app, models.ProxyServer)
 
 @app.after_request
 def checkCredentialChange(response):
@@ -68,9 +60,6 @@ def get_user_config():
 
   return config
 
-# only import setup here to avoid circular reference
-from setup import SetupNeeded
-
 def setup_required(func):
   """Decorator to handle routes that need setup to have been completed
 
@@ -83,5 +72,6 @@ def setup_required(func):
     return func(*args, **kwargs)
   return decorated_function
 
-import xsrf
-import routes
+from ufo.services import key_distributor
+from ufo.handlers import routes
+from ufo.services import xsrf

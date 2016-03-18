@@ -1,0 +1,99 @@
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+
+<dom-module id="oauth-configuration">
+  <style is="custom-style">
+    p, #oauth-configuration-form {
+      margin-left: 40px;
+    }
+    #oauth-configuration-form {
+      margin-left: 50px;
+    }
+    p, #oauth-configuration-form {
+      margin-right: 25px;
+      margin-bottom: 25px;
+    }
+    .buttons {
+      margin-top: 35px;
+    }
+    paper-input {
+      margin-left: -10px;
+    }
+  </style>
+  <template>
+    <!-- TODO: Make a clear way to say you do not want to use Google apps. -->
+      <template is="dom-if" if="{{!resources.config.isConfigured}}">
+        <p>
+          {{resources.welcomeText}}
+        </p>
+        <p>
+          {{resources.googleDomainPromptText}}
+        </p>
+      </template>
+
+      <template is="dom-if" if="{{resources.config.isConfigured}}">
+        <p>
+          {{resources.successSetupText}}
+        </p>
+
+        <template is="dom-if" if="{{isDomainConfigured(resources.config)}}">
+          <p>
+            {{resources.domainConfiguredText}} <strong>{{resources.config.domain}}</strong>
+          </p>
+        </template>
+
+        <template is="dom-if" if="{{!isDomainConfigured(resources.config)}}">
+          <p>
+            {{resources.noDomainConfiguredText}}
+          </p>
+        </template>
+      </template>
+
+        <p>
+          {{resources.betaWarningText}}
+        </p>
+
+        <p>
+          <a class="anchor-no-button" href="{{resources.oauth_url}}" target="_blank">{{resources.connectYourDomainButtonText}}</a>
+        </p>
+
+         <p>
+           {{resources.pasteTheCodeText}}
+         </p>
+
+      <!-- TODO make this form be more useful -->
+      <form id="oauth-configuration-form" method="post" action="{{resources.setup_url}}">
+        <paper-input label="Domain" name="domain"></paper-input>
+        <paper-input label="OAuth Code" name="oauth_code"></paper-input>
+        <template is="dom-if" if="{{!resources.config.isConfigured}}">
+          <paper-input label="Default Admin Username" name="admin_username"></paper-input>
+          <paper-input label="Default Admin Password" name="admin_password"></paper-input>
+        </template>
+        <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
+        <div class="buttons">
+          <paper-button onclick="submitByFormId('oauth-configuration-form')" class="form-submit-button anchor-button" type="submit">
+            <strong>{{resources.submitButtonText}}</strong>
+          </paper-button>
+        </div>
+      </form>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'oauth-configuration',
+      properties: {
+        resources: {
+          type: Object,
+        },
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+      isDomainConfigured: function(config) {
+        return config.domain && config.credentials;
+      },
+    });
+  </script>
+</dom-module>

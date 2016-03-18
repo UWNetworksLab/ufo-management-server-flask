@@ -1,0 +1,196 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+
+<dom-module id="list-items">
+  <style is="custom-style">
+    .first-div {
+      width: 300px;
+    }
+    .second-div {
+      width: 250px;
+    }
+    .third-div {
+      width: 200px;
+    }
+    .fourth-div {
+      width: 100px;
+    }
+    .topLineButton {
+      opacity: 0.0;
+      color: #25CFB9;
+      text-transform: none;
+    }
+    paper-item, paper-icon-item {
+      border-top: 1px solid #e5e5e5;
+    }
+    paper-icon-item:hover {
+      @apply(--paper-item-focused);
+    }
+    paper-icon-item:hover .topLineButton {
+      opacity: 1.0;
+    }
+  </style>
+  <!-- TODO(eholder): Figure out how to make hover work with focused. -->
+  <template>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner active$={{loading}}></paper-spinner>
+    </template>
+    <iron-ajax auto$="[[autoGet]]"
+      url="{{resources.listUrl}}"
+      method="GET"
+      handle-as="json"
+      id="getItemsAjax"
+      loading="{{loading}}"
+      last-response="{{ajaxResponse}}">
+    </iron-ajax>
+    <paper-listbox>
+      <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
+        <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified" on-tap="openDetailsDialog">
+          <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
+          <template is="dom-if" if="{{resources.isUser}}">
+            <div class="first-div"><strong>{{_limitCharacters(item.name)}}</strong></div>
+            <div class="second-div">{{_limitCharacters(item.email)}}</div>
+            <div class="third-div">{{item.access}}</div>
+            <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="fourth-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
+              <input type="hidden" name="user_id" value="{{item.id}}">
+              <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+              <paper-button on-tap="submitRevokeForm" class="topLineButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
+            </form>
+            <user-details-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></user-details-dialog>
+          </template>
+          <template is="dom-if" if="{{resources.isProxyServer}}">
+            <div class="first-div"><strong>{{item.name}}</strong></div>
+            <div class="second-div">{{item.ip_address}}</div>
+            <div class="third-div"></div>
+            <paper-button on-tap="openServerEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
+            <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
+          </template>
+          <paper-icon-button icon="expand-more" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}"></paper-icon-button>
+        </paper-icon-item>
+      </template>
+      <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
+        <paper-item id="showMore" class="horizontal layout start-justified">
+          <paper-button class="see-all-button" on-tap="_flipShowingAll">
+          {{resources.seeAllText}}
+          </paper-button>
+        </paper-item>
+      </template>
+    </paper-listbox>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'list-items',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        isShowingAll: {
+          value: false,
+          type: Boolean,
+        },
+        defaultLimit: {
+          value: 10,
+          type: Number,
+        },
+        ajaxResponse: {
+          type: Object,
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        characterLimit: {
+          type: Number,
+          value: 25,
+        },
+        autoGet: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+      },
+      _limitCharacters: function(text) {
+        if (text.length > this.characterLimit) {
+          return text.substring(0, this.characterLimit) + '...';
+        } else {
+          return text;
+        }
+      },
+      _limitResults: function(array, isShowingAll) {
+        var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
+        if (isShowingAll || !array || array.length <= limit) {
+          return array;
+        } else {
+          return array.slice(0, limit);
+        }
+      },
+      _hasMoreToShow: function(array, isShowingAll) {
+        var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
+        return array.length > limit && !isShowingAll;
+      },
+      _flipShowingAll: function() {
+        this.isShowingAll = !this.isShowingAll;
+      },
+      setAjaxResponse: function(response) {
+        this.set('ajaxResponse', response);
+      },
+      resendRequest: function() {
+        this.$.getItemsAjax.generateRequest();
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+      _findAncestorMatchingTagnameFromTarget: function(target, tagName) {
+        var elem = target;
+        while (elem.tagName.toLowerCase() !== tagName) {
+          elem = elem.parentElement;
+          if (elem == document.body) {
+            break;
+          }
+        }
+        if (elem.tagName.toLowerCase() !== tagName) {
+          return null;
+        }
+        return elem;
+      },
+      submitRevokeForm: function(e, details) {
+        e.stopPropagation();
+        var name = 'form';
+        var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
+        if (elem) {
+          elem.submit();
+        }
+      },
+      parseRevokeResponse: function(e, details) {
+        this.set('ajaxResponse', e.target.request.lastResponse);
+        this.set('loading', false);
+      },
+      openDetailsDialog: function(e, details) {
+        var name = 'paper-icon-item';
+        var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
+        if (elem) {
+          var dialogHolder = elem.querySelector('#detailsHolder');
+          dialogHolder.openDialog();
+        }
+      },
+      openServerEdit: function(e, details) {
+        var name = 'paper-icon-item';
+        var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
+        if (elem) {
+          var dialogHolder = elem.querySelector('#detailsHolder');
+          dialogHolder.openServerEdit();
+        }
+      },
+    });
+  </script>
+</dom-module>

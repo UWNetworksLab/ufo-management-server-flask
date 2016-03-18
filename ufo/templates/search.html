@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Search Results{% endblock %}
+{% block body %}
+<!-- TODO(eholder): Verify this page will/will not be needed according
+                    to John Cassidy and remove or keep as appropriate. -->
+  <paper-display-template resources="{{user_resources}}">
+    <header-container resources="{{user_resources}}">
+      <list-items resources="{{user_resources}}" id="userList" ajax-response="{{user_items}}">
+      </list-items>
+    </header-container>
+  </paper-display-template>
+  <paper-display-template resources="{{proxy_server_resources}}">
+    <header-container resources="{{proxy_server_resources}}">
+      <list-items resources="{{proxy_server_resources}}" id="proxyList" ajax-response="{{proxy_server_items}}">
+      </list-items>
+    </header-container>
+  </paper-display-template>
+  <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
+{% endblock %}

@@ -1,0 +1,121 @@
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/iron-icons/iron-icons.html" />
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+
+<dom-module id="ufo-search-bar">
+  <style is="custom-style">
+    #searchBar {
+      background-color: #4DB6AB;
+      border-radius: 5px;
+      --paper-input-container-input-color: white;
+      --paper-input-container-color: rgba(0,0,0,0.0)!important;
+      --paper-input-container-focus-color: rgba(0,0,0,0.0)!important;
+      --paper-input-container-invalid-color: rgba(0,0,0,0.0)!important;
+    }
+    .hideSuffix {
+      display: none;
+    }
+    .showSuffix {
+      display: block;
+    }
+  </style>
+  <template>
+
+    <form is="iron-form" method="GET" action="{{userResources.searchJsonUrl}}" loading="{{loading}}" last-response="{{searchJson}}" on-iron-form-presubmit="presubmit" on-iron-form-response="parseSearchResponse" id="searchForm" content-type="application/json">
+      <paper-input id="searchBar" no-label-float name="search_input" value="{{searchText}}">
+        <paper-icon-button icon="search" prefix on-tap="submitForm"></paper-icon-button>
+        <paper-icon-button icon="arrow-back" suffix id="suffix" class="hideSuffix" on-tap="resetLists"></paper-icon-button>
+      </paper-input>
+      <input type="hidden" id="hiddenSearch" name="search_text" value="&quot;{{searchText}}&quot;">
+    </form>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner active$={{loading}}></paper-spinner>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ufo-search-bar',
+      properties: {
+        userResources: {
+          type: Object,
+        },
+        proxyServerResources: {
+          type: Object,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        searchText: {
+          type: String,
+          notify: true,
+        },
+        searchJson: {
+          type: Object,
+          notify: true,
+        },
+      },
+      presubmit: function() {
+        var userList = document.getElementById(this.userResources.listId);
+        var serverList = document.getElementById(
+          this.proxyServerResources.listId);
+        if (!userList && !serverList) {
+          var queryString = "?search_text=" + this.$.hiddenSearch.value;
+          var locationString = this.userResources.searchPageUrl + queryString;
+          window.location.href = locationString;
+        }
+        this.set('loading', true);
+        this.$.suffix.className = this.$.suffix.className.replace(
+          'hideSuffix', 'showSuffix');
+      },
+      submitForm: function(e, details) {
+        var elem = e.target;
+        while (elem.tagName.toLowerCase() != 'form') {
+          elem = elem.parentElement;
+          if (elem == document.body) {
+            break;
+          }
+        }
+        if (elem.tagName.toLowerCase() != 'form') {
+          return;
+        }
+        elem.submit();
+      },
+      parseSearchResponse: function(e, details) {
+        var searchJson = details.xhr.response;
+        if (searchJson.users) {
+          this.sendJsonToList(searchJson.users, this.userResources.listId);
+        }
+        if (searchJson.servers) {
+          this.sendJsonToList(searchJson.servers,
+            this.proxyServerResources.listId);
+        }
+        this.set('loading', false);
+      },
+      sendJsonToList: function(updatedJson, elementId) {
+        var listElem = document.getElementById(elementId);
+        if (listElem) {
+          listElem.setAjaxResponse(updatedJson);
+        }
+      },
+      resetLists: function(e, details) {
+        var userList = document.getElementById(this.userResources.listId);
+        if (userList) {
+          userList.resendRequest();
+        }
+        var serverList = document.getElementById(
+          this.proxyServerResources.listId);
+        if (serverList) {
+          serverList.resendRequest();
+        }
+        this.$.suffix.className = this.$.suffix.className.replace(
+          'showSuffix', 'hideSuffix');
+        this.set('searchText', '');
+      },
+    });
+  </script>
+</dom-module>

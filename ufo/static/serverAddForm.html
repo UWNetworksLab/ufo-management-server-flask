@@ -1,0 +1,94 @@
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+
+<dom-module id="server-add-form">
+  <style is="custom-style">
+    #serverAddForm {
+      margin-bottom: 0px;
+      padding: 24px 24px;
+      max-width: ;
+    }
+    #serverSpinner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      z-index: 100000000;
+    }
+    .buttons {
+      margin-bottom: 25px;
+    }
+  </style>
+  <template>
+    <div>
+      <template is="dom-if" if="{{isSpinnerOn}}">
+        <paper-spinner id="serverSpinner" active$={{isSpinnerOn}}></paper-spinner>
+      </template>
+      <form is="iron-form" id="serverAddForm" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
+        <paper-input label="{{resources.ipLabel}}" type="text" name="ip_address" required auto-validate pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}">{{resources.ip_address}}</paper-input>
+        <paper-input label="{{resources.nameLabel}}" type="text" name="name" required>{{resources.name}}</paper-input>
+        <!-- TODO add the ability to upload files -->
+        <ufo-textarea label="{{resources.privateKeyLabel}}" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" auto-validate pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}">{{resources.private_key}}</ufo-textarea>
+        <br>
+        <p>{{resources.privateKeyText}}</p>
+
+        <paper-input label="{{resources.publicKeyLabel}}" type="text" name="public_key" required auto-validate pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}">{{resources.public_key}}</paper-input>
+        <br>
+        <p>{{resources.publicKeyText}}</p>
+        <p>{{resources.rsaText}}</p>
+        <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+      </form>
+      <div class="buttons">
+        <paper-button class="anchor-button" dialog-dismiss>
+        <strong>{{resources.dismissText}}</strong>
+        </paper-button>
+        <paper-button class="anchor-button" autofocus on-tap="submitPostForm">
+        <strong>{{resources.confirmText}}</strong>
+        </paper-button>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'server-add-form',
+      properties: {
+        resources: {
+          type: Object,
+          notify: true,
+        },
+        isSpinnerOn: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+      },
+      enableSpinner: function() {
+        this.set('isSpinnerOn', true);
+      },
+      submitPostForm: function() {
+        this.querySelector('#serverAddForm').submit();
+      },
+      parsePostResponse: function(e, detail) {
+        this.sendServersJsonToList(detail.xhr.response);
+        this.set('isSpinnerOn', false);
+        serverModal = document.getElementById('serverModal');
+        if (serverModal) {
+          document.getElementById('serverModal').close();
+        } else {
+          document.getElementById('serverAddForm').reset();
+        }
+      },
+      sendServersJsonToList: function(updatedServersJson) {
+        var listElem = document.getElementById(this.resources.listId);
+        if (listElem) {
+          listElem.setAjaxResponse(updatedServersJson);
+        }
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+    });
+  </script>
+</dom-module>
