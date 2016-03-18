@@ -1,5 +1,7 @@
 """Auth module which provides login handlers and decorators."""
 
+import json
+
 import flask
 import functools
 
@@ -13,6 +15,21 @@ class NotLoggedIn(Exception):
   To be thrown by the decorators listed below."""
   code = 401
   message = 'User is not logged in'
+
+def get_login_resources_dict():
+  """Get the resources for the login page.
+
+    Returns:
+      A dict of the resources for the login page.
+  """
+  return {
+    'hasAddFlow': False,
+    'titleText': 'Please Log In',
+    'loginUrl': flask.url_for('login'),
+    'usernameLabel': 'Username',
+    'passwordLabel': 'Password',
+    'loginText': 'Login',
+  }
 
 def is_user_logged_in():
   """Checks whether or not a user is logged in currently.
@@ -100,16 +117,18 @@ def login():
     A redirect to the login page if there is any problem with the current user
     or a redirect to the landing page if everything checks out.
   """
+  login_resources = get_login_resources_dict()
   if flask.request.method == 'GET':
     return flask.render_template('login.html',
-                                 error=flask.request.form.get('error'))
+                                 error=flask.request.form.get('error'),
+                                 login_resources=json.dumps(login_resources))
 
   username = flask.request.form.get('username')
   password = flask.request.form.get('password')
 
   user = models.ManagementServerUser.get_by_username(username)
   if user is None:
-    return flask.redirect(flask.url_for('login', error='No valid user found'))
+    return flask.redirect(flask.url_for('login', error='No valid user found',))
 
   if not user.does_password_match(password):
     return flask.redirect(flask.url_for('login', error='Invalid password'))

@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block body %}
-  <h2>Error</h2>
-  <p>{{ error.code }} - {{ error.name }}</p>
-  <p>{{ error.description }}</p>
+  <div class="horizontal center-justified layout">
+    <paper-card heading="Error">
+      <div>
+        <p>{{ error.code }} - {{ error.name }}</p>
+        <p>{{ error.description }}</p>
+      </div>
+    </paper-card>
+  </div>
+  <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
+  <br>
 {% endblock %}

@@ -1,0 +1,50 @@
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+
+<dom-module id="login-form">
+  <style is="custom-style">
+    #loginForm {
+      margin-left: 50px;
+      margin-right: 25px;
+      margin-bottom: 25px;
+    }
+    .buttons {
+      margin-top: 35px;
+      margin-right: 25px;
+      margin-bottom: 25px;
+    }
+    paper-input {
+      margin-left: -10px;
+    }
+  </style>
+  <template>
+    <form id="loginForm" method="POST">
+      <paper-input label="{{resources.usernameLabel}}" name="username"></paper-input>
+      <paper-input type="password" label="{{resources.passwordLabel}}" name="password"></paper-input>
+
+      <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+    </form>
+    <div class="buttons">
+      <paper-button on-tap="submitLoginForm" class="anchor-button" type="submit">
+        <strong>{{resources.loginText}}</strong>
+      </paper-button>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'login-form',
+      properties: {
+        resources: {
+          type: Object,
+        },
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+      submitLoginForm: function() {
+        this.querySelector('#loginForm').submit();
+      },
+    });
+  </script>
+</dom-module>

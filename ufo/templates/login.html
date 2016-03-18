@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 {% block body %}
-  <h2>Please Log In</h2>
-  <form id="login-form" method="POST">
-    <paper-input label="Username" name="username"></paper-input>
-    <paper-input type="password" label="Password" name="password"></paper-input>
-
-    <input type="hidden" name="_xsrf_token" value="{{ xsrf_token() }}">
-    <paper-button raised onclick="submitByFormId('login-form')" class="form-submit-button" type="submit">Login</paper-button>
-  </form>
+  <paper-display-template resources="{{login_resources}}">
+    <header-container resources="{{login_resources}}">
+      <login-form resources="{{login_resources}}"></login-form>
+    </header-container>
+  </paper-display-template>
+  <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
 {% endblock %}
