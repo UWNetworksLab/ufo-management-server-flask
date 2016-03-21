@@ -1,7 +1,12 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/iron-icons/iron-icons.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 
 <dom-module id="ufo-dropdown-menu">
@@ -10,27 +15,73 @@
       width: 20px;
       --iron-icon-fill-color: #009788;
     }
+    .floatToTheRight {
+      float: right;
+    }
+    #spinner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      z-index: 100000000;
+    }
   </style>
   <template>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner id="spinner" active$={{loading}}></paper-spinner>
+    </template>
+    <iron-ajax
+      url="{{resources.listAdminUrl}}"
+      method="GET"
+      handle-as="json"
+      id="getAdminsAjax"
+      loading="{{loading}}"
+      on-response="handleAdminList"
+      last-response="{{ajaxResponse}}">
+    </iron-ajax>
+
     <paper-dialog class="dropdown-content" id="ufoDropdownMenu">
       <paper-listbox>
-        <paper-icon-item class="dropdown-button">
+        <paper-icon-item class="dropdown-button" on-tap="flipToAdminFlow">
           <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
           {{resources.addAdminText}}
         </paper-icon-item>
-        <paper-icon-item class="dropdown-button">
-          <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
-          {{resources.settingsText}}
-        </paper-icon-item>
+        <a href="{{resources.settingsUrl}}">
+          <paper-icon-item class="dropdown-button">
+            <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
+            {{resources.settingsText}}
+          </paper-icon-item>
+        </a>
         <paper-item class="dropdown-button">
           <form id="logoutForm" method="post" action="{{resources.logoutUrl}}">
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
-            <paper-button type="submit" on-tap="submitForm">
+            <paper-button type="submit" on-tap="submitLogoutForm">
               <strong>{{resources.logoutText}}</strong>
             </paper-button>
           </form>
         </paper-item>
       </paper-listbox>
+    </paper-dialog>
+
+    <paper-dialog id="addAdminDialog">
+      <paper-button on-tap="flipToDropdownFlow">
+        <iron-icon icon="arrow-back" item-icon></iron-icon>
+      </paper-button>
+      <template is="dom-if" if="{{showResponseStatus}}">
+        <p>{{responseStatus}}</p>
+      </template>
+      <form is="iron-form" id="addAdminForm" method="post" action="{{resources.addAdminUrl}}" on-iron-form-response="parseAddAdminResponse" on-iron-form-presubmit="enableSpinner">
+        <paper-input label="{{resources.adminUsernameLabel}}" id="username" name="username"></paper-input>
+        <paper-input label="{{resources.adminPasswordlabel}}" id="password" name="password"></paper-input>
+        <input type="hidden" name="admin_username" id="jsonUsername" value="" />
+        <input type="hidden" name="admin_password" id="jsonPassword" value="" />
+        <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
+        <paper-button on-tap="checkThenSubmitAddAdminForm" class="floatToTheRight anchor-button" type="submit">
+          <strong>{{resources.addAdminSubmitText}}</strong>
+        </paper-button>
+      </form>
+      <p></p>
+      <br>
+      <p></p>
     </paper-dialog>
 
     <!-- TODO(eholder): Figure out how to style the UI so that the dialog
@@ -46,7 +97,7 @@
       <paper-button class="dropdown-trigger" id="openMenuButton">
        {{username}} <iron-icon icon="arrow-drop-down"></iron-icon>
       </paper-button>
-      <paper-menu class="dropdown-content" id="actualMenu">
+      <paper-menu class="dropdown-content" id="ufoDropdownMenu">
         <paper-icon-item class="dropdown-button">
           <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
           Add an Admin
@@ -86,10 +137,6 @@
       properties: {
         resources: {
           type: Object,
-        },
-        isMenuOpened: {
-          type: Boolean,
-          value: false,
           notify: true,
         },
         loading: {
@@ -97,34 +144,116 @@
           value: false,
           notify: true,
         },
-        searchJson: {
+        ajaxResponse: {
           type: Object,
           notify: true,
         },
-        dialogHolder: {
-          type: Object,
+        showResponseStatus: {
+          type: Boolean,
           notify: true,
-          value: document.getElementById('dialogMenuHolder'),
+          value: false,
+        },
+        responseStatus: {
+          type: String,
+          notify: true,
         },
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
       },
-      openMenu: function(e, details) {
-        this.$.actualMenu.open();
+      openMenu: function() {
+        this.$.ufoDropdownMenu.open();
       },
-      submitForm: function(e, details) {
-        var elem = e.target;
-        while (elem.tagName.toLowerCase() != 'form') {
-          elem = elem.parentElement;
-          if (elem == document.body) {
+      closeMenu: function() {
+        this.$.ufoDropdownMenu.close();
+      },
+      flipToAdminFlow: function(e, details) {
+        this.closeMenu();
+        this.openAdminDialog();
+      },
+      submitLogoutForm: function(e, details) {
+        this.querySelector('#logoutForm').submit();
+      },
+      openAdminDialog: function() {
+        this.$.addAdminDialog.open();
+      },
+      closeAdminDialog: function() {
+        this.$.addAdminDialog.close();
+      },
+      flipToDropdownFlow: function(e, details) {
+        this.openMenu();
+        this.closeAdminDialog();
+        this.resetAddAdminForm();
+        this.set('showResponseStatus', false);
+        this.set('responseStatus', '');
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      makeAdminJson: function() {
+        var username = this.querySelector('#username').value;
+        var password = this.querySelector('#password').value;
+        var jsonUsername = this.querySelector('#jsonUsername');
+        var jsonPassword = this.querySelector('#jsonPassword');
+        jsonUsername.value = JSON.stringify(username);
+        jsonPassword.value = JSON.stringify(password);
+      },
+      checkThenSubmitAddAdminForm: function() {
+        this.$.getAdminsAjax.generateRequest();
+      },
+      handleAdminList: function(e, details) {
+        var username = this.querySelector('#username').value;
+        var admins = details.xhr.response.items;
+        if (admins) {
+          var found = this._findUsernameInAdminList(admins, username);
+          if (found) {
+            this.set('showResponseStatus', true);
+            this.set('responseStatus', this.resources.adminExistsError);
+          } else {
+            this.submitAddAdminForm();
+          }
+        } else {
+          this.set('showResponseStatus', true);
+          this.set('responseStatus', this.resources.adminListGetError);
+        }
+      },
+      submitAddAdminForm: function() {
+        this.enableSpinner();
+        this.makeAdminJson();
+        this.querySelector('#addAdminForm').submit();
+      },
+      parseAddAdminResponse: function(e, details) {
+        var username = this.querySelector('#username').value;
+        var admins = details.xhr.response.items;
+        if (admins) {
+          var found = this._findUsernameInAdminList(admins, username);
+          if (found) {
+            this.set('showResponseStatus', true);
+            this.set('responseStatus', this.resources.adminAddSuccessText);
+            this.resetAddAdminForm();
+          } else {
+            this.set('showResponseStatus', true);
+            this.set('responseStatus', this.resources.adminAddFailureText);
+          }
+        } else {
+          this.set('showResponseStatus', true);
+          this.set('responseStatus', this.resources.adminListGetError);
+        }
+        this.set('loading', false);
+      },
+      resetAddAdminForm: function() {
+        this.querySelector('#addAdminForm').reset();
+      },
+      _findUsernameInAdminList: function(admins, username) {
+        var found = false;
+        var i = 0;
+        for (; i < admins.length; ++i) {
+          if (admins[i].username === username) {
+            found = true;
             break;
           }
         }
-        if (elem.tagName.toLowerCase() != 'form') {
-          return;
-        }
-        elem.submit();
+        return found;
       },
     });
   </script>

@@ -21,6 +21,19 @@ def get_landing():
     'settingsText': 'Settings',
     'logoutText': 'Log Out',
     'logoutUrl': flask.url_for('logout'),
+    'settingsUrl': flask.url_for('setup') + '#policy-config-form',
+    'listAdminUrl': flask.url_for('admin_list'),
+    'addAdminUrl': flask.url_for('add_admin'),
+    'adminUsernameLabel': 'Admin Username',
+    'adminPasswordlabel': 'Admin Password',
+    'addAdminSubmitText': 'Add Admin',
+    'adminListGetError': ('Error: Getting the list of admins failed. Try again'
+                          ' later.'),
+    'adminExistsError': ('Error: An admin with the specified username already '
+                         'exists.'),
+    'adminAddSuccessText': 'Success! The specified admin was added.',
+    'adminAddFailureText': ('Error: Adding the specified admin failed. Try '
+                            'again later.'),
   }
 
 def get_login():
@@ -75,8 +88,10 @@ def get_oauth():
     'connectYourDomainButtonText': 'Connect to Your Domain',
     'pasteTheCodeText': ('Once you finish authorizing access, please paste the'
         ' code you receive in the box below.'),
+    'adminUsernameLabel': 'Admin Username',
+    'adminPasswordlabel': 'Admin Password',
     'submitButtonText': 'Submit',
-    }
+  }
 
 def get_policy():
   """Get the resources for the chrome policy component.

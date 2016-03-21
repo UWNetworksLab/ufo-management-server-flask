@@ -19,6 +19,7 @@ def landing():
 
 # The following imports are commented out since they are already
 # imported above, but are kept here for posterity.
+from ufo.handlers import admin
 #from ufo.handlers import chrome_policy
 #from ufo.handlers import proxy_server
 from ufo.handlers import setup

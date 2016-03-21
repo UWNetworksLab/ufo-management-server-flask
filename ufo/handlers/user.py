@@ -12,7 +12,6 @@ from ufo.database import models
 from ufo.handlers import auth
 from ufo.services import google_directory_service
 from ufo.services import oauth
-from ufo.services import regex
 
 INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
