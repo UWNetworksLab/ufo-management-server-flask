@@ -92,6 +92,32 @@ class ProxyServerTest(base_test.BaseTest):
     self.assertEqual(getBinaryPublicKey(fake_server['key']),
                      proxy_server_in_db.host_public_key)
 
+  def testProxyServerCanNotBeAddedMoreThanOnce(self):
+    """Test that the proxy server can not be added more than."""
+    fake_server = FAKE_PROXY_SERVER_DATA[0]
+    form_data = self._GetProxyServerFormData()
+    response = self.client.post(
+        flask.url_for('proxyserver_add'),
+        data=form_data,
+        follow_redirects=False)
+    response = self.client.post(
+        flask.url_for('proxyserver_add'),
+        data=form_data,
+        follow_redirects=False)
+
+    query = models.ProxyServer.query
+    query.filter_by(ip_address=fake_server['ip_address'])
+    
+    self.assertEqual(1, query.count())
+    proxy_server_in_db = query.one_or_none()
+    self.assertIsNotNone(proxy_server_in_db)
+    self.assertEqual(fake_server['name'],
+                     proxy_server_in_db.name)
+    self.assertEqual(fake_server['key'].exportKey('DER'),
+                     proxy_server_in_db.ssh_private_key)
+    self.assertEqual(getBinaryPublicKey(fake_server['key']),
+                     proxy_server_in_db.host_public_key)
+
   def testAddingProxyServerRedirectsToList(self):
     """Tests the redirect after adding a proxy server.
 
