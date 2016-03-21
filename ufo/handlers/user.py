@@ -253,7 +253,7 @@ def add_user():
     # Save on each user so that we can let the database check if the
     # uniqueness constraint is fulfilled.  i.e don't batch this because
     # if one user is added more than once then the whole session will fail.
-    db_user.save(commit=True)
+    db_user.save()
 
   return user_list()
 
