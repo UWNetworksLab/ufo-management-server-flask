@@ -10,57 +10,6 @@ from ufo.services import regex
 from ufo.services import ssh_client
 
 
-def get_proxy_resources_dict():
-  """Get the resources for the proxy server component.
-
-    Returns:
-      A dict of the resources for the proxy server component.
-  """
-  return {
-    'addUrl': flask.url_for('proxyserver_add'),
-    'addIconUrl': flask.url_for('static', filename='img/add-servers.svg'),
-    'inverseAddIconUrl': flask.url_for('static', filename='img/add-servers-inverse.svg'),
-    'addText': 'Add a Server',
-    'listId': 'proxyList',
-    'listUrl': flask.url_for('proxyserver_list'),
-    'listLimit': 10,
-    'detailsButtonText': 'Edit Server',
-    'detailsButtonId': 'serverEditButton',
-    'detailsOverlayId': 'serverDetailsOverlay',
-    'editText': 'Edit',
-    'saveText': 'Save',
-    'deleteLabel': 'Delete Server',
-    'editUrl': flask.url_for('proxyserver_edit'),
-    'deleteUrl': flask.url_for('proxyserver_delete'),
-    'seeAllText': 'See All Servers',
-    'titleText': 'Servers',
-    'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
-    'isProxyServer': True,
-    'hasAddFlow': True,
-    'modalId': 'serverModal',
-    'dismissText': 'Cancel',
-    'confirmText': 'Add Server',
-    'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
-    'textAreaMaxRows': 10,
-    'ipLabel': 'IP Address',
-    'nameLabel': 'Server Name',
-    'privateKeyLabel': 'SSH Private Key',
-    'publicKeyLabel': 'SSH Host Public Key',
-    'ip_address': '',
-    'name': '',
-    'private_key': '',
-    'public_key': '',
-    'privateKeyText': ('For the private key, please copy the full contents of '
-                       'a private key file with the ability to access a proxy '
-                       'server. The beginning of the file should resemble '
-                       '"-----BEGIN RSA PRIVATE KEY-----".'),
-    'publicKeyText': ('For the hosts public key, you can usually get this '
-                      'value from either /etc/ssh/ssh_host_rsa_key.pub or from'
-                      ' the line in $HOME/.ssh/known_hosts on your server.'),
-    'rsaText': ('For now, please be sure to use an RSA key (the text should '
-                'begin with ssh-rsa)'),
-  }
-
 @ufo.app.route('/proxyserver/')
 @ufo.setup_required
 @auth.login_required

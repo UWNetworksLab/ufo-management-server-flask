@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 {% block title %}Setup{% endblock %}
 {% block body %}
-  <paper-display-template resources="{{user_resources}}">
-    <left-icon-container resources="{{user_resources}}">
-      <user-add-tabs resources="{{user_resources}}">
+  <paper-display-template resources="{{user_resources_without_add_flow}}">
+    <left-icon-container resources="{{user_resources_without_add_flow}}">
+      <user-add-tabs resources="{{user_resources_without_add_flow}}">
       </user-add-tabs>
     </left-icon-container>
   </paper-display-template>
 
-  <paper-display-template resources="{{proxy_server_resources}}">
-    <left-icon-container resources="{{proxy_server_resources}}">
-      <server-add-form resources="{{proxy_server_resources}}">
+  <paper-display-template resources="{{proxy_server_resources_without_add_flow}}">
+    <left-icon-container resources="{{proxy_server_resources_without_add_flow}}">
+      <server-add-form resources="{{proxy_server_resources_without_add_flow}}">
       </server-add-form>
     </left-icon-container>
   </paper-display-template>
 
   <paper-display-template resources="{{oauth_resources}}">
     <header-container resources="{{oauth_resources}}">
-      <oauth-configuration resources="{{oauth_resources}}">
+      <oauth-configuration resources="{{oauth_resources}}" configuration="{{oauth_configuration_resources}}">
       </oauth-configuration>
     </header-container>
   </paper-display-template>

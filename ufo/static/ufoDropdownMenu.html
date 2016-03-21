@@ -1,0 +1,131 @@
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/iron-icons/iron-icons.html" />
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+
+<dom-module id="ufo-dropdown-menu">
+  <style is="custom-style">
+    .dropdown-icon {
+      width: 20px;
+      --iron-icon-fill-color: #009788;
+    }
+  </style>
+  <template>
+    <paper-dialog class="dropdown-content" id="ufoDropdownMenu">
+      <paper-listbox>
+        <paper-icon-item class="dropdown-button">
+          <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
+          {{resources.addAdminText}}
+        </paper-icon-item>
+        <paper-icon-item class="dropdown-button">
+          <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
+          {{resources.settingsText}}
+        </paper-icon-item>
+        <paper-item class="dropdown-button">
+          <form id="logoutForm" method="post" action="{{resources.logoutUrl}}">
+            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
+            <paper-button type="submit" on-tap="submitForm">
+              <strong>{{resources.logoutText}}</strong>
+            </paper-button>
+          </form>
+        </paper-item>
+      </paper-listbox>
+    </paper-dialog>
+
+    <!-- TODO(eholder): Figure out how to style the UI so that the dialog
+    appears in the correct place. Below are some alternative methods that
+    present the same basic UI flow. These did not work because of stacking, as
+    in they ended up being rendered underneath other elements and z-index did
+    not fix the issue. If I can figure out how to fix that, we can use one of
+    approach below, so they are kept around for now. I will clean this up once
+    we have some feedback on the UI. -->
+
+    <!-- Paper menu button approach.
+    <paper-menu-button horizontal-align="right">
+      <paper-button class="dropdown-trigger" id="openMenuButton">
+       {{username}} <iron-icon icon="arrow-drop-down"></iron-icon>
+      </paper-button>
+      <paper-menu class="dropdown-content" id="actualMenu">
+        <paper-icon-item class="dropdown-button">
+          <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
+          Add an Admin
+        </paper-icon-item>
+        <paper-icon-item class="dropdown-button">
+          <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
+          Settings
+        </paper-icon-item>
+        <paper-item class="dropdown-button">
+          Log Out
+        </paper-item>
+      </paper-menu>
+    </paper-menu-button> -->
+
+
+    <!-- Paper dropdown menu approach.
+    <paper-dropdown-menu label="{{session['username']}}" id="username-and-menu" class="custom-dropdown flex">
+      <paper-listbox class="dropdown-content">
+        <paper-icon-item class="dropdown-button">
+          <iron-icon class="dropdown-icon" src="{{url_for('static', filename='img/add-users.svg')}}" item-icon></iron-icon>
+          Add an Admin
+        </paper-icon-item>
+        <paper-icon-item class="dropdown-button">
+          <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
+          Settings
+        </paper-icon-item>
+        <paper-item class="dropdown-button">
+          Log Out
+        </paper-item>
+      </paper-listbox>
+    </paper-dropdown-menu>-->
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ufo-dropdown-menu',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        isMenuOpened: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        searchJson: {
+          type: Object,
+          notify: true,
+        },
+        dialogHolder: {
+          type: Object,
+          notify: true,
+          value: document.getElementById('dialogMenuHolder'),
+        },
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+      openMenu: function(e, details) {
+        this.$.actualMenu.open();
+      },
+      submitForm: function(e, details) {
+        var elem = e.target;
+        while (elem.tagName.toLowerCase() != 'form') {
+          elem = elem.parentElement;
+          if (elem == document.body) {
+            break;
+          }
+        }
+        if (elem.tagName.toLowerCase() != 'form') {
+          return;
+        }
+        elem.submit();
+      },
+    });
+  </script>
+</dom-module>

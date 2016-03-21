@@ -75,3 +75,10 @@ def setup_required(func):
 from ufo.services import key_distributor
 from ufo.handlers import routes
 from ufo.services import xsrf
+from ufo.services import resource_dicts
+
+
+@app.before_request
+def set_jinja_before_request():
+  """Set the global jinja environment vars."""
+  resource_dicts.set_jinja_globals()

@@ -41,12 +41,8 @@ class SetupTest(base_test.BaseTest):
 
     args, kwargs = mock_render_template.call_args
     self.assertEquals('setup.html', args[0])
-    self.assertIsNotNone(kwargs['oauth_resources'])
-    self.assertIsNotNone(kwargs['settings_resources'])
-    self.assertIsNotNone(kwargs['policy_resources'])
-    self.assertIsNotNone(kwargs['proxy_server_resources'])
+    self.assertIsNotNone(kwargs['oauth_configuration_resources'])
     self.assertIsNotNone(kwargs['oauth_url'])
-    self.assertIsNotNone(kwargs['user_resources'])
 
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')
@@ -76,7 +72,7 @@ class SetupTest(base_test.BaseTest):
     args, kwargs = mock_render_template.call_args
     self.assertEquals('setup.html', args[0])
     self.assertEquals(setup.DOMAIN_INVALID_TEXT, kwargs['error'])
-    self.assertIsNotNone(kwargs['oauth_resources'])
+    self.assertIsNotNone(kwargs['oauth_configuration_resources'])
 
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')
@@ -108,7 +104,7 @@ class SetupTest(base_test.BaseTest):
     args, kwargs = mock_render_template.call_args
     self.assertEquals('setup.html', args[0])
     self.assertEquals(setup.NON_ADMIN_TEXT, kwargs['error'])
-    self.assertIsNotNone(kwargs['oauth_resources'])
+    self.assertIsNotNone(kwargs['oauth_configuration_resources'])
 
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')
@@ -140,7 +136,7 @@ class SetupTest(base_test.BaseTest):
     args, kwargs = mock_render_template.call_args
     self.assertEquals('setup.html', args[0])
     self.assertEquals(setup.NO_ADMINISTRATOR, kwargs['error'])
-    self.assertIsNotNone(kwargs['oauth_resources'])
+    self.assertIsNotNone(kwargs['oauth_configuration_resources'])
 
   @patch.object(oauth, 'getOauthFlow')
   @patch.object(discovery, 'build')

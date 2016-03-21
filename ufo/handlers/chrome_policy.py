@@ -36,42 +36,6 @@ def _make_chrome_policy_json():
   return json.dumps(policy_dictionary)
 
 
-def get_policy_resources_dict():
-  """Get the resources for the chrome policy component.
-
-    Returns:
-      A dict of the resources for the chrome policy component.
-  """
-  return {
-    'download_chrome_policy': flask.url_for('download_chrome_policy'),
-    'isChromePolicy': True,
-    'hasAddFlow': False,
-    'policy_filename': 'chrome_policy.json',
-    'titleText': 'Chrome Policy',
-    'policyExplanationText': ('Chrome policy is a feature of enterprise Google'
-        ' devices which can be used to securely add extra configuration to the'
-        ' uProxy frontend. If you use enterprise Google devices through Google'
-        ' Apps for Work, you can for example turn on validation for invitation'
-        ' links to ensure you are proxying through an endpoint controlled by '
-        'the management console.'),
-    'policyEditText': ('You can adjust the values below in the Management '
-        'Server Settings section and save to update the managed policy json.'
-        'Once you are ready, you can click the download link to get your json '
-        'policy file generated automatically.'),
-    'adminConsoleText': 'Google Admin Console',
-    'policyUploadText': ('To push your managed policy out to your devices, '
-        'visit Google Admin Console at the link above and navigate to the '
-        'uProxy Chrome App/Extension under Device Management -> Chrome '
-        'Management -> App Management. For the App and Extension, select the '
-        'entry listed, then click User settings. From the list of Orgs, choose'
-        ' which you want the policy to apply to, then enable Force '
-        'Installation and select Upload Configuration File. Choose the json '
-        'file you just downloaded. You may have to click override to edit '
-        'Force Installation or Configure\'s values. Finally, click Save.'),
-    'downloadText': 'Download',
-  }
-
-
 @ufo.app.route('/chromepolicy/download/')
 @ufo.setup_required
 @auth.login_required
