@@ -107,7 +107,7 @@ class ProxyServerTest(base_test.BaseTest):
 
     query = models.ProxyServer.query
     query.filter_by(ip_address=fake_server['ip_address'])
-    
+
     self.assertEqual(1, query.count())
     proxy_server_in_db = query.one_or_none()
     self.assertIsNotNone(proxy_server_in_db)
