@@ -36,7 +36,7 @@ class AdminTest(base_test.BaseTest):
     self.assertEquals(len(admin_list_output), 1)
     test_admin = admin_list_output[0]
     self.assertEquals(base_test.FAKE_ADMIN_USERNAME, test_admin['username'])
-    self.assertIsNone(test_admin['password'])
+    self.assertNotIn('password', test_admin)
 
   def testAddAdminHandler(self):
     """Test the add admin handler calls to insert the specified admin."""
@@ -65,7 +65,7 @@ class AdminTest(base_test.BaseTest):
     admin_in_db = query.one_or_none()
     self.assertIsNotNone(admin_in_db)
     self.assertEqual(MOCK_ADMIN_USERNAME, admin_in_db.username)
-    self.assertIsNone(admin_in_db.password)
+    self.assertIsNotNone(admin_in_db.password)
 
   def testDeleteAdminPostHandler(self):
     """Test the delete admin handler calls to delete the specified admin."""
