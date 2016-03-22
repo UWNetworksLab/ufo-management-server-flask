@@ -20,6 +20,10 @@ class LoginPage(BaseDriver):
   PASSWORD_INPUT = (By.ID, 'password')
   SIGN_IN_BUTTON = (By.ID, 'signIn')
 
+  OPEN_MENU_BUTTON = (By.ID, 'openMenuButton')
+  LOGOUT_FORM = (By.ID, 'logoutForm')
+  GENERIC_PAPER_BUTTON = (By.TAG_NAME, 'paper-button')
+
   # If we ever need to use the Google sign-in flow, see here for an example of
   # how to do that instead of signing in directly to the management server:
   # https://github.com/uProxy/ufo-management-server/blob/master/tests/ui/login_page.py
@@ -48,3 +52,20 @@ class LoginPage(BaseDriver):
 
     sign_in_button = self.driver.find_element(*self.SIGN_IN_BUTTON)
     sign_in_button.click()
+
+  def Logout(self, args):
+    """Click through the logout flow."""
+    self.driver.get(args.server_url + flask.url_for('landing'))
+
+    dropdown_button = WebDriverWait(self.driver, 10).until(
+        EC.visibility_of_element_located(((self.OPEN_MENU_BUTTON))))
+    dropdown_button.click()
+
+    logout_form = WebDriverWait(self.driver, 10).until(
+        EC.visibility_of_element_located(((self.LOGOUT_FORM))))
+    logout_button = logout_form.find_element(*self.GENERIC_PAPER_BUTTON)
+    logout_button.click()
+
+    # Wait for redirect back to login
+    login_form = WebDriverWait(self.driver, 10).until(
+        EC.visibility_of_element_located(((self.LOGIN_FORM))))

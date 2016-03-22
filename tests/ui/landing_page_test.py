@@ -25,6 +25,7 @@ class LandingPageTest(BaseTest):
   def tearDown(self):
     """Teardown for test methods."""
     self._remove_test_user_from_landing_page(raiseException=False)
+    LoginPage(self.driver).Logout(self.args)
     super(LandingPageTest, self).tearDown()
 
   # def testLandingPage(self):
