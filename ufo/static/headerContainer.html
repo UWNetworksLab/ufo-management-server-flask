@@ -7,13 +7,14 @@
     .title {
       margin-left: 25px;
     }
-  </style>  <template>
+  </style>
+  <template>
     <div class="heading">
       <paper-toolbar class="medium-tall">
         <div class="middle flex">
           <div class="horizontal center-justified layout">
             <div class="title">{{resources.titleText}}</div>
-            <template is="dom-if" if="{{resources.hasAddFlow}}">
+            <template is="dom-if" if="{{hasAddFlow}}">
               <add-item-button resources="{{resources}}"></add-item-button>
             </template>
           </div>
@@ -23,7 +24,7 @@
     <div>
       <content></content>
     </div>
-    <template is="dom-if" if="{{resources.hasAddFlow}}">
+    <template is="dom-if" if="{{hasAddFlow}}">
       <add-modal resources="{{resources}}"></add-modal>
     </template>
   </template>
@@ -34,6 +35,10 @@
       properties: {
         resources: {
           type: Object,
+        },
+        hasAddFlow: {
+          type: Boolean,
+          notify: true,
         },
       },
     });

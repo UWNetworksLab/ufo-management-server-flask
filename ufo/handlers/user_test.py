@@ -231,7 +231,7 @@ class UserTest(base_test.BaseTest):
     self.assertEqual(response.data, self.client.get(flask.url_for('user_list')).data)
 
   def testUserCanNotBeAddedMoreThanOnce(self):
-    """Test that user can not added more than once."""
+    """Test that user can not be added more than once."""
     response = self.create_user_with_manual_post()
     response = self.create_user_with_manual_post()
 

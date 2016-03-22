@@ -236,7 +236,7 @@ class ProxyServer(Model):
 
   id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
-  ip_address = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
+  ip_address = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH), unique=True)
   name = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
   ssh_private_key = ufo.db.Column(ufo.db.LargeBinary())
   ssh_private_key_type = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
@@ -360,6 +360,5 @@ class AdminUser(Model):
     return {
       "id": self.id,
       "username": self.username,
-      "password": self.password,
     }
 

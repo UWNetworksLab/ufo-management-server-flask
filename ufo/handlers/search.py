@@ -7,8 +7,6 @@ import flask
 import ufo
 from ufo.database import models
 from ufo.handlers import auth
-from ufo.handlers import user
-from ufo.handlers import proxy_server
 
 
 # TODO(eholder): Add tests for these in a separate PR.
@@ -25,15 +23,8 @@ def search_page():
   user_items = _search_user(search_text)
   proxy_server_items = _search_proxy_server(search_text)
 
-  user_resources_dict = user.get_user_resources_dict()
-  user_resources_dict['hasAddFlow'] = False
-  proxy_server_resources_dict = proxy_server.get_proxy_resources_dict()
-  proxy_server_resources_dict['hasAddFlow'] = False
-
   return flask.render_template(
       'search.html',
-      user_resources=json.dumps(user_resources_dict),
-      proxy_server_resources=json.dumps(proxy_server_resources_dict),
       user_items=json.dumps(user_items),
       proxy_server_items=json.dumps(proxy_server_items))
 
