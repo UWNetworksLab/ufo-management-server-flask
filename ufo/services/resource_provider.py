@@ -7,7 +7,7 @@ import ufo
 from ufo.services import regex
 
 
-def _get_landing():
+def _get_landing_resources():
   """Get the resources for the general landing component.
 
     Returns:
@@ -36,7 +36,7 @@ def _get_landing():
                             'again later.'),
   }
 
-def _get_login():
+def _get_login_resources():
   """Get the resources for the login component.
 
     Returns:
@@ -50,7 +50,7 @@ def _get_login():
     'loginText': 'Login',
   }
 
-def _get_oauth():
+def _get_oauth_resources():
   """Get the resources for the oauth component.
 
     Returns:
@@ -91,7 +91,7 @@ def _get_oauth():
     'submitButtonText': 'Submit',
   }
 
-def _get_policy():
+def _get_policy_resources():
   """Get the resources for the chrome policy component.
 
     Returns:
@@ -126,7 +126,7 @@ def _get_policy():
   }
 
 
-def _get_proxy_server():
+def _get_proxy_server_resources():
   """Get the resources for the proxy server component.
 
     Returns:
@@ -176,7 +176,7 @@ def _get_proxy_server():
                 'begin with ssh-rsa)'),
   }
 
-def _get_settings():
+def _get_settings_resources():
   """Get the resources for the settings configuration component.
 
     Returns:
@@ -191,7 +191,7 @@ def _get_settings():
     'saveText': 'Save',
   }
 
-def _get_user():
+def _get_user_resources():
   """Get the resources for the user component(s).
 
     Returns:
@@ -269,11 +269,17 @@ def _get_user():
 
 def set_jinja_globals():
   """Set the jinja global environment to contain all the resource dicts."""
-  ufo.app.jinja_env.globals['landing_resources'] = json.dumps(_get_landing())
-  ufo.app.jinja_env.globals['login_resources'] = json.dumps(_get_login())
-  ufo.app.jinja_env.globals['oauth_resources'] = json.dumps(_get_oauth())
-  ufo.app.jinja_env.globals['policy_resources'] = json.dumps(_get_policy())
+  ufo.app.jinja_env.globals['landing_resources'] = json.dumps(
+      _get_landing_resources())
+  ufo.app.jinja_env.globals['login_resources'] = json.dumps(
+      _get_login_resources())
+  ufo.app.jinja_env.globals['oauth_resources'] = json.dumps(
+      _get_oauth_resources())
+  ufo.app.jinja_env.globals['policy_resources'] = json.dumps(
+      _get_policy_resources())
   ufo.app.jinja_env.globals['proxy_server_resources'] = (
-      json.dumps(_get_proxy_server()))
-  ufo.app.jinja_env.globals['settings_resources'] = json.dumps(_get_settings())
-  ufo.app.jinja_env.globals['user_resources'] = json.dumps(_get_user())
+      json.dumps(_get_proxy_server_resources()))
+  ufo.app.jinja_env.globals['settings_resources'] = json.dumps(
+      _get_settings_resources())
+  ufo.app.jinja_env.globals['user_resources'] = json.dumps(
+      _get_user_resources())
