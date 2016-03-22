@@ -3,11 +3,18 @@ import unittest
 
 from base_test import BaseTest
 from landing_page import LandingPage
+from login_page import LoginPage
 
 
 class LandingPageTest(BaseTest):
 
   """Test landing page functionality."""
+
+  def setUp(self):
+    """Setup for test methods."""
+    super(LandingPageTest, self).setUp()
+    super(LandingPageTest, self).setContext()
+    LoginPage(self.driver).Login(self.args)
 
   def testLandingPage(self):
     """Test the landing page."""

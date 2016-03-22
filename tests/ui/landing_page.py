@@ -1,7 +1,8 @@
 """Landing page module for testing."""
-from layout import UfOPageLayout
 
 from selenium.webdriver.common.by import By
+
+from layout import UfOPageLayout
 
 class LandingPage(UfOPageLayout):
 

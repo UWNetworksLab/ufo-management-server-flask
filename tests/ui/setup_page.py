@@ -1,12 +1,13 @@
-"""User page module functionality for getting elements for testing."""
-from layout import UfOPageLayout
+"""Setup page module functionality for getting elements for testing."""
 
 from selenium.webdriver.common.by import By
 
+from layout import UfOPageLayout
 
-class UserPage(UfOPageLayout):
 
-  """User page action methods and locators."""
+class SetupPage(UfOPageLayout):
+
+  """Setup page action methods and locators."""
 
   # pylint: disable=too-few-public-methods
 
