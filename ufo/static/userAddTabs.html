@@ -33,7 +33,7 @@
     specification. -->
     <paper-tabs id="tabs" selected="{{ selected }}">
       <template is="dom-repeat" items="[[resources.addFlowTextDicts]]">
-        <paper-tab>{{item.tab}}</paper-tab>
+        <paper-tab id="{{item.tabId}}">{{item.tab}}</paper-tab>
       </template>
     </paper-tabs>
 
@@ -43,7 +43,7 @@
           <template is="dom-if" if="{{item.isManual}}">
             <div>
               <template is="dom-if" if="{{isSpinnerOn}}">
-                <paper-spinner id="spinner" active$={{isSpinnerOn}}></paper-spinner>
+                <paper-spinner id="manualAddSpinner" active$={{isSpinnerOn}}></paper-spinner>
               </template>
               <form is="iron-form" id="{{item.id}}" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
                 <paper-input label="{{item.label1}}" type="textbox" name="name" value="" id="manualUserName" required>
@@ -61,7 +61,7 @@
                 <paper-button class="anchor-button" dialog-dismiss>
                 <strong>{{resources.dismissText}}</strong>
                 </paper-button>
-                <paper-button class="anchor-button" autofocus on-tap="submitPostForm">
+                <paper-button class="anchor-button" autofocus on-tap="submitPostForm" id="manualAddSubmitButton">
                 <strong>{{item.saveButton}}</strong>
                 </paper-button>
               </div>

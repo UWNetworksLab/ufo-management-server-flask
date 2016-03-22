@@ -13,10 +13,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 class SetupPageTest(BaseTest):
 
   """Test user page functionality."""
-  TEST_USER_AS_DICT = {
-      'name': 'Test User Fake Name 01',
-      'email': 'test_user@not-a-real-domain-that-should-be-in-use.com'
-  }
 
   def setUp(self):
     """Setup for test methods."""
@@ -145,22 +141,6 @@ class SetupPageTest(BaseTest):
     # Redirect to user listing page
     user_listing = WebDriverWait(self.driver, 10).until(
         EC.visibility_of_element_located(((SetupPage.USER_LISTING))))
-
-  def _findUserInListing(self, listing, email):
-    """Given the listing of users and an email, return the email's anchor.
-
-    Args:
-      listing: The paper-listbox element holding all users.
-      email: The email of a user to search for.
-
-    Returns:
-      The anchor element for visiting the given user's details page or None.
-    """
-    anchors = listing.find_elements(By.TAG_NAME, 'a')
-    for anchor in anchors:
-      if email.lower() in anchor.text.lower():
-        return anchor
-    return None
 
   def tearDown(self):
     """Teardown for test methods."""

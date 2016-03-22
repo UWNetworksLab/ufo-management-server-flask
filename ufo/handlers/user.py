@@ -165,6 +165,7 @@ def get_user_resources_dict():
     'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
     'isUser': True,
     'hasAddFlow': True,
+    'addButtonId': 'addUserButton',
     'modalId': 'userModal',
     'dismissText': 'Cancel',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
@@ -172,6 +173,7 @@ def get_user_resources_dict():
         {
           'id': 'groupAdd',
           'tab': 'Add Group',
+          'tabId': 'groupAddTab',
           'saveButton': 'Add Group',
           'searchButton': 'Search for Users in Group',
           'label1': 'Group key',
@@ -183,6 +185,7 @@ def get_user_resources_dict():
         {
           'id': 'userAdd',
           'tab': 'Add Individual',
+          'tabId': 'userAddTab',
           'saveButton': 'Add User',
           'searchButton': 'Search for Specific User',
           'label1': 'User key',
@@ -194,6 +197,7 @@ def get_user_resources_dict():
         {
           'id': 'domainAdd',
           'tab': 'Add by Domain',
+          'tabId': 'domainAddTab',
           'saveButton': 'Add Users',
           'searchButton': 'Search for Users in Domain',
           'isManual': False,
@@ -201,6 +205,7 @@ def get_user_resources_dict():
         {
           'id': 'manualAdd',
           'tab': 'Add Manually',
+          'tabId': 'manualAddTab',
           'saveButton': 'Add User',
           'label1': 'Input user name here.',
           'label2': 'Input user email here.',

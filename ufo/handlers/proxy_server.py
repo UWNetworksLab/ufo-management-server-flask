@@ -37,6 +37,7 @@ def get_proxy_resources_dict():
     'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
     'isProxyServer': True,
     'hasAddFlow': True,
+    'addButtonId': 'addServerButton',
     'modalId': 'serverModal',
     'dismissText': 'Cancel',
     'confirmText': 'Add Server',
