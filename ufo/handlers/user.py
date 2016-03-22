@@ -12,7 +12,6 @@ from ufo.database import models
 from ufo.handlers import auth
 from ufo.services import google_directory_service
 from ufo.services import oauth
-from ufo.services import regex
 
 INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
 
@@ -129,85 +128,6 @@ def _make_invite_code(user):
   invite_code = base64.urlsafe_b64encode(json_data)
 
   return invite_code
-
-def get_user_resources_dict():
-  """Get the resources for the user component.
-
-    Returns:
-      A dict of the resources for the user component.
-  """
-  return {
-    'searchPageUrl': flask.url_for('search_page'),
-    'searchJsonUrl': flask.url_for('search'),
-    'addUrl': flask.url_for('add_user'),
-    'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
-    'inverseAddIconUrl': flask.url_for('static', filename='img/add-users-inverse.svg'),
-    'addText': 'Add Users',
-    'lookAgainText': 'Search Again',
-    'listId': 'userList',
-    'listUrl': flask.url_for('user_list'),
-    'listLimit': 10,
-    'revokeToggleUrl': flask.url_for('user_toggle_revoked'),
-    'rotateKeysUrl': flask.url_for('user_get_new_key_pair'),
-    'inviteCodeUrl': flask.url_for('user_get_invite_code'),
-    'deleteUrl': flask.url_for('delete_user'),
-    'detailsButtonText': 'User Details',
-    'detailsButtonId': 'userDetailsButton',
-    'detailsOverlayId': 'userDetailsOverlay',
-    'inviteCodeLabel': 'Invite Code',
-    'privateKeyLabel': 'SSH Private Key',
-    'publicKeyLabel': 'SSH Public Key',
-    'copyLabel': 'Copy Code',
-    'rotateKeysLabel': 'Create New Code',
-    'deleteLabel': 'Delete User',
-    'seeAllText': 'See All Users',
-    'titleText': 'Users',
-    'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
-    'isUser': True,
-    'hasAddFlow': True,
-    'modalId': 'userModal',
-    'dismissText': 'Cancel',
-    'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
-    'addFlowTextDicts': [
-        {
-          'id': 'groupAdd',
-          'tab': 'Add Group',
-          'saveButton': 'Add Group',
-          'searchButton': 'Search for Users in Group',
-          'label1': 'Group key',
-          'definition1': ('To add users by group, please provide a valid '
-                          'group email address or unique id.'),
-          'name1': 'group_key',
-          'isManual': False,
-        },
-        {
-          'id': 'userAdd',
-          'tab': 'Add Individual',
-          'saveButton': 'Add User',
-          'searchButton': 'Search for Specific User',
-          'label1': 'User key',
-          'definition1': ('To add individual users, please provide a valid '
-                          'email address or unique id.'),
-          'name1': 'user_key',
-          'isManual': False,
-        },
-        {
-          'id': 'domainAdd',
-          'tab': 'Add by Domain',
-          'saveButton': 'Add Users',
-          'searchButton': 'Search for Users in Domain',
-          'isManual': False,
-        },
-        {
-          'id': 'manualAdd',
-          'tab': 'Add Manually',
-          'saveButton': 'Add User',
-          'label1': 'Input user name here.',
-          'label2': 'Input user email here.',
-          'isManual': True,
-        },
-    ],
-  }
 
 @ufo.app.route('/user/')
 @ufo.setup_required

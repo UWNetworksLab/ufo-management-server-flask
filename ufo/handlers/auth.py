@@ -11,21 +11,6 @@ from ufo.services.custom_exceptions import NotLoggedIn
 
 
 # TODO(eholder): Add functional or unit tests for each decorator.
-def get_login_resources_dict():
-  """Get the resources for the login page.
-
-    Returns:
-      A dict of the resources for the login page.
-  """
-  return {
-    'hasAddFlow': False,
-    'titleText': 'Please Log In',
-    'loginUrl': flask.url_for('login'),
-    'usernameLabel': 'Username',
-    'passwordLabel': 'Password',
-    'loginText': 'Login',
-  }
-
 def is_user_logged_in():
   """Checks whether or not a user is logged in currently.
 
@@ -112,11 +97,9 @@ def login():
     A redirect to the login page if there is any problem with the current user
     or a redirect to the landing page if everything checks out.
   """
-  login_resources = get_login_resources_dict()
   if flask.request.method == 'GET':
     return flask.render_template('login.html',
-                                 error=flask.request.form.get('error'),
-                                 login_resources=json.dumps(login_resources))
+                                 error=flask.request.form.get('error'))
 
   username = flask.request.form.get('username')
   password = flask.request.form.get('password')

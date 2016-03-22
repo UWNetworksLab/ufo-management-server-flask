@@ -23,7 +23,7 @@
   </style>
   <template>
 
-    <form is="iron-form" method="GET" action="{{userResources.searchJsonUrl}}" loading="{{loading}}" last-response="{{searchJson}}" on-iron-form-presubmit="presubmit" on-iron-form-response="parseSearchResponse" id="searchForm" content-type="application/json">
+    <form is="iron-form" method="GET" action="{{searchResources.searchJsonUrl}}" loading="{{loading}}" last-response="{{searchJson}}" on-iron-form-presubmit="presubmit" on-iron-form-response="parseSearchResponse" id="searchForm" content-type="application/json">
       <paper-input id="searchBar" no-label-float name="search_input" value="{{searchText}}">
         <paper-icon-button icon="search" prefix on-tap="submitForm"></paper-icon-button>
         <paper-icon-button icon="arrow-back" suffix id="suffix" class="hideSuffix" on-tap="resetLists"></paper-icon-button>
@@ -43,6 +43,9 @@
           type: Object,
         },
         proxyServerResources: {
+          type: Object,
+        },
+        searchResources: {
           type: Object,
         },
         loading: {
@@ -65,7 +68,7 @@
           this.proxyServerResources.listId);
         if (!userList && !serverList) {
           var queryString = "?search_text=" + this.$.hiddenSearch.value;
-          var locationString = this.userResources.searchPageUrl + queryString;
+          var locationString = this.searchResources.searchPageUrl + queryString;
           window.location.href = locationString;
         }
         this.set('loading', true);

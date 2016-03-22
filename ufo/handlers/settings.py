@@ -25,23 +25,6 @@ def _make_settings_json():
   return json.dumps(settings_dictionary)
 
 
-def get_settings_resources_dict():
-  """Get the resources for the settings configuration component.
-
-    Returns:
-      A dict of the resources for the settings configuration component.
-  """
-  return {
-    'hasAddFlow': False,
-    'titleText': 'Management Server Settings',
-    'getSettingsUrl': flask.url_for('get_settings'),
-    'editUrl': flask.url_for('edit_settings'),
-    'proxyValidityText': 'Enforce Proxy Server Check from Invitation Link',
-    'networkJailText': 'Enforce Network Jail Before Google Login',
-    'saveText': 'Save',
-  }
-
-
 @ufo.app.route('/settings/', methods=['GET'])
 @ufo.setup_required
 @auth.login_required

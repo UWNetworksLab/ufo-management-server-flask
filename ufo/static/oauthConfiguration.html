@@ -1,7 +1,7 @@
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
-<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 
 <dom-module id="oauth-configuration">
   <style is="custom-style">
@@ -24,7 +24,7 @@
   </style>
   <template>
     <!-- TODO: Make a clear way to say you do not want to use Google apps. -->
-      <template is="dom-if" if="{{!resources.config.isConfigured}}">
+      <template is="dom-if" if="{{!configuration.config.is_configured}}">
         <p>
           {{resources.welcomeText}}
         </p>
@@ -33,18 +33,18 @@
         </p>
       </template>
 
-      <template is="dom-if" if="{{resources.config.isConfigured}}">
+      <template is="dom-if" if="{{configuration.config.is_configured}}">
         <p>
           {{resources.successSetupText}}
         </p>
 
-        <template is="dom-if" if="{{isDomainConfigured(resources.config)}}">
+        <template is="dom-if" if="{{isDomainConfigured(configuration.config)}}">
           <p>
-            {{resources.domainConfiguredText}} <strong>{{resources.config.domain}}</strong>
+            {{resources.domainConfiguredText}} <strong>{{configuration.config.domain}}</strong>
           </p>
         </template>
 
-        <template is="dom-if" if="{{!isDomainConfigured(resources.config)}}">
+        <template is="dom-if" if="{{!isDomainConfigured(configuration.config)}}">
           <p>
             {{resources.noDomainConfiguredText}}
           </p>
@@ -56,7 +56,7 @@
         </p>
 
         <p>
-          <a class="anchor-no-button" href="{{resources.oauth_url}}" target="_blank">{{resources.connectYourDomainButtonText}}</a>
+          <a class="anchor-no-button" href="{{configuration.oauth_url}}" target="_blank">{{resources.connectYourDomainButtonText}}</a>
         </p>
 
          <p>
@@ -67,9 +67,9 @@
       <form id="oauth-configuration-form" method="post" action="{{resources.setup_url}}">
         <paper-input label="Domain" name="domain"></paper-input>
         <paper-input label="OAuth Code" name="oauth_code"></paper-input>
-        <template is="dom-if" if="{{!resources.config.isConfigured}}">
-          <paper-input label="Default Admin Username" name="admin_username"></paper-input>
-          <paper-input label="Default Admin Password" name="admin_password"></paper-input>
+        <template is="dom-if" if="{{!configuration.config.is_configured}}">
+          <paper-input label="{{resources.adminUsernameLabel}}" name="admin_username"></paper-input>
+          <paper-input label="{{resources.adminPasswordlabel}}" name="admin_password"></paper-input>
         </template>
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
         <div class="buttons">
@@ -86,6 +86,11 @@
       properties: {
         resources: {
           type: Object,
+          notify: true,
+        },
+        configuration: {
+          type: Object,
+          notify: true,
         },
       },
       getXsrfToken: function() {
