@@ -1,4 +1,4 @@
-"""Resource dicts module which provides resource dictionaries for all pages."""
+"""Resource provider module to set resource dictionaries for all pages."""
 
 import flask
 import json
@@ -7,7 +7,7 @@ import ufo
 from ufo.services import regex
 
 
-def get_landing():
+def _get_landing():
   """Get the resources for the general landing component.
 
     Returns:
@@ -36,14 +36,13 @@ def get_landing():
                             'again later.'),
   }
 
-def get_login():
+def _get_login():
   """Get the resources for the login component.
 
     Returns:
       A dict of the resources for the login component.
   """
   return {
-    'hasAddFlow': False,
     'titleText': 'Please Log In',
     'loginUrl': flask.url_for('login'),
     'usernameLabel': 'Username',
@@ -51,14 +50,13 @@ def get_login():
     'loginText': 'Login',
   }
 
-def get_oauth():
+def _get_oauth():
   """Get the resources for the oauth component.
 
     Returns:
       A dict of the resources for the oauth component.
   """
   return {
-    'hasAddFlow': False,
     'setup_url': flask.url_for('setup'),
     'titleText': 'Oauth Configuration',
     'welcomeText': ('Hey there! Welcome to the uProxy for Organizations '
@@ -93,7 +91,7 @@ def get_oauth():
     'submitButtonText': 'Submit',
   }
 
-def get_policy():
+def _get_policy():
   """Get the resources for the chrome policy component.
 
     Returns:
@@ -102,7 +100,6 @@ def get_policy():
   return {
     'download_chrome_policy': flask.url_for('download_chrome_policy'),
     'isChromePolicy': True,
-    'hasAddFlow': False,
     'policy_filename': 'chrome_policy.json',
     'titleText': 'Chrome Policy',
     'policyExplanationText': ('Chrome policy is a feature of enterprise Google'
@@ -129,16 +126,13 @@ def get_policy():
   }
 
 
-def get_proxy_server(with_add_flow=True):
+def _get_proxy_server():
   """Get the resources for the proxy server component.
-
-    Args:
-      with_add_flow: If true, set hasAddFlow to true. Otherwise set to false.
 
     Returns:
       A dict of the resources for the proxy server component.
   """
-  proxy_server_resource_dict = {
+  return {
     'addUrl': flask.url_for('proxyserver_add'),
     'addIconUrl': flask.url_for('static', filename='img/add-servers.svg'),
     'inverseAddIconUrl': flask.url_for('static', filename='img/add-servers-inverse.svg'),
@@ -158,7 +152,6 @@ def get_proxy_server(with_add_flow=True):
     'titleText': 'Servers',
     'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
     'isProxyServer': True,
-    'hasAddFlow': True,
     'modalId': 'serverModal',
     'dismissText': 'Cancel',
     'confirmText': 'Add Server',
@@ -182,19 +175,14 @@ def get_proxy_server(with_add_flow=True):
     'rsaText': ('For now, please be sure to use an RSA key (the text should '
                 'begin with ssh-rsa)'),
   }
-  if not with_add_flow:
-    proxy_server_resource_dict['hasAddFlow'] = False
 
-  return proxy_server_resource_dict
-
-def get_settings():
+def _get_settings():
   """Get the resources for the settings configuration component.
 
     Returns:
       A dict of the resources for the settings configuration component.
   """
   return {
-    'hasAddFlow': False,
     'titleText': 'Management Server Settings',
     'getSettingsUrl': flask.url_for('get_settings'),
     'editUrl': flask.url_for('edit_settings'),
@@ -203,16 +191,13 @@ def get_settings():
     'saveText': 'Save',
   }
 
-def get_user(with_add_flow=True):
+def _get_user():
   """Get the resources for the user component(s).
-
-    Args:
-      with_add_flow: If true, set hasAddFlow to true. Otherwise set to false.
 
     Returns:
       A dict of the resources for the user component(s).
   """
-  user_resource_dict = {
+  return {
     'addUrl': flask.url_for('add_user'),
     'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
     'inverseAddIconUrl': flask.url_for('static', filename='img/add-users-inverse.svg'),
@@ -238,7 +223,6 @@ def get_user(with_add_flow=True):
     'titleText': 'Users',
     'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
     'isUser': True,
-    'hasAddFlow': True,
     'modalId': 'userModal',
     'dismissText': 'Cancel',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
@@ -282,22 +266,14 @@ def get_user(with_add_flow=True):
         },
     ],
   }
-  if not with_add_flow:
-    user_resource_dict['hasAddFlow'] = False
-
-  return user_resource_dict
 
 def set_jinja_globals():
   """Set the jinja global environment to contain all the resource dicts."""
-  ufo.app.jinja_env.globals['landing_resources'] = json.dumps(get_landing())
-  ufo.app.jinja_env.globals['login_resources'] = json.dumps(get_login())
-  ufo.app.jinja_env.globals['oauth_resources'] = json.dumps(get_oauth())
-  ufo.app.jinja_env.globals['policy_resources'] = json.dumps(get_policy())
+  ufo.app.jinja_env.globals['landing_resources'] = json.dumps(_get_landing())
+  ufo.app.jinja_env.globals['login_resources'] = json.dumps(_get_login())
+  ufo.app.jinja_env.globals['oauth_resources'] = json.dumps(_get_oauth())
+  ufo.app.jinja_env.globals['policy_resources'] = json.dumps(_get_policy())
   ufo.app.jinja_env.globals['proxy_server_resources'] = (
-      json.dumps(get_proxy_server()))
-  ufo.app.jinja_env.globals['proxy_server_resources_without_add_flow'] = (
-      json.dumps(get_proxy_server(with_add_flow=False)))
-  ufo.app.jinja_env.globals['settings_resources'] = json.dumps(get_settings())
-  ufo.app.jinja_env.globals['user_resources'] = json.dumps(get_user())
-  ufo.app.jinja_env.globals['user_resources_without_add_flow'] = (
-      json.dumps(get_user(with_add_flow=False)))
+      json.dumps(_get_proxy_server()))
+  ufo.app.jinja_env.globals['settings_resources'] = json.dumps(_get_settings())
+  ufo.app.jinja_env.globals['user_resources'] = json.dumps(_get_user())

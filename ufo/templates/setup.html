@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Setup{% endblock %}
 {% block body %}
-  <paper-display-template resources="{{user_resources_without_add_flow}}">
-    <left-icon-container resources="{{user_resources_without_add_flow}}">
-      <user-add-tabs resources="{{user_resources_without_add_flow}}">
+  <paper-display-template resources="{{user_resources}}">
+    <left-icon-container resources="{{user_resources}}">
+      <user-add-tabs resources="{{user_resources}}">
       </user-add-tabs>
     </left-icon-container>
   </paper-display-template>
 
-  <paper-display-template resources="{{proxy_server_resources_without_add_flow}}">
-    <left-icon-container resources="{{proxy_server_resources_without_add_flow}}">
-      <server-add-form resources="{{proxy_server_resources_without_add_flow}}">
+  <paper-display-template resources="{{proxy_server_resources}}">
+    <left-icon-container resources="{{proxy_server_resources}}">
+      <server-add-form resources="{{proxy_server_resources}}">
       </server-add-form>
     </left-icon-container>
   </paper-display-template>
