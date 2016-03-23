@@ -129,11 +129,13 @@ class BaseTest(unittest.TestCase):
         return item
     return None
 
-  def add_test_server_helper(self):
-    """Add a test server once the modal is displayed."""
-    add_server_modal = WebDriverWait(self.driver, 10).until(
-        EC.visibility_of_element_located(((UfOPageLayout.ADD_SERVER_MODAL))))
-    add_server_form = add_server_modal.find_element(
+  def add_test_server_helper(self, containingElement):
+    """Add a test server using the element container to find the add form.
+
+    Args:
+      containingElement: An element containing the add server form.
+    """
+    add_server_form = containingElement.find_element(
         *UfOPageLayout.ADD_SERVER_FORM)
 
     ip_paper_input = add_server_form.find_element(
@@ -199,3 +201,37 @@ class BaseTest(unittest.TestCase):
     WebDriverWait(self.driver, 20).until(
         EC.invisibility_of_element_located(((
             LandingPage.SERVER_DELETE_SPINNER))))
+
+  def assert_test_user_presence_on_landing_page(self, isPresent):
+    """Helper to assert whether a user is present on the landing page.
+
+    Args:
+      isPresent: True for the user is present and false for not present.
+    """
+    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    landing_page = LandingPage(self.driver)
+    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
+    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
+    test_user_item = self.find_item_in_listing(
+        user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
+    if isPresent:
+      self.assertIsNotNone(test_user_item)
+    else:
+      self.assertIsNone(test_user_item)
+
+  def assert_test_server_presence_on_landing_page(self, isPresent):
+    """Helper to assert whether a server is present on the landing page.
+
+    Args:
+      isPresent: True for the server is present and false for not present.
+    """
+    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    landing_page = LandingPage(self.driver)
+    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
+    server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
+    test_server_item = self.find_item_in_listing(
+        server_listbox, BaseTest.TEST_SERVER_AS_DICT['name'])
+    if isPresent:
+      self.assertIsNotNone(test_server_item)
+    else:
+      self.assertIsNone(test_server_item)

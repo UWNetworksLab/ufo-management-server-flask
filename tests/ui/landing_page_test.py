@@ -48,83 +48,41 @@ class LandingPageTest(BaseTest):
       landing_page_element = landing_page.GetElement(element_by_id)
       self.assertIsNotNone(landing_page_element)
 
-  def testManualUserAdd(self):
+  def testManualUserAddFromLanding(self):
     """Test that manually adding a user shows up on the user listing."""
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
-    landing_page = LandingPage(self.driver)
-    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
-    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_user_item = self.find_item_in_listing(
-        user_listbox, LandingPageTest.TEST_USER_AS_DICT['name'])
-    self.assertIsNone(test_user_item)
+    self.assert_test_user_presence_on_landing_page(False)
 
     self._add_test_user_from_landing_page()
 
-    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
-    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_user_item = self.find_item_in_listing(
-        user_listbox, LandingPageTest.TEST_USER_AS_DICT['name'])
-    self.assertIsNotNone(test_user_item)
+    self.assert_test_user_presence_on_landing_page(True)
 
   def testUserDelete(self):
     """Test that deleting a user removes that user."""
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
-    landing_page = LandingPage(self.driver)
-
     self._add_test_user_from_landing_page()
 
-    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
-    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_user_item = self.find_item_in_listing(
-        user_listbox, LandingPageTest.TEST_USER_AS_DICT['name'])
-    self.assertIsNotNone(test_user_item)
+    self.assert_test_user_presence_on_landing_page(True)
 
     self.remove_test_user()
 
-    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
-    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_user_item = self.find_item_in_listing(
-        user_listbox, LandingPageTest.TEST_USER_AS_DICT['name'])
-    self.assertIsNone(test_user_item)
+    self.assert_test_user_presence_on_landing_page(False)
 
-  def testServerAdd(self):
+  def testServerAddFromLanding(self):
     """Test that adding a server shows up on the server listing."""
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
-    landing_page = LandingPage(self.driver)
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
-    server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_server_item = self.find_item_in_listing(
-        server_listbox, LandingPageTest.TEST_SERVER_AS_DICT['name'])
-    self.assertIsNone(test_server_item)
+    self.assert_test_server_presence_on_landing_page(False)
 
     self._add_test_server_from_landing_page()
 
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
-    server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_server_item = self.find_item_in_listing(
-        server_listbox, LandingPageTest.TEST_SERVER_AS_DICT['name'])
-    self.assertIsNotNone(test_server_item)
+    self.assert_test_server_presence_on_landing_page(True)
 
   def testServerDelete(self):
     """Test that deleting a server removes that server."""
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
-    landing_page = LandingPage(self.driver)
-
     self._add_test_server_from_landing_page()
 
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
-    server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_server_item = self.find_item_in_listing(
-        server_listbox, LandingPageTest.TEST_SERVER_AS_DICT['name'])
-    self.assertIsNotNone(test_server_item)
+    self.assert_test_server_presence_on_landing_page(True)
 
     self.remove_test_server()
 
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
-    server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_server_item = self.find_item_in_listing(
-        server_listbox, LandingPageTest.TEST_SERVER_AS_DICT['name'])
-    self.assertIsNone(test_server_item)
+    self.assert_test_server_presence_on_landing_page(False)
 
   def _add_test_user_from_landing_page(self):
     """Manually add a test user using the landing page."""
@@ -146,8 +104,10 @@ class LandingPageTest(BaseTest):
     landing_page = LandingPage(self.driver)
     add_server_button = landing_page.GetElement(LandingPage.ADD_SERVER_BUTTON)
     add_server_button.click()
+    add_server_modal = WebDriverWait(self.driver, 10).until(
+        EC.visibility_of_element_located(((LandingPage.ADD_SERVER_MODAL))))
 
-    self.add_test_server_helper()
+    self.add_test_server_helper(add_server_modal)
 
 
 if __name__ == '__main__':
