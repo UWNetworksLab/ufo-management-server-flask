@@ -152,6 +152,7 @@ def _get_proxy_server_resources():
     'titleText': 'Servers',
     'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
     'isProxyServer': True,
+    'addButtonId': 'addServerButton',
     'modalId': 'serverModal',
     'dismissText': 'Cancel',
     'confirmText': 'Add Server',
@@ -223,6 +224,7 @@ def _get_user_resources():
     'titleText': 'Users',
     'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
     'isUser': True,
+    'addButtonId': 'addUserButton',
     'modalId': 'userModal',
     'dismissText': 'Cancel',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
@@ -230,6 +232,7 @@ def _get_user_resources():
         {
           'id': 'groupAdd',
           'tab': 'Add Group',
+          'tabId': 'groupAddTab',
           'saveButton': 'Add Group',
           'searchButton': 'Search for Users in Group',
           'label1': 'Group key',
@@ -241,6 +244,7 @@ def _get_user_resources():
         {
           'id': 'userAdd',
           'tab': 'Add Individual',
+          'tabId': 'userAddTab',
           'saveButton': 'Add User',
           'searchButton': 'Search for Specific User',
           'label1': 'User key',
@@ -252,6 +256,7 @@ def _get_user_resources():
         {
           'id': 'domainAdd',
           'tab': 'Add by Domain',
+          'tabId': 'domainAddTab',
           'saveButton': 'Add Users',
           'searchButton': 'Search for Users in Domain',
           'isManual': False,
@@ -259,6 +264,7 @@ def _get_user_resources():
         {
           'id': 'manualAdd',
           'tab': 'Add Manually',
+          'tabId': 'manualAddTab',
           'saveButton': 'Add User',
           'label1': 'Input user name here.',
           'label2': 'Input user email here.',

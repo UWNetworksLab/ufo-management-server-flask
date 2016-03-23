@@ -50,7 +50,7 @@
   </style>
   <template>
     <template is="dom-if" if="{{loading}}">
-      <paper-spinner active$={{loading}}></paper-spinner>
+      <paper-spinner id="serverDetailsSpinner" active$={{loading}}></paper-spinner>
     </template>
     <paper-dialog id="{{resources.detailsOverlayId}}" with-backdrop>
       <paper-listbox>
@@ -91,7 +91,7 @@
         <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="server_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-          <paper-button on-tap="submitForm" class="delete-button" type="submit">
+          <paper-button on-tap="submitForm" class="delete-button" id="serverDeleteButton" type="submit">
             <iron-icon icon="delete"></iron-icon>
             <strong>{{resources.deleteLabel}}</strong>
           </paper-button>
