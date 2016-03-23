@@ -243,5 +243,7 @@ class BaseTest(unittest.TestCase):
     generic_page = UfOPageLayout(self.driver)
     download_button = generic_page.GetElement(
         UfOPageLayout.CHROME_POLICY_DOWNLOAD_BUTTON)
-    self.assertEquals(flask.url_for('download_chrome_policy'),
+    actual_download_url = (
+        self.args.server_url + flask.url_for('download_chrome_policy'))
+    self.assertEquals(actual_download_url,
                       download_button.get_attribute('href'))
