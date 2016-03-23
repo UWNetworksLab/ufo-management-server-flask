@@ -7,8 +7,8 @@ from paramiko import pkey
 import sqlalchemy
 
 import ufo
-from ufo.services import ssh_client
 from ufo.services import custom_exceptions
+from ufo.services import ssh_client
 
 LONG_STRING_LENGTH = 1024
 REVOKED_TEXT = 'Access Disabled'
