@@ -22,8 +22,8 @@ class LandingPageTest(BaseTest):
 
   def tearDown(self):
     """Teardown for test methods."""
-    self.remove_test_user(shouldRaiseException=False)
-    self.remove_test_server(shouldRaiseException=False)
+    self.removeTestUser(shouldRaiseException=False)
+    self.removeTestServer(shouldRaiseException=False)
     LoginPage(self.driver).Logout(self.args)
     super(LandingPageTest, self).tearDown()
 
@@ -48,46 +48,46 @@ class LandingPageTest(BaseTest):
 
   def testManuallyAddUserFromLandingPage(self):
     """Test that manually adding a user shows up on the user listing."""
-    self.assert_test_user_presence_on_landing_page(False)
+    self.assertTestUserPresenceOnLandingPage(False)
 
-    self._add_test_user_from_landing_page()
+    self._addTestUserFromLandingPage()
 
-    self.assert_test_user_presence_on_landing_page(True)
+    self.assertTestUserPresenceOnLandingPage(True)
 
   def testDeleteUser(self):
     """Test that deleting a user removes that user."""
-    self._add_test_user_from_landing_page()
+    self._addTestUserFromLandingPage()
 
-    self.assert_test_user_presence_on_landing_page(True)
+    self.assertTestUserPresenceOnLandingPage(True)
 
-    self.remove_test_user()
+    self.removeTestUser()
 
-    self.assert_test_user_presence_on_landing_page(False)
+    self.assertTestUserPresenceOnLandingPage(False)
 
   def testAddServerFromLandingPage(self):
     """Test that adding a server shows up on the server listing."""
-    self.assert_test_server_presence_on_landing_page(False)
+    self.assertTestServerPresenceOnLandingPage(False)
 
-    self._add_test_server_from_landing_page()
+    self._addTestServerFromLandingPage()
 
-    self.assert_test_server_presence_on_landing_page(True)
+    self.assertTestServerPresenceOnLandingPage(True)
 
   def testDeleteServer(self):
     """Test that deleting a server removes that server."""
-    self._add_test_server_from_landing_page()
+    self._addTestServerFromLandingPage()
 
-    self.assert_test_server_presence_on_landing_page(True)
+    self.assertTestServerPresenceOnLandingPage(True)
 
-    self.remove_test_server()
+    self.removeTestServer()
 
-    self.assert_test_server_presence_on_landing_page(False)
+    self.assertTestServerPresenceOnLandingPage(False)
 
   def testDownloadChromePolicyFromLandingPage(self):
     """Test that the chrome policy download link is present and wired up."""
     self.driver.get(self.args.server_url + flask.url_for('landing'))
-    self.assert_chrome_policy_download_link()
+    self.assertChromePolicyDownloadLinkIsConnected()
 
-  def _add_test_user_from_landing_page(self):
+  def _addTestUserFromLandingPage(self):
     """Manually add a test user using the landing page."""
     # Navigate to add user and go to manual tab.
     self.driver.get(self.args.server_url + flask.url_for('landing'))
@@ -98,9 +98,9 @@ class LandingPageTest(BaseTest):
         EC.visibility_of_element_located(((LandingPage.ADD_MANUALLY_TAB))))
     add_manually_tab.click()
 
-    self.add_test_user_helper()
+    self.addTestUserHelper()
 
-  def _add_test_server_from_landing_page(self):
+  def _addTestServerFromLandingPage(self):
     """Add a test server using the landing page."""
     # Navigate to add server.
     self.driver.get(self.args.server_url + flask.url_for('landing'))
@@ -110,7 +110,7 @@ class LandingPageTest(BaseTest):
     add_server_modal = WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((LandingPage.ADD_SERVER_MODAL))))
 
-    self.add_test_server_helper(add_server_modal)
+    self.addTestServerHelper(add_server_modal)
 
 
 if __name__ == '__main__':

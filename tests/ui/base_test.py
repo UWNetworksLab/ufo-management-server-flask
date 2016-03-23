@@ -55,7 +55,7 @@ class BaseTest(unittest.TestCase):
     """Teardown for test methods."""
     self.driver.quit()
 
-  def add_test_user_helper(self):
+  def addTestUserHelper(self):
     """Manually add a test user once the tabs are displayed."""
     add_manually_form = WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((UfOPageLayout.ADD_MANUALLY_FORM))))
@@ -76,7 +76,7 @@ class BaseTest(unittest.TestCase):
         EC.invisibility_of_element_located(((
             UfOPageLayout.ADD_MANUALLY_SPINNER))))
 
-  def remove_test_user(self, shouldRaiseException=True):
+  def removeTestUser(self, shouldRaiseException=True):
     """Manually remove a test user using the landing page (the only way).
 
     Args:
@@ -88,7 +88,7 @@ class BaseTest(unittest.TestCase):
     landing_page = LandingPage(self.driver)
     user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
     user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
-    user_item = self.find_item_in_listing(
+    user_item = self.findItemInListing(
         user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
 
     if user_item is None:
@@ -111,7 +111,7 @@ class BaseTest(unittest.TestCase):
         EC.invisibility_of_element_located(((
             LandingPage.USER_DELETE_SPINNER))))
 
-  def find_item_in_listing(self, listing, name):
+  def findItemInListing(self, listing, name):
     """Given the listing of items and a name, return the name's anchor.
 
     Args:
@@ -130,13 +130,13 @@ class BaseTest(unittest.TestCase):
         return item
     return None
 
-  def add_test_server_helper(self, containingElement):
+  def addTestServerHelper(self, containing_element):
     """Add a test server using the element container to find the add form.
 
     Args:
-      containingElement: An element containing the add server form.
+      containing_element: An element containing the add server form.
     """
-    add_server_form = containingElement.find_element(
+    add_server_form = containing_element.find_element(
         *UfOPageLayout.ADD_SERVER_FORM)
 
     ip_paper_input = add_server_form.find_element(
@@ -168,7 +168,7 @@ class BaseTest(unittest.TestCase):
         EC.invisibility_of_element_located(((
             UfOPageLayout.ADD_SERVER_SPINNER))))
 
-  def remove_test_server(self, shouldRaiseException=True):
+  def removeTestServer(self, shouldRaiseException=True):
     """Remove a test server using the landing page (the only way).
 
     Args:
@@ -180,7 +180,7 @@ class BaseTest(unittest.TestCase):
     landing_page = LandingPage(self.driver)
     server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
     server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
-    server_item = self.find_item_in_listing(
+    server_item = self.findItemInListing(
         server_listbox, BaseTest.TEST_SERVER_AS_DICT['name'])
 
     if server_item is None:
@@ -204,7 +204,7 @@ class BaseTest(unittest.TestCase):
         EC.invisibility_of_element_located(((
             LandingPage.SERVER_DELETE_SPINNER))))
 
-  def assert_test_user_presence_on_landing_page(self, isPresent):
+  def assertTestUserPresenceOnLandingPage(self, isPresent):
     """Helper to assert whether a user is present on the landing page.
 
     Args:
@@ -214,14 +214,14 @@ class BaseTest(unittest.TestCase):
     landing_page = LandingPage(self.driver)
     user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
     user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_user_item = self.find_item_in_listing(
+    test_user_item = self.findItemInListing(
         user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
     if isPresent:
       self.assertIsNotNone(test_user_item)
     else:
       self.assertIsNone(test_user_item)
 
-  def assert_test_server_presence_on_landing_page(self, isPresent):
+  def assertTestServerPresenceOnLandingPage(self, isPresent):
     """Helper to assert whether a server is present on the landing page.
 
     Args:
@@ -231,14 +231,14 @@ class BaseTest(unittest.TestCase):
     landing_page = LandingPage(self.driver)
     server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
     server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_server_item = self.find_item_in_listing(
+    test_server_item = self.findItemInListing(
         server_listbox, BaseTest.TEST_SERVER_AS_DICT['name'])
     if isPresent:
       self.assertIsNotNone(test_server_item)
     else:
       self.assertIsNone(test_server_item)
 
-  def assert_chrome_policy_download_link(self):
+  def assertChromePolicyDownloadLinkIsConnected(self):
     """Helper to assert that chrome policy download links to download url."""
     generic_page = UfOPageLayout(self.driver)
     download_button = generic_page.GetElement(
