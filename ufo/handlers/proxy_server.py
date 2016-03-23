@@ -8,6 +8,7 @@ from ufo.database import models
 from ufo.handlers import auth
 from ufo.services import regex
 from ufo.services import ssh_client
+from ufo.services import custom_exceptions
 
 
 @ufo.app.route('/proxyserver/')
@@ -43,7 +44,11 @@ def proxyserver_add():
   server.read_public_key_from_file_contents(public_key_contents)
   server.read_private_key_from_file_contents(private_key_contents)
 
-  server.save()
+  try:
+    server.save()
+  except custom_exceptions.UnableToSaveToDB as e:
+    flask.abort(e.code, {'code': e.code,
+                         'message': e.message})
 
   return flask.redirect(flask.url_for('proxyserver_list'))
 

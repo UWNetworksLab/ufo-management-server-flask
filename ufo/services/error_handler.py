@@ -31,8 +31,8 @@ def handle_error(error):
   # one it finds.  This will let us create specific error pages
   # for errors where we can provide the user some additional help.
   # (Like a 404, for example).
-  templates_to_try = ['{}_error.html'.format(error.code), 'error.html']
-  return flask.render_template(templates_to_try, error=error)
+  return flask.jsonify({'code': error.description['code'],
+                        'message': error.description['message']})
 
 def handle_not_logged_in(error):
   """A handler to gracefully handle the not logged in error.

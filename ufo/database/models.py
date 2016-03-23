@@ -8,6 +8,7 @@ import sqlalchemy
 
 import ufo
 from ufo.services import ssh_client
+from ufo.services import custom_exceptions.UnableToSaveToDB
 
 LONG_STRING_LENGTH = 1024
 REVOKED_TEXT = 'Access Disabled'
@@ -64,6 +65,7 @@ class Model(ufo.db.Model):
         ufo.app.logger.error(
           'Unable to save to database.  Check if constraint is violated.')
         ufo.db.session.rollback()
+        raise custom_exceptions.UnableToSaveToDB
     return self
 
   def delete(self, commit=True):

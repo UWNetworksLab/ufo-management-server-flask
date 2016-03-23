@@ -1,0 +1,33 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<dom-module id="error-notification">
+  <style is="custom-style">
+    #container {
+      display: table;
+      width: 100%
+    }
+  </style>
+  <template>
+    <paper-dialog id='error-notification-dialog' with-backdrop>
+      {{errorCode}} <br>
+      {{errorMessage}}
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'error-notification',
+      properties: {
+        errorCode: Number,
+        errorMessage: String,
+      },
+      listeners: {
+        'ApplicationError': 'showErrorNotification',
+      },
+      showErrorNotification: function(event) {
+        this.errorCode = event.detail.response.code;
+        this.errorMessage = event.detail.response.message;
+        document.getElementById('error-notification-dialog').open();
+      },
+    });
+  </script>
+</dom-module>
