@@ -11,10 +11,17 @@ class UfOPageLayout(BaseDriver):
 
   # pylint: disable=too-few-public-methods
 
-  ADD_USER_BUTTON = (By.ID, 'addUserButton')
+  MAIN_TOOLBAR = (By.ID, 'main-toolbar')
+  LANDING_ANCHOR = (By.ID, 'logoLandingAnchor')
+  SEARCH_FORM = (By.ID, 'searchForm')
+  OPEN_MENU_BUTTON = (By.ID, 'openMenuButton')
+  MAIN_HOLDER = (By.ID, 'main-holder')
+  BASE_PAGE_ELEMENTS = [
+      MAIN_TOOLBAR, LANDING_ANCHOR, SEARCH_FORM, OPEN_MENU_BUTTON, MAIN_HOLDER]
 
+  ADD_USER_BUTTON = (By.ID, 'addUserButton')
   USER_LIST_ITEM = (By.ID, 'userList')
-  USER_LISTBOX = (By.TAG_NAME, 'paper-listbox')
+  GENERIC_LISTBOX = (By.TAG_NAME, 'paper-listbox')
 
   ADD_MANUALLY_TAB = (By.ID, 'manualAddTab')
   ADD_MANUALLY_FORM = (By.ID, 'manualAdd')
@@ -23,15 +30,25 @@ class UfOPageLayout(BaseDriver):
   ADD_MANUALLY_SUBMIT_BUTTON = (By.ID, 'manualAddSubmitButton')
   ADD_MANUALLY_SPINNER = (By.ID, 'manualAddSpinner')
 
-  USER_DETAILS_MODAL = (By.TAG_NAME, 'paper-dialog')
+  DETAILS_MODAL = (By.TAG_NAME, 'paper-dialog')
+
   USER_DELETE_BUTTON = (By.ID, 'userDeleteButton')
   USER_DELETE_SPINNER = (By.ID, 'userDetailsSpinner')
 
-  # ADD_USERS_LINK = (By.ID, 'add_users')
+  ADD_SERVER_BUTTON = (By.ID, 'addServerButton')
+  SERVER_LIST_ITEM = (By.ID, 'proxyList')
 
-  # ADD_USERS_TABS = (By.ID, 'tabsContent')
+  ADD_SERVER_MODAL = (By.ID, 'serverModal')
+  ADD_SERVER_FORM = (By.ID, 'serverAddForm')
+  ADD_SERVER_INPUT_IP = (By.ID, 'ipInput')
+  ADD_SERVER_INPUT_NAME = (By.ID, 'nameInput')
+  ADD_SERVER_INPUT_PRIVATE_KEY = (By.ID, 'privateKeyInput')
+  ADD_SERVER_INPUT_PUBLIC_KEY = (By.ID, 'publicKeyInput')
+  ADD_SERVER_SUBMIT_BUTTON = (By.ID, 'serverAddSubmitButton')
+  ADD_SERVER_SPINNER = (By.ID, 'serverSpinner')
 
-  # DELETE_FORM = (By.ID, 'user-delete-form')
+  SERVER_DELETE_BUTTON = (By.ID, 'serverDeleteButton')
+  SERVER_DELETE_SPINNER = (By.ID, 'serverDetailsSpinner')
 
   def GetSidebar(self):
     """Get the sidebar element on the user page.

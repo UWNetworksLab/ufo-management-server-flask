@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block title %}New Landing{% endblock %}
 {% block body %}
-  <paper-display-template resources="{{user_resources}}">
+  <paper-display-template resources="{{user_resources}}" id="userDisplayTemplate">
     <header-container resources="{{user_resources}}" has-add-flow="true">
       <list-items resources="{{user_resources}}" id="userList" auto-get=true>
       </list-items>
     </header-container>
   </paper-display-template>
-  <paper-display-template resources="{{proxy_server_resources}}">
+  <paper-display-template resources="{{proxy_server_resources}}" id="proxyServerDisplayTemplate">
     <header-container resources="{{proxy_server_resources}}" has-add-flow="true">
       <list-items resources="{{proxy_server_resources}}" id="proxyList" auto-get=true>
       </list-items>
     </header-container>
   </paper-display-template>
-  <paper-display-template resources="{{policy_resources}}">
+  <paper-display-template resources="{{policy_resources}}" id="chromePolicyDisplayTemplate">
     <header-container resources="{{policy_resources}}">
       <chrome-policy resources="{{policy_resources}}">
       </chrome-policy>

@@ -2,12 +2,15 @@
 
 import unittest
 
+from Crypto.PublicKey import RSA
+import flask
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from landing_page import LandingPage
 from layout import UfOPageLayout
 from test_config import CHROME_DRIVER_LOCATION
 from ufo import app
@@ -19,11 +22,23 @@ class BaseTest(unittest.TestCase):
       'name': 'Test User Fake Name 01',
       'email': 'test_user@not-a-real-domain-that-should-be-in-use.com'
   }
+  TEST_SERVER_AS_DICT = {
+      'ip': '127.0.0.1',
+      'name': 'Test Server Fake Name 01',
+      'private_key': 'to be filled in',
+      'public_key': 'to be filled in',
+  }
 
   def __init__(self, methodName='runTest', args=None, **kwargs):
     """Create the base test object for others to inherit."""
     super(BaseTest, self).__init__(methodName, **kwargs)
     self.args = args
+    rsa_key = RSA.generate(2048)
+    private_key = rsa_key.exportKey()
+    public_key = rsa_key.publickey().exportKey('OpenSSH')
+    BaseTest.TEST_SERVER_AS_DICT['private_key'] = private_key
+    BaseTest.TEST_SERVER_AS_DICT['public_key'] = (
+        public_key + ' ' + BaseTest.TEST_USER_AS_DICT['email'])
 
   def setUp(self):
     """Setup for test methods."""
@@ -61,15 +76,49 @@ class BaseTest(unittest.TestCase):
         EC.invisibility_of_element_located(((
             UfOPageLayout.ADD_MANUALLY_SPINNER))))
 
-  def find_user_in_listing(self, listing, name):
-    """Given the listing of users and a name, return the name's anchor.
+  def remove_test_user(self, raiseException=True):
+    """Manually remove a test user using the landing page (the only way).
 
     Args:
-      listing: The paper-listbox element holding all users.
-      name: The name of a user to search for.
+      raiseException: True to raise an exception if the user is not found.
+    """
+    # Find the user and navigate to their details page.
+    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    landing_page = LandingPage(self.driver)
+    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
+    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
+    user_item = self.find_item_in_listing(
+        user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
+
+    if user_item is None:
+      if raiseException:
+        raise Exception
+      else:
+        return
+    else:
+      user_item.click()
+
+    # Click delete on that user.
+    details_modal = user_item.find_element(*LandingPage.DETAILS_MODAL)
+    WebDriverWait(self.driver, 10).until(
+        EC.visibility_of(details_modal))
+    delete_button = details_modal.find_element(*LandingPage.USER_DELETE_BUTTON)
+    delete_button.click()
+
+    # Wait for post to finish, can take a while.
+    WebDriverWait(self.driver, 20).until(
+        EC.invisibility_of_element_located(((
+            LandingPage.USER_DELETE_SPINNER))))
+
+  def find_item_in_listing(self, listing, name):
+    """Given the listing of items and a name, return the name's anchor.
+
+    Args:
+      listing: The paper-listbox element holding all items.
+      name: The name of an item to search for.
 
     Returns:
-      The anchor element for visiting the given user's details page or None.
+      The anchor element for visiting the given item's details page or None.
     """
     items = listing.find_elements(By.TAG_NAME, 'paper-icon-item')
     for item in items:
@@ -79,3 +128,74 @@ class BaseTest(unittest.TestCase):
       if name.lower() in strong.text.lower():
         return item
     return None
+
+  def add_test_server_helper(self):
+    """Add a test server once the modal is displayed."""
+    add_server_modal = WebDriverWait(self.driver, 10).until(
+        EC.visibility_of_element_located(((UfOPageLayout.ADD_SERVER_MODAL))))
+    add_server_form = add_server_modal.find_element(
+        *UfOPageLayout.ADD_SERVER_FORM)
+
+    ip_paper_input = add_server_form.find_element(
+        *UfOPageLayout.ADD_SERVER_INPUT_IP)
+    ip_input = ip_paper_input.find_element(By.ID, 'input')
+    ip_input.send_keys(BaseTest.TEST_SERVER_AS_DICT['ip'])
+
+    name_paper_input = add_server_form.find_element(
+        *UfOPageLayout.ADD_SERVER_INPUT_NAME)
+    name_input = name_paper_input.find_element(By.ID, 'input')
+    name_input.send_keys(BaseTest.TEST_SERVER_AS_DICT['name'])
+
+    private_key_paper_input = add_server_form.find_element(
+        *UfOPageLayout.ADD_SERVER_INPUT_PRIVATE_KEY)
+    private_key_input = private_key_paper_input.find_element(By.ID, 'textarea')
+    private_key_input.send_keys(BaseTest.TEST_SERVER_AS_DICT['private_key'])
+
+    public_key_paper_input = add_server_form.find_element(
+        *UfOPageLayout.ADD_SERVER_INPUT_PUBLIC_KEY)
+    public_key_input = public_key_paper_input.find_element(By.ID, 'input')
+    public_key_input.send_keys(BaseTest.TEST_SERVER_AS_DICT['public_key'])
+
+    submit_button = self.driver.find_element(
+        *UfOPageLayout.ADD_SERVER_SUBMIT_BUTTON)
+    submit_button.click()
+
+    # Wait for post to finish, can take a while.
+    WebDriverWait(self.driver, 20).until(
+        EC.invisibility_of_element_located(((
+            UfOPageLayout.ADD_SERVER_SPINNER))))
+
+  def remove_test_server(self, raiseException=True):
+    """Remove a test server using the landing page (the only way).
+
+    Args:
+      raiseException: True to raise an exception if the server is not found.
+    """
+    # Find the server and navigate to its details page.
+    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    landing_page = LandingPage(self.driver)
+    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
+    server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
+    server_item = self.find_item_in_listing(
+        server_listbox, BaseTest.TEST_SERVER_AS_DICT['name'])
+
+    if server_item is None:
+      if raiseException:
+        raise Exception
+      else:
+        return
+    else:
+      server_item.click()
+
+    # Click delete on that server.
+    details_modal = server_item.find_element(*LandingPage.DETAILS_MODAL)
+    WebDriverWait(self.driver, 10).until(
+        EC.visibility_of(details_modal))
+    delete_button = details_modal.find_element(
+        *LandingPage.SERVER_DELETE_BUTTON)
+    delete_button.click()
+
+    # Wait for post to finish, can take a while.
+    WebDriverWait(self.driver, 20).until(
+        EC.invisibility_of_element_located(((
+            LandingPage.SERVER_DELETE_SPINNER))))

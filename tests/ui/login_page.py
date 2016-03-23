@@ -6,10 +6,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from base_driver import BaseDriver
+from layout import UfOPageLayout
 
 
-class LoginPage(BaseDriver):
+class LoginPage(UfOPageLayout):
 
   """The UfO login page."""
 
@@ -20,7 +20,6 @@ class LoginPage(BaseDriver):
   PASSWORD_INPUT = (By.ID, 'password')
   SIGN_IN_BUTTON = (By.ID, 'signIn')
 
-  OPEN_MENU_BUTTON = (By.ID, 'openMenuButton')
   LOGOUT_FORM = (By.ID, 'logoutForm')
   GENERIC_PAPER_BUTTON = (By.TAG_NAME, 'paper-button')
 
@@ -58,7 +57,7 @@ class LoginPage(BaseDriver):
     self.driver.get(args.server_url + flask.url_for('landing'))
 
     dropdown_button = WebDriverWait(self.driver, 10).until(
-        EC.visibility_of_element_located(((self.OPEN_MENU_BUTTON))))
+        EC.visibility_of_element_located(((LoginPage.OPEN_MENU_BUTTON))))
     dropdown_button.click()
 
     logout_form = WebDriverWait(self.driver, 10).until(
