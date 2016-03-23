@@ -2,8 +2,6 @@
 import unittest
 
 import flask
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -24,12 +22,12 @@ class LandingPageTest(BaseTest):
 
   def tearDown(self):
     """Teardown for test methods."""
-    self.remove_test_user(raiseException=False)
-    self.remove_test_server(raiseException=False)
+    self.remove_test_user(shouldRaiseException=False)
+    self.remove_test_server(shouldRaiseException=False)
     LoginPage(self.driver).Logout(self.args)
     super(LandingPageTest, self).tearDown()
 
-  def testLandingPage(self):
+  def testLandingPageLayout(self):
     """Test the landing page layout contains the elements we expect.
 
     This should include elements inherited from the base page,
@@ -48,7 +46,7 @@ class LandingPageTest(BaseTest):
       landing_page_element = landing_page.GetElement(element_by_id)
       self.assertIsNotNone(landing_page_element)
 
-  def testManualUserAddFromLanding(self):
+  def testManuallyAddUserFromLandingPage(self):
     """Test that manually adding a user shows up on the user listing."""
     self.assert_test_user_presence_on_landing_page(False)
 
@@ -56,7 +54,7 @@ class LandingPageTest(BaseTest):
 
     self.assert_test_user_presence_on_landing_page(True)
 
-  def testUserDelete(self):
+  def testDeleteUser(self):
     """Test that deleting a user removes that user."""
     self._add_test_user_from_landing_page()
 
@@ -66,7 +64,7 @@ class LandingPageTest(BaseTest):
 
     self.assert_test_user_presence_on_landing_page(False)
 
-  def testServerAddFromLanding(self):
+  def testAddServerFromLandingPage(self):
     """Test that adding a server shows up on the server listing."""
     self.assert_test_server_presence_on_landing_page(False)
 
@@ -74,7 +72,7 @@ class LandingPageTest(BaseTest):
 
     self.assert_test_server_presence_on_landing_page(True)
 
-  def testServerDelete(self):
+  def testDeleteServer(self):
     """Test that deleting a server removes that server."""
     self._add_test_server_from_landing_page()
 
@@ -84,6 +82,11 @@ class LandingPageTest(BaseTest):
 
     self.assert_test_server_presence_on_landing_page(False)
 
+  def testDownloadChromePolicyFromLandingPage(self):
+    """Test that the chrome policy download link is present and wired up."""
+    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    self.assert_chrome_policy_download_link()
+
   def _add_test_user_from_landing_page(self):
     """Manually add a test user using the landing page."""
     # Navigate to add user and go to manual tab.
@@ -91,7 +94,7 @@ class LandingPageTest(BaseTest):
     landing_page = LandingPage(self.driver)
     add_user_button = landing_page.GetElement(LandingPage.ADD_USER_BUTTON)
     add_user_button.click()
-    add_manually_tab = WebDriverWait(self.driver, 10).until(
+    add_manually_tab = WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((LandingPage.ADD_MANUALLY_TAB))))
     add_manually_tab.click()
 
@@ -104,7 +107,7 @@ class LandingPageTest(BaseTest):
     landing_page = LandingPage(self.driver)
     add_server_button = landing_page.GetElement(LandingPage.ADD_SERVER_BUTTON)
     add_server_button.click()
-    add_server_modal = WebDriverWait(self.driver, 10).until(
+    add_server_modal = WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((LandingPage.ADD_SERVER_MODAL))))
 
     self.add_test_server_helper(add_server_modal)

@@ -50,6 +50,8 @@ class UfOPageLayout(BaseDriver):
   SERVER_DELETE_BUTTON = (By.ID, 'serverDeleteButton')
   SERVER_DELETE_SPINNER = (By.ID, 'serverDetailsSpinner')
 
+  CHROME_POLICY_DOWNLOAD_BUTTON = (By.ID, 'chromePolicyDownloadButton')
+
   def GetSidebar(self):
     """Get the sidebar element on the user page.
 

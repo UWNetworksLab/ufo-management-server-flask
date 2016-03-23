@@ -2,9 +2,6 @@
 import unittest
 
 import flask
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 
 from base_test import BaseTest
 from login_page import LoginPage
@@ -23,12 +20,12 @@ class SetupPageTest(BaseTest):
 
   def tearDown(self):
     """Teardown for test methods."""
-    self.remove_test_user(raiseException=False)
-    self.remove_test_server(raiseException=False)
+    self.remove_test_user(shouldRaiseException=False)
+    self.remove_test_server(shouldRaiseException=False)
     LoginPage(self.driver).Logout(self.args)
     super(SetupPageTest, self).tearDown()
 
-  def testLandingPage(self):
+  def testSetupPageLayout(self):
     """Test the setup page layout contains the elements we expect.
 
     This should include elements inherited from the base page,
@@ -47,7 +44,7 @@ class SetupPageTest(BaseTest):
       setup_page_element = setup_page.GetElement(element_by_id)
       self.assertIsNotNone(setup_page_element)
 
-  def testManualUserAddFromSetup(self):
+  def testManuallyAddUserFromSetupPage(self):
     """Test that manually adding a user shows up on the user listing."""
     self.assert_test_user_presence_on_landing_page(False)
 
@@ -55,13 +52,18 @@ class SetupPageTest(BaseTest):
 
     self.assert_test_user_presence_on_landing_page(True)
 
-  def testServerAddFromSetup(self):
+  def testAddServerFromSetupPage(self):
     """Test that adding a server shows up on the server listing."""
     self.assert_test_server_presence_on_landing_page(False)
 
     self._add_test_server_from_setup_page()
 
     self.assert_test_server_presence_on_landing_page(True)
+
+  def testDownloadChromePolicyFromSetupPage(self):
+    """Test that the chrome policy download link is present and wired up."""
+    self.driver.get(self.args.server_url + flask.url_for('setup'))
+    self.assert_chrome_policy_download_link()
 
   def _add_test_user_from_setup_page(self):
     """Manually add a test user using the setup page."""

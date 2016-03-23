@@ -5,7 +5,6 @@ import unittest
 from Crypto.PublicKey import RSA
 import flask
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -28,6 +27,7 @@ class BaseTest(unittest.TestCase):
       'private_key': 'to be filled in',
       'public_key': 'to be filled in',
   }
+  DEFAULT_TIMEOUT = 30
 
   def __init__(self, methodName='runTest', args=None, **kwargs):
     """Create the base test object for others to inherit."""
@@ -57,7 +57,7 @@ class BaseTest(unittest.TestCase):
 
   def add_test_user_helper(self):
     """Manually add a test user once the tabs are displayed."""
-    add_manually_form = WebDriverWait(self.driver, 10).until(
+    add_manually_form = WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((UfOPageLayout.ADD_MANUALLY_FORM))))
     name_paper_input = add_manually_form.find_element(
         *UfOPageLayout.ADD_MANUALLY_INPUT_NAME)
@@ -72,15 +72,16 @@ class BaseTest(unittest.TestCase):
     submit_button.click()
 
     # Wait for post to finish, can take a while.
-    WebDriverWait(self.driver, 20).until(
+    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located(((
             UfOPageLayout.ADD_MANUALLY_SPINNER))))
 
-  def remove_test_user(self, raiseException=True):
+  def remove_test_user(self, shouldRaiseException=True):
     """Manually remove a test user using the landing page (the only way).
 
     Args:
-      raiseException: True to raise an exception if the user is not found.
+      shouldRaiseException: True to raise an exception if the user is not
+                            found.
     """
     # Find the user and navigate to their details page.
     self.driver.get(self.args.server_url + flask.url_for('landing'))
@@ -91,7 +92,7 @@ class BaseTest(unittest.TestCase):
         user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
 
     if user_item is None:
-      if raiseException:
+      if shouldRaiseException:
         raise Exception
       else:
         return
@@ -100,13 +101,13 @@ class BaseTest(unittest.TestCase):
 
     # Click delete on that user.
     details_modal = user_item.find_element(*LandingPage.DETAILS_MODAL)
-    WebDriverWait(self.driver, 10).until(
+    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.visibility_of(details_modal))
     delete_button = details_modal.find_element(*LandingPage.USER_DELETE_BUTTON)
     delete_button.click()
 
     # Wait for post to finish, can take a while.
-    WebDriverWait(self.driver, 20).until(
+    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located(((
             LandingPage.USER_DELETE_SPINNER))))
 
@@ -163,15 +164,16 @@ class BaseTest(unittest.TestCase):
     submit_button.click()
 
     # Wait for post to finish, can take a while.
-    WebDriverWait(self.driver, 20).until(
+    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located(((
             UfOPageLayout.ADD_SERVER_SPINNER))))
 
-  def remove_test_server(self, raiseException=True):
+  def remove_test_server(self, shouldRaiseException=True):
     """Remove a test server using the landing page (the only way).
 
     Args:
-      raiseException: True to raise an exception if the server is not found.
+      shouldRaiseException: True to raise an exception if the server is not
+                            found.
     """
     # Find the server and navigate to its details page.
     self.driver.get(self.args.server_url + flask.url_for('landing'))
@@ -182,7 +184,7 @@ class BaseTest(unittest.TestCase):
         server_listbox, BaseTest.TEST_SERVER_AS_DICT['name'])
 
     if server_item is None:
-      if raiseException:
+      if shouldRaiseException:
         raise Exception
       else:
         return
@@ -191,14 +193,14 @@ class BaseTest(unittest.TestCase):
 
     # Click delete on that server.
     details_modal = server_item.find_element(*LandingPage.DETAILS_MODAL)
-    WebDriverWait(self.driver, 10).until(
+    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.visibility_of(details_modal))
     delete_button = details_modal.find_element(
         *LandingPage.SERVER_DELETE_BUTTON)
     delete_button.click()
 
     # Wait for post to finish, can take a while.
-    WebDriverWait(self.driver, 20).until(
+    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located(((
             LandingPage.SERVER_DELETE_SPINNER))))
 
@@ -235,3 +237,11 @@ class BaseTest(unittest.TestCase):
       self.assertIsNotNone(test_server_item)
     else:
       self.assertIsNone(test_server_item)
+
+  def assert_chrome_policy_download_link(self):
+    """Helper to assert that chrome policy download links to download url."""
+    generic_page = UfOPageLayout(self.driver)
+    download_button = generic_page.GetElement(
+        UfOPageLayout.CHROME_POLICY_DOWNLOAD_BUTTON)
+    self.assertEquals(flask.url_for('download_chrome_policy'),
+                      download_button.get_attribute('href'))
