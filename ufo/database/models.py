@@ -8,7 +8,7 @@ import sqlalchemy
 
 import ufo
 from ufo.services import ssh_client
-from ufo.services import custom_exceptions.UnableToSaveToDB
+from ufo.services import custom_exceptions
 
 LONG_STRING_LENGTH = 1024
 REVOKED_TEXT = 'Access Disabled'
