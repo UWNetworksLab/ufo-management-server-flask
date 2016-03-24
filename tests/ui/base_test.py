@@ -108,11 +108,7 @@ class BaseTest(unittest.TestCase):
     """
     # Find the user and navigate to their details page.
     self.driver.get(self.args.server_url + flask.url_for('landing'))
-    landing_page = LandingPage(self.driver)
-    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
-    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
-    user_item = self.findItemInListing(
-        user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
+    user_item = self.findTestUserOnLangingPage()
 
     if user_item is None:
       if should_raise_exception:
@@ -132,7 +128,7 @@ class BaseTest(unittest.TestCase):
     # Wait for post to finish, can take a while.
     WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located(((
-            LandingPage.USER_DELETE_SPINNER))))
+            LandingPage.USER_DETAILS_SPINNER))))
 
   def searchForTestItem(self, is_user=True):
     """Execute a search for the test item from the current page.
@@ -155,6 +151,18 @@ class BaseTest(unittest.TestCase):
     WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located(((
             UfOPageLayout.SEARCH_SPINNER))))
+
+  def findTestUserOnLangingPage(self):
+    """Find the test user on the landing page if it exists.
+
+    Returns:
+      The anchor element for visiting the given item's details page or None.
+    """
+    landing_page = LandingPage(self.driver)
+    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
+    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
+    return self.findItemInListing(
+        user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
 
   def findItemInListing(self, listing, name):
     """Given the listing of items and a name, return the name's anchor.
@@ -283,11 +291,7 @@ class BaseTest(unittest.TestCase):
     """
     if go_to_landing:
       self.driver.get(self.args.server_url + flask.url_for('landing'))
-    landing_page = LandingPage(self.driver)
-    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
-    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_user_item = self.findItemInListing(
-        user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
+    test_user_item = self.findTestUserOnLangingPage()
     if is_present:
       self.assertIsNotNone(test_user_item)
       self.assertTrue(test_user_item.is_displayed())

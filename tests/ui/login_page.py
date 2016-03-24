@@ -55,6 +55,7 @@ class LoginPage(UfOPageLayout):
 
   def Logout(self, args):
     """Click through the logout flow."""
+    self.driver.get(args.server_url + flask.url_for('landing'))
     WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((LoginPage.OPEN_MENU_BUTTON))))
     dropdown_button = self.driver.find_element(*LoginPage.OPEN_MENU_BUTTON)

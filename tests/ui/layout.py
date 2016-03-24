@@ -50,7 +50,12 @@ class UfOPageLayout(BaseDriver):
   DETAILS_MODAL = (By.TAG_NAME, 'paper-dialog')
 
   USER_DELETE_BUTTON = (By.ID, 'userDeleteButton')
-  USER_DELETE_SPINNER = (By.ID, 'userDetailsSpinner')
+  USER_DISABLE_ENABLE_TEXT = (By.ID, 'isEnabledDisabledText')
+  USER_DISABLE_ENABLE_BUTTON = (By.ID, 'userDisableEnableButton')
+  USER_INVITE_CODE_TEXT = (By.ID, 'lastInviteCode')
+  USER_COPY_INVITE_BUTTON = (By.ID, 'copyInviteCodeButton')
+  USER_ROTATE_KEYS_BUTTON = (By.ID, 'rotateKeysButton')
+  USER_DETAILS_SPINNER = (By.ID, 'userDetailsSpinner')
 
   ADD_SERVER_BUTTON = (By.ID, 'addServerButton')
   SERVER_LIST_ITEM = (By.ID, 'proxyList')
