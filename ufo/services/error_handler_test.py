@@ -32,18 +32,18 @@ class ErrorHandlerTest(base_test.BaseTest):
     resp = self.client.get(flask.url_for('proxyserver_list'))
 
     self.assertTrue(str(setup_needed_error.code) in resp.data)
-    self.assertTrue(setup_needed_error.name in resp.data)
-    self.assertTrue(setup_needed_error.get_description() in resp.data)
+    self.assertTrue(SetupNeeded.message in resp.data)
 
   def testErrorHandlerCanProcessHTTPError(self):
     """Test error handler can process HTTP error."""
     error_404 = exceptions.NotFound()
     resp = error_handler.handle_error(error_404)
 
-    self.assertTrue(str(error_404.code) in resp)
-    self.assertTrue(error_404.name in resp)
+    self.assertEqual(error_404.code, resp[1])
+    self.assertTrue(str(error_404.code) in resp[0].data)
+    self.assertTrue(error_404.message in resp[0].data)
 
-  def testErrorHandlerCanProcessCustomError(self):
+  def ErrorHandlerCanProcessCustomError(self):
     """Test error handler can process custom error."""
     setup_needed_error = SetupNeeded()
     werkzeug_error = exceptions.InternalServerError(
@@ -51,9 +51,9 @@ class ErrorHandlerTest(base_test.BaseTest):
 
     resp = error_handler.handle_error(setup_needed_error)
 
-    self.assertTrue(str(werkzeug_error.code) in resp)
-    self.assertTrue(werkzeug_error.name in resp)
-    self.assertTrue(werkzeug_error.message in resp)
+    self.assertEqual(werkzeug_error.code, resp[1])
+    self.assertTrue(str(werkzeug_error.code) in resp[0].data)
+    self.assertTrue(werkzeug_error.message in resp[0].data)
 
   # TODO(eholder): Add a test for the not logged in error handler.
 

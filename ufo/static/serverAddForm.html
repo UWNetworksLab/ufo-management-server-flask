@@ -64,14 +64,16 @@
           notify: true,
         },
       },
+      listeners: {
+        'iron-form-error': 'handleFormError',
+      },
       enableSpinner: function() {
         this.set('isSpinnerOn', true);
       },
       submitPostForm: function() {
         this.querySelector('#serverAddForm').submit();
       },
-      parsePostResponse: function(e, detail) {
-        this.sendServersJsonToList(detail.xhr.response);
+      closeModal: function() {
         this.set('isSpinnerOn', false);
         serverModal = document.getElementById('serverModal');
         if (serverModal) {
@@ -79,6 +81,16 @@
         } else {
           document.getElementById('serverAddForm').reset();
         }
+      },
+      handleFormError: function(event, detail) {
+        var errorDetail = {'detail': detail.request.xhr.response};
+        var errorEvent = new CustomEvent('ApplicationError', errorDetail);
+        document.getElementById('error-notification').dispatchEvent(errorEvent);
+        this.closeModal();
+      },
+      parsePostResponse: function(e, detail) {
+        this.sendServersJsonToList(detail.xhr.response);
+        this.closeModal();
       },
       sendServersJsonToList: function(updatedServersJson) {
         var listElem = document.getElementById(this.resources.listId);

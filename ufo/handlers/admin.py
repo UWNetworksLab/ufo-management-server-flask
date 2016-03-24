@@ -7,6 +7,7 @@ import flask
 import ufo
 from ufo.database import models
 from ufo.handlers import auth
+from ufo.services import custom_exceptions
 
 
 
@@ -37,7 +38,10 @@ def add_admin():
   if admin_username is not None or admin_password is not None:
     admin_user = models.AdminUser(username=json.loads(admin_username))
     admin_user.set_password(json.loads(admin_password))
-    admin_user.save()
+    try:
+      admin_user.save()
+    except custom_exceptions.UnableToSaveToDB as e:
+      flask.abort(e.code, e.message)
 
   return flask.redirect(flask.url_for('admin_list'))
 
