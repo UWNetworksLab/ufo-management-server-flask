@@ -4,7 +4,7 @@ import unittest
 
 from landing_page_test import LandingPageTest
 #from login_page_test import LoginPageTest
-#from search_page_test import SearchPageTest
+from search_page_test import SearchPageTest
 from setup_page_test import SetupPageTest
 
 
@@ -45,7 +45,7 @@ def MakeSuite(testcase_class):
 SUITE = unittest.TestSuite()
 SUITE.addTest(MakeSuite(LandingPageTest))
 #SUITE.addTest(MakeSuite(LoginPageTest))
-#SUITE.addTest(MakeSuite(SearchPageTest))
+SUITE.addTest(MakeSuite(SearchPageTest))
 SUITE.addTest(MakeSuite(SetupPageTest))
 
 unittest.TextTestRunner().run(SUITE)

@@ -20,8 +20,8 @@ class SetupPageTest(BaseTest):
 
   def tearDown(self):
     """Teardown for test methods."""
-    self.removeTestUser(shouldRaiseException=False)
-    self.removeTestServer(shouldRaiseException=False)
+    self.removeTestUser(should_raise_exception=False)
+    self.removeTestServer(should_raise_exception=False)
     LoginPage(self.driver).Logout(self.args)
     super(SetupPageTest, self).tearDown()
 
@@ -40,50 +40,32 @@ class SetupPageTest(BaseTest):
       base_page_element = setup_page.GetElement(element_by_id)
       self.assertIsNotNone(base_page_element)
 
+    self.assertLogoLinksToLandingPage()
+
     for element_by_id in SetupPage.SETUP_PAGE_ELEMENTS:
       setup_page_element = setup_page.GetElement(element_by_id)
       self.assertIsNotNone(setup_page_element)
 
   def testManuallyAddUserFromSetupPage(self):
     """Test that manually adding a user shows up on the user listing."""
-    self.assertTestUserPresenceOnLandingPage(False)
+    self.assertTestUserPresenceOnPage(False)
 
-    self._addTestUserFromSetupPage()
+    self.addTestUserFromSetupPage()
 
-    self.assertTestUserPresenceOnLandingPage(True)
+    self.assertTestUserPresenceOnPage(True)
 
   def testAddServerFromSetupPage(self):
     """Test that adding a server shows up on the server listing."""
-    self.assertTestServerPresenceOnLandingPage(False)
+    self.assertTestServerPresenceOnPage(False)
 
-    self._addTestServerFromSetupPage()
+    self.addTestServerFromSetupPage()
 
-    self.assertTestServerPresenceOnLandingPage(True)
+    self.assertTestServerPresenceOnPage(True)
 
   def testDownloadChromePolicyFromSetupPage(self):
     """Test that the chrome policy download link is present and wired up."""
     self.driver.get(self.args.server_url + flask.url_for('setup'))
     self.assertChromePolicyDownloadLinkIsConnected()
-
-  def _addTestUserFromSetupPage(self):
-    """Manually add a test user using the setup page."""
-    # Navigate to add user and go to manual tab.
-    self.driver.get(self.args.server_url + flask.url_for('setup'))
-    setup_page = SetupPage(self.driver)
-    add_manually_tab = setup_page.GetElement(SetupPage.ADD_MANUALLY_TAB)
-    add_manually_tab.click()
-
-    self.addTestUserHelper()
-
-  def _addTestServerFromSetupPage(self):
-    """Add a test server using the setup page."""
-    # Navigate to add server.
-    self.driver.get(self.args.server_url + flask.url_for('setup'))
-    setup_page = SetupPage(self.driver)
-    proxy_server_add_template = setup_page.GetElement(
-        SetupPage.PROXY_SERVER_DISPLAY_TEMPLATE)
-
-    self.addTestServerHelper(proxy_server_add_template)
 
 
 if __name__ == '__main__':
