@@ -177,8 +177,8 @@ def add_user():
     try:
       db_user.save()
     except custom_exceptions.UnableToSaveToDB as e:
-      flask.abort(e.code, {'code': e.code,
-                           'message': e.message})
+      flask.abort(e.code, e.message)
+
 
   return user_list()
 

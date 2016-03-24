@@ -41,8 +41,7 @@ def add_admin():
     try:
       admin_user.save()
     except custom_exceptions.UnableToSaveToDB as e:
-      flask.abort(e.code, {'code': e.code,
-                           'message': e.message})
+      flask.abort(e.code, e.message)
 
   return flask.redirect(flask.url_for('admin_list'))
 
