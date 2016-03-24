@@ -27,12 +27,8 @@ def handle_error(error):
   if not isinstance(error, exceptions.HTTPException):
     error = exceptions.InternalServerError(error.message)
 
-  # Flask supports looking up multiple templates and rendering the first
-  # one it finds.  This will let us create specific error pages
-  # for errors where we can provide the user some additional help.
-  # (Like a 404, for example).
-  return flask.jsonify({'code': error.description['code'],
-                        'message': error.description['message']})
+  return flask.jsonify({'code': error.code,
+                        'message': error.description}), error.code
 
 def handle_not_logged_in(error):
   """A handler to gracefully handle the not logged in error.

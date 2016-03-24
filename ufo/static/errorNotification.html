@@ -8,7 +8,7 @@
     }
   </style>
   <template>
-    <paper-dialog id='error-notification-dialog' with-backdrop>
+    <paper-dialog id='errorNotificationDialog' with-backdrop>
       {{errorCode}} <br>
       {{errorMessage}}
     </paper-dialog>
@@ -23,10 +23,10 @@
       listeners: {
         'ApplicationError': 'showErrorNotification',
       },
-      showErrorNotification: function(event) {
-        this.errorCode = event.detail.response.code;
-        this.errorMessage = event.detail.response.message;
-        document.getElementById('error-notification-dialog').open();
+      showErrorNotification: function(event, detail) {
+        this.errorCode = detail.code;
+        this.errorMessage = detail.message;
+        this.$.errorNotificationDialog.open();
       },
     });
   </script>

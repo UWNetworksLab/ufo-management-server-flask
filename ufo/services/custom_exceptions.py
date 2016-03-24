@@ -5,6 +5,7 @@ PLEASE_CONFIGURE_TEXT = 'Please finish configuring this site.'
 
 
 # TODO: Move the other exceptions here.
+# TODO: Extract these messages for i18n (possibly to resources).
 
 class SetupNeeded(Exception):
   code = 500

@@ -10,6 +10,7 @@ from googleapiclient import errors
 import ufo
 from ufo.database import models
 from ufo.handlers import auth
+from ufo.services import custom_exceptions
 from ufo.services import google_directory_service
 from ufo.services import oauth
 
@@ -173,7 +174,11 @@ def add_user():
     # Save on each user so that we can let the database check if the
     # uniqueness constraint is fulfilled.  i.e don't batch this because
     # if one user is added more than once then the whole session will fail.
-    db_user.save()
+    try:
+      db_user.save()
+    except custom_exceptions.UnableToSaveToDB as e:
+      flask.abort(e.code, {'code': e.code,
+                           'message': e.message})
 
   return user_list()
 
