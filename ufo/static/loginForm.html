@@ -19,13 +19,13 @@
   </style>
   <template>
     <form id="loginForm" method="POST">
-      <paper-input label="{{resources.usernameLabel}}" name="username"></paper-input>
-      <paper-input type="password" label="{{resources.passwordLabel}}" name="password"></paper-input>
+      <paper-input label="{{resources.usernameLabel}}" id="username" name="username"></paper-input>
+      <paper-input type="password" label="{{resources.passwordLabel}}" id="password" name="password"></paper-input>
 
       <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
     </form>
     <div class="buttons">
-      <paper-button on-tap="submitLoginForm" class="anchor-button" type="submit">
+      <paper-button on-tap="submitLoginForm" class="anchor-button" type="submit" id="signIn">
         <strong>{{resources.loginText}}</strong>
       </paper-button>
     </div>

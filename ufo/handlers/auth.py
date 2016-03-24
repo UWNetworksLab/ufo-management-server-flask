@@ -97,6 +97,9 @@ def login():
     A redirect to the login page if there is any problem with the current user
     or a redirect to the landing page if everything checks out.
   """
+  if is_user_logged_in():
+    return flask.redirect(flask.url_for('landing'))
+
   if flask.request.method == 'GET':
     return flask.render_template('login.html',
                                  error=flask.request.form.get('error'))

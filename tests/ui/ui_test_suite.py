@@ -3,8 +3,9 @@ import argparse
 import unittest
 
 from landing_page_test import LandingPageTest
-from sidebar_test import SidebarTest
-from user_page_test import UserPageTest
+#from login_page_test import LoginPageTest
+#from search_page_test import SearchPageTest
+from setup_page_test import SetupPageTest
 
 
 def _ParseArgs():
@@ -17,9 +18,9 @@ def _ParseArgs():
   parser.add_argument('--server_url', action='store',
                       dest='server_url', default=None,
                       help='URL of the server to test.')
-  parser.add_argument('--email', action='store',
-                      dest='email', default=None,
-                      help='Email of the user to login.')
+  parser.add_argument('--username', action='store',
+                      dest='username', default=None,
+                      help='Username of the user to login.')
   parser.add_argument('--password', action='store',
                       dest='password', default=None,
                       help='Password of the user to login.')
@@ -43,7 +44,8 @@ def MakeSuite(testcase_class):
 
 SUITE = unittest.TestSuite()
 SUITE.addTest(MakeSuite(LandingPageTest))
-SUITE.addTest(MakeSuite(UserPageTest))
-SUITE.addTest(MakeSuite(SidebarTest))
+#SUITE.addTest(MakeSuite(LoginPageTest))
+#SUITE.addTest(MakeSuite(SearchPageTest))
+SUITE.addTest(MakeSuite(SetupPageTest))
 
 unittest.TextTestRunner().run(SUITE)

@@ -45,7 +45,7 @@
   <!-- TODO(eholder): Figure out how to make hover work with focused. -->
   <template>
     <template is="dom-if" if="{{loading}}">
-      <paper-spinner active$={{loading}}></paper-spinner>
+      <paper-spinner id="userDetailsSpinner" active$={{loading}}></paper-spinner>
     </template>
     <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" loading="{{loading}}" last-response="{{invitCodeJson}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax">
       <input type="hidden" name="user_id" value="{{item.id}}">
@@ -80,7 +80,7 @@
         <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="user_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-          <paper-button on-tap="submitForm" class="delete-button" type="submit">
+          <paper-button on-tap="submitForm" class="delete-button" id="userDeleteButton" type="submit">
             <iron-icon icon="delete"></iron-icon>
             <strong>{{resources.deleteLabel}}</strong>
           </paper-button>
