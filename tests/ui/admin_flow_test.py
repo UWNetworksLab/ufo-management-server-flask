@@ -49,21 +49,21 @@ class AdminFlowTest(BaseTest):
     self.driver.get(self.args.server_url + flask.url_for('landing'))
 
     # Find the add admin form.
-    add_admin_form = self.getAdminFormHelper()
+    add_admin_form = self.getAdminForm()
     response_status = add_admin_form.find_element(
         *UfOPageLayout.ADD_ADMIN_RESPONSE_STATUS)
     self.assertIsNone(response_status)
 
     # Add the new admin.
-    username_input = add_admin_form.find_element(
+    username_paper_input = add_admin_form.find_element(
         *UfOPageLayout.ADD_ADMIN_USERNAME)
-    username_real_input = username_input.find_element(By.ID, 'input')
-    username_real_input.send_keys(self.TEST_ADMIN_AS_DICT['username'])
+    username_input = username_paper_input.find_element(By.ID, 'input')
+    username_input.send_keys(self.TEST_ADMIN_AS_DICT['username'])
 
-    password_input = add_admin_form.find_element(
+    password_paper_input = add_admin_form.find_element(
         *UfOPageLayout.ADD_ADMIN_PASSWORD)
-    password_real_input = password_input.find_element(By.ID, 'input')
-    password_real_input.send_keys(self.TEST_ADMIN_AS_DICT['password'])
+    password_input = password_paper_input.find_element(By.ID, 'input')
+    password_input.send_keys(self.TEST_ADMIN_AS_DICT['password'])
 
     submit_button = add_admin_form.find_element(
         *UfOPageLayout.ADD_ADMIN_SUBMIT)
@@ -94,7 +94,7 @@ class AdminFlowTest(BaseTest):
     # Logout of the test admin account so it can be removed.
     LoginPage(self.driver).Logout(self.args.server_url)
 
-  def getAdminFormHelper(self):
+  def getAdminForm(self):
     """Navigates to the admin form on a given page.
 
     Returns:
