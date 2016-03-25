@@ -10,11 +10,8 @@ class LandingPage(UfOPageLayout):
 
   # pylint: disable=too-few-public-methods
 
-  USER_DISPLAY_TEMPLATE = (By.ID, 'userDisplayTemplate')
-  PROXY_SERVER_DISPLAY_TEMPLATE = (By.ID, 'proxyServerDisplayTemplate')
-  CHROME_POLICY_DISPLAY_TEMPLATE = (By.ID, 'chromePolicyDisplayTemplate')
   LANDING_PAGE_ELEMENTS = [
-    USER_DISPLAY_TEMPLATE,
-    PROXY_SERVER_DISPLAY_TEMPLATE,
-    CHROME_POLICY_DISPLAY_TEMPLATE
+    UfOPageLayout.USER_DISPLAY_TEMPLATE,
+    UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
+    UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
   ]

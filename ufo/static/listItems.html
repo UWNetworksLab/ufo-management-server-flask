@@ -54,11 +54,11 @@
           <template is="dom-if" if="{{resources.isUser}}">
             <div class="first-div"><strong>{{_limitCharacters(item.name)}}</strong></div>
             <div class="second-div">{{_limitCharacters(item.email)}}</div>
-            <div class="third-div">{{item.access}}</div>
+            <div class="third-div" id="isEnabledDisabledText">{{item.access}}</div>
             <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="fourth-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
               <input type="hidden" name="user_id" value="{{item.id}}">
               <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-              <paper-button on-tap="submitRevokeForm" class="topLineButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
+              <paper-button on-tap="submitRevokeForm" class="topLineButton" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
             </form>
             <user-details-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></user-details-dialog>
           </template>

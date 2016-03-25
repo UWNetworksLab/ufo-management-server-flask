@@ -56,11 +56,11 @@
           <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.email}}</div>
-          <div class="third-div">{{item.access}}</div>
+          <div class="third-div" id="isEnabledDisabledText">{{item.access}}</div>
           <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="fourth-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
             <input type="hidden" name="user_id" value="{{item.id}}">
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-            <paper-button on-tap="submitForm" class="topLineButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
+            <paper-button on-tap="submitForm" class="topLineButton" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
           </form>
           <paper-icon-button icon="close" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
@@ -71,11 +71,11 @@
       </div>
       <br>
       <div class="buttons">
-        <paper-button on-tap="copyInviteCode" class="anchor-button"><strong>{{resources.copyLabel}}</strong></paper-button>
+        <paper-button on-tap="copyInviteCode" class="anchor-button" id="copyInviteCodeButton"><strong>{{resources.copyLabel}}</strong></paper-button>
         <form is="iron-form" method="post" action="{{resources.rotateKeysUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="user_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-          <paper-button on-tap="submitForm" class="anchor-button" type="submit"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
+          <paper-button on-tap="submitForm" class="anchor-button" id="rotateKeysButton" type="submit"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
         </form>
         <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="user_id" value="{{item.id}}">

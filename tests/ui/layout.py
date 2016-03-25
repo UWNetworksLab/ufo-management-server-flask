@@ -14,10 +14,36 @@ class UfOPageLayout(BaseDriver):
   MAIN_TOOLBAR = (By.ID, 'main-toolbar')
   LANDING_ANCHOR = (By.ID, 'logoLandingAnchor')
   SEARCH_FORM = (By.ID, 'searchForm')
+  SEARCH_BUTTON = (By.ID, 'searchButton')
   OPEN_MENU_BUTTON = (By.ID, 'openMenuButton')
   MAIN_HOLDER = (By.ID, 'main-holder')
+  JIGSAW_LOGO_HOLDER = (By.ID, 'jigsaw-logo-holder')
   BASE_PAGE_ELEMENTS = [
-      MAIN_TOOLBAR, LANDING_ANCHOR, SEARCH_FORM, OPEN_MENU_BUTTON, MAIN_HOLDER]
+    MAIN_TOOLBAR,
+    LANDING_ANCHOR,
+    SEARCH_FORM,
+    SEARCH_BUTTON,
+    OPEN_MENU_BUTTON,
+    MAIN_HOLDER,
+    JIGSAW_LOGO_HOLDER
+  ]
+
+  SEARCH_SPINNER = (By.ID, 'searchSpinner')
+
+  DROPDOWN_MENU = (By.ID, 'ufoDropdownMenu')
+  DROPDOWN_MENU_SPINNER = (By.ID, 'dropdownMenuSpinner')
+  ADD_ADMIN_BUTTON = (By.ID, 'addAdminButton')
+  ADD_ADMIN_FORM = (By.ID, 'addAdminForm')
+  ADD_ADMIN_USERNAME = (By.ID, 'username')
+  ADD_ADMIN_PASSWORD = (By.ID, 'password')
+  ADD_ADMIN_SUBMIT = (By.ID, 'adminFormSubmitButton')
+  ADD_ADMIN_RESPONSE_STATUS = (By.ID, 'addAdminResponseStatus')
+
+  USER_DISPLAY_TEMPLATE = (By.ID, 'userDisplayTemplate')
+  PROXY_SERVER_DISPLAY_TEMPLATE = (By.ID, 'proxyServerDisplayTemplate')
+  OAUTH_DISPLAY_TEMPLATE = (By.ID, 'oauthDisplayTemplate')
+  CHROME_POLICY_DISPLAY_TEMPLATE = (By.ID, 'chromePolicyDisplayTemplate')
+  SETTINGS_DISPLAY_TEMPLATE = (By.ID, 'settingsDisplayTemplate')
 
   ADD_USER_BUTTON = (By.ID, 'addUserButton')
   USER_LIST_ITEM = (By.ID, 'userList')
@@ -33,7 +59,12 @@ class UfOPageLayout(BaseDriver):
   DETAILS_MODAL = (By.TAG_NAME, 'paper-dialog')
 
   USER_DELETE_BUTTON = (By.ID, 'userDeleteButton')
-  USER_DELETE_SPINNER = (By.ID, 'userDetailsSpinner')
+  USER_DISABLE_ENABLE_TEXT = (By.ID, 'isEnabledDisabledText')
+  USER_DISABLE_ENABLE_BUTTON = (By.ID, 'userDisableEnableButton')
+  USER_INVITE_CODE_TEXT = (By.ID, 'lastInviteCode')
+  USER_COPY_INVITE_BUTTON = (By.ID, 'copyInviteCodeButton')
+  USER_ROTATE_KEYS_BUTTON = (By.ID, 'rotateKeysButton')
+  USER_DETAILS_SPINNER = (By.ID, 'userDetailsSpinner')
 
   ADD_SERVER_BUTTON = (By.ID, 'addServerButton')
   SERVER_LIST_ITEM = (By.ID, 'proxyList')
@@ -52,10 +83,10 @@ class UfOPageLayout(BaseDriver):
 
   CHROME_POLICY_DOWNLOAD_BUTTON = (By.ID, 'chromePolicyDownloadButton')
 
-  def GetSidebar(self):
-    """Get the sidebar element on the user page.
+  def GetSearchBar(self):
+    """Get the search bar element on the page.
 
     Returns:
       The sidebar element for any page.
     """
-    return self.driver.find_element(*Sidebar.SIDEBAR)
+    return self.driver.find_element(*UfOPageLayout.SEARCH_FORM)

@@ -27,7 +27,7 @@
   </style>
   <template>
     <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="spinner" active$={{loading}}></paper-spinner>
+      <paper-spinner id="dropdownMenuSpinner" active$={{loading}}></paper-spinner>
     </template>
     <iron-ajax
       url="{{resources.listAdminUrl}}"
@@ -41,7 +41,7 @@
 
     <paper-dialog class="dropdown-content" id="ufoDropdownMenu">
       <paper-listbox>
-        <paper-icon-item class="dropdown-button" on-tap="flipToAdminFlow">
+        <paper-icon-item class="dropdown-button" id="addAdminButton" on-tap="flipToAdminFlow">
           <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
           {{resources.addAdminText}}
         </paper-icon-item>
@@ -67,7 +67,7 @@
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
       <template is="dom-if" if="{{showResponseStatus}}">
-        <p>{{responseStatus}}</p>
+        <p id="addAdminResponseStatus">{{responseStatus}}</p>
       </template>
       <form is="iron-form" id="addAdminForm" method="post" action="{{resources.addAdminUrl}}" on-iron-form-response="parseAddAdminResponse" on-iron-form-presubmit="enableSpinner">
         <paper-input label="{{resources.adminUsernameLabel}}" id="username" name="username"></paper-input>
@@ -75,7 +75,7 @@
         <input type="hidden" name="admin_username" id="jsonUsername" value="" />
         <input type="hidden" name="admin_password" id="jsonPassword" value="" />
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
-        <paper-button on-tap="checkThenSubmitAddAdminForm" class="floatToTheRight anchor-button" type="submit">
+        <paper-button on-tap="checkThenSubmitAddAdminForm" class="floatToTheRight anchor-button" id="adminFormSubmitButton" type="submit">
           <strong>{{resources.addAdminSubmitText}}</strong>
         </paper-button>
       </form>
