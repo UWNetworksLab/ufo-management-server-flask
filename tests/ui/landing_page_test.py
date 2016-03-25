@@ -20,13 +20,14 @@ class LandingPageTest(BaseTest):
     """Setup for test methods."""
     super(LandingPageTest, self).setUp()
     super(LandingPageTest, self).setContext()
-    LoginPage(self.driver).Login(self.args)
+    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+                                 self.args.password)
 
   def tearDown(self):
     """Teardown for test methods."""
     self.removeTestUser(should_raise_exception=False)
     self.removeTestServer(should_raise_exception=False)
-    LoginPage(self.driver).Logout(self.args)
+    LoginPage(self.driver).Logout(self.args.server_url)
     super(LandingPageTest, self).tearDown()
 
   def testLandingPageLayout(self):
@@ -108,9 +109,6 @@ class LandingPageTest(BaseTest):
 
     # Renavigate to the landing page to ensure the backend changed vs just a
     # UI update if specified.
-    # if should_refresh_page:
-    #   self.driver.get(self.args.server_url + flask.url_for('landing'))
-    #   test_user_item = self.findTestUserOnLangingPage()
     self.driver.get(self.args.server_url + flask.url_for('landing'))
     test_user_item = self.findTestUserOnLangingPage()
 

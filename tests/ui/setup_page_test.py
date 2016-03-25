@@ -16,13 +16,14 @@ class SetupPageTest(BaseTest):
     """Setup for test methods."""
     super(SetupPageTest, self).setUp()
     super(SetupPageTest, self).setContext()
-    LoginPage(self.driver).Login(self.args)
+    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+                                 self.args.password)
 
   def tearDown(self):
     """Teardown for test methods."""
     self.removeTestUser(should_raise_exception=False)
     self.removeTestServer(should_raise_exception=False)
-    LoginPage(self.driver).Logout(self.args)
+    LoginPage(self.driver).Logout(self.args.server_url)
     super(SetupPageTest, self).tearDown()
 
   def testSetupPageLayout(self):

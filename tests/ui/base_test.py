@@ -249,7 +249,7 @@ class BaseTest(unittest.TestCase):
 
     Args:
       should_raise_exception: True to raise an exception if the server is not
-                             found.
+                              found.
     """
     # Find the server and navigate to its details page.
     self.driver.get(self.args.server_url + flask.url_for('landing'))

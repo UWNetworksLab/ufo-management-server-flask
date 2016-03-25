@@ -30,6 +30,15 @@ class UfOPageLayout(BaseDriver):
 
   SEARCH_SPINNER = (By.ID, 'searchSpinner')
 
+  DROPDOWN_MENU = (By.ID, 'ufoDropdownMenu')
+  DROPDOWN_MENU_SPINNER = (By.ID, 'dropdownMenuSpinner')
+  ADD_ADMIN_BUTTON = (By.ID, 'addAdminButton')
+  ADD_ADMIN_FORM = (By.ID, 'addAdminForm')
+  ADD_ADMIN_USERNAME = (By.ID, 'username')
+  ADD_ADMIN_PASSWORD = (By.ID, 'password')
+  ADD_ADMIN_SUBMIT = (By.ID, 'adminFormSubmitButton')
+  ADD_ADMIN_RESPONSE_STATUS = (By.ID, 'addAdminResponseStatus')
+
   USER_DISPLAY_TEMPLATE = (By.ID, 'userDisplayTemplate')
   PROXY_SERVER_DISPLAY_TEMPLATE = (By.ID, 'proxyServerDisplayTemplate')
   OAUTH_DISPLAY_TEMPLATE = (By.ID, 'oauthDisplayTemplate')

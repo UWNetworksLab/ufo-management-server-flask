@@ -36,26 +36,40 @@ class LoginPage(UfOPageLayout):
       return False
     return True
 
-  def Login(self, args):
-    """Go through the login and authorization flows."""
-    self.driver.get(args.server_url + flask.url_for('login'))
+  def Login(self, server_url, username, password):
+    """Go through the login and authorization flows.
+
+    Args:
+      server_url: The base url for the server, such as http://0.0.0.0:5000.
+      username: The username to supply for login.
+      password: The password to supply for login.
+    """
+    self.driver.get(server_url + flask.url_for('login'))
 
     login_form = WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((self.LOGIN_FORM))))
     username_paper_input = login_form.find_element(*self.USERNAME_INPUT)
     username_input = username_paper_input.find_element(By.ID, 'input')
-    username_input.send_keys(args.username)
+    username_input.send_keys(username)
 
     password_paper_input = login_form.find_element(*self.PASSWORD_INPUT)
     password_input = password_paper_input.find_element(By.ID, 'input')
-    password_input.send_keys(args.password)
+    password_input.send_keys(password)
 
     sign_in_button = self.driver.find_element(*self.SIGN_IN_BUTTON)
     sign_in_button.click()
 
-  def Logout(self, args):
-    """Click through the logout flow."""
-    self.driver.get(args.server_url + flask.url_for('landing'))
+    # Wait for redirect to landing page.
+    WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
+        EC.visibility_of_element_located(((LoginPage.OPEN_MENU_BUTTON))))
+
+  def Logout(self, server_url):
+    """Click through the logout flow.
+
+    Args:
+      server_url: The base url for the server, such as http://0.0.0.0:5000.
+    """
+    self.driver.get(server_url + flask.url_for('landing'))
     WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((LoginPage.OPEN_MENU_BUTTON))))
     dropdown_button = self.driver.find_element(*LoginPage.OPEN_MENU_BUTTON)
