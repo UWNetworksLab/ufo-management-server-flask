@@ -44,10 +44,10 @@ def MakeSuite(testcase_class):
   return test_suite
 
 SUITE = unittest.TestSuite()
-#SUITE.addTest(MakeSuite(AdminFlowTest))
-SUITE.addTest(MakeSuite(LandingPageTest))
+SUITE.addTest(MakeSuite(AdminFlowTest))
+#SUITE.addTest(MakeSuite(LandingPageTest))
 #SUITE.addTest(MakeSuite(LoginPageTest))
-SUITE.addTest(MakeSuite(SearchPageTest))
-SUITE.addTest(MakeSuite(SetupPageTest))
+#SUITE.addTest(MakeSuite(SearchPageTest))
+#SUITE.addTest(MakeSuite(SetupPageTest))
 
 unittest.TextTestRunner().run(SUITE)

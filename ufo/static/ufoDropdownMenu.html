@@ -92,12 +92,13 @@
       <paper-button on-tap="flipToDropdownFlowFromRemoveAdmin" class="header">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
+      <p>{{resources.removeAdminInstructions}}</p>
       <paper-dialog-scrollable>
         <form is="iron-form" id="removeAdminForm" method="post" action="{{resources.removeAdminUrl}}" on-iron-form-response="parseRemoveAdminResponse" on-iron-form-presubmit="enableSpinner">
           <paper-menu selected="{{selected}}">
             <template is="dom-repeat" items="[[ajaxResponse.items]]">
               <paper-item id="{{item.id}}" class="horizontal layout">
-                {{item.username}}
+                <strong>{{item.username}}</strong>
               </paper-item>
             </template>
           </paper-menu>

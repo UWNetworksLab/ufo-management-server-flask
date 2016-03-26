@@ -36,6 +36,7 @@ def _get_landing_resources():
     'adminAddFailureText': ('Error: Adding the specified admin failed. Try '
                             'again later.'),
     'removeAdminUrl': flask.url_for('delete_admin'),
+    'removeAdminInstructions': 'Select an Admin below by username to remove.',
     'removeAdminSubmitText': 'Remove Admin',
   }
 
