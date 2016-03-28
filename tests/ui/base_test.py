@@ -164,21 +164,29 @@ class BaseTest(unittest.TestCase):
     return self.findItemInListing(
         user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
 
-  def findItemInListing(self, listing, name):
+  def findItemInListing(self, listing, name, should_find_by_icon_item=True):
     """Given the listing of items and a name, return the name's anchor.
 
     Args:
       listing: The paper-listbox element holding all items.
       name: The name of an item to search for.
+      should_find_by_icon_item: True if the items to search are icon items.
+                                False for regular items.
 
     Returns:
       The anchor element for visiting the given item's details page or None.
     """
-    items = listing.find_elements(By.TAG_NAME, 'paper-icon-item')
+    items = None
+    if should_find_by_icon_item:
+      items = listing.find_elements(By.TAG_NAME, 'paper-icon-item')
+    else:
+      items = listing.find_elements(By.TAG_NAME, 'paper-item')
     for item in items:
       # This can technically return multiple, but it will only return one.
-      div = item.find_elements(By.CLASS_NAME, 'first-div')[0]
-      strong = div.find_elements(By.TAG_NAME, 'strong')[0]
+      container_element = item
+      if should_find_by_icon_item:
+        container_element = item.find_elements(By.CLASS_NAME, 'first-div')[0]
+      strong = container_element.find_elements(By.TAG_NAME, 'strong')[0]
       if name.lower() in strong.text.lower():
         return item
     return None
@@ -279,6 +287,21 @@ class BaseTest(unittest.TestCase):
     WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located(((
             LandingPage.SERVER_DELETE_SPINNER))))
+
+  def getDropdownMenu(self):
+    """Navigates to the dropdown menu on a given page.
+
+    Returns:
+      The dropdown menu element once found.
+    """
+    WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
+        EC.visibility_of_element_located(((UfOPageLayout.OPEN_MENU_BUTTON))))
+    dropdown_button = self.driver.find_element(*UfOPageLayout.OPEN_MENU_BUTTON)
+    dropdown_button.click()
+
+    dropdown_menu = WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
+        EC.visibility_of_element_located(((UfOPageLayout.DROPDOWN_MENU))))
+    return dropdown_menu
 
   def assertTestUserPresenceOnPage(self, is_present, go_to_landing=True):
     """Helper to assert whether a user is present on the landing page.

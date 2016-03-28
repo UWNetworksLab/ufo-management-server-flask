@@ -3,10 +3,12 @@
 <link rel="import" href="bower_components/iron-icons/iron-icons.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
+<link rel="import" href="bower_components/paper-menu/paper-menu.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 
 <dom-module id="ufo-dropdown-menu">
@@ -29,7 +31,7 @@
     <template is="dom-if" if="{{loading}}">
       <paper-spinner id="dropdownMenuSpinner" active$={{loading}}></paper-spinner>
     </template>
-    <iron-ajax
+    <iron-ajax auto
       url="{{resources.listAdminUrl}}"
       method="GET"
       handle-as="json"
@@ -41,9 +43,13 @@
 
     <paper-dialog class="dropdown-content" id="ufoDropdownMenu">
       <paper-listbox>
-        <paper-icon-item class="dropdown-button" id="addAdminButton" on-tap="flipToAdminFlow">
+        <paper-icon-item class="dropdown-button" id="addAdminButton" on-tap="flipToAddAdminFlow">
           <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
           {{resources.addAdminText}}
+        </paper-icon-item>
+        <paper-icon-item class="dropdown-button" id="removeAdminButton" on-tap="flipToRemoveAdminFlow">
+          <iron-icon class="dropdown-icon" icon="close" item-icon></iron-icon>
+          {{resources.removeAdminText}}
         </paper-icon-item>
         <a href="{{resources.settingsUrl}}">
           <paper-icon-item class="dropdown-button">
@@ -63,7 +69,7 @@
     </paper-dialog>
 
     <paper-dialog id="addAdminDialog">
-      <paper-button on-tap="flipToDropdownFlow">
+      <paper-button on-tap="flipToDropdownFlowFromAddAdmin">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
       <template is="dom-if" if="{{showResponseStatus}}">
@@ -75,13 +81,36 @@
         <input type="hidden" name="admin_username" id="jsonUsername" value="" />
         <input type="hidden" name="admin_password" id="jsonPassword" value="" />
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
-        <paper-button on-tap="checkThenSubmitAddAdminForm" class="floatToTheRight anchor-button" id="adminFormSubmitButton" type="submit">
+        <paper-button on-tap="submitAddAdminForm" class="floatToTheRight anchor-button" id="adminFormSubmitButton" type="submit">
           <strong>{{resources.addAdminSubmitText}}</strong>
         </paper-button>
       </form>
       <p></p>
       <br>
       <p></p>
+    </paper-dialog>
+
+    <paper-dialog id="removeAdminDialog">
+      <paper-button on-tap="flipToDropdownFlowFromRemoveAdmin" class="header">
+        <iron-icon icon="arrow-back" item-icon></iron-icon>
+      </paper-button>
+      <p>{{resources.removeAdminInstructions}}</p>
+      <paper-dialog-scrollable>
+        <form is="iron-form" id="removeAdminForm" method="post" action="{{resources.removeAdminUrl}}" on-iron-form-response="parseRemoveAdminResponse" on-iron-form-presubmit="enableSpinner">
+          <paper-menu selected="{{selected}}">
+            <template is="dom-repeat" items="[[ajaxResponse.items]]">
+              <paper-item id="{{item.id}}" class="horizontal layout">
+                <strong>{{item.username}}</strong>
+              </paper-item>
+            </template>
+          </paper-menu>
+          <input type="hidden" id="hiddenAdminId" name="admin_id" value="">
+          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+        </form>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button on-tap="submitRemoveAdminForm" class="anchor-button" id="removeAdminSubmitButton" type="submit"><strong>{{resources.removeAdminSubmitText}}</strong></paper-button>
+      </div>
     </paper-dialog>
 
     <!-- TODO(eholder): Figure out how to style the UI so that the dialog
@@ -157,6 +186,10 @@
           type: String,
           notify: true,
         },
+        selected: {
+          type: Number,
+          notify: true,
+        },
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
@@ -167,25 +200,40 @@
       closeMenu: function() {
         this.$.ufoDropdownMenu.close();
       },
-      flipToAdminFlow: function(e, details) {
+      flipToAddAdminFlow: function(e, details) {
         this.closeMenu();
-        this.openAdminDialog();
+        this.openAddAdminDialog();
+      },
+      flipToRemoveAdminFlow: function(e, details) {
+        this.closeMenu();
+        this.openRemoveAdminDialog();
       },
       submitLogoutForm: function(e, details) {
         this.querySelector('#logoutForm').submit();
       },
-      openAdminDialog: function() {
+      openAddAdminDialog: function() {
         this.$.addAdminDialog.open();
       },
-      closeAdminDialog: function() {
+      closeAddAdminDialog: function() {
         this.$.addAdminDialog.close();
       },
-      flipToDropdownFlow: function(e, details) {
+      openRemoveAdminDialog: function() {
+        this.$.removeAdminDialog.open();
+      },
+      closeRemoveAdminDialog: function() {
+        this.$.removeAdminDialog.close();
+      },
+      flipToDropdownFlowFromAddAdmin: function(e, details) {
         this.openMenu();
-        this.closeAdminDialog();
+        this.closeAddAdminDialog();
         this.resetAddAdminForm();
         this.set('showResponseStatus', false);
         this.set('responseStatus', '');
+      },
+      flipToDropdownFlowFromRemoveAdmin: function(e, details) {
+        this.openMenu();
+        this.closeRemoveAdminDialog();
+        this.resetRemoveAdminForm();
       },
       enableSpinner: function() {
         this.set('loading', true);
@@ -198,29 +246,36 @@
         jsonUsername.value = JSON.stringify(username);
         jsonPassword.value = JSON.stringify(password);
       },
-      checkThenSubmitAddAdminForm: function() {
+      makeAdminIdJson: function() {
+        var adminId = this.ajaxResponse.items[this.selected].id;
+        var adminIdInput = this.querySelector('#hiddenAdminId');
+        adminIdInput.value = JSON.stringify(adminId);
+      },
+      getAdminsAgain: function() {
         this.$.getAdminsAjax.generateRequest();
       },
       handleAdminList: function(e, details) {
-        var username = this.querySelector('#username').value;
-        var admins = details.xhr.response.items;
-        if (admins) {
-          var found = this._findUsernameInAdminList(admins, username);
-          if (found) {
-            this.set('showResponseStatus', true);
-            this.set('responseStatus', this.resources.adminExistsError);
-          } else {
-            this.submitAddAdminForm();
-          }
-        } else {
-          this.set('showResponseStatus', true);
-          this.set('responseStatus', this.resources.adminListGetError);
-        }
+        // var username = this.querySelector('#username').value;
+        // var admins = details.xhr.response.items;
+        // if (admins) {
+        //   var found = this._findUsernameInAdminList(admins, username);
+        //   if (found) {
+        //     this.set('showResponseStatus', true);
+        //     this.set('responseStatus', this.resources.adminExistsError);
+        //   } else {
+        //     this.submitAddAdminForm();
+        //   }
+        // }
       },
       submitAddAdminForm: function() {
         this.enableSpinner();
         this.makeAdminJson();
         this.querySelector('#addAdminForm').submit();
+      },
+      submitRemoveAdminForm: function() {
+        this.enableSpinner();
+        this.makeAdminIdJson();
+        this.querySelector('#removeAdminForm').submit();
       },
       parseAddAdminResponse: function(e, details) {
         var username = this.querySelector('#username').value;
@@ -241,8 +296,16 @@
         }
         this.set('loading', false);
       },
+      parseRemoveAdminResponse: function(e, details) {
+        this.set('ajaxResponse', details.xhr.response);
+        this.set('loading', false);
+        this.resetRemoveAdminForm();
+      },
       resetAddAdminForm: function() {
         this.querySelector('#addAdminForm').reset();
+      },
+      resetRemoveAdminForm: function() {
+        this.querySelector('#removeAdminForm').reset();
       },
       _findUsernameInAdminList: function(admins, username) {
         var found = false;

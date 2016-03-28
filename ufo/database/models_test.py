@@ -107,5 +107,62 @@ class ConfigTest(base_test.BaseTest):
                      config.network_jail_until_google_auth)
 
 
+class AdminUserTest(base_test.BaseTest):
+  """Test for admin user model class functionality."""
+  FAKE_ADMIN_USERNAME = 'fake admin username'
+  FAKE_ADMIN_PASSWORD = 'fake admin password'
+
+  def testAdminUserToDict(self):
+    """Whether the necessary fields match in a dictionary representation."""
+    admin_user = models.AdminUser()
+    admin_user.username = self.FAKE_ADMIN_USERNAME
+    admin_user.set_password(self.FAKE_ADMIN_PASSWORD)
+    admin_user.save()
+    admin_dict = admin_user.to_dict()
+
+    self.assertEqual(admin_dict['id'], admin_user.id)
+    self.assertEqual(admin_dict['username'], admin_user.username)
+    self.assertNotIn('password', admin_dict)
+
+  def testGetAdminByUsername(self):
+    """Test if getting by username works as intended."""
+    # The username should not exist initially.
+    self.assertIsNone(models.AdminUser.get_by_username(
+        self.FAKE_ADMIN_USERNAME))
+
+    admin_user = models.AdminUser()
+    admin_user.username = self.FAKE_ADMIN_USERNAME
+    admin_user.set_password(self.FAKE_ADMIN_PASSWORD)
+    admin_user.save()
+
+    self.assertIsNotNone(models.AdminUser.get_by_username(
+        self.FAKE_ADMIN_USERNAME))
+    self.assertEquals(models.AdminUser.get_by_username(
+        self.FAKE_ADMIN_USERNAME), admin_user)
+
+    admin_user.delete()
+    self.assertIsNone(models.AdminUser.get_by_username(
+        self.FAKE_ADMIN_USERNAME))
+
+  def testAdminPassword(self):
+    """Test that setting password and comparing works."""
+    other_password = 'random new password that doesnt match the old one'
+    self.assertNotEqual(other_password, self.FAKE_ADMIN_PASSWORD)
+
+    admin_user = models.AdminUser()
+    admin_user.username = self.FAKE_ADMIN_USERNAME
+    admin_user.set_password(self.FAKE_ADMIN_PASSWORD)
+    admin_user.save()
+
+    self.assertTrue(admin_user.does_password_match(self.FAKE_ADMIN_PASSWORD))
+    self.assertFalse(admin_user.does_password_match(other_password))
+
+    admin_user.set_password(other_password)
+    admin_user.save()
+
+    self.assertTrue(admin_user.does_password_match(other_password))
+    self.assertFalse(admin_user.does_password_match(self.FAKE_ADMIN_PASSWORD))
+
+
 if __name__ == '__main__':
   unittest.main()
