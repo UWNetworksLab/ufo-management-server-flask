@@ -164,27 +164,27 @@ class BaseTest(unittest.TestCase):
     return self.findItemInListing(
         user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
 
-  def findItemInListing(self, listing, name, is_icon_item=True):
+  def findItemInListing(self, listing, name, should_find_by_icon_item=True):
     """Given the listing of items and a name, return the name's anchor.
 
     Args:
       listing: The paper-listbox element holding all items.
       name: The name of an item to search for.
-      is_icon_item: True if the items tosearch are icon items. False for
-                    regular items.
+      should_find_by_icon_item: True if the items to search are icon items.
+                                False for regular items.
 
     Returns:
       The anchor element for visiting the given item's details page or None.
     """
     items = None
-    if is_icon_item:
+    if should_find_by_icon_item:
       items = listing.find_elements(By.TAG_NAME, 'paper-icon-item')
     else:
       items = listing.find_elements(By.TAG_NAME, 'paper-item')
     for item in items:
       # This can technically return multiple, but it will only return one.
       container_element = item
-      if is_icon_item:
+      if should_find_by_icon_item:
         container_element = item.find_elements(By.CLASS_NAME, 'first-div')[0]
       strong = container_element.find_elements(By.TAG_NAME, 'strong')[0]
       if name.lower() in strong.text.lower():

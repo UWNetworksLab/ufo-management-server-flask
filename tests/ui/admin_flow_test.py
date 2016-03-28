@@ -29,7 +29,7 @@ class AdminFlowTest(BaseTest):
 
   def tearDown(self):
     """Teardown for test methods."""
-    self.removeTestAdmin(should_raise_exception=False)
+    self._removeTestAdmin(should_raise_exception=False)
     LoginPage(self.driver).Logout(self.args.server_url)
     super(AdminFlowTest, self).tearDown()
 
@@ -52,14 +52,14 @@ class AdminFlowTest(BaseTest):
 
     # Find the add admin dialog.
     dropdown_menu = self.getDropdownMenu()
-    add_admin_dialog = self.getAddAdminDialog(dropdown_menu)
+    add_admin_dialog = self._getAddAdminDialog(dropdown_menu)
     with self.assertRaises(NoSuchElementException):
       response_status = add_admin_dialog.find_element(
           *UfOPageLayout.ADD_ADMIN_RESPONSE_STATUS)
       self.assertIsNone(response_status)
 
     # Add the new admin.
-    self.addTestAdmin(add_admin_dialog)
+    self._addTestAdmin(add_admin_dialog)
 
     # Assert that it worked.
     response_status = add_admin_dialog.find_element(
@@ -88,25 +88,25 @@ class AdminFlowTest(BaseTest):
 
     # Find the add admin dialog.
     dropdown_menu = self.getDropdownMenu()
-    add_admin_dialog = self.getAddAdminDialog(dropdown_menu)
+    add_admin_dialog = self._getAddAdminDialog(dropdown_menu)
 
     # Add the test admin.
-    self.addTestAdmin(add_admin_dialog)
+    self._addTestAdmin(add_admin_dialog)
 
     # Remove the test admin.
-    self.removeTestAdmin(should_raise_exception=True)
+    self._removeTestAdmin(should_raise_exception=True)
 
     # See if the admin exists.
     self.driver.get(self.args.server_url + flask.url_for('landing'))
     dropdown_menu = self.getDropdownMenu()
-    remove_admin_dialog = self.getRemoveAdminDialog(dropdown_menu)
+    remove_admin_dialog = self._getRemoveAdminDialog(dropdown_menu)
     remove_admin_form = remove_admin_dialog.find_element(
         *UfOPageLayout.REMOVE_ADMIN_FORM)
-    admin_item = self.findTestAdminOnRemoveForm(remove_admin_form)
+    admin_item = self._findTestAdminOnRemoveForm(remove_admin_form)
 
     self.assertIsNone(admin_item)
 
-  def testAdminUsernameDisplayed(self):
+  def testAdminUsernameIsDisplayed(self):
     """Test that the admin's username is displayed while logged in."""
     LoginPage(self.driver).Login(self.args.server_url, self.args.username,
                                  self.args.password)
@@ -115,7 +115,7 @@ class AdminFlowTest(BaseTest):
     dropdown_button = self.driver.find_element(*UfOPageLayout.OPEN_MENU_BUTTON)
     self.assertEquals(dropdown_button.text.lower(), self.args.username.lower())
 
-  def getAddAdminDialog(self, dropdown_menu):
+  def _getAddAdminDialog(self, dropdown_menu):
     """Navigates to the add admin dialog on a given page.
 
     Args:
@@ -134,7 +134,7 @@ class AdminFlowTest(BaseTest):
                 UfOPageLayout.ADD_ADMIN_DIALOG))))
     return add_admin_dialog
 
-  def getRemoveAdminDialog(self, dropdown_menu):
+  def _getRemoveAdminDialog(self, dropdown_menu):
     """Navigates to the remove admin dialog on a given page.
 
     Args:
@@ -153,7 +153,7 @@ class AdminFlowTest(BaseTest):
                 UfOPageLayout.REMOVE_ADMIN_DIALOG))))
     return remove_admin_dialog
 
-  def findTestAdminOnRemoveForm(self, remove_admin_form):
+  def _findTestAdminOnRemoveForm(self, remove_admin_form):
     """Find and return the test admin element on the remove admin form.
 
     Args:
@@ -164,9 +164,9 @@ class AdminFlowTest(BaseTest):
     """
     menu = remove_admin_form.find_element(By.TAG_NAME, 'paper-menu')
     return self.findItemInListing(menu, self.TEST_ADMIN_AS_DICT['username'],
-                                  is_icon_item=False)
+                                  should_find_by_icon_item=False)
 
-  def addTestAdmin(self, add_admin_dialog):
+  def _addTestAdmin(self, add_admin_dialog):
     """Add a test admin account using the add admin form.
 
     Args:
@@ -192,7 +192,7 @@ class AdminFlowTest(BaseTest):
         EC.invisibility_of_element_located(((
             UfOPageLayout.DROPDOWN_MENU_SPINNER))))
 
-  def removeTestAdmin(self, should_raise_exception=True):
+  def _removeTestAdmin(self, should_raise_exception=True):
     """Remove a test admin account using a form post (the only way currently).
 
     Args:
@@ -202,10 +202,10 @@ class AdminFlowTest(BaseTest):
     # Find the user and navigate to their details page.
     self.driver.get(self.args.server_url + flask.url_for('landing'))
     dropdown_menu = self.getDropdownMenu()
-    remove_admin_dialog = self.getRemoveAdminDialog(dropdown_menu)
+    remove_admin_dialog = self._getRemoveAdminDialog(dropdown_menu)
     remove_admin_form = remove_admin_dialog.find_element(
         *UfOPageLayout.REMOVE_ADMIN_FORM)
-    admin_item = self.findTestAdminOnRemoveForm(remove_admin_form)
+    admin_item = self._findTestAdminOnRemoveForm(remove_admin_form)
 
     if admin_item is None:
       if should_raise_exception:
