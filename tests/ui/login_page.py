@@ -20,6 +20,12 @@ class LoginPage(UfOPageLayout):
   USERNAME_INPUT = (By.ID, 'username')
   PASSWORD_INPUT = (By.ID, 'password')
   SIGN_IN_BUTTON = (By.ID, 'signIn')
+  LOGIN_PAGE_ELEMENTS = [
+    LOGIN_FORM,
+    USERNAME_INPUT,
+    PASSWORD_INPUT,
+    SIGN_IN_BUTTON
+  ]
 
   LOGOUT_FORM = (By.ID, 'logoutForm')
   GENERIC_PAPER_BUTTON = (By.TAG_NAME, 'paper-button')

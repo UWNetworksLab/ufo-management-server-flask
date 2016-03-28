@@ -4,7 +4,7 @@ import unittest
 
 from admin_flow_test import AdminFlowTest
 from landing_page_test import LandingPageTest
-#from login_page_test import LoginPageTest
+from login_page_test import LoginPageTest
 from search_page_test import SearchPageTest
 from setup_page_test import SetupPageTest
 
@@ -46,7 +46,7 @@ def MakeSuite(testcase_class):
 SUITE = unittest.TestSuite()
 SUITE.addTest(MakeSuite(AdminFlowTest))
 SUITE.addTest(MakeSuite(LandingPageTest))
-#SUITE.addTest(MakeSuite(LoginPageTest))
+SUITE.addTest(MakeSuite(LoginPageTest))
 SUITE.addTest(MakeSuite(SearchPageTest))
 SUITE.addTest(MakeSuite(SetupPageTest))
 
