@@ -179,7 +179,6 @@ def add_user():
     except custom_exceptions.UnableToSaveToDB as e:
       flask.abort(e.code, e.message)
 
-
   return user_list()
 
 @ufo.app.route('/user/delete', methods=['POST'])

@@ -92,6 +92,9 @@
           notify: true,
         },
       },
+      listeners: {
+        'iron-form-error': 'handleFormError',
+      },
       enableSpinner: function() {
         this.set('isSpinnerOn', true);
       },
@@ -108,14 +111,25 @@
         this.makeManualInputsJsonArray();
         this.querySelector('#manualAdd').submit();
       },
-      parsePostResponse: function(e, detail) {
-        this.sendUsersJsonToList(detail.xhr.response);
+
+
+      closeModal: function() {
         this.set('isSpinnerOn', false);
-        this.resetForm();
         var userModal = document.getElementById('userModal');
         if (userModal) {
           userModal.close();
         }
+      },
+      parsePostResponse: function(e, detail) {
+        this.sendUsersJsonToList(detail.xhr.response);
+        this.resetForm();
+        this.closeModal();
+      },
+      handleFormError: function(event, detail) {
+        var errorDetail = {'detail': detail.request.xhr.response};
+        var errorEvent = new CustomEvent('ApplicationError', errorDetail);
+        document.getElementById('error-notification').dispatchEvent(errorEvent);
+        this.closeModal();
       },
       resetForm: function() {
         var formElem = document.getElementById('manualAdd');
