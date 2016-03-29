@@ -41,14 +41,14 @@ class AdminFlowTest(BaseTest):
   def testAddingAnotherAdminWorks(self):
     """Test that adding another admin works and lets us login as that admin."""
     for handler in self.handlers:
-      self._helperForTestingAddAdmin(self.args.server_url + handler)
+      self._verifyAnotherAdminCanBeAdded(self.args.server_url + handler)
       self._removeTestAdmin(should_raise_exception=False)
       LoginPage(self.driver).Logout(self.args.server_url)
 
   def testRemovingAdminWorksFromLandingPage(self):
     """Test that removing an admin works."""
     for handler in self.handlers:
-      self._helperForTestingRemoveAdmin(self.args.server_url + handler)
+      self._verifyAdminCanBeRemoved(self.args.server_url + handler)
       LoginPage(self.driver).Logout(self.args.server_url)
 
   def testAdminUsernameIsDisplayed(self):
@@ -59,10 +59,10 @@ class AdminFlowTest(BaseTest):
       self.driver.get(self.args.server_url + handler)
       dropdown_button = self.driver.find_element(
           *UfOPageLayout.OPEN_MENU_BUTTON)
-      self.assertEquals(
-          dropdown_button.text.lower(), self.args.username.lower())
+      self.assertEquals(dropdown_button.text.lower(),
+                        self.args.username.lower())
 
-  def _helperForTestingAddAdmin(self, test_url):
+  def _verifyAnotherAdminCanBeAdded(self, test_url):
     """Test that adding another admin works from the given url.
 
     Args:
@@ -111,7 +111,7 @@ class AdminFlowTest(BaseTest):
     # Assert that login succeeded (we're now on the test_url page).
     self.assertEquals(test_url, self.driver.current_url)
 
-  def _helperForTestingRemoveAdmin(self, test_url):
+  def _verifyAdminCanBeRemoved(self, test_url):
     """Test that removing an admin works from the given url.
 
     Args:
