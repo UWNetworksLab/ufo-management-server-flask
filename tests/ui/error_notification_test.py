@@ -46,7 +46,7 @@ class ErrorNotificationTest(BaseTest):
     # LandingPage.addTestUser()
     self.addTestUserFromLandingPage()
     self.addTestUserFromLandingPage()
-    
+
     # Trying to add the same user twice will cause the error notification
     # to be displayed.
     WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
@@ -55,6 +55,7 @@ class ErrorNotificationTest(BaseTest):
     self.assertTrue(error_notification.is_displayed())
 
     # Check the correct error message is displayed.
+    # TODO: Make it testable for i18n.
     message = custom_exceptions.UnableToSaveToDB.message
     self.assertTrue(error_notification.has_error_message(message))
 

@@ -28,7 +28,7 @@ class ErrorNotification(BaseDriver):
     except NoSuchElementException:
       return False
     return True
-  
+
   def is_displayed(self):
     """Whether the error notification is displayed (i.e. visible) on the page.
 
