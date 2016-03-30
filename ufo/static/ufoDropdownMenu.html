@@ -191,6 +191,9 @@
           notify: true,
         },
       },
+      listeners: {
+        'iron-form-error': 'handleFormError',
+      },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
       },
@@ -214,25 +217,34 @@
       openAddAdminDialog: function() {
         this.$.addAdminDialog.open();
       },
-      closeAddAdminDialog: function() {
-        this.$.addAdminDialog.close();
-      },
       openRemoveAdminDialog: function() {
         this.$.removeAdminDialog.open();
       },
-      closeRemoveAdminDialog: function() {
-        this.$.removeAdminDialog.close();
+      closeAdminDialog: function() {
+        this.set('loading', false);  // Disables the spinner.
+        var addAdminDialog = document.getElementById('addAdminDialog');
+        if (addAdminDialog) {
+          this.$.addAdminDialog.close();
+        } else {
+          this.$.removeAdminDialog.close();
+        }
+      },
+      handleFormError: function(event, detail) {
+        var errorDetail = {'detail': detail.request.xhr.response};
+        var errorEvent = new CustomEvent('ApplicationError', errorDetail);
+        document.getElementById('error-notification').dispatchEvent(errorEvent);
+        this.closeAdminDialog();
       },
       flipToDropdownFlowFromAddAdmin: function(e, details) {
         this.openMenu();
-        this.closeAddAdminDialog();
+        this.closeAdminDialog();
         this.resetAddAdminForm();
         this.set('showResponseStatus', false);
         this.set('responseStatus', '');
       },
       flipToDropdownFlowFromRemoveAdmin: function(e, details) {
         this.openMenu();
-        this.closeRemoveAdminDialog();
+        this.closeAdminDialog();
         this.resetRemoveAdminForm();
       },
       enableSpinner: function() {

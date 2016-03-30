@@ -26,6 +26,11 @@ class AdminFlowTest(BaseTest):
     """Setup for test methods."""
     super(AdminFlowTest, self).setUp()
     super(AdminFlowTest, self).setContext()
+    self.handlers = [
+      flask.url_for('landing'),
+      flask.url_for('setup'),
+      flask.url_for('search_page', search_text='"foo"')
+    ]
 
   def tearDown(self):
     """Teardown for test methods."""
@@ -35,11 +40,39 @@ class AdminFlowTest(BaseTest):
 
   def testAddingAnotherAdminWorks(self):
     """Test that adding another admin works and lets us login as that admin."""
+    for handler in self.handlers:
+      self._verifyAnotherAdminCanBeAdded(self.args.server_url + handler)
+      self._removeTestAdmin(should_raise_exception=False)
+      LoginPage(self.driver).Logout(self.args.server_url)
+
+  def testRemovingAdminWorksFromLandingPage(self):
+    """Test that removing an admin works."""
+    for handler in self.handlers:
+      self._verifyAdminCanBeRemoved(self.args.server_url + handler)
+      LoginPage(self.driver).Logout(self.args.server_url)
+
+  def testAdminUsernameIsDisplayed(self):
+    """Test that the admin's username is displayed while logged in."""
+    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+                                 self.args.password)
+    for handler in self.handlers:
+      self.driver.get(self.args.server_url + handler)
+      dropdown_button = self.driver.find_element(
+          *UfOPageLayout.OPEN_MENU_BUTTON)
+      self.assertEquals(dropdown_button.text.lower(),
+                        self.args.username.lower())
+
+  def _verifyAnotherAdminCanBeAdded(self, test_url):
+    """Test that adding another admin works from the given url.
+
+    Args:
+      test_url: The url to add the admin from.
+    """
     # Try to login with the uncreated admin to ensure it does not exist.
     LoginPage(self.driver).Login(self.args.server_url,
                                  self.TEST_ADMIN_AS_DICT['username'],
                                  self.TEST_ADMIN_AS_DICT['password'])
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    self.driver.get(test_url)
 
     # Assert that login failed (we're still on the login page).
     login_url = self.args.server_url + flask.url_for('login')
@@ -48,7 +81,7 @@ class AdminFlowTest(BaseTest):
     # Login as an existing admin to get access.
     LoginPage(self.driver).Login(self.args.server_url, self.args.username,
                                  self.args.password)
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    self.driver.get(test_url)
 
     # Find the add admin dialog.
     dropdown_menu = self.getDropdownMenu()
@@ -73,18 +106,21 @@ class AdminFlowTest(BaseTest):
     LoginPage(self.driver).Login(self.args.server_url,
                                  self.TEST_ADMIN_AS_DICT['username'],
                                  self.TEST_ADMIN_AS_DICT['password'])
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    self.driver.get(test_url)
 
-    # Assert that login succeeded (we're now on the landing page).
-    landing_url = self.args.server_url + flask.url_for('landing')
-    self.assertEquals(landing_url, self.driver.current_url)
+    # Assert that login succeeded (we're now on the test_url page).
+    self.assertEquals(test_url, self.driver.current_url)
 
-  def testRemovingAdminWorks(self):
-    """Test that removing an admin works."""
+  def _verifyAdminCanBeRemoved(self, test_url):
+    """Test that removing an admin works from the given url.
+
+    Args:
+      test_url: The url to remove the admin from.
+    """
     # Login as an existing admin to get access.
     LoginPage(self.driver).Login(self.args.server_url, self.args.username,
                                  self.args.password)
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    self.driver.get(test_url)
 
     # Find the add admin dialog.
     dropdown_menu = self.getDropdownMenu()
@@ -97,7 +133,7 @@ class AdminFlowTest(BaseTest):
     self._removeTestAdmin(should_raise_exception=True)
 
     # See if the admin exists.
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
+    self.driver.get(test_url)
     dropdown_menu = self.getDropdownMenu()
     remove_admin_dialog = self._getRemoveAdminDialog(dropdown_menu)
     remove_admin_form = remove_admin_dialog.find_element(
@@ -105,15 +141,6 @@ class AdminFlowTest(BaseTest):
     admin_item = self._findTestAdminOnRemoveForm(remove_admin_form)
 
     self.assertIsNone(admin_item)
-
-  def testAdminUsernameIsDisplayed(self):
-    """Test that the admin's username is displayed while logged in."""
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
-                                 self.args.password)
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
-
-    dropdown_button = self.driver.find_element(*UfOPageLayout.OPEN_MENU_BUTTON)
-    self.assertEquals(dropdown_button.text.lower(), self.args.username.lower())
 
   def _getAddAdminDialog(self, dropdown_menu):
     """Navigates to the add admin dialog on a given page.

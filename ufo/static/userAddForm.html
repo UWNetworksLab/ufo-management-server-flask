@@ -110,6 +110,9 @@
           notify: true,
         },
       },
+      listeners: {
+        'iron-form-error': 'handleFormError',
+      },
       enableSpinner: function() {
         this.set('isSpinnerOn', true);
       },
@@ -125,14 +128,23 @@
         this.set('showInputFields', false);
         this.set('isSpinnerOn', false);
       },
-      parsePostResponse: function(e, details) {
-        this.sendUsersJsonToList(details.xhr.response);
+      closeModal: function() {
         this.set('isSpinnerOn', false);
-        this.resetForms();
         var userModal = document.getElementById('userModal');
         if (userModal) {
           userModal.close();
         }
+      },
+      parsePostResponse: function(e, details) {
+        this.sendUsersJsonToList(details.xhr.response);
+        this.resetForms();
+        this.closeModal();
+      },
+      handleFormError: function(event, detail) {
+        var errorDetail = {'detail': detail.request.xhr.response};
+        var errorEvent = new CustomEvent('ApplicationError', errorDetail);
+        document.getElementById('error-notification').dispatchEvent(errorEvent);
+        this.closeModal();
       },
       resetForms: function() {
         this.set('showInputFields', true);
