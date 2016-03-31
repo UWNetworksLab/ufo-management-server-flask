@@ -1,9 +1,10 @@
 """Layout module to abstract away the sidebar and future common elements."""
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 from base_driver import BaseDriver
-from sidebar import Sidebar
 
 class UfOPageLayout(BaseDriver):
 
@@ -95,3 +96,135 @@ class UfOPageLayout(BaseDriver):
       The sidebar element for any page.
     """
     return self.driver.find_element(*UfOPageLayout.SEARCH_FORM)
+
+  def addTestUserOnceFormIsDisplayed(self, name, email):
+    """Manually add a test user once the form is displayed.
+
+    Args:
+      name: A string for the name of a test user.
+      email: A string for the email of a test user.
+    """
+    add_manually_form = WebDriverWait(self.driver,
+                                      UfOPageLayout.DEFAULT_TIMEOUT).until(
+        EC.visibility_of_element_located(((UfOPageLayout.ADD_MANUALLY_FORM))))
+    name_paper_input = add_manually_form.find_element(
+        *UfOPageLayout.ADD_MANUALLY_INPUT_NAME)
+    name_input = name_paper_input.find_element(By.ID, 'input')
+    name_input.send_keys(name)
+    email_paper_input = add_manually_form.find_element(
+        *UfOPageLayout.ADD_MANUALLY_INPUT_EMAIL)
+    email_input = email_paper_input.find_element(By.ID, 'input')
+    email_input.send_keys(email)
+    submit_button = self.driver.find_element(
+        *UfOPageLayout.ADD_MANUALLY_SUBMIT_BUTTON)
+    submit_button.click()
+
+    # Wait for post to finish, can take a while.
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+        EC.invisibility_of_element_located(((
+            UfOPageLayout.ADD_MANUALLY_SPINNER))))
+
+  def addTestServerOnceFormIsDisplayed(self, containing_element, ip, name,
+                                       private_key, public_key):
+    """Add a test server using the element container to find the add form.
+
+    Args:
+      containing_element: An element containing the add server form.
+      ip: A string for the ip address of the server to add.
+      name: A string for the name of the server to add.
+      private_key: A string for the private key of the server to add.
+      public_key: A string for the public key of the server to add.
+    """
+    add_server_form = containing_element.find_element(
+        *UfOPageLayout.ADD_SERVER_FORM)
+
+    ip_paper_input = add_server_form.find_element(
+        *UfOPageLayout.ADD_SERVER_INPUT_IP)
+    ip_input = ip_paper_input.find_element(By.ID, 'input')
+    ip_input.send_keys(ip)
+
+    name_paper_input = add_server_form.find_element(
+        *UfOPageLayout.ADD_SERVER_INPUT_NAME)
+    name_input = name_paper_input.find_element(By.ID, 'input')
+    name_input.send_keys(name)
+
+    private_key_paper_input = add_server_form.find_element(
+        *UfOPageLayout.ADD_SERVER_INPUT_PRIVATE_KEY)
+    private_key_input = private_key_paper_input.find_element(By.ID, 'textarea')
+    private_key_input.send_keys(private_key)
+
+    public_key_paper_input = add_server_form.find_element(
+        *UfOPageLayout.ADD_SERVER_INPUT_PUBLIC_KEY)
+    public_key_input = public_key_paper_input.find_element(By.ID, 'input')
+    public_key_input.send_keys(public_key)
+
+    submit_button = self.driver.find_element(
+        *UfOPageLayout.ADD_SERVER_SUBMIT_BUTTON)
+    submit_button.click()
+
+    # Wait for post to finish, can take a while.
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+        EC.invisibility_of_element_located(((
+            UfOPageLayout.ADD_SERVER_SPINNER))))
+
+  def findItemInListing(self, listing, name, should_find_by_icon_item=True):
+    """Given the listing of items and a name, return the name's anchor.
+
+    Args:
+      listing: The paper-listbox element holding all items.
+      name: The name of an item to search for.
+      should_find_by_icon_item: True if the items to search are icon items.
+                                False for regular items.
+
+    Returns:
+      The anchor element for visiting the given item's details page or None.
+    """
+    items = None
+    if should_find_by_icon_item:
+      items = listing.find_elements(By.TAG_NAME, 'paper-icon-item')
+    else:
+      items = listing.find_elements(By.TAG_NAME, 'paper-item')
+    for item in items:
+      # This can technically return multiple, but it will only return one.
+      container_element = item
+      if should_find_by_icon_item:
+        container_element = item.find_elements(By.CLASS_NAME, 'first-div')[0]
+      strong = container_element.find_elements(By.TAG_NAME, 'strong')[0]
+      if name.lower() in strong.text.lower():
+        return item
+    return None
+
+  def searchForTestItem(self, name):
+    """Execute a search for the test item from the current page.
+
+    Args:
+      name: A string for the name of the item to search for.
+    """
+    generic_page = UfOPageLayout(self.driver)
+    search_bar = generic_page.GetSearchBar()
+    search_input = search_bar.find_element(By.ID, 'input')
+    search_input.send_keys(name)
+
+    search_button = search_bar.find_element(*UfOPageLayout.SEARCH_BUTTON)
+    search_button.click()
+
+    # Wait for search to finish, can take a while.
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+        EC.invisibility_of_element_located(((
+            UfOPageLayout.SEARCH_SPINNER))))
+
+  def getDropdownMenu(self):
+    """Navigates to the dropdown menu on a given page.
+
+    Returns:
+      The dropdown menu element once found.
+    """
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+        EC.visibility_of_element_located(((UfOPageLayout.OPEN_MENU_BUTTON))))
+    dropdown_button = self.driver.find_element(*UfOPageLayout.OPEN_MENU_BUTTON)
+    dropdown_button.click()
+
+    dropdown_menu = WebDriverWait(self.driver,
+                                  UfOPageLayout.DEFAULT_TIMEOUT).until(
+        EC.visibility_of_element_located(((UfOPageLayout.DROPDOWN_MENU))))
+    return dropdown_menu

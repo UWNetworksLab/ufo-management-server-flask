@@ -2,7 +2,6 @@
 import unittest
 
 import flask
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -95,7 +94,7 @@ class LoginPageTest(BaseTest):
     for handler in self.handlers:
       test_url = self.args.server_url + handler
       self.driver.get(test_url)
-      WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
+      WebDriverWait(self.driver, LoginPage.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((LoginPage.MAIN_TOOLBAR))))
       self.assertEquals(login_url, self.driver.current_url)
 

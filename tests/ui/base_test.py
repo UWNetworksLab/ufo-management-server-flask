@@ -5,9 +5,6 @@ import unittest
 from Crypto.PublicKey import RSA
 import flask
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 
 from landing_page import LandingPage
 from layout import UfOPageLayout
@@ -27,7 +24,6 @@ class BaseTest(unittest.TestCase):
       'private_key': 'to be filled in',
       'public_key': 'to be filled in',
   }
-  DEFAULT_TIMEOUT = 30
 
   def __init__(self, methodName='runTest', args=None, **kwargs):
     """Create the base test object for others to inherit."""
@@ -50,258 +46,19 @@ class BaseTest(unittest.TestCase):
     """Set context as test_request_context so we can use flask.url_for."""
     self.context = app.test_request_context()
     self.context.push()
+    # The handlers list is added here to simplify testing against multiple
+    # pages when necessary in tests that inherit from here. For example, admin
+    # and settings tests need to run against multiple pages to ensure there is
+    # a link present on each.
+    self.handlers = [
+      flask.url_for('landing'),
+      flask.url_for('setup'),
+      flask.url_for('search_page', search_text='"foo"')
+    ]
 
   def tearDown(self):
     """Teardown for test methods."""
     self.driver.quit()
-
-  def addTestUserFromLandingPage(self):
-    """Manually add a test user using the landing page."""
-    # Navigate to add user and go to manual tab.
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
-    generic_page = UfOPageLayout(self.driver)
-    add_user_button = generic_page.GetElement(UfOPageLayout.ADD_USER_BUTTON)
-    add_user_button.click()
-    add_manually_tab = WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((UfOPageLayout.ADD_MANUALLY_TAB))))
-    add_manually_tab.click()
-
-    self.addTestUserHelper()
-
-  def addTestUserFromSetupPage(self):
-    """Manually add a test user using the setup page."""
-    # Navigate to add user and go to manual tab.
-    self.driver.get(self.args.server_url + flask.url_for('setup'))
-    generic_page = UfOPageLayout(self.driver)
-    add_manually_tab = generic_page.GetElement(UfOPageLayout.ADD_MANUALLY_TAB)
-    add_manually_tab.click()
-
-    self.addTestUserHelper()
-
-  def addTestUserHelper(self):
-    """Manually add a test user once the tabs are displayed."""
-    add_manually_form = WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((UfOPageLayout.ADD_MANUALLY_FORM))))
-    name_paper_input = add_manually_form.find_element(
-        *UfOPageLayout.ADD_MANUALLY_INPUT_NAME)
-    name_input = name_paper_input.find_element(By.ID, 'input')
-    name_input.send_keys(BaseTest.TEST_USER_AS_DICT['name'])
-    email_paper_input = add_manually_form.find_element(
-        *UfOPageLayout.ADD_MANUALLY_INPUT_EMAIL)
-    email_input = email_paper_input.find_element(By.ID, 'input')
-    email_input.send_keys(BaseTest.TEST_USER_AS_DICT['email'])
-    submit_button = self.driver.find_element(
-        *UfOPageLayout.ADD_MANUALLY_SUBMIT_BUTTON)
-    submit_button.click()
-
-    # Wait for post to finish, can take a while.
-    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.invisibility_of_element_located(((
-            UfOPageLayout.ADD_MANUALLY_SPINNER))))
-
-  def removeTestUser(self, should_raise_exception=True):
-    """Manually remove a test user using the landing page (the only way).
-
-    Args:
-      should_raise_exception: True to raise an exception if the user is not
-                              found.
-    """
-    # Find the user and navigate to their details page.
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
-    user_item = self.findTestUserOnLangingPage()
-
-    if user_item is None:
-      if should_raise_exception:
-        raise Exception
-      else:
-        return
-    else:
-      user_item.click()
-
-    # Click delete on that user.
-    details_modal = user_item.find_element(*LandingPage.DETAILS_MODAL)
-    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.visibility_of(details_modal))
-    delete_button = details_modal.find_element(*LandingPage.USER_DELETE_BUTTON)
-    delete_button.click()
-
-    # Wait for post to finish, can take a while.
-    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.invisibility_of_element_located(((
-            LandingPage.USER_DETAILS_SPINNER))))
-
-  def searchForTestItem(self, is_user=True):
-    """Execute a search for the test item from the current page.
-
-    Args:
-      is_user: Search for the test user on True and the test server on False.
-    """
-    generic_page = UfOPageLayout(self.driver)
-    search_bar = generic_page.GetSearchBar()
-    search_input = search_bar.find_element(By.ID, 'input')
-    if is_user:
-      search_input.send_keys(BaseTest.TEST_USER_AS_DICT['name'])
-    else:
-      search_input.send_keys(BaseTest.TEST_SERVER_AS_DICT['name'])
-
-    search_button = search_bar.find_element(*UfOPageLayout.SEARCH_BUTTON)
-    search_button.click()
-
-    # Wait for search to finish, can take a while.
-    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.invisibility_of_element_located(((
-            UfOPageLayout.SEARCH_SPINNER))))
-
-  def findTestUserOnLangingPage(self):
-    """Find the test user on the landing page if it exists.
-
-    Returns:
-      The anchor element for visiting the given item's details page or None.
-    """
-    landing_page = LandingPage(self.driver)
-    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
-    user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
-    return self.findItemInListing(
-        user_listbox, BaseTest.TEST_USER_AS_DICT['name'])
-
-  def findItemInListing(self, listing, name, should_find_by_icon_item=True):
-    """Given the listing of items and a name, return the name's anchor.
-
-    Args:
-      listing: The paper-listbox element holding all items.
-      name: The name of an item to search for.
-      should_find_by_icon_item: True if the items to search are icon items.
-                                False for regular items.
-
-    Returns:
-      The anchor element for visiting the given item's details page or None.
-    """
-    items = None
-    if should_find_by_icon_item:
-      items = listing.find_elements(By.TAG_NAME, 'paper-icon-item')
-    else:
-      items = listing.find_elements(By.TAG_NAME, 'paper-item')
-    for item in items:
-      # This can technically return multiple, but it will only return one.
-      container_element = item
-      if should_find_by_icon_item:
-        container_element = item.find_elements(By.CLASS_NAME, 'first-div')[0]
-      strong = container_element.find_elements(By.TAG_NAME, 'strong')[0]
-      if name.lower() in strong.text.lower():
-        return item
-    return None
-
-  def addTestServerFromLandingPage(self):
-    """Add a test server using the landing page."""
-    # Navigate to add server.
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
-    generic_page = UfOPageLayout(self.driver)
-    add_server_button = generic_page.GetElement(
-        UfOPageLayout.ADD_SERVER_BUTTON)
-    add_server_button.click()
-    add_server_modal = WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((UfOPageLayout.ADD_SERVER_MODAL))))
-
-    self.addTestServerHelper(add_server_modal)
-
-  def addTestServerFromSetupPage(self):
-    """Add a test server using the setup page."""
-    # Navigate to add server.
-    self.driver.get(self.args.server_url + flask.url_for('setup'))
-    generic_page = UfOPageLayout(self.driver)
-    proxy_server_add_template = generic_page.GetElement(
-        UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE)
-
-    self.addTestServerHelper(proxy_server_add_template)
-
-  def addTestServerHelper(self, containing_element):
-    """Add a test server using the element container to find the add form.
-
-    Args:
-      containing_element: An element containing the add server form.
-    """
-    add_server_form = containing_element.find_element(
-        *UfOPageLayout.ADD_SERVER_FORM)
-
-    ip_paper_input = add_server_form.find_element(
-        *UfOPageLayout.ADD_SERVER_INPUT_IP)
-    ip_input = ip_paper_input.find_element(By.ID, 'input')
-    ip_input.send_keys(BaseTest.TEST_SERVER_AS_DICT['ip'])
-
-    name_paper_input = add_server_form.find_element(
-        *UfOPageLayout.ADD_SERVER_INPUT_NAME)
-    name_input = name_paper_input.find_element(By.ID, 'input')
-    name_input.send_keys(BaseTest.TEST_SERVER_AS_DICT['name'])
-
-    private_key_paper_input = add_server_form.find_element(
-        *UfOPageLayout.ADD_SERVER_INPUT_PRIVATE_KEY)
-    private_key_input = private_key_paper_input.find_element(By.ID, 'textarea')
-    private_key_input.send_keys(BaseTest.TEST_SERVER_AS_DICT['private_key'])
-
-    public_key_paper_input = add_server_form.find_element(
-        *UfOPageLayout.ADD_SERVER_INPUT_PUBLIC_KEY)
-    public_key_input = public_key_paper_input.find_element(By.ID, 'input')
-    public_key_input.send_keys(BaseTest.TEST_SERVER_AS_DICT['public_key'])
-
-    submit_button = self.driver.find_element(
-        *UfOPageLayout.ADD_SERVER_SUBMIT_BUTTON)
-    submit_button.click()
-
-    # Wait for post to finish, can take a while.
-    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.invisibility_of_element_located(((
-            UfOPageLayout.ADD_SERVER_SPINNER))))
-
-  def removeTestServer(self, should_raise_exception=True):
-    """Remove a test server using the landing page (the only way).
-
-    Args:
-      should_raise_exception: True to raise an exception if the server is not
-                              found.
-    """
-    # Find the server and navigate to its details page.
-    self.driver.get(self.args.server_url + flask.url_for('landing'))
-    landing_page = LandingPage(self.driver)
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
-    server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
-    server_item = self.findItemInListing(
-        server_listbox, BaseTest.TEST_SERVER_AS_DICT['name'])
-
-    if server_item is None:
-      if should_raise_exception:
-        raise Exception
-      else:
-        return
-    else:
-      server_item.click()
-
-    # Click delete on that server.
-    details_modal = server_item.find_element(*LandingPage.DETAILS_MODAL)
-    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.visibility_of(details_modal))
-    delete_button = details_modal.find_element(
-        *LandingPage.SERVER_DELETE_BUTTON)
-    delete_button.click()
-
-    # Wait for post to finish, can take a while.
-    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.invisibility_of_element_located(((
-            LandingPage.SERVER_DELETE_SPINNER))))
-
-  def getDropdownMenu(self):
-    """Navigates to the dropdown menu on a given page.
-
-    Returns:
-      The dropdown menu element once found.
-    """
-    WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((UfOPageLayout.OPEN_MENU_BUTTON))))
-    dropdown_button = self.driver.find_element(*UfOPageLayout.OPEN_MENU_BUTTON)
-    dropdown_button.click()
-
-    dropdown_menu = WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((UfOPageLayout.DROPDOWN_MENU))))
-    return dropdown_menu
 
   def assertTestUserPresenceOnPage(self, is_present, go_to_landing=True):
     """Helper to assert whether a user is present on the landing page.
@@ -314,7 +71,9 @@ class BaseTest(unittest.TestCase):
     """
     if go_to_landing:
       self.driver.get(self.args.server_url + flask.url_for('landing'))
-    test_user_item = self.findTestUserOnLangingPage()
+    landing_page = LandingPage(self.driver)
+    test_user_item = landing_page.findTestUser(
+        BaseTest.TEST_USER_AS_DICT['name'])
     if is_present:
       self.assertIsNotNone(test_user_item)
       self.assertTrue(test_user_item.is_displayed())
@@ -335,7 +94,7 @@ class BaseTest(unittest.TestCase):
     landing_page = LandingPage(self.driver)
     server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
     server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_server_item = self.findItemInListing(
+    test_server_item = landing_page.findItemInListing(
         server_listbox, BaseTest.TEST_SERVER_AS_DICT['name'])
     if is_present:
       self.assertIsNotNone(test_server_item)

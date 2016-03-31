@@ -1,6 +1,6 @@
 """Setup page module functionality for getting elements for testing."""
 
-from selenium.webdriver.common.by import By
+import flask
 
 from layout import UfOPageLayout
 
@@ -18,3 +18,37 @@ class SetupPage(UfOPageLayout):
     UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE,
     UfOPageLayout.SETTINGS_DISPLAY_TEMPLATE
   ]
+
+  def addTestUser(self, name, email, server_url):
+    """Manually add a test user using the setup page.
+
+    Args:
+      name: A string for the name of a test user.
+      email: A string for the email of a test user.
+      server_url: The base url portion of the setup page.
+    """
+    # Navigate to add user and go to manual tab.
+    self.driver.get(server_url + flask.url_for('setup'))
+    add_manually_tab = self.GetElement(UfOPageLayout.ADD_MANUALLY_TAB)
+    add_manually_tab.click()
+
+    self.addTestUserOnceFormIsDisplayed(name, email)
+
+  def addTestServer(self, ip, name, private_key, public_key, server_url):
+    """Add a test server using the setup page.
+
+    Args:
+      ip: A string for the ip address of the server to add.
+      name: A string for the name of the server to add.
+      private_key: A string for the private key of the server to add.
+      public_key: A string for the public key of the server to add.
+      server_url: The base url portion of the setup page.
+    """
+    # Navigate to add server.
+    self.driver.get(server_url + flask.url_for('setup'))
+    proxy_server_add_template = self.GetElement(
+        UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE)
+
+    self.addTestServerOnceFormIsDisplayed(proxy_server_add_template, ip, name,
+                                          private_key, public_key)
+
