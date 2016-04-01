@@ -35,7 +35,9 @@ class SettingsComponentTest(BaseTest):
 
   def tearDown(self):
     """Teardown for test methods."""
-    # self._resetServerSettings()
+    settings_component = SettingsComponent(self.driver)
+    self.driver.get(self.args.server_url + settings_component.setting_url)
+    settings_component.resetSettings(self.initial_settings)
     LoginPage(self.driver).Logout(self.args.server_url)
     super(SettingsComponentTest, self).tearDown()
 
@@ -44,24 +46,26 @@ class SettingsComponentTest(BaseTest):
     for handler in self.handlers:
       self._assertLinkToSettingsIsPresent(self.args.server_url + handler)
 
-  # def testSavingChangedSettings(self):
-  #   """Test that changing a setting and saving it will actually retain it.
+  def testSavingChangedSettings(self):
+    """Test that changing a setting and saving it will actually retain it.
 
-  #   Also tests that other settings are not changed when they shouldn't be.
-  #   """
-  #   settings_component = SettingsComponent(self.driver)
-  #   self.driver.get(self.args.server_url + settings_component.setting_url)
-  #   self._changeSetting('enforce_proxy_server_validity')
+    Also tests that other settings are not changed when they shouldn't be.
+    """
+    proxy_server_key = 'enforce_proxy_server_validity'
+    settings_component = SettingsComponent(self.driver)
+    self.driver.get(self.args.server_url + settings_component.setting_url)
+    settings_component.changeSetting(
+        proxy_server_key, not self.initial_settings[proxy_server_key])
 
-  #   self.driver.get(self.args.server_url + settings_component.setting_url)
-  #   changed_settings = settings_component.getCurrentSettings()
+    self.driver.get(self.args.server_url + settings_component.setting_url)
+    changed_settings = settings_component.getCurrentSettings()
 
-  #   for (key, value) in self.initial_settings:
-  #     self.assertIn(key, changed_settings)
-  #     if key == 'enforce_proxy_server_validity':
-  #       self.assertNotEquals(self.initial_settings[key], changed_settings[key])
-  #     else :
-  #       self.assertEquals(self.initial_settings[key], changed_settings[key])
+    for key, value in self.initial_settings.iteritems():
+      self.assertIn(key, changed_settings)
+      if key == proxy_server_key:
+        self.assertNotEquals(self.initial_settings[key], changed_settings[key])
+      else :
+        self.assertEquals(self.initial_settings[key], changed_settings[key])
 
   def _assertLinkToSettingsIsPresent(self, test_url):
     """Assert that the link to the settings page is present on the given url.

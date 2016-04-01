@@ -91,6 +91,9 @@ class UfOPageLayout(BaseDriver):
 
   CHROME_POLICY_DOWNLOAD_BUTTON = (By.ID, 'chromePolicyDownloadButton')
 
+  SETTINGS_SAVE_BUTTON = (By.ID, 'saveSettingsButton')
+  SETTINGS_SPINNER = (By.ID, 'settingsSpinner')
+
   def GetSearchBar(self):
     """Get the search bar element on the page.
 

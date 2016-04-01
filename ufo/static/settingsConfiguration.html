@@ -13,7 +13,7 @@
   </style>
   <template>
     <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="spinner" active$={{loading}}></paper-spinner>
+      <paper-spinner id="settingsSpinner" active$={{loading}}></paper-spinner>
     </template>
     <iron-ajax auto
       url="{{resources.getSettingsUrl}}"
@@ -30,7 +30,7 @@
       <br>
       <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
       <div class="buttons">
-        <paper-button class="anchor-button" onclick="submitByFormId('policy-config-form')" type="submit">
+        <paper-button class="anchor-button" id="saveSettingsButton" onclick="submitByFormId('policy-config-form')" type="submit">
           <strong>{{resources.saveText}}</strong>
         </paper-button>
       </div>
