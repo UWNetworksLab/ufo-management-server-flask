@@ -5,13 +5,13 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from add_server_form import AddServerForm
+from add_user_form import AddUserForm
 from layout import UfOPageLayout
 
 class LandingPage(UfOPageLayout):
 
   """Home page action methods and locators."""
-
-  # pylint: disable=too-few-public-methods
 
   LANDING_PAGE_ELEMENTS = [
     UfOPageLayout.USER_DISPLAY_TEMPLATE,
@@ -36,7 +36,8 @@ class LandingPage(UfOPageLayout):
         EC.visibility_of_element_located(((UfOPageLayout.ADD_MANUALLY_TAB))))
     add_manually_tab.click()
 
-    self.addTestUserOnceFormIsDisplayed(name, email)
+    add_user_form = AddUserForm(self.driver)
+    add_user_form.addTestUser(name, email)
 
   def removeTestUser(self, name, server_url, should_raise_exception=True):
     """Manually remove a test user using the landing page (the only way).
@@ -103,8 +104,9 @@ class LandingPage(UfOPageLayout):
                                      UfOPageLayout.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((UfOPageLayout.ADD_SERVER_MODAL))))
 
-    self.addTestServerOnceFormIsDisplayed(add_server_modal, ip, name,
-                                          private_key, public_key)
+    add_server_form = AddServerForm(self.driver)
+    add_server_form.addTestServer(add_server_modal, ip, name, private_key,
+                                  public_key)
 
   def removeTestServer(self, name, server_url, should_raise_exception=True):
     """Remove a test server using the landing page (the only way).

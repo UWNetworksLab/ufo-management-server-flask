@@ -2,14 +2,14 @@
 
 import flask
 
+from add_server_form import AddServerForm
+from add_user_form import AddUserForm
 from layout import UfOPageLayout
 
 
 class SetupPage(UfOPageLayout):
 
   """Setup page action methods and locators."""
-
-  # pylint: disable=too-few-public-methods
 
   SETUP_PAGE_ELEMENTS = [
     UfOPageLayout.USER_DISPLAY_TEMPLATE,
@@ -32,7 +32,8 @@ class SetupPage(UfOPageLayout):
     add_manually_tab = self.GetElement(UfOPageLayout.ADD_MANUALLY_TAB)
     add_manually_tab.click()
 
-    self.addTestUserOnceFormIsDisplayed(name, email)
+    add_user_form = AddUserForm(self.driver)
+    add_user_form.addTestUser(name, email)
 
   def addTestServer(self, ip, name, private_key, public_key, server_url):
     """Add a test server using the setup page.
@@ -49,6 +50,7 @@ class SetupPage(UfOPageLayout):
     proxy_server_add_template = self.GetElement(
         UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE)
 
-    self.addTestServerOnceFormIsDisplayed(proxy_server_add_template, ip, name,
-                                          private_key, public_key)
+    add_server_form = AddServerForm(self.driver)
+    add_server_form.addTestServer(proxy_server_add_template, ip, name,
+                                  private_key, public_key)
 

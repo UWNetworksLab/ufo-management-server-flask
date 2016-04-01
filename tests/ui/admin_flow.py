@@ -11,8 +11,6 @@ class AdminFlow(UfOPageLayout):
 
   """Admin flow methods and locators."""
 
-  # pylint: disable=too-few-public-methods
-
   LANDING_PAGE_ELEMENTS = [
     UfOPageLayout.USER_DISPLAY_TEMPLATE,
     UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
