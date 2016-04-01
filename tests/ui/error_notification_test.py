@@ -24,7 +24,10 @@ class ErrorNotificationTest(BaseTest):
 
   def tearDown(self):
     """Teardown for test methods."""
-    self.removeTestUser(should_raise_exception=False)
+    landing_page = LandingPage(self.driver)
+    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
+                                self.args.server_url,
+                                should_raise_exception=False)
     LoginPage(self.driver).Logout(self.args.server_url)
     super(ErrorNotificationTest, self).tearDown()
 
@@ -42,14 +45,16 @@ class ErrorNotificationTest(BaseTest):
     self.assertTrue(error_notification.is_present())
     self.assertFalse(error_notification.is_displayed())
 
-    # TODO: The page object model would have expected this to be:
-    # LandingPage.addTestUser()
-    self.addTestUserFromLandingPage()
-    self.addTestUserFromLandingPage()
+    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
+                             BaseTest.TEST_USER_AS_DICT['email'],
+                             self.args.server_url)
+    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
+                             BaseTest.TEST_USER_AS_DICT['email'],
+                             self.args.server_url)
 
     # Trying to add the same user twice will cause the error notification
     # to be displayed.
-    WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
+    WebDriverWait(self.driver, ErrorNotification.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located((
             error_notification.ERROR_NOTIFICATION_DIALOG)))
     self.assertTrue(error_notification.is_displayed())

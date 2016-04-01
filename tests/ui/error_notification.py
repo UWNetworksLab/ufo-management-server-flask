@@ -58,7 +58,5 @@ class ErrorNotification(BaseDriver):
     """
     self.GetElement(self.ERROR_NOTIFICATION_CLOSE_BUTTON).click()
     # Need to wait for the button's ripple effect to complete.
-    # TODO: Move the DEFAULT_TIMEOUT out of the base_test, so that it's
-    # reusable by page objects.
-    WebDriverWait(self.driver, 30).until(
+    WebDriverWait(self.driver, BaseDriver.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located((self.ERROR_NOTIFICATION_CLOSE_BUTTON)))

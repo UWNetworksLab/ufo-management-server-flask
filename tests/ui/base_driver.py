@@ -9,6 +9,7 @@ class BaseDriver(object):
   """Base driver that will be called from all pages and elements."""
 
   GENERIC_DIV = (By.TAG_NAME, 'div')
+  DEFAULT_TIMEOUT = 30
 
   def __init__(self, driver):
     """Create the base driver object.
@@ -28,7 +29,7 @@ class BaseDriver(object):
     Returns:
       A link element if found.
     """
-    return WebDriverWait(self.driver, 10).until(
+    return WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((link_locator))))
 
   def GetElement(self, element_locator):
