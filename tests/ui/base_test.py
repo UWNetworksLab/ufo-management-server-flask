@@ -15,12 +15,14 @@ class BaseTest(unittest.TestCase):
 
   """Base test class to inherit from."""
   TEST_USER_AS_DICT = {
-      'name': 'Test User Fake Name 01',
+      # This name is intentionally made to be different from the server name.
+      'name': 'Test User with name 01',
       'email': 'test_user@not-a-real-domain-that-should-be-in-use.com'
   }
   TEST_SERVER_AS_DICT = {
       'ip': '127.0.0.1',
-      'name': 'Test Server Fake Name 01',
+      # This name is intentionally made to be different from the user name.
+      'name': 'Server Fake con nombre 02',
       'private_key': 'to be filled in',
       'public_key': 'to be filled in',
   }
@@ -98,6 +100,7 @@ class BaseTest(unittest.TestCase):
         server_listbox, BaseTest.TEST_SERVER_AS_DICT['name'])
     if is_present:
       self.assertIsNotNone(test_server_item)
+      self.assertTrue(test_server_item.is_displayed())
     else:
       self.assertIsNone(test_server_item)
 
