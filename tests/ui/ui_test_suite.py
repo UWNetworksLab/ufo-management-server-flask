@@ -7,7 +7,7 @@ from error_notification_test import ErrorNotificationTest
 from landing_page_test import LandingPageTest
 from login_page_test import LoginPageTest
 from search_page_test import SearchPageTest
-from settings_flow_test import SettingsFlowTest
+from settings_component_test import SettingsComponentTest
 from setup_page_test import SetupPageTest
 
 
@@ -51,7 +51,7 @@ SUITE.addTest(MakeSuite(ErrorNotificationTest))
 SUITE.addTest(MakeSuite(LandingPageTest))
 SUITE.addTest(MakeSuite(LoginPageTest))
 SUITE.addTest(MakeSuite(SearchPageTest))
-SUITE.addTest(MakeSuite(SettingsFlowTest))
+SUITE.addTest(MakeSuite(SettingsComponentTest))
 SUITE.addTest(MakeSuite(SetupPageTest))
 
 unittest.TextTestRunner().run(SUITE)

@@ -1,4 +1,4 @@
-"""Test settings flows."""
+"""Test settings component and flows."""
 import unittest
 
 import flask
@@ -16,7 +16,7 @@ from layout import UfOPageLayout
 
 class SettingsFlowTest(BaseTest):
 
-  """Test settings flows.
+  """Test settings component and flows.
 
   This could be part of the setup page tests, but is abstracted away for now
   in case we ever decide to make the settings component its own page or move
