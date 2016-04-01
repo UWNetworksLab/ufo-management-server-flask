@@ -1,6 +1,7 @@
 """Layout module to abstract away the sidebar and future common elements."""
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -133,6 +134,9 @@ class UfOPageLayout(BaseDriver):
     generic_page = UfOPageLayout(self.driver)
     search_bar = generic_page.GetSearchBar()
     search_input = search_bar.find_element(By.ID, 'input')
+    existing_search_text = search_input.get_attribute('value')
+    for x in range(len(existing_search_text)):
+      search_input.send_keys(Keys.BACKSPACE)
     search_input.send_keys(name)
 
     search_button = search_bar.find_element(*UfOPageLayout.SEARCH_BUTTON)
