@@ -11,6 +11,11 @@ class SettingsComponent(UfOPageLayout):
 
   """Settings component methods."""
 
+  SETTINGS_DISPLAY_TEMPLATE_ID = 'settingsDisplayTemplate'
+  SETTINGS_DISPLAY_TEMPLATE = (By.ID, SETTINGS_DISPLAY_TEMPLATE_ID)
+  SETTINGS_SAVE_BUTTON = (By.ID, 'saveSettingsButton')
+  SETTINGS_SPINNER = (By.ID, 'settingsSpinner')
+
   def __init__(self, driver):
     """Create the base driver object.
 

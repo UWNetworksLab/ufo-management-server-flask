@@ -50,8 +50,6 @@ class UfOPageLayout(BaseDriver):
   PROXY_SERVER_DISPLAY_TEMPLATE = (By.ID, 'proxyServerDisplayTemplate')
   OAUTH_DISPLAY_TEMPLATE = (By.ID, 'oauthDisplayTemplate')
   CHROME_POLICY_DISPLAY_TEMPLATE = (By.ID, 'chromePolicyDisplayTemplate')
-  SETTINGS_DISPLAY_TEMPLATE_ID = 'settingsDisplayTemplate'
-  SETTINGS_DISPLAY_TEMPLATE = (By.ID, SETTINGS_DISPLAY_TEMPLATE_ID)
 
   ADD_USER_BUTTON = (By.ID, 'addUserButton')
   USER_LIST_ITEM = (By.ID, 'userList')
@@ -91,8 +89,6 @@ class UfOPageLayout(BaseDriver):
 
   CHROME_POLICY_DOWNLOAD_BUTTON = (By.ID, 'chromePolicyDownloadButton')
 
-  SETTINGS_SAVE_BUTTON = (By.ID, 'saveSettingsButton')
-  SETTINGS_SPINNER = (By.ID, 'settingsSpinner')
 
   def GetSearchBar(self):
     """Get the search bar element on the page.

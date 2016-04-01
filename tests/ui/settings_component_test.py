@@ -57,6 +57,8 @@ class SettingsComponentTest(BaseTest):
     settings_component.changeSetting(
         proxy_server_key, not self.initial_settings[proxy_server_key])
 
+    # We specifically reload the page here to ensure that changes propagate to
+    # the backend and are not solely in the UI.
     self.driver.get(self.args.server_url + settings_component.setting_url)
     changed_settings = settings_component.getCurrentSettings()
 
