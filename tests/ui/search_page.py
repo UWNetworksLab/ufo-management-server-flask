@@ -1,7 +1,5 @@
 """Search page module functionality for getting elements for testing."""
 
-from selenium.webdriver.common.by import By
-
 from layout import UfOPageLayout
 
 

@@ -4,8 +4,10 @@ import unittest
 import flask
 
 from base_test import BaseTest
+from landing_page import LandingPage
 from login_page import LoginPage
 from search_page import SearchPage
+from setup_page import SetupPage
 
 
 class SearchPageTest(BaseTest):
@@ -21,8 +23,13 @@ class SearchPageTest(BaseTest):
 
   def tearDown(self):
     """Teardown for test methods."""
-    self.removeTestUser(should_raise_exception=False)
-    self.removeTestServer(should_raise_exception=False)
+    landing_page = LandingPage(self.driver)
+    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
+                                self.args.server_url,
+                                should_raise_exception=False)
+    landing_page.removeTestServer(BaseTest.TEST_SERVER_AS_DICT['name'],
+                                  self.args.server_url,
+                                  should_raise_exception=False)
     LoginPage(self.driver).Logout(self.args.server_url)
     super(SearchPageTest, self).tearDown()
 
@@ -34,9 +41,9 @@ class SearchPageTest(BaseTest):
     the search page, SEARCH_PAGE_ELEMENTS. Please add to each list as the UI
     is modified to ensure this test stays up to date.
     """
-    self.searchForTestItem()
-
     search_page = SearchPage(self.driver)
+    search_page.searchForTestItem('foo')
+
     for element_by_id in SearchPage.BASE_PAGE_ELEMENTS:
       base_page_element = search_page.GetElement(element_by_id)
       self.assertIsNotNone(base_page_element)
@@ -49,10 +56,13 @@ class SearchPageTest(BaseTest):
 
   def testSearchUserFromLandingPage(self):
     """Test that search displays user results within the landing page."""
-    self.addTestUserFromLandingPage()
+    landing_page = LandingPage(self.driver)
+    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
+                             BaseTest.TEST_USER_AS_DICT['email'],
+                             self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
 
-    self.searchForTestItem()
+    landing_page.searchForTestItem(BaseTest.TEST_USER_AS_DICT['name'])
 
     self.assertTestUserPresenceOnPage(True, False)
     landing_url = self.args.server_url + flask.url_for('landing')
@@ -60,10 +70,15 @@ class SearchPageTest(BaseTest):
 
   def testSearchServerFromLandingPage(self):
     """Test that search displays server results within the landing page."""
-    self.addTestServerFromLandingPage()
+    landing_page = LandingPage(self.driver)
+    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
+                               BaseTest.TEST_SERVER_AS_DICT['name'],
+                               BaseTest.TEST_SERVER_AS_DICT['private_key'],
+                               BaseTest.TEST_SERVER_AS_DICT['public_key'],
+                               self.args.server_url)
     self.assertTestServerPresenceOnPage(True)
 
-    self.searchForTestItem(is_user=False)
+    landing_page.searchForTestItem(BaseTest.TEST_SERVER_AS_DICT['name'])
 
     self.assertTestServerPresenceOnPage(True, False)
     landing_url = self.args.server_url + flask.url_for('landing')
@@ -71,11 +86,14 @@ class SearchPageTest(BaseTest):
 
   def testSearchUserFromSetupPage(self):
     """Test that search displays user results on a new page."""
-    self.addTestUserFromSetupPage()
+    setup_page = SetupPage(self.driver)
+    setup_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
+                           BaseTest.TEST_USER_AS_DICT['email'],
+                           self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
     self.driver.get(self.args.server_url + flask.url_for('setup'))
 
-    self.searchForTestItem()
+    setup_page.searchForTestItem(BaseTest.TEST_USER_AS_DICT['name'])
 
     self.assertTestUserPresenceOnPage(True, False)
     search_url = self.args.server_url + flask.url_for('search_page')
@@ -83,11 +101,16 @@ class SearchPageTest(BaseTest):
 
   def testSearchServerFromSetupPage(self):
     """Test that search displays server results on a new page."""
-    self.addTestServerFromSetupPage()
+    setup_page = SetupPage(self.driver)
+    setup_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
+                             BaseTest.TEST_SERVER_AS_DICT['name'],
+                             BaseTest.TEST_SERVER_AS_DICT['private_key'],
+                             BaseTest.TEST_SERVER_AS_DICT['public_key'],
+                             self.args.server_url)
     self.assertTestServerPresenceOnPage(True)
     self.driver.get(self.args.server_url + flask.url_for('setup'))
 
-    self.searchForTestItem(is_user=False)
+    setup_page.searchForTestItem(BaseTest.TEST_SERVER_AS_DICT['name'])
 
     self.assertTestServerPresenceOnPage(True, False)
     search_url = self.args.server_url + flask.url_for('search_page')
