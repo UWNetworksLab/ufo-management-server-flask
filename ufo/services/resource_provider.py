@@ -22,7 +22,7 @@ def _get_landing_resources():
     'settingsText': 'Settings',
     'logoutText': 'Log Out',
     'logoutUrl': flask.url_for('logout'),
-    'settingsUrl': flask.url_for('setup') + '#policy-config-form',
+    'settingsUrl': flask.url_for('setup') + '#settingsDisplayTemplate',
     'listAdminUrl': flask.url_for('admin_list'),
     'addAdminUrl': flask.url_for('add_admin'),
     'adminUsernameLabel': 'Admin Username',

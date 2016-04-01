@@ -45,12 +45,12 @@ class UfOPageLayout(BaseDriver):
   REMOVE_ADMIN_BUTTON = (By.ID, 'removeAdminButton')
   REMOVE_ADMIN_FORM = (By.ID, 'removeAdminForm')
   REMOVE_ADMIN_SUBMIT = (By.ID, 'removeAdminSubmitButton')
+  SETTINGS_ANCHOR = (By.ID, 'settingsAnchor')
 
   USER_DISPLAY_TEMPLATE = (By.ID, 'userDisplayTemplate')
   PROXY_SERVER_DISPLAY_TEMPLATE = (By.ID, 'proxyServerDisplayTemplate')
   OAUTH_DISPLAY_TEMPLATE = (By.ID, 'oauthDisplayTemplate')
   CHROME_POLICY_DISPLAY_TEMPLATE = (By.ID, 'chromePolicyDisplayTemplate')
-  SETTINGS_DISPLAY_TEMPLATE = (By.ID, 'settingsDisplayTemplate')
 
   ADD_USER_BUTTON = (By.ID, 'addUserButton')
   USER_LIST_ITEM = (By.ID, 'userList')
@@ -89,6 +89,7 @@ class UfOPageLayout(BaseDriver):
   SERVER_DELETE_SPINNER = (By.ID, 'serverDetailsSpinner')
 
   CHROME_POLICY_DOWNLOAD_BUTTON = (By.ID, 'chromePolicyDownloadButton')
+
 
   def GetSearchBar(self):
     """Get the search bar element on the page.

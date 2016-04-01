@@ -5,6 +5,7 @@ import flask
 from add_server_form import AddServerForm
 from add_user_form import AddUserForm
 from layout import UfOPageLayout
+from settings_component import SettingsComponent
 
 
 class SetupPage(UfOPageLayout):
@@ -16,7 +17,7 @@ class SetupPage(UfOPageLayout):
     UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
     UfOPageLayout.OAUTH_DISPLAY_TEMPLATE,
     UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE,
-    UfOPageLayout.SETTINGS_DISPLAY_TEMPLATE
+    SettingsComponent.SETTINGS_DISPLAY_TEMPLATE
   ]
 
   def addTestUser(self, name, email, server_url):

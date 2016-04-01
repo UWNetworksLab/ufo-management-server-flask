@@ -1,4 +1,4 @@
-"""Test admin flows, for now just add."""
+"""Test admin flows."""
 import unittest
 
 import flask

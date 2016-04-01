@@ -7,6 +7,7 @@ from base_test import BaseTest
 from landing_page import LandingPage
 from login_page import LoginPage
 from setup_page import SetupPage
+from settings_component import SettingsComponent
 
 
 class SetupPageTest(BaseTest):
