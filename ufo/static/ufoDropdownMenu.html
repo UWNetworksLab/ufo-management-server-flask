@@ -41,7 +41,7 @@
       last-response="{{ajaxResponse}}">
     </iron-ajax>
 
-    <paper-dialog class="dropdown-content" id="ufoDropdownMenu">
+    <paper-dialog class="dropdown-content" id="ufoDropdownMenu" with-backdrop>
       <paper-listbox>
         <paper-icon-item class="dropdown-button" id="addAdminButton" on-tap="flipToAddAdminFlow">
           <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
@@ -68,7 +68,7 @@
       </paper-listbox>
     </paper-dialog>
 
-    <paper-dialog id="addAdminDialog">
+    <paper-dialog id="addAdminDialog" with-backdrop>
       <paper-button on-tap="flipToDropdownFlowFromAddAdmin">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
@@ -90,7 +90,7 @@
       <p></p>
     </paper-dialog>
 
-    <paper-dialog id="removeAdminDialog">
+    <paper-dialog id="removeAdminDialog" with-backdrop>
       <paper-button on-tap="flipToDropdownFlowFromRemoveAdmin" class="header">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
@@ -222,10 +222,14 @@
       },
       closeAdminDialog: function() {
         this.set('loading', false);  // Disables the spinner.
+
         var addAdminDialog = document.getElementById('addAdminDialog');
         if (addAdminDialog) {
           this.$.addAdminDialog.close();
-        } else {
+        }
+
+        var removeAdminDialog = document.getElementById('removeAdminDialog');
+        if (removeAdminDialog) {
           this.$.removeAdminDialog.close();
         }
       },

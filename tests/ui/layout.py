@@ -19,15 +19,13 @@ class UfOPageLayout(BaseDriver):
   SEARCH_BUTTON = (By.ID, 'searchButton')
   OPEN_MENU_BUTTON = (By.ID, 'openMenuButton')
   MAIN_HOLDER = (By.ID, 'main-holder')
-  JIGSAW_LOGO_HOLDER = (By.ID, 'jigsaw-logo-holder')
   BASE_PAGE_ELEMENTS = [
     MAIN_TOOLBAR,
     LANDING_ANCHOR,
     SEARCH_FORM,
     SEARCH_BUTTON,
     OPEN_MENU_BUTTON,
-    MAIN_HOLDER,
-    JIGSAW_LOGO_HOLDER
+    MAIN_HOLDER
   ]
 
   SEARCH_SPINNER = (By.ID, 'searchSpinner')
