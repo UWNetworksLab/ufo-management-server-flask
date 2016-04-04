@@ -61,6 +61,11 @@ class LoginPageTest(BaseTest):
       self.assertIsNotNone(base_page_element)
       self.assertTrue(base_page_element.is_displayed())
 
+    for element_by_id in LoginPage.BASE_PAGE_SEARCH_ELEMENTS:
+      base_page_search_element = login_page.GetElement(element_by_id)
+      self.assertIsNotNone(base_page_search_element)
+      self.assertFalse(base_page_search_element.is_displayed())
+
     self.assertLogoLinksToLandingPage()
 
     for element_by_id in LoginPage.LOGIN_PAGE_ELEMENTS:
