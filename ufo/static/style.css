@@ -68,6 +68,7 @@ paper-dialog-scrollable {
 
 paper-dialog-scrollable > div {
   max-width: none!important;
+  max-height: 250px;
 }
 
 .title {
