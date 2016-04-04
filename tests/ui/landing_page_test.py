@@ -47,12 +47,14 @@ class LandingPageTest(BaseTest):
     for element_by_id in LandingPage.BASE_PAGE_ELEMENTS:
       base_page_element = landing_page.GetElement(element_by_id)
       self.assertIsNotNone(base_page_element)
+      self.assertTrue(base_page_element.is_displayed())
 
     self.assertLogoLinksToLandingPage()
 
     for element_by_id in LandingPage.LANDING_PAGE_ELEMENTS:
       landing_page_element = landing_page.GetElement(element_by_id)
       self.assertIsNotNone(landing_page_element)
+      self.assertTrue(landing_page_element.is_displayed())
 
   def testManuallyAddUserFromLandingPage(self):
     """Test that manually adding a user shows up on the user listing."""
