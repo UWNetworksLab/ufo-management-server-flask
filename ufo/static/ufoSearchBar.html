@@ -22,17 +22,18 @@
     }
   </style>
   <template>
-
-    <form is="iron-form" method="GET" action="{{searchResources.searchJsonUrl}}" loading="{{loading}}" last-response="{{searchJson}}" on-iron-form-presubmit="presubmit" on-iron-form-response="parseSearchResponse" id="searchForm" content-type="application/json">
-      <paper-input id="searchBar" no-label-float name="search_input" value="{{searchText}}">
-        <paper-icon-button id="searchButton" icon="search" prefix on-tap="submitForm"></paper-icon-button>
-        <paper-icon-button icon="arrow-back" suffix id="suffix" class="hideSuffix" on-tap="resetLists"></paper-icon-button>
-      </paper-input>
-      <input type="hidden" id="hiddenSearch" name="search_text" value="&quot;{{searchText}}&quot;">
-    </form>
-    <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="searchSpinner" active$={{loading}}></paper-spinner>
-    </template>
+    <div class="middle horizontal layout center flex">
+      <form is="iron-form" method="GET" action="{{searchResources.searchJsonUrl}}" loading="{{loading}}" last-response="{{searchJson}}" on-iron-form-presubmit="presubmit" on-iron-form-response="parseSearchResponse" id="searchForm" content-type="application/json" class="flex">
+        <paper-input id="searchBar" no-label-float name="search_input" value="{{searchText}}">
+          <paper-icon-button id="searchButton" icon="search" prefix on-tap="submitForm"></paper-icon-button>
+          <paper-icon-button icon="arrow-back" suffix id="suffix" class="hideSuffix" on-tap="resetLists"></paper-icon-button>
+        </paper-input>
+        <input type="hidden" id="hiddenSearch" name="search_text" value="&quot;{{searchText}}&quot;">
+      </form>
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="searchSpinner" active$={{loading}}></paper-spinner>
+      </template>
+    <div>
   </template>
 
   <script>
