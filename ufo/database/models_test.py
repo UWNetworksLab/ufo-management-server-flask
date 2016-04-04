@@ -110,6 +110,7 @@ class ConfigTest(base_test.BaseTest):
 class AdminUserTest(base_test.BaseTest):
   """Test for admin user model class functionality."""
   FAKE_ADMIN_USERNAME = 'fake admin username'
+  FAKE_ADMIN_USERNAME_2 = 'fake admin username 2'
   FAKE_ADMIN_PASSWORD = 'fake admin password'
 
   def testAdminUserToDict(self):
@@ -139,6 +140,16 @@ class AdminUserTest(base_test.BaseTest):
         self.FAKE_ADMIN_USERNAME))
     self.assertEquals(models.AdminUser.get_by_username(
         self.FAKE_ADMIN_USERNAME), admin_user)
+
+    admin_user_2 = models.AdminUser()
+    admin_user_2.username = self.FAKE_ADMIN_USERNAME_2
+    admin_user_2.set_password(self.FAKE_ADMIN_PASSWORD)
+    admin_user_2.save()
+
+    self.assertIsNotNone(models.AdminUser.get_by_username(
+        self.FAKE_ADMIN_USERNAME_2))
+    self.assertEquals(models.AdminUser.get_by_username(
+        self.FAKE_ADMIN_USERNAME_2), admin_user_2)
 
     admin_user.delete()
     self.assertIsNone(models.AdminUser.get_by_username(

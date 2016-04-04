@@ -23,4 +23,11 @@ class NotLoggedIn(Exception):
 class UnableToSaveToDB(Exception):
   """An exception for when we can not save to DB."""
   code = 500
-  message = ('Unable to save to DB.  Check if constraint is violated.')
+  message = ('Unable to save to DB. Check if constraint is violated.')
+
+
+class AttemptToRemoveLastAdmin(Exception):
+  """An exception for when the user attempts to remove the only admin."""
+  code = 409
+  message = ('Can\'t delete the last admin in the database. Add another ' +
+             'admin then try to delete this one again.')

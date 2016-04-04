@@ -97,11 +97,20 @@
       <p>{{resources.removeAdminInstructions}}</p>
       <paper-dialog-scrollable>
         <form is="iron-form" id="removeAdminForm" method="post" action="{{resources.removeAdminUrl}}" on-iron-form-response="parseRemoveAdminResponse" on-iron-form-presubmit="enableSpinner">
-          <paper-menu selected="{{selected}}">
-            <template is="dom-repeat" items="[[ajaxResponse.items]]">
-              <paper-item id="{{item.id}}" class="horizontal layout">
-                <strong>{{item.username}}</strong>
-              </paper-item>
+          <paper-menu selected="{{selected}}" id="menuOfAdmins">
+            <template is="dom-if" if="[[!hasMoreThanOne(ajaxResponse.items)]]">
+              <template is="dom-repeat" items="[[ajaxResponse.items]]">
+                <paper-item id="{{item.id}}" class="horizontal layout" disabled>
+                  <strong>{{item.username}}</strong>
+                </paper-item>
+              </template>
+            </template>
+            <template is="dom-if" if="[[hasMoreThanOne(ajaxResponse.items)]]">
+              <template is="dom-repeat" items="[[ajaxResponse.items]]">
+                <paper-item id="{{item.id}}" class="horizontal layout">
+                  <strong>{{item.username}}</strong>
+                </paper-item>
+              </template>
             </template>
           </paper-menu>
           <input type="hidden" id="hiddenAdminId" name="admin_id" value="">
@@ -188,7 +197,6 @@
         },
         selected: {
           type: Number,
-          notify: true,
         },
       },
       listeners: {
@@ -263,7 +271,7 @@
         jsonPassword.value = JSON.stringify(password);
       },
       makeAdminIdJson: function() {
-        var adminId = this.ajaxResponse.items[this.selected].id;
+        var adminId = this.$.menuOfAdmins.selectedItem.id;
         var adminIdInput = this.querySelector('#hiddenAdminId');
         adminIdInput.value = JSON.stringify(adminId);
       },
@@ -289,9 +297,11 @@
         this.querySelector('#addAdminForm').submit();
       },
       submitRemoveAdminForm: function() {
-        this.enableSpinner();
-        this.makeAdminIdJson();
-        this.querySelector('#removeAdminForm').submit();
+        if (this.$.menuOfAdmins.selectedItem) {
+          this.enableSpinner();
+          this.makeAdminIdJson();
+          this.querySelector('#removeAdminForm').submit();
+        }
       },
       parseAddAdminResponse: function(e, details) {
         var username = this.querySelector('#username').value;
@@ -301,6 +311,7 @@
           if (found) {
             this.set('showResponseStatus', true);
             this.set('responseStatus', this.resources.adminAddSuccessText);
+            this.set('ajaxResponse', details.xhr.response);
             this.resetAddAdminForm();
           } else {
             this.set('showResponseStatus', true);
@@ -322,6 +333,12 @@
       },
       resetRemoveAdminForm: function() {
         this.querySelector('#removeAdminForm').reset();
+      },
+      hasMoreThanOne: function(items) {
+        if (items) {
+          return items.length > 1;
+        }
+        return false;
       },
       _findUsernameInAdminList: function(admins, username) {
         var found = false;
