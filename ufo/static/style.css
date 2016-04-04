@@ -50,7 +50,7 @@ paper-material {
   top: -75px;  /* Make the components or cards overlap with the page header. */
 }
 
-paper-material:not(.dropdown-content), #jigsaw-logo-holder {
+paper-material:not(.dropdown-content) {
   width: 1200px;
 }
 
@@ -116,14 +116,6 @@ paper-dialog-scrollable > div {
 .buttons {
   display: flex;
   justify-content: flex-end;
-}
-
-#jigsaw-logo {
-  opacity: 53;
-}
-
-#jigsaw-logo:hover {
-  opacity: 86;
 }
 
 #main-toolbar {
