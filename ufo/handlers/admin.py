@@ -60,6 +60,9 @@ def delete_admin():
   """
   admin_id = json.loads(flask.request.form.get('admin_id'))
   admin_user = models.AdminUser.query.get_or_404(admin_id)
-  admin_user.delete()
+  try:
+    admin_user.delete()
+  except custom_exceptions.AttemptToRemoveLastAdmin as e:
+    flask.abort(e.code, e.message)
 
   return flask.redirect(flask.url_for('admin_list'))

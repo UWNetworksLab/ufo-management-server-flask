@@ -69,9 +69,8 @@ class AdminTest(base_test.BaseTest):
 
   def testDeleteAdminPostHandler(self):
     """Test the delete admin handler calls to delete the specified admin."""
-    response =  self.client.post(flask.url_for('add_admin'),
-                                 data=MOCK_ADMIN_DATA,
-                                 follow_redirects=False)
+    self.client.post(flask.url_for('add_admin'), data=MOCK_ADMIN_DATA,
+                     follow_redirects=False)
     query = models.AdminUser.query.filter_by(username=MOCK_ADMIN_USERNAME)
     admin_in_db = query.one_or_none()
     admin_id = admin_in_db.id
@@ -82,6 +81,21 @@ class AdminTest(base_test.BaseTest):
     admin_user = models.AdminUser.query.get(admin_id)
     self.assertIsNone(admin_user)
     self.assert_redirects(response, flask.url_for('admin_list'))
+
+  def testLastAdminCannotBeDeleted(self):
+    """Test deleting the last admin throws an exception."""
+    last_admin_username = base_test.FAKE_ADMIN_USERNAME
+    query = models.AdminUser.query.filter_by(username=last_admin_username)
+    admin_in_db = query.one_or_none()
+    admin_id = admin_in_db.id
+
+    post_data = {'admin_id': json.dumps(admin_id)}
+    response = self.client.post(flask.url_for('delete_admin'), data=post_data)
+
+    query = models.AdminUser.query.filter_by(username=last_admin_username)
+    self.assertEqual(1, query.count())
+    admin_in_db = query.one_or_none()
+    self.assertIsNotNone(admin_in_db)
 
 
 if __name__ == '__main__':

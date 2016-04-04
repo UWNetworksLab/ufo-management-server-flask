@@ -56,6 +56,11 @@ class Model(ufo.db.Model):
 
     Returns:
       The specified entity.
+
+    Raises:
+      custom_exceptions.UnableToSaveToDB: If there is an integrity error from
+                                          attempting to save an item which
+                                          duplicates a unique value.
     """
     ufo.db.session.add(self)
     if commit:
@@ -352,6 +357,26 @@ class AdminUser(Model):
     hashed = bcrypt.hashpw(password.encode('utf-8'), self.password.encode('utf-8'))
     return hashed == self.password
 
+  def delete(self, commit=True):
+    """Delete the given entity and save if specified.
+
+    The admin specific implementation here will raise an exception if this is
+    the last remaining admin that is being deleted.
+
+    Args:
+      commit: A boolean for whether or not to commit the result immediately.
+
+    Returns:
+      The result of committing the given entity if specified or False.
+
+    Raises:
+      custom_exceptions.AttemptToRemoveLastAdmin: If this is the only admin in
+                                                  the database.
+    """
+    if len(AdminUser.query.all()) == 1:
+      raise custom_exceptions.AttemptToRemoveLastAdmin
+
+    super(AdminUser, self).delete(commit)
 
   def to_dict(self):
     """Get the admin user as a dictionary.
