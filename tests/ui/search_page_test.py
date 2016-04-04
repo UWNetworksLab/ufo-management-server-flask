@@ -47,12 +47,14 @@ class SearchPageTest(BaseTest):
     for element_by_id in SearchPage.BASE_PAGE_ELEMENTS:
       base_page_element = search_page.GetElement(element_by_id)
       self.assertIsNotNone(base_page_element)
+      self.assertTrue(base_page_element.is_displayed())
 
     self.assertLogoLinksToLandingPage()
 
     for element_by_id in SearchPage.SEARCH_PAGE_ELEMENTS:
       search_page_element = search_page.GetElement(element_by_id)
       self.assertIsNotNone(search_page_element)
+      self.assertTrue(search_page_element.is_displayed())
 
   def testSearchUserFromLandingPage(self):
     """Test that search displays user results within the landing page."""

@@ -19,14 +19,18 @@ class UfOPageLayout(BaseDriver):
   SEARCH_BUTTON = (By.ID, 'searchButton')
   OPEN_MENU_BUTTON = (By.ID, 'openMenuButton')
   MAIN_HOLDER = (By.ID, 'main-holder')
-  BASE_PAGE_ELEMENTS = [
+  BASE_PAGE_ELEMENTS_WITHOUT_SEARCH = [
     MAIN_TOOLBAR,
     LANDING_ANCHOR,
-    SEARCH_FORM,
-    SEARCH_BUTTON,
     OPEN_MENU_BUTTON,
     MAIN_HOLDER
   ]
+  BASE_PAGE_SEARCH_ELEMENTS = [
+    SEARCH_FORM,
+    SEARCH_BUTTON
+  ]
+  BASE_PAGE_ELEMENTS = (BASE_PAGE_ELEMENTS_WITHOUT_SEARCH +
+                        BASE_PAGE_SEARCH_ELEMENTS)
 
   SEARCH_SPINNER = (By.ID, 'searchSpinner')
 
@@ -35,8 +39,8 @@ class UfOPageLayout(BaseDriver):
   ADD_ADMIN_BUTTON = (By.ID, 'addAdminButton')
   ADD_ADMIN_DIALOG = (By.ID, 'addAdminDialog')
   ADD_ADMIN_FORM = (By.ID, 'addAdminForm')
-  ADD_ADMIN_USERNAME = (By.ID, 'username')
-  ADD_ADMIN_PASSWORD = (By.ID, 'password')
+  ADD_ADMIN_USERNAME = (By.ID, 'paperAdminUsername')
+  ADD_ADMIN_PASSWORD = (By.ID, 'paperAdminPassword')
   ADD_ADMIN_SUBMIT = (By.ID, 'adminFormSubmitButton')
   ADD_ADMIN_RESPONSE_STATUS = (By.ID, 'addAdminResponseStatus')
   REMOVE_ADMIN_DIALOG = (By.ID, 'removeAdminDialog')
