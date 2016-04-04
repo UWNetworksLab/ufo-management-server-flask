@@ -84,17 +84,16 @@ class AdminTest(base_test.BaseTest):
 
   def testLastAdminCannotBeDeleted(self):
     """Test deleting the last admin throws an exception."""
-    last_admin_username = base_test.FAKE_ADMIN_USERNAME
-    query = models.AdminUser.query.filter_by(username=last_admin_username)
-    admin_in_db = query.one_or_none()
-    admin_id = admin_in_db.id
+    all_admins = models.AdminUser.query.all()
+    self.assertEqual(1, len(all_admins))
+    admin_id = all_admins[0].id
 
     post_data = {'admin_id': json.dumps(admin_id)}
     response = self.client.post(flask.url_for('delete_admin'), data=post_data)
 
-    query = models.AdminUser.query.filter_by(username=last_admin_username)
-    self.assertEqual(1, query.count())
-    admin_in_db = query.one_or_none()
+    all_admins = models.AdminUser.query.all()
+    self.assertEqual(1, len(all_admins))
+    admin_in_db = all_admins[0]
     self.assertIsNotNone(admin_in_db)
 
 
