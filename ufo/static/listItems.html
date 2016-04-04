@@ -69,7 +69,7 @@
             <paper-button on-tap="openServerEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
             <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
           </template>
-          <paper-icon-button icon="expand-more" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}"></paper-icon-button>
+          <paper-icon-button icon="expand-more" title="{{resources.detailsExpandText}}" id="{{resources.detailsButtonId}}"></paper-icon-button>
         </paper-icon-item>
       </template>
       <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">

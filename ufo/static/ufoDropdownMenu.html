@@ -222,10 +222,14 @@
       },
       closeAdminDialog: function() {
         this.set('loading', false);  // Disables the spinner.
+
         var addAdminDialog = document.getElementById('addAdminDialog');
         if (addAdminDialog) {
           this.$.addAdminDialog.close();
-        } else {
+        }
+
+        var removeAdminDialog = document.getElementById('removeAdminDialog');
+        if (removeAdminDialog) {
           this.$.removeAdminDialog.close();
         }
       },
