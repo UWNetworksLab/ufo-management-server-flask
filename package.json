@@ -2,7 +2,7 @@
   "name": "ufo-management-server",
   "dependencies": {
     "bower": "^1.7.1",
-    "vulcanize": "^1.14.5"
+    "vulcanize": "1.14.8"
   },
   "scripts": {
     "postinstall": "bower install && ./vulcanize.sh travis"
