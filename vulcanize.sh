@@ -117,7 +117,7 @@ if [ "$#" == 0 ] || [ ! "$1" == 'help' && ! "$1" == '--help' ]; then
   createSingleHtmlFileToVulcanize
   vulcanizeSingleFileForImports
 elif [ "$1" == 'travis' ]; then
-  runAndAssertCmd "npm install -g vulcanize"
+  runAndAssertCmd "npm install -g vulcanize@1.14.8"
   updateBowerPackages
   findHtmlFilesToVulcanize
   createSingleHtmlFileToVulcanize
