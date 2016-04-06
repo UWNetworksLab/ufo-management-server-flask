@@ -1,6 +1,7 @@
 APScheduler==3.0.5
 bcrypt==1.1.0
 Flask==0.10.1
+Flask-Migrate==1.8.0
 Flask-SQLAlchemy==1.0
 Flask-Testing==0.4.2
 flask-whooshalchemy==0.56
