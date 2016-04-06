@@ -44,7 +44,7 @@ function runInStaticDirAndAssertCmd ()
 
 function installVulcanize ()
 {
-  runAndAssertCmd "sudo npm install -g vulcanize"
+  runAndAssertCmd "sudo npm install -g vulcanize@1.14.8"
 }
 
 function updateBowerPackages ()
