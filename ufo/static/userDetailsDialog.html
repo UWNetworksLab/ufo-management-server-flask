@@ -70,7 +70,9 @@
         <template is="dom-if" if="[[!invitCodeJson.invite_code]]">
           <p>{{resources.inviteCodeNeedServerText}}</p>
         </template>
-        <paper-input disabled type="text" id="lastInviteCode" value="{{invitCodeJson.invite_code}}"></paper-input>
+        <template is="dom-if" if="[[invitCodeJson.invite_code]]">
+          <paper-input disabled type="text" id="lastInviteCode" value="{{invitCodeJson.invite_code}}"></paper-input>
+        </template>
       </div>
       <br>
       <div class="buttons">
@@ -129,7 +131,6 @@
       },
       inviteCodeErrorResponse: function() {
         this.set('loading', false);
-        this.set('invitCodeJson.invite_code', false);
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
@@ -172,7 +173,7 @@
       openDialog: function() {
         var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
         dialog.open();
-        if (!this.invitCodeJson) {
+        if (!this.invitCodeJson.invite_code) {
           this.getUpdatedInviteCode();
         }
       },
