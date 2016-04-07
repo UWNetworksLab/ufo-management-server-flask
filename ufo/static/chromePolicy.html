@@ -5,33 +5,34 @@
 <dom-module id="chrome-policy">
   <style is="custom-style">
     #chrome-policy {
-      margin-left: 25px;
+      margin-left: 40px;
       margin-right: 25px;
       margin-bottom: 25px;
     }
   </style>
   <template>
-    <paper-listbox id="chrome-policy">
-      <paper-item><p>
+    <div id="chrome-policy">
+      <p>
         {{resources.policyExplanationText}}
-      </p></paper-item>
-      <paper-item><p>
+      </p>
+      <p>
         {{resources.policyEditText}}
-      </p></paper-item>
-      <paper-item>
-      <a href="https://admin.google.com/AdminHome" class="anchor-no-button">{{resources.adminConsoleText}}</a>
-      </p></paper-item>
-      <paper-item><p>
+      </p>
+
+      <p><a href="https://admin.google.com/AdminHome" class="anchor-no-button">
+        <paper-button>
+          <iron-icon icon="open-in-new"></iron-icon> {{resources.adminConsoleText}}
+        </paper-button>
+      </a></p>
+      <p>
         {{resources.policyUploadText}}
-      </p></paper-item>
+      </p>
       <div class="buttons">
-        <paper-item>
-          <a href="{{resources.download_chrome_policy}}" download="{{resources.policy_filename}}" id="chromePolicyDownloadButton">
-            <paper-button class="anchor-button"><iron-icon icon="file-download"></iron-icon> {{resources.downloadText}}</paper-button>
-          </a>
-        </paper-item>
+        <a href="{{resources.download_chrome_policy}}" download="{{resources.policy_filename}}" id="chromePolicyDownloadButton">
+          <paper-button class="anchor-button"><iron-icon icon="file-download"></iron-icon> {{resources.downloadText}}</paper-button>
+        </a>
       </div>
-    </paper-listbox>
+    </div>
   </template>
 
   <script>
