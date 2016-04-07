@@ -220,6 +220,10 @@ def _get_user_resources():
     'detailsCloseText': 'Close',
     'detailsButtonId': 'userDetailsButton',
     'detailsOverlayId': 'userDetailsOverlay',
+    'inviteCodeNeedServerText': ('Invite codes aren\'t available without any' +
+                                 ' proxy server configured. Configure a ' +
+                                 'proxy server to have an invite code ' +
+                                 'created automatically.'),
     'inviteCodeLabel': 'Invite Code',
     'privateKeyLabel': 'SSH Private Key',
     'publicKeyLabel': 'SSH Public Key',
