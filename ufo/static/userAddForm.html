@@ -20,8 +20,8 @@
   </style>
   <template>
     <div>
-      <template is="dom-if" if="{{isSpinnerOn}}">
-        <paper-spinner id="spinner" active$={{isSpinnerOn}}></paper-spinner>
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="spinner" active$={{loading}}></paper-spinner>
       </template>
       <template is="dom-if" if="{{showInputFields}}">
         <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinner">
@@ -67,7 +67,7 @@
       </template>
     </div>
     <div class="buttons">
-      <paper-button class="anchor-button" dialog-dismiss>
+      <paper-button class="anchor-button" dialog-dismiss on-tap="resetForms">
       <strong>{{resources.dismissText}}</strong>
       </paper-button>
       <paper-button class="anchor-button" autofocus on-tap="submitPostForm">
@@ -104,7 +104,7 @@
           type: String,
           notify: true,
         },
-        isSpinnerOn: {
+        loading: {
           type: Boolean,
           value: false,
           notify: true,
@@ -114,7 +114,7 @@
         'iron-form-error': 'handleFormError',
       },
       enableSpinner: function() {
-        this.set('isSpinnerOn', true);
+        this.set('loading', true);
       },
       submitGetForm: function() {
         this.querySelector('#' + this.addFlowTextObj.id).submit();
@@ -126,10 +126,10 @@
       parseGetResponse: function(e, details) {
         this.set('lastResponse', e.target.request.lastResponse);
         this.set('showInputFields', false);
-        this.set('isSpinnerOn', false);
+        this.set('loading', false);
       },
       closeModal: function() {
-        this.set('isSpinnerOn', false);
+        this.set('loading', false);
         var userModal = document.getElementById('userModal');
         if (userModal) {
           userModal.close();
@@ -146,10 +146,13 @@
         document.getElementById('error-notification').dispatchEvent(errorEvent);
         this.closeModal();
       },
-      resetForms: function() {
+      resetForms: function(e, details) {
         this.set('showInputFields', true);
         document.getElementById(this.addFlowTextObj.id).reset();
-        this.querySelector('#addPostForm').reset();
+        var addPostForm = this.querySelector('#addPostForm');
+        if (addPostForm) {
+          addPostForm.reset();
+        }
         this.set('selectedUsers', []);
         this.set('usersJson', '');
       },

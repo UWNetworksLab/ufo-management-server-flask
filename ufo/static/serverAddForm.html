@@ -22,14 +22,14 @@
   </style>
   <template>
     <div>
-      <template is="dom-if" if="{{isSpinnerOn}}">
-        <paper-spinner id="serverSpinner" active$={{isSpinnerOn}}></paper-spinner>
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="serverSpinner" active$={{loading}}></paper-spinner>
       </template>
       <form is="iron-form" id="serverAddForm" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
         <paper-input label="{{resources.ipLabel}}" type="text" id="ipInput" name="ip_address" required auto-validate pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}">{{resources.ip_address}}</paper-input>
         <paper-input label="{{resources.nameLabel}}" type="text" id="nameInput" name="name" required>{{resources.name}}</paper-input>
         <!-- TODO add the ability to upload files -->
-        <ufo-textarea label="{{resources.privateKeyLabel}}" id="privateKeyInput" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" auto-validate pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}">{{resources.private_key}}</ufo-textarea>
+        <ufo-textarea label="{{resources.privateKeyLabel}}" id="privateKeyInput" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" auto-validate pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="{{resources.private_key}}"></ufo-textarea>
         <br>
         <p>{{resources.privateKeyText}}</p>
 
@@ -40,7 +40,7 @@
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
       </form>
       <div class="buttons">
-        <paper-button class="anchor-button" dialog-dismiss>
+        <paper-button class="anchor-button" dialog-dismiss on-tap="resetForm">
         <strong>{{resources.dismissText}}</strong>
         </paper-button>
         <paper-button class="anchor-button" id="serverAddSubmitButton" autofocus on-tap="submitPostForm">
@@ -58,7 +58,7 @@
           type: Object,
           notify: true,
         },
-        isSpinnerOn: {
+        loading: {
           type: Boolean,
           value: false,
           notify: true,
@@ -68,18 +68,18 @@
         'iron-form-error': 'handleFormError',
       },
       enableSpinner: function() {
-        this.set('isSpinnerOn', true);
+        this.set('loading', true);
       },
       submitPostForm: function() {
         this.querySelector('#serverAddForm').submit();
       },
       closeModal: function() {
-        this.set('isSpinnerOn', false);
+        this.set('loading', false);
         serverModal = document.getElementById('serverModal');
         if (serverModal) {
           document.getElementById('serverModal').close();
         } else {
-          document.getElementById('serverAddForm').reset();
+          this.resetForm();
         }
       },
       handleFormError: function(event, detail) {
@@ -97,6 +97,9 @@
         if (listElem) {
           listElem.setAjaxResponse(updatedServersJson);
         }
+      },
+      resetForm: function(e, details) {
+        document.getElementById('serverAddForm').reset();
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
