@@ -44,7 +44,7 @@ function runInStaticDirAndAssertCmd ()
 
 function installVulcanize ()
 {
-  runAndAssertCmd "sudo npm install -g vulcanize@1.14.8"
+  runAndAssertCmd "sudo npm install -g vulcanize"
 }
 
 function updateBowerPackages ()
@@ -117,7 +117,7 @@ if [ "$#" == 0 ] || [ ! "$1" == 'help' && ! "$1" == '--help' ]; then
   createSingleHtmlFileToVulcanize
   vulcanizeSingleFileForImports
 elif [ "$1" == 'travis' ]; then
-  runAndAssertCmd "npm install -g vulcanize@1.14.8"
+  runAndAssertCmd "npm install -g vulcanize"
   updateBowerPackages
   findHtmlFilesToVulcanize
   createSingleHtmlFileToVulcanize
