@@ -47,7 +47,7 @@
     <template is="dom-if" if="{{loading}}">
       <paper-spinner id="userDetailsSpinner" active$={{loading}}></paper-spinner>
     </template>
-    <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" loading="{{loading}}" last-response="{{invitCodeJson}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax">
+    <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" loading="{{loading}}" last-response="{{invitCodeJson}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax" on-iron-form-error="inviteCodeErrorResponse">
       <input type="hidden" name="user_id" value="{{item.id}}">
     </form>
     <paper-dialog id="{{resources.detailsOverlayId}}" with-backdrop>
@@ -67,16 +67,23 @@
       </paper-listbox>
       <div id="rowHolder" class="vertical center-justified layout">
         <strong>{{resources.inviteCodeLabel}}</strong>
-        <paper-input disabled type="text" id="lastInviteCode" value="{{invitCodeJson.invite_code}}"></paper-input>
+        <template is="dom-if" if="[[!invitCodeJson.invite_code]]">
+          <p>{{resources.inviteCodeNeedServerText}}</p>
+        </template>
+        <template is="dom-if" if="[[invitCodeJson.invite_code]]">
+          <paper-input disabled type="text" id="lastInviteCode" value="{{invitCodeJson.invite_code}}"></paper-input>
+        </template>
       </div>
       <br>
       <div class="buttons">
-        <paper-button on-tap="copyInviteCode" class="anchor-button" id="copyInviteCodeButton"><strong>{{resources.copyLabel}}</strong></paper-button>
-        <form is="iron-form" method="post" action="{{resources.rotateKeysUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="enableSpinner">
-          <input type="hidden" name="user_id" value="{{item.id}}">
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-          <paper-button on-tap="submitForm" class="anchor-button" id="rotateKeysButton" type="submit"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
-        </form>
+        <template is="dom-if" if="[[invitCodeJson.invite_code]]">
+          <paper-button on-tap="copyInviteCode" class="anchor-button" id="copyInviteCodeButton"><strong>{{resources.copyLabel}}</strong></paper-button>
+          <form is="iron-form" method="post" action="{{resources.rotateKeysUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="enableSpinner">
+            <input type="hidden" name="user_id" value="{{item.id}}">
+            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            <paper-button on-tap="submitForm" class="anchor-button" id="rotateKeysButton" type="submit"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
+          </form>
+        </template>
         <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="user_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
@@ -112,6 +119,7 @@
         },
         invitCodeJson: {
           type: Object,
+          value: false,
           notify: true,
         },
       },
@@ -120,6 +128,9 @@
       },
       enableSpinner: function() {
         this.set('loading', true);
+      },
+      inviteCodeErrorResponse: function() {
+        this.set('loading', false);
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
@@ -162,7 +173,7 @@
       openDialog: function() {
         var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
         dialog.open();
-        if (!this.invitCodeJson) {
+        if (!this.invitCodeJson.invite_code) {
           this.getUpdatedInviteCode();
         }
       },
