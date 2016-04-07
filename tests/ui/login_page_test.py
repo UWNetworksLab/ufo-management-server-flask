@@ -56,12 +56,12 @@ class LoginPageTest(BaseTest):
     self.driver.get(self.args.server_url + flask.url_for('login'))
 
     login_page = LoginPage(self.driver)
-    for element_by_id in LoginPage.BASE_PAGE_ELEMENTS_WITHOUT_SEARCH:
+    for element_by_id in LoginPage.BASE_PAGE_ELEMENTS_FOR_LOGIN:
       base_page_element = login_page.GetElement(element_by_id)
       self.assertIsNotNone(base_page_element)
       self.assertTrue(base_page_element.is_displayed())
 
-    for element_by_id in LoginPage.BASE_PAGE_SEARCH_ELEMENTS:
+    for element_by_id in LoginPage.BASE_PAGE_ELEMENTS_AFTER_LOGIN:
       base_page_search_element = login_page.GetElement(element_by_id)
       self.assertIsNotNone(base_page_search_element)
       self.assertFalse(base_page_search_element.is_displayed())
