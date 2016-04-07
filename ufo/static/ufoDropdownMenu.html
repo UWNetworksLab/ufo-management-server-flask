@@ -29,6 +29,9 @@
     paper-icon-item {
       cursor: pointer;
     }
+    #removeAdminDialog {
+      font-size: 16px;
+    }
   </style>
   <template>
     <template is="dom-if" if="{{loading}}">
@@ -96,7 +99,7 @@
       <paper-button on-tap="flipToDropdownFlowFromRemoveAdmin" class="header">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
-      <p>{{resources.removeAdminInstructions}}</p>
+      {{resources.removeAdminInstructions}}
       <paper-dialog-scrollable>
         <form is="iron-form" id="removeAdminForm" method="post" action="{{resources.removeAdminUrl}}" on-iron-form-response="parseRemoveAdminResponse" on-iron-form-presubmit="enableSpinner">
           <paper-menu selected="{{selected}}" id="menuOfAdmins">
