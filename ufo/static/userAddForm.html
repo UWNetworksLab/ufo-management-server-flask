@@ -26,7 +26,7 @@
       <template is="dom-if" if="{{showInputFields}}">
         <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinner">
           <template is="dom-if" if="[[!idMatches(addFlowTextObj.id, 'domainAdd')]]">
-            <paper-input label="{{addFlowTextObj.label1}}" type="textbox" name="{{addFlowTextObj.name1}}" auto-validate pattern="{{resources.regexes.keyLookupPattern}}" error-message="{{resources.regexes.keyLookupError}}"></paper-input>
+            <paper-input label="{{addFlowTextObj.label1}}" type="textbox" name="{{addFlowTextObj.name1}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="{{resources.regexes.keyLookupError}}"></paper-input>
             <br>
             <p>{{addFlowTextObj.definition1}}</p>
             <br>
