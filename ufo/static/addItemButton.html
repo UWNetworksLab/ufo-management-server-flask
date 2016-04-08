@@ -1,8 +1,20 @@
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 
 <dom-module id="add-item-button">
+  <style is="custom-style">
+    #strong {
+      vertical-align: bottom;
+      line-height: 19px;
+    }
+  </style>
   <template>
-    <paper-button class="anchor-button" on-tap="openModal" id="{{resources.addButtonId}}"><iron-icon src="{{resources.inverseAddIconUrl}}"></iron-icon> <strong>{{resources.addText}}</strong></paper-button>
+    <paper-button
+        class="anchor-button"
+        on-tap="openModal"\
+        id="{{resources.addButtonId}}">
+      <iron-icon src="{{resources.inverseAddIconUrl}}"></iron-icon>
+      <strong id="strong">{{resources.addText}}</strong>
+    </paper-button>
   </template>
 
   <script>
