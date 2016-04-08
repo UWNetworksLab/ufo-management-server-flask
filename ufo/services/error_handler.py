@@ -27,6 +27,9 @@ def handle_error(error):
   if not isinstance(error, exceptions.HTTPException):
     error = exceptions.InternalServerError(error.message)
 
+  if error.code == 404:
+    return flask.render_template('error.html', error=error)
+
   return flask.jsonify({'code': error.code,
                         'message': error.description}), error.code
 
