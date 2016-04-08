@@ -11,17 +11,11 @@
     paper-listbox {
       background: #EEE;
     }
-    #spinner {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
   </style>
   <template>
     <div>
       <template is="dom-if" if="{{loading}}">
-        <paper-spinner id="spinner" active$={{loading}}></paper-spinner>
+        <paper-spinner id="spinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <template is="dom-if" if="{{showInputFields}}">
         <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinner">

@@ -118,6 +118,20 @@ paper-dialog-scrollable > div {
   justify-content: flex-end;
 }
 
+.absolutePositionSpinner, .fixedPositionSpinner {
+  top: 50%;
+  left: 50%;
+  z-index: 100000000;
+}
+
+.absolutePositionSpinner {
+  position: absolute;
+}
+
+.fixedPositionSpinner {
+  position: fixed;
+}
+
 #main-toolbar {
   background-color: #009788!important;
 }

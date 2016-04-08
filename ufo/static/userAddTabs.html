@@ -21,12 +21,6 @@
       margin-bottom: 24px;
       padding: 0px 24px;
     }
-    #manualAddSpinner {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
   </style>
   <template>
     <!--Portion for finding users via group, individual, domain, or manual
@@ -43,7 +37,7 @@
           <template is="dom-if" if="{{item.isManual}}">
             <div>
               <template is="dom-if" if="{{loading}}">
-                <paper-spinner id="manualAddSpinner" active$={{loading}}></paper-spinner>
+                <paper-spinner id="manualAddSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
               </template>
               <form is="iron-form" id="{{item.id}}" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
                 <paper-input label="{{item.label1}}" type="textbox" name="name" value="" id="manualUserName" required>

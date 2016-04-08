@@ -41,17 +41,11 @@
     .spacer {
       width: 20px;
     }
-    #userDetailsSpinner {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
   </style>
   <!-- TODO(eholder): Figure out how to make hover work with focused. -->
   <template>
     <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="userDetailsSpinner" active$={{loading}}></paper-spinner>
+      <paper-spinner id="userDetailsSpinner" class="fixedPositionSpinner" active$={{loading}}></paper-spinner>
     </template>
     <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" loading="{{loading}}" last-response="{{invitCodeJson}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax" on-iron-form-error="inviteCodeErrorResponse">
       <input type="hidden" name="user_id" value="{{item.id}}">
