@@ -4,6 +4,7 @@ import unittest
 import flask
 import json
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 
 from admin_flow import AdminFlow
 from base_test import BaseTest
@@ -26,6 +27,8 @@ class AdminFlowTest(BaseTest):
   def tearDown(self):
     """Teardown for test methods."""
     admin_flow = AdminFlow(self.driver)
+    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+                                 self.args.password)
     admin_flow.removeTestAdmin(self.TEST_ADMIN_AS_DICT['username'],
                                self.args.server_url,
                                should_raise_exception=False)
@@ -57,6 +60,7 @@ class AdminFlowTest(BaseTest):
       dropdown_button = self.driver.find_element(*AdminFlow.OPEN_MENU_BUTTON)
       self.assertEquals(dropdown_button.text.lower(),
                         self.args.username.lower())
+    LoginPage(self.driver).Logout(self.args.server_url)
 
   def _verifyAnotherAdminCanBeAdded(self, test_url):
     """Test that adding another admin works from the given url.
@@ -65,9 +69,10 @@ class AdminFlowTest(BaseTest):
       test_url: The url to add the admin from.
     """
     # Try to login with the uncreated admin to ensure it does not exist.
-    LoginPage(self.driver).Login(self.args.server_url,
-                                 self.TEST_ADMIN_AS_DICT['username'],
-                                 self.TEST_ADMIN_AS_DICT['password'])
+    with self.assertRaises(TimeoutException):
+      LoginPage(self.driver).Login(self.args.server_url,
+                                   self.TEST_ADMIN_AS_DICT['username'],
+                                   self.TEST_ADMIN_AS_DICT['password'])
     self.driver.get(test_url)
 
     # Assert that login failed (we're still on the login page).

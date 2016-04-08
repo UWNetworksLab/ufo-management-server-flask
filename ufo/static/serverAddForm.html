@@ -10,12 +10,6 @@
       padding: 24px 24px;
       max-width: ;
     }
-    #serverSpinner {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
     .buttons {
       margin-bottom: 25px;
     }
@@ -23,7 +17,7 @@
   <template>
     <div>
       <template is="dom-if" if="{{loading}}">
-        <paper-spinner id="serverSpinner" active$={{loading}}></paper-spinner>
+        <paper-spinner id="serverSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <form is="iron-form" id="serverAddForm" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
         <paper-input label="{{resources.ipLabel}}" type="text" id="ipInput" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}">{{resources.ip_address}}</paper-input>
