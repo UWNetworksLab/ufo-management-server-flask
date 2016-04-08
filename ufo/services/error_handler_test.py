@@ -20,8 +20,6 @@ class ErrorHandlerTest(base_test.BaseTest):
     """Test the default HTTP error handlers are registered."""
     app_error_handlers = self.client.application.error_handler_spec[None]
     for error_code in exceptions.default_exceptions:
-      # 404 errors are handled separately as a special case.
-      # It will be covered by a webdriver test.
       self.assertTrue(error_code in app_error_handlers)
 
   def testUnknowExceptionTypesAreHandled(self):
