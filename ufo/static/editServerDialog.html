@@ -47,11 +47,13 @@
     .showElement {
       display: inline-block;
     }
+    #serverDetailsSpinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
   </style>
   <template>
-    <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="serverDetailsSpinner" active$={{loading}}></paper-spinner>
-    </template>
     <paper-dialog id="{{resources.detailsOverlayId}}" with-backdrop>
       <paper-listbox>
         <paper-icon-item id="topBar" class="horizontal center-justified layout">
@@ -63,6 +65,9 @@
           <paper-icon-button icon="close" title="{{resources.detailsCloseText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="serverDetailsSpinner" active$={{loading}}></paper-spinner>
+      </template>
       <div id="rowHolder" class="vertical center-justified layout">
         <form is="iron-form" id="serverEditForm" method="post" action="{{resources.editUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
           <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]"></paper-input>
