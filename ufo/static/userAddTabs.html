@@ -68,7 +68,7 @@
             </div>
           </template>
           <template is="dom-if" if="{{!item.isManual}}">
-            <user-add-form resources="{{resources}}" add-flow-text-obj="{{item}}" display-with-dialog$="[[displayWithDialog]]"></user-add-form>
+            <user-add-form resources="{{resources}}" add-flow-text-obj="{{item}}" should-display-with-dialog$="[[shouldDisplayWithDialog]]"></user-add-form>
           </template>
         </template>
       </iron-pages>
@@ -91,7 +91,7 @@
           value: false,
           notify: true,
         },
-        displayWithDialog: {
+        shouldDisplayWithDialog: {
           type: Boolean,
           value: false,
           notify: true,
