@@ -20,6 +20,8 @@ class ErrorHandlerTest(base_test.BaseTest):
     """Test the default HTTP error handlers are registered."""
     app_error_handlers = self.client.application.error_handler_spec[None]
     for error_code in exceptions.default_exceptions:
+      # 404 errors are handled separately as a special case.
+      # It will be covered by a webdriver test.
       self.assertTrue(error_code in app_error_handlers)
 
   def testUnknowExceptionTypesAreHandled(self):
@@ -34,14 +36,14 @@ class ErrorHandlerTest(base_test.BaseTest):
     self.assertTrue(str(setup_needed_error.code) in resp.data)
     self.assertTrue(SetupNeeded.message in resp.data)
 
-  def testErrorHandlerCanProcessHTTPError(self):
+  def testErrorHandlerCanProcessInternalServerError(self):
     """Test error handler can process HTTP error."""
-    error_404 = exceptions.NotFound()
-    resp = error_handler.handle_error(error_404)
+    error_500 = exceptions.InternalServerError()
+    resp = error_handler.handle_error(error_500)
 
-    self.assertEqual(error_404.code, resp[1])
-    self.assertTrue(str(error_404.code) in resp[0].data)
-    self.assertTrue(error_404.message in resp[0].data)
+    self.assertEqual(error_500.code, resp[1])
+    self.assertTrue(str(error_500.code) in resp[0].data)
+    self.assertTrue(error_500.message in resp[0].data)
 
   def ErrorHandlerCanProcessCustomError(self):
     """Test error handler can process custom error."""
