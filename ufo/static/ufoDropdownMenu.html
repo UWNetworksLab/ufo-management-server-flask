@@ -20,12 +20,6 @@
     .floatToTheRight {
       float: right;
     }
-    #spinner {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
     paper-icon-item {
       cursor: pointer;
     }
@@ -35,7 +29,7 @@
   </style>
   <template>
     <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="dropdownMenuSpinner" active$={{loading}}></paper-spinner>
+      <paper-spinner id="dropdownMenuSpinner" class="fixedPositionSpinner" active$={{loading}}></paper-spinner>
     </template>
     <iron-ajax auto
       url="{{resources.listAdminUrl}}"
