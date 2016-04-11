@@ -11,27 +11,20 @@
       width: 300px;
     }
     .second-div {
-      width: 250px;
+      width: 350px;
     }
     .third-div {
       width: 200px;
     }
-    .fourth-div {
-      width: 100px;
-    }
     .topLineButton {
-      opacity: 0.0;
       color: #25CFB9;
       text-transform: none;
     }
+    .leftTextAlign {
+      text-align: left;
+    }
     paper-item, paper-icon-item {
       border-top: 1px solid #e5e5e5;
-    }
-    paper-icon-item:hover {
-      @apply(--paper-item-focused);
-    }
-    paper-icon-item:hover .topLineButton {
-      opacity: 1.0;
     }
   </style>
   <!-- TODO(eholder): Figure out how to make hover work with focused. -->
@@ -54,19 +47,17 @@
           <template is="dom-if" if="{{resources.isUser}}">
             <div class="first-div"><strong>{{_limitCharacters(item.name)}}</strong></div>
             <div class="second-div">{{_limitCharacters(item.email)}}</div>
-            <div class="third-div" id="isEnabledDisabledText">{{item.access}}</div>
-            <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="fourth-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
+            <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="third-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
               <input type="hidden" name="user_id" value="{{item.id}}">
               <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-              <paper-button on-tap="submitRevokeForm" class="topLineButton" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
+              <paper-button on-tap="submitRevokeForm" class="topLineButton leftTextAlign" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
             </form>
             <user-details-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></user-details-dialog>
           </template>
           <template is="dom-if" if="{{resources.isProxyServer}}">
             <div class="first-div"><strong>{{item.name}}</strong></div>
             <div class="second-div">{{item.ip_address}}</div>
-            <div class="third-div"></div>
-            <paper-button on-tap="openServerEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
+            <paper-button on-tap="openServerEdit" class="third-div topLineButton leftTextAlign"><strong>{{resources.editText}}</strong></paper-button>
             <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
           </template>
           <paper-icon-button icon="expand-more" title="{{resources.detailsExpandText}}" id="{{resources.detailsButtonId}}"></paper-icon-button>
@@ -108,7 +99,7 @@
         },
         characterLimit: {
           type: Number,
-          value: 25,
+          value: 40,
         },
         autoGet: {
           type: Boolean,

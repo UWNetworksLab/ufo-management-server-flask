@@ -13,13 +13,10 @@
       min-width: 300px;
     }
     .second-div {
-      min-width: 250px;
+      min-width: 350px;
     }
     .third-div {
       min-width: 200px;
-    }
-    .fourth-div {
-      min-width: 100px;
     }
     .topLineButton {
       color: #25CFB9;
@@ -55,8 +52,7 @@
           <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.ip_address}}</div>
-          <div class="third-div"></div>
-          <paper-button on-tap="switchToServerEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
+          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
           <paper-icon-button icon="close" title="{{resources.detailsCloseText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
