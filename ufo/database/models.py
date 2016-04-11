@@ -33,6 +33,7 @@ class Model(ufo.db.Model):
   Most method implementations are taken from
   https://github.com/sloria/cookiecutter-flask"""
   __abstract__ = True
+  id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
   def update(self, commit=True, **kwargs):
     """Update the given entity by setting the given attributes and saving.
@@ -103,7 +104,7 @@ class Model(ufo.db.Model):
     Returns:
       A list of entities in dictionary form from the database.
     """
-    return cls.make_items_into_list_of_dict(cls.query.all())
+    return cls.make_items_into_list_of_dict(cls.query.order_by(cls.id).all())
 
   @classmethod
   def search(cls, search_text):
