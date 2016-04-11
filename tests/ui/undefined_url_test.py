@@ -12,8 +12,6 @@ from werkzeug import exceptions
 
 from base_test import BaseTest
 from error_page import ErrorPage
-import time
-
 
 class UndefinedURLTest(BaseTest):
   """Tests for undefined URL."""
@@ -30,15 +28,18 @@ class UndefinedURLTest(BaseTest):
     """Test that error page is shown for undefined URL."""
     self.driver.get(self.args.server_url + '/foobar123')
 
+    error_code_element = self.driver.find_element(
+        *ErrorPage.ERROR_CODE_ELEMENT)
+    error_description_element = self.driver.find_element(
+        *ErrorPage.ERROR_DESCRIPTION_ELEMENT)
+
     error_404 = exceptions.NotFound()
 
-    self.assertTrue(EC.text_to_be_present_in_element(
-        ErrorPage.ERROR_CODE_ELEMENT,
-        'Error ' + str(error_404.code)))
+    self.assertEquals('Error ' + str(error_404.code),
+                      error_code_element.text)
 
-    self.assertTrue(EC.text_to_be_present_in_element(
-        ErrorPage.ERROR_DESCRIPTION_ELEMENT,
-        error_404.description))
+    self.assertEquals(error_404.description.replace('  ', ' '),
+                      error_description_element.text.encode('ascii'))
 
 
 if __name__ == '__main__':

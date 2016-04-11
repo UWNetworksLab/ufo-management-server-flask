@@ -9,6 +9,7 @@ from login_page_test import LoginPageTest
 from search_page_test import SearchPageTest
 from settings_component_test import SettingsComponentTest
 from setup_page_test import SetupPageTest
+from undefined_url_test import UndefinedURLTest
 
 
 def _ParseArgs():
@@ -53,5 +54,6 @@ SUITE.addTest(MakeSuite(LoginPageTest))
 SUITE.addTest(MakeSuite(SearchPageTest))
 SUITE.addTest(MakeSuite(SettingsComponentTest))
 SUITE.addTest(MakeSuite(SetupPageTest))
+SUITE.addTest(MakeSuite(UndefinedURLTest))
 
 unittest.TextTestRunner().run(SUITE)
