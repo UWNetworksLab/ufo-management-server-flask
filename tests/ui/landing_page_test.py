@@ -200,8 +200,6 @@ class LandingPageTest(BaseTest):
         test_user_item, should_use_listbox)
 
     # Get the initial enable/disable text.
-    initial_disabled_enabled_text = container_element.find_element(
-        *LandingPage.USER_DISABLE_ENABLE_TEXT).text
     initial_disabled_enabled_button_text = container_element.find_element(
         *LandingPage.USER_DISABLE_ENABLE_BUTTON).text
 
@@ -221,12 +219,8 @@ class LandingPageTest(BaseTest):
         test_user_item, should_use_listbox)
 
     # Check the enable/disable text changed.
-    changed_disabled_enabled_text = container_element.find_element(
-        *LandingPage.USER_DISABLE_ENABLE_TEXT).text
     changed_disabled_enabled_button_text = container_element.find_element(
         *LandingPage.USER_DISABLE_ENABLE_BUTTON).text
-    self.assertNotEquals(initial_disabled_enabled_text,
-                         changed_disabled_enabled_text)
     self.assertNotEquals(initial_disabled_enabled_button_text,
                          changed_disabled_enabled_button_text)
 
@@ -245,16 +239,10 @@ class LandingPageTest(BaseTest):
         test_user_item, should_use_listbox)
 
     # Check the enable/disable text changed back to the initial.
-    final_disabled_enabled_text = container_element.find_element(
-        *LandingPage.USER_DISABLE_ENABLE_TEXT).text
     final_disabled_enabled_button_text = container_element.find_element(
         *LandingPage.USER_DISABLE_ENABLE_BUTTON).text
-    self.assertNotEquals(changed_disabled_enabled_text,
-                         final_disabled_enabled_text)
     self.assertNotEquals(changed_disabled_enabled_button_text,
                          final_disabled_enabled_button_text)
-    self.assertEquals(initial_disabled_enabled_text,
-                      final_disabled_enabled_text)
     self.assertEquals(initial_disabled_enabled_button_text,
                       final_disabled_enabled_button_text)
 
