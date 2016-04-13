@@ -19,12 +19,21 @@
     .topLineButton {
       color: #25CFB9;
       text-transform: none;
+      margin: 0;
+      padding: 0;
     }
     .leftTextAlign {
       text-align: left;
     }
+    .noDisplay {
+      opacity: 0.0;
+      cursor: default;
+    }
     paper-item, paper-icon-item {
       border-top: 1px solid #e5e5e5;
+    }
+    #columnHeader {
+      border-top: none;
     }
   </style>
   <!-- TODO(eholder): Figure out how to make hover work with focused. -->
@@ -41,12 +50,19 @@
       last-response="{{ajaxResponse}}">
     </iron-ajax>
     <paper-listbox>
+      <paper-icon-item id="columnHeader" class="horizontal layout">
+        <iron-icon src="{{resources.itemIconUrl}}" class="noDisplay" item-icon></iron-icon>
+        <div class="first-div"><strong>{{resources.columnHeader1}}</strong></div>
+        <div class="second-div flex"><strong>{{resources.columnHeader2}}</strong></div>
+        <div class="third-div"><strong>{{resources.columnHeader3}}</strong></div>
+        <paper-icon-button icon="expand-more" class="noDisplay"></paper-icon-button>
+      </paper-icon-item>
       <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
-        <paper-icon-item id="{{item.name}}" class="horizontal layout around-justified" on-tap="openDetailsDialog">
+        <paper-icon-item id="{{item.name}}" class="horizontal layout" on-tap="openDetailsDialog">
           <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
           <template is="dom-if" if="{{resources.isUser}}">
             <div class="first-div"><strong>{{_limitCharacters(item.name)}}</strong></div>
-            <div class="second-div">{{_limitCharacters(item.email)}}</div>
+            <div class="second-div flex">{{_limitCharacters(item.email)}}</div>
             <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="third-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
               <input type="hidden" name="user_id" value="{{item.id}}">
               <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
@@ -56,7 +72,7 @@
           </template>
           <template is="dom-if" if="{{resources.isProxyServer}}">
             <div class="first-div"><strong>{{item.name}}</strong></div>
-            <div class="second-div">{{item.ip_address}}</div>
+            <div class="second-div flex">{{item.ip_address}}</div>
             <paper-button on-tap="openServerEdit" class="third-div topLineButton leftTextAlign"><strong>{{resources.editText}}</strong></paper-button>
             <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
           </template>
