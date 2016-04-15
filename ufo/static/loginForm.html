@@ -19,8 +19,8 @@
   </style>
   <template>
     <form id="loginForm" method="POST">
-      <paper-input label="{{resources.usernameLabel}}" id="username" name="username"></paper-input>
-      <paper-input type="password" label="{{resources.passwordLabel}}" id="password" name="password"></paper-input>
+      <paper-input label="{{resources.usernameLabel}}" id="username" name="username" required  on-keypress="submitIfEnter"></paper-input>
+      <paper-input type="password" label="{{resources.passwordLabel}}" id="password" name="password" required on-keypress="submitIfEnter"></paper-input>
 
       <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
     </form>
@@ -44,6 +44,11 @@
       },
       submitLoginForm: function() {
         this.querySelector('#loginForm').submit();
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitLoginForm();
+        }
       },
     });
   </script>

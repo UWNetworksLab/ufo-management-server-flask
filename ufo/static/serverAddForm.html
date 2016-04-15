@@ -20,14 +20,14 @@
         <paper-spinner id="serverSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <form is="iron-form" id="serverAddForm" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-        <paper-input label="{{resources.ipLabel}}" type="text" id="ipInput" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}">{{resources.ip_address}}</paper-input>
-        <paper-input label="{{resources.nameLabel}}" type="text" id="nameInput" name="name" required>{{resources.name}}</paper-input>
+        <paper-input label="{{resources.ipLabel}}" type="text" id="ipInput" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" on-keypress="submitIfEnter">{{resources.ip_address}}</paper-input>
+        <paper-input label="{{resources.nameLabel}}" type="text" id="nameInput" name="name" required on-keypress="submitIfEnter">{{resources.name}}</paper-input>
         <!-- TODO add the ability to upload files -->
-        <ufo-textarea label="{{resources.privateKeyLabel}}" id="privateKeyInput" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="{{resources.private_key}}"></ufo-textarea>
+        <ufo-textarea label="{{resources.privateKeyLabel}}" id="privateKeyInput" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="{{resources.private_key}}" on-keypress="submitIfEnter"></ufo-textarea>
         <br>
         <p>{{resources.privateKeyText}}</p>
 
-        <paper-input label="{{resources.publicKeyLabel}}" type="text" id="publicKeyInput" name="public_key" required pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}">{{resources.public_key}}</paper-input>
+        <paper-input label="{{resources.publicKeyLabel}}" type="text" id="publicKeyInput" name="public_key" required pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}" on-keypress="submitIfEnter">{{resources.public_key}}</paper-input>
         <br>
         <p>{{resources.publicKeyText}}</p>
         <p>{{resources.rsaText}}</p>
@@ -97,6 +97,11 @@
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitPostForm();
+        }
       },
     });
   </script>

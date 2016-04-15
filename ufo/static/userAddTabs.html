@@ -40,11 +40,11 @@
                 <paper-spinner id="manualAddSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
               </template>
               <form is="iron-form" id="{{item.id}}" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-                <paper-input label="{{item.label1}}" type="textbox" name="name" value="" id="manualUserName" required>
+                <paper-input label="{{item.label1}}" type="textbox" name="name" value="" id="manualUserName" required on-keypress="submitIfEnter">
                 </paper-input>
                 <paper-input label="{{item.label2}}" type="email" name="email" value="" id="manualUserEmail" required
                 pattern="{{resources.regexes.emailValidationPattern}}"
-                error-message="{{resources.regexes.emailValidationError}}">
+                error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter">
                 </paper-input>
                 <input type="hidden" name="users" id="manualUserInput" value="">
                 <input type="hidden" name="manual" value="true">
@@ -144,6 +144,11 @@
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitPostForm();
+        }
       },
     });
   </script>

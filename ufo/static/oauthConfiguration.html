@@ -69,11 +69,11 @@
 
       <!-- TODO make this form be more useful -->
       <form id="oauth-configuration-form" method="post" action="{{resources.setup_url}}">
-        <paper-input label="Domain" name="domain"></paper-input>
-        <paper-input label="OAuth Code" name="oauth_code"></paper-input>
+        <paper-input label="Domain" name="domain" required on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="OAuth Code" name="oauth_code" required on-keypress="submitIfEnter"></paper-input>
         <template is="dom-if" if="{{!configuration.config.is_configured}}">
           <paper-input label="{{resources.adminUsernameLabel}}" name="admin_username"></paper-input>
-          <paper-input label="{{resources.adminPasswordlabel}}" name="admin_password"></paper-input>
+          <paper-input label="{{resources.adminPasswordlabel}}" name="admin_password" on-keypress="submitIfEnter"></paper-input>
         </template>
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
         <div class="buttons">
@@ -102,6 +102,11 @@
       },
       isDomainConfigured: function(config) {
         return config.domain && config.credentials;
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          submitByFormId('oauth-configuration-form');
+        }
       },
     });
   </script>
