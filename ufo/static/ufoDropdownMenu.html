@@ -81,8 +81,8 @@
         <p id="addAdminResponseStatus">{{responseStatus}}</p>
       </template>
       <form is="iron-form" id="addAdminForm" method="post" action="{{resources.addAdminUrl}}" on-iron-form-response="parseAddAdminResponse" on-iron-form-presubmit="enableSpinner">
-        <paper-input label="{{resources.adminUsernameLabel}}" id="paperAdminUsername" name="paperUsername"></paper-input>
-        <paper-input label="{{resources.adminPasswordlabel}}" id="paperAdminPassword" name="paperPassword"></paper-input>
+        <paper-input label="{{resources.adminUsernameLabel}}" id="paperAdminUsername" name="paperUsername"required on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="{{resources.adminPasswordlabel}}" id="paperAdminPassword" name="paperPassword" required on-keypress="submitIfEnter"></paper-input>
         <input type="hidden" name="admin_username" id="jsonUsername" value="" />
         <input type="hidden" name="admin_password" id="jsonPassword" value="" />
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
@@ -349,6 +349,11 @@
           }
         }
         return found;
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitAddAdminForm();
+        }
       },
     });
   </script>
