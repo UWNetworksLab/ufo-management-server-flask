@@ -1,5 +1,6 @@
 """Test key distributor module functionality."""
 
+from Crypto.PublicKey import RSA
 from mock import patch
 
 from ufo import base_test
@@ -22,10 +23,14 @@ class KeyDistributorTest(base_test.BaseTest):
 
     key_string = key_distributor.KeyDistributor().make_key_string()
 
-    self.assertEquals(3, key_string.count('END PUBLIC KEY'))
+    # There should be no PEM-format keys in an authorized_keys file
+    self.assertEquals(0, key_string.count('END PUBLIC KEY'))
+
     for fake_user in fake_users:
       self.assertIn(fake_user.email, key_string)
-      self.assertIn(fake_user.public_key, key_string)
+      self.assertIn(
+          RSA.importKey(fake_user.public_key).exportKey('OpenSSH'),
+          key_string)
 
   def testRevokedUsersAreNotInKeyString(self):
     """Test revoked users are not in key string.."""

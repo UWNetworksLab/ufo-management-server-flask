@@ -1,5 +1,6 @@
 """The module for distributing user keys to proxy servers."""
 
+from Crypto.PublicKey import RSA
 from rq import Queue
 
 import ufo
@@ -29,10 +30,15 @@ class KeyDistributor(object):
     ssh_starting_portion = 'ssh-rsa'
     endline = '\n'
     for user in users:
-      if not user.is_key_revoked:
-        user_string = (ssh_starting_portion + ' ' + user.public_key + ' ' +
-                       user.email + endline)
-        key_string += user_string
+      if user.is_key_revoked:
+        continue
+
+      public_key = RSA.importKey(user.public_key)
+      public_key_string = public_key.exportKey('OpenSSH')
+
+      user_string = (ssh_starting_portion + ' ' + public_key_string + ' ' +
+                     user.email + endline)
+      key_string += user_string
 
     return key_string
 
