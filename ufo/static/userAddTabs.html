@@ -21,12 +21,6 @@
       margin-bottom: 24px;
       padding: 0px 24px;
     }
-    #spinner {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
   </style>
   <template>
     <!--Portion for finding users via group, individual, domain, or manual
@@ -43,14 +37,14 @@
           <template is="dom-if" if="{{item.isManual}}">
             <div>
               <template is="dom-if" if="{{loading}}">
-                <paper-spinner id="manualAddSpinner" active$={{loading}}></paper-spinner>
+                <paper-spinner id="manualAddSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
               </template>
               <form is="iron-form" id="{{item.id}}" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-                <paper-input label="{{item.label1}}" type="textbox" name="name" value="" id="manualUserName" required>
+                <paper-input label="{{item.label1}}" type="textbox" name="name" value="" id="manualUserName" required on-keypress="submitIfEnter">
                 </paper-input>
                 <paper-input label="{{item.label2}}" type="email" name="email" value="" id="manualUserEmail" required
-                auto-validate pattern="{{resources.regexes.emailValidationPattern}}"
-                error-message="{{resources.regexes.emailValidationError}}">
+                pattern="{{resources.regexes.emailValidationPattern}}"
+                error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter">
                 </paper-input>
                 <input type="hidden" name="users" id="manualUserInput" value="">
                 <input type="hidden" name="manual" value="true">
@@ -68,7 +62,7 @@
             </div>
           </template>
           <template is="dom-if" if="{{!item.isManual}}">
-            <user-add-form resources="{{resources}}" add-flow-text-obj="{{item}}"></user-add-form>
+            <user-add-form resources="{{resources}}" add-flow-text-obj="{{item}}" should-display-with-dialog$="[[shouldDisplayWithDialog]]"></user-add-form>
           </template>
         </template>
       </iron-pages>
@@ -87,6 +81,11 @@
           type: Number,
         },
         loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        shouldDisplayWithDialog: {
           type: Boolean,
           value: false,
           notify: true,
@@ -145,6 +144,11 @@
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitPostForm();
+        }
       },
     });
   </script>

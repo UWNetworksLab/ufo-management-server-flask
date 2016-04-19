@@ -76,6 +76,10 @@ class LoginPage(UfOPageLayout):
       server_url: The base url for the server, such as http://0.0.0.0:5000.
     """
     self.driver.get(server_url + flask.url_for('landing'))
+    login_url = server_url + flask.url_for('login')
+    if login_url == self.driver.current_url:
+      # We were already logged out so don't need to do anything.
+      return
     WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((LoginPage.OPEN_MENU_BUTTON))))
     dropdown_button = self.driver.find_element(*LoginPage.OPEN_MENU_BUTTON)

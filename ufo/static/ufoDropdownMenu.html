@@ -20,12 +20,6 @@
     .floatToTheRight {
       float: right;
     }
-    #spinner {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
     paper-icon-item {
       cursor: pointer;
     }
@@ -35,7 +29,7 @@
   </style>
   <template>
     <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="dropdownMenuSpinner" active$={{loading}}></paper-spinner>
+      <paper-spinner id="dropdownMenuSpinner" class="fixedPositionSpinner" active$={{loading}}></paper-spinner>
     </template>
     <iron-ajax auto
       url="{{resources.listAdminUrl}}"
@@ -47,6 +41,9 @@
     </iron-ajax>
 
     <paper-dialog class="dropdown-content" id="ufoDropdownMenu" with-backdrop>
+      <paper-button class="floatToTheRight" on-tap="exitAll">
+        <iron-icon icon="close" item-icon></iron-icon>
+      </paper-button>
       <paper-listbox>
         <paper-icon-item class="dropdown-button" id="addAdminButton" on-tap="flipToAddAdminFlow">
           <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
@@ -77,12 +74,15 @@
       <paper-button on-tap="flipToDropdownFlowFromAddAdmin">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
+      <paper-button class="floatToTheRight" on-tap="exitAll">
+        <iron-icon icon="close" item-icon></iron-icon>
+      </paper-button>
       <template is="dom-if" if="{{showResponseStatus}}">
         <p id="addAdminResponseStatus">{{responseStatus}}</p>
       </template>
       <form is="iron-form" id="addAdminForm" method="post" action="{{resources.addAdminUrl}}" on-iron-form-response="parseAddAdminResponse" on-iron-form-presubmit="enableSpinner">
-        <paper-input label="{{resources.adminUsernameLabel}}" id="paperAdminUsername" name="paperUsername"></paper-input>
-        <paper-input label="{{resources.adminPasswordlabel}}" id="paperAdminPassword" name="paperPassword"></paper-input>
+        <paper-input label="{{resources.adminUsernameLabel}}" id="paperAdminUsername" name="paperUsername"required on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="{{resources.adminPasswordlabel}}" id="paperAdminPassword" name="paperPassword" required on-keypress="submitIfEnter"></paper-input>
         <input type="hidden" name="admin_username" id="jsonUsername" value="" />
         <input type="hidden" name="admin_password" id="jsonPassword" value="" />
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
@@ -100,6 +100,9 @@
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
       {{resources.removeAdminInstructions}}
+      <paper-button class="floatToTheRight" on-tap="exitAll">
+        <iron-icon icon="close" item-icon></iron-icon>
+      </paper-button>
       <paper-dialog-scrollable>
         <form is="iron-form" id="removeAdminForm" method="post" action="{{resources.removeAdminUrl}}" on-iron-form-response="parseRemoveAdminResponse" on-iron-form-presubmit="enableSpinner">
           <paper-menu selected="{{selected}}" id="menuOfAdmins">
@@ -332,6 +335,10 @@
         }
         return false;
       },
+      exitAll: function(e, details) {
+        this.closeMenu();
+        this.closeAdminDialog();
+      },
       _findUsernameInAdminList: function(admins, username) {
         var found = false;
         var i = 0;
@@ -342,6 +349,11 @@
           }
         }
         return found;
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitAddAdminForm();
+        }
       },
     });
   </script>

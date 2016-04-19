@@ -11,22 +11,16 @@
     paper-listbox {
       background: #EEE;
     }
-    #spinner {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
   </style>
   <template>
     <div>
       <template is="dom-if" if="{{loading}}">
-        <paper-spinner id="spinner" active$={{loading}}></paper-spinner>
+        <paper-spinner id="spinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <template is="dom-if" if="{{showInputFields}}">
         <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinner">
           <template is="dom-if" if="[[!idMatches(addFlowTextObj.id, 'domainAdd')]]">
-            <paper-input label="{{addFlowTextObj.label1}}" type="textbox" name="{{addFlowTextObj.name1}}" auto-validate pattern="{{resources.regexes.keyLookupPattern}}" error-message="{{resources.regexes.keyLookupError}}"></paper-input>
+            <paper-input label="{{addFlowTextObj.label1}}" type="textbox" name="{{addFlowTextObj.name1}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="{{resources.regexes.keyLookupError}}"></paper-input>
             <br>
             <p>{{addFlowTextObj.definition1}}</p>
             <br>
@@ -38,7 +32,34 @@
         </form>
       </template>
       <template is="dom-if" if="{{!showInputFields}}">
-        <paper-dialog-scrollable>
+        <template is="dom-if" if="{{shouldDisplayWithDialog}}">
+          <paper-dialog-scrollable>
+            <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
+              <paper-listbox>
+                <template is="dom-repeat" items="[[lastResponse.directory_users]]">
+                  <paper-item id="{{item.name}}" class="horizontal layout">
+                    <paper-checkbox name="checkboxes" value="{{item}}"></paper-checkbox>
+                    <span class="flex"><strong>{{item.name}}</strong></span>
+                    <span>{{item.email}}</span>
+                  </paper-item>
+                </template>
+              </paper-listbox>
+              <input type="hidden" id="hiddenUsers" name="users" value="{{usersJson}}">
+              <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            </form>
+          </paper-dialog-scrollable>
+          <script>
+          var modal = document.getElementById('userModal');
+          if (modal) {
+            var scrollables = modal.getElementsByTagName(
+              'paper-dialog-scrollable');
+            for (var i in scrollables) {
+              scrollables[i].dialogElement = modal;
+            }
+          }
+          </script>
+        </template>
+        <template is="dom-if" if="{{!shouldDisplayWithDialog}}">
           <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
             <paper-listbox>
               <template is="dom-repeat" items="[[lastResponse.directory_users]]">
@@ -49,21 +70,12 @@
                 </paper-item>
               </template>
             </paper-listbox>
+            <br>
             <input type="hidden" id="hiddenUsers" name="users" value="{{usersJson}}">
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
           </form>
-        </paper-dialog-scrollable>
+        </template>
         <paper-button on-tap="resetForms" class="anchor-button"><strong>{{resources.lookAgainText}}</strong></paper-button>
-        <script>
-        var modal = document.getElementById('userModal');
-        if (modal) {
-          var scrollables = modal.getElementsByTagName(
-            'paper-dialog-scrollable');
-          for (var i in scrollables) {
-            scrollables[i].dialogElement = modal;
-          }
-        }
-        </script>
       </template>
     </div>
     <div class="buttons">
@@ -105,6 +117,11 @@
           notify: true,
         },
         loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        shouldDisplayWithDialog: {
           type: Boolean,
           value: false,
           notify: true,

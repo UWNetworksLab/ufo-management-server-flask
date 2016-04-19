@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block body %}
   <div class="horizontal center-justified layout">
-    <paper-card heading="Error">
+    <paper-card>
       <div>
-        <p>{{ error.code }} - {{ error.name }}</p>
-        <p>{{ error.description }}</p>
+        <p id="errorCode">Error {{ error.code }}</p>
+        <p id="errorDescription">{{ error.description }}</p>
       </div>
     </paper-card>
   </div>

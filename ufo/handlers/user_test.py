@@ -309,6 +309,17 @@ class UserTest(base_test.BaseTest):
     self.assertEquals(created_user.private_key,
                       invite_code['networkData']['pass'])
 
+  def testUserGetInviteCodeWithoutProxy(self):
+    """Test the user get invite code does not throw an error."""
+    created_user = self._CreateAndSaveFakeUser()
+
+    get_data = {'user_id': created_user.id}
+    resp = self.client.get(flask.url_for('user_get_invite_code'),
+                           query_string=get_data)
+    invite_code = json.loads(resp.data)['invite_code']
+
+    self.assertFalse(invite_code)
+
   def testUserToggleRevokedHandler(self):
     """Test toggle revoked handler changes the revoked status for a user."""
     user = self._CreateAndSaveFakeUser()

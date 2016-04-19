@@ -234,8 +234,12 @@ def user_get_invite_code():
   user_id = json.loads(flask.request.args.get('user_id'))
   user = models.User.query.get_or_404(user_id)
   invite_code = _make_invite_code(user)
-  invite_url = INVITE_CODE_URL_PREFIX + invite_code
-  code_json = json.dumps(({'invite_code': invite_url}))
+  code_json = None
+  if invite_code is None:
+    code_json = json.dumps(({'invite_code': False}))
+  else:
+    invite_url = INVITE_CODE_URL_PREFIX + invite_code
+    code_json = json.dumps(({'invite_code': invite_url}))
   return flask.Response(code_json, mimetype='application/json')
 
 @ufo.app.route('/user/toggleRevoked', methods=['POST'])

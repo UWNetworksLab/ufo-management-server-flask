@@ -13,13 +13,10 @@
       min-width: 300px;
     }
     .second-div {
-      min-width: 250px;
+      min-width: 350px;
     }
     .third-div {
       min-width: 200px;
-    }
-    .fourth-div {
-      min-width: 100px;
     }
     .topLineButton {
       color: #25CFB9;
@@ -49,30 +46,29 @@
     }
   </style>
   <template>
-    <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="serverDetailsSpinner" active$={{loading}}></paper-spinner>
-    </template>
     <paper-dialog id="{{resources.detailsOverlayId}}" with-backdrop>
       <paper-listbox>
         <paper-icon-item id="topBar" class="horizontal center-justified layout">
           <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.ip_address}}</div>
-          <div class="third-div"></div>
-          <paper-button on-tap="switchToServerEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
+          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
           <paper-icon-button icon="close" title="{{resources.detailsCloseText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="serverDetailsSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
+      </template>
       <div id="rowHolder" class="vertical center-justified layout">
         <form is="iron-form" id="serverEditForm" method="post" action="{{resources.editUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
-          <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required auto-validate pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]"></paper-input>
-          <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]"></paper-input>
+          <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter"></paper-input>
+          <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter"></paper-input>
           <!-- TODO add the ability to upload files -->
-          <ufo-textarea class="editInputFields" disabled label="{{resources.privateKeyLabel}}" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" auto-validate pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="[[item.private_key]]"></ufo-textarea>
+          <ufo-textarea class="editInputFields" disabled label="{{resources.privateKeyLabel}}" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="[[item.private_key]]" on-keypress="submitIfEnter"></ufo-textarea>
           <br>
           <p class="editElements hideElement">{{resources.privateKeyText}}</p>
 
-          <paper-input class="editInputFields" disabled label="{{resources.publicKeyLabel}}" type="text" name="public_key" required auto-validate pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}" value="[[item.public_key]]"></paper-input>
+          <paper-input class="editInputFields" disabled label="{{resources.publicKeyLabel}}" type="text" name="public_key" required pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}" value="[[item.public_key]]" on-keypress="submitIfEnter"></paper-input>
           <br>
           <p class="editElements hideElement">{{resources.publicKeyText}}</p>
           <p class="editElements hideElement">{{resources.rsaText}}</p>
@@ -211,6 +207,11 @@
             editElements[i].className = editElements[i].className.replace(
               'hideElement', 'showElement');
           }
+        }
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitEditForm();
         }
       },
     });

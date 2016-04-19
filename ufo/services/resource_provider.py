@@ -155,6 +155,9 @@ def _get_proxy_server_resources():
     'deleteUrl': flask.url_for('proxyserver_delete'),
     'seeAllText': 'See All Servers',
     'titleText': 'Servers',
+    'columnHeader1': 'Name',
+    'columnHeader2': 'IP Address',
+    'columnHeader3': 'Modify',
     'itemIconUrl': flask.url_for('static', filename='img/server.svg'),
     'isProxyServer': True,
     'addButtonId': 'addServerButton',
@@ -220,6 +223,10 @@ def _get_user_resources():
     'detailsCloseText': 'Close',
     'detailsButtonId': 'userDetailsButton',
     'detailsOverlayId': 'userDetailsOverlay',
+    'inviteCodeNeedServerText': ('Invite codes aren\'t available without any' +
+                                 ' proxy server configured. Configure a ' +
+                                 'proxy server to have an invite code ' +
+                                 'created automatically.'),
     'inviteCodeLabel': 'Invite Code',
     'privateKeyLabel': 'SSH Private Key',
     'publicKeyLabel': 'SSH Public Key',
@@ -228,6 +235,9 @@ def _get_user_resources():
     'deleteLabel': 'Delete User',
     'seeAllText': 'See All Users',
     'titleText': 'Users',
+    'columnHeader1': 'Name',
+    'columnHeader2': 'Email',
+    'columnHeader3': 'Access',
     'itemIconUrl': flask.url_for('static', filename='img/user.svg'),
     'isUser': True,
     'addButtonId': 'addUserButton',
