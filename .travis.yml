@@ -7,7 +7,6 @@ install:
  - pip install -r requirements.txt
  - python setup_database.py
  - npm install
- - ./vulcanize.sh travis
 # command to run tests
 script:
  - python -m unittest discover -p "*_test.py"
