@@ -8,6 +8,9 @@
 ROOT_DIR="$(cd "$(dirname $0)"; pwd)";
 STATIC_DIR="${ROOT_DIR}/ufo/static/"
 
+VULCANIZE_COMMAND="${ROOT_DIR}/node_modules/.bin/vulcanize"
+BOWER_COMMAND="${ROOT_DIR}/node_modules/.bin/bower"
+
 BOWER_OPTIONS="--allow-root --config.interactive=false"
 
 TEMP_FILE_LIST="temp_file_for_vulcanize_list"
@@ -42,14 +45,9 @@ function runInStaticDirAndAssertCmd ()
   fi
 }
 
-function installVulcanize ()
-{
-  runAndAssertCmd "sudo npm install -g vulcanize@1.14.8"
-}
-
 function updateBowerPackages ()
 {
-  runAndAssertCmd "bower install $BOWER_OPTIONS"
+  runAndAssertCmd "${BOWER_COMMAND} install $BOWER_OPTIONS"
 }
 
 function findHtmlFilesToVulcanize ()
@@ -88,17 +86,16 @@ function vulcanizeSingleFileForImports ()
   runInStaticDirAndAssertCmd "rm -fr $VULCANIZED_HTML_FILE"
   # This finally vulcanizes all the import statements into one flat file,
   # $VULCANIZED_HTML_FILE, with comments removed and scripts inlined.
-  runInStaticDirAndAssertCmd "vulcanize $HTML_FILE_TO_VULCANIZE > $VULCANIZED_HTML_FILE --strip-comments --inline-scripts"
+  runInStaticDirAndAssertCmd "${VULCANIZE_COMMAND} $HTML_FILE_TO_VULCANIZE > $VULCANIZED_HTML_FILE --strip-comments --inline-scripts"
   runInStaticDirAndAssertCmd "rm -fr $HTML_FILE_TO_VULCANIZE"
 }
 
 function printHelp ()
 {
   echo
-  echo "Usage: vulcanize.sh [help|--help|travis]"
+  echo "Usage: vulcanize.sh [help|--help]"
   echo
-  echo "  help, --help   - Prints this help text."
-  echo "  travis         - Creates the vulcanized file in Travis CI."
+  echo "  help, --help, .* - Prints this help text."
   echo
   echo "If no parameters are specified, this generates a vulcanized html file "
   echo "of bower packages and custom elements which were found under "
@@ -110,14 +107,7 @@ function printHelp ()
 }
 
 
-if [ "$#" == 0 ] || [ ! "$1" == 'help' && ! "$1" == '--help' ]; then
-  installVulcanize
-  updateBowerPackages
-  findHtmlFilesToVulcanize
-  createSingleHtmlFileToVulcanize
-  vulcanizeSingleFileForImports
-elif [ "$1" == 'travis' ]; then
-  runAndAssertCmd "npm install -g vulcanize@1.14.8"
+if [ "$#" == 0 ]; then
   updateBowerPackages
   findHtmlFilesToVulcanize
   createSingleHtmlFileToVulcanize
