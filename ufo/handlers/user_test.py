@@ -305,7 +305,8 @@ class UserTest(base_test.BaseTest):
 
     self.assertEquals('Cloud', invite_code['networkName'])
     self.assertEquals(fake_ip, invite_code['networkData']['host'])
-    self.assertEquals(created_user.email, invite_code['networkData']['user'])
+    self.assertEquals(created_user.email.split("@")[0],
+                      invite_code['networkData']['user'])
     self.assertEquals(created_user.private_key,
                       invite_code['networkData']['pass'])
 
