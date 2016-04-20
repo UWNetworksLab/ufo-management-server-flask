@@ -121,7 +121,7 @@ def _make_invite_code(user):
       'networkName': 'Cloud',
       'networkData': {
         'host': ip,
-        'user': user.email,
+        'user': user.email.split("@")[0],
         'pass': user.private_key,
       },
   }
