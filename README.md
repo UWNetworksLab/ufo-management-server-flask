@@ -43,16 +43,14 @@ To setup development of the Management Server locally, please perform the follow
 
 1. Ensure you already have the prerequisites above installed and reachable via command line/terminal.
 1. In a terminal, navigate to the directory where you would like to download UfO.
-  E.g., `cd ~/UfO`
+  * E.g., `cd ~/UfO`
 1. Clone the UfO repository:
-  `git clone https://github.com/uProxy/ufo-management-server-flask.git`
-  or
-  `git clone git@github.com:uProxy/ufo-management-server-flask.git` if you have your ssh access to GitHub set up (useful if you use 2-step auth for GitHub, which you should do).
+  * `git clone https://github.com/uProxy/ufo-management-server-flask.git` or
+  * `git clone git@github.com:uProxy/ufo-management-server-flask.git` if you have your ssh access to GitHub set up (useful if you use 2-step auth for GitHub, which you should do).
 1. Install virtualenv for running a virtual environment during development:
-
 1. Setup a virtual environment:
-  `virtualenv venv`
-  `. venv/bin/activate`
+  * `virtualenv venv`
+  * `. venv/bin/activate`
 1. Install the database library: `sudo apt-get install libpq-dev`
 1. Install the necessary pip dependencies: `pip install -r requirements.txt`
 1. Setup a local database: `python setup_database.py`
@@ -109,15 +107,21 @@ To run the unit tests locally, execute the following command:
 Our functional tests are primarily intended to automate the Quality Assurance (QA) process by checking that page loading and navigation works as intended, data entered into forms is processed, and calls to the live database proceed. We built them utilizing the Selenium/WebDriver framework. These tests should run against a live server (deployed either locally or in the cloud) and go through the same flows a typical user would. Please see the existing tests in the tests/ui/ directory for an example.
 
 There is a web_driver.sh file included in source control that will install and setup WebDriver testing in your local environment. To use this, simply execute the following command:
+
 `./web_driver.sh install`
 
 Similarly, this file can be used to execute the WebDriver tests as well. To do so, simply execute the following command:
+
 `./web_driver.sh test server_url_goes_here login_username_goes_here login_password_goes_here`
+
 Here’s an example with realistic values substituted:
+
 `./web_driver.sh test http://0.0.0.0:5000 ethanAdmin test1111`
 
 You can also run the WebDriver tests directly with the following commands:
+
 `cd tests/ui/`
+
 `python ui_test_suite.py --server_url=”server_url_goes_here” --username=”login_username_goes_here” --password=”login_password_goes_here”`
 
 ## Release
@@ -127,12 +131,15 @@ TODO: Figure out and build a versioning system that might notify th eadmin in th
 There are two main channels for releasing the management server: nightly and production. The nightly channel will release automatically on every push to the master branch in github as long as the unit tests pass. The production channel can only be released manually from the production branch. For the remainder of this document, the assumed channel of release is production since it is the only one that requires any interaction.
 
 Heroku Links:
+
 [Nightly](https://dashboard.heroku.com/apps/ufo-nightly/resources)
+
 [Production](https://dashboard.heroku.com/apps/ufo-prod/resources)
 
 ### Requirements for Release
 
 To release a new version of the management server, it must meet several requirements, listed below.
+
 1. All unit tests must pass. These should be executed against the code level which is about to released with no additional code patched. See Unit Testing for how to execute them.
 1. All functional tests must pass. These should be executed against a test instance which is deployed with the code level which is about to release with no additional code patched. See Functional Testing for how to execute them.
 1. All database schema changes must come with a migration to update the most recently released schema (prior to the new release) to the new schema. See Schema Migration for how to create a migration tool.
@@ -194,6 +201,7 @@ The Management Server can be deployed locally or to the cloud. We have setup a o
 #### Create an Instance via Click-to-Deploy
 
 The click to deploy method creates a new app based on a template from github. Heroku will read the configurations already created there and generate a new app for you, with almost no interaction required. Simply follow these steps:
+
 1. Visit the Click-to-Deploy [link](https://dashboard.heroku.com/new?template=https://github.com/uProxy/ufo-management-server-flask/tree/production).
   * TODO(eholder): Create the button on the website.
 1. Login if necessary.
