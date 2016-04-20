@@ -65,13 +65,13 @@ We hope to automate this in the future with some sort of setup script containing
 In the event that our dependencies change, it is recommended to perform the following steps to refresh your local environment.
 
 1. Pull down the latest source code:
-  `git checkout your-branch-name-here`
-  `git pull`
+  * `git checkout your-branch-name-here`
+  * `git pull`
 1. Update your dependencies:
-  `pip install -r requirements.txt`
-  `npm install`
-  `bower install`
-  `./vulcanize.sh`
+  * `pip install -r requirements.txt`
+  * `npm install`
+  * `bower install`
+  * `./vulcanize.sh`
 1. Repeat steps 1-2 for every local branch including master.
 
 ### Implement
