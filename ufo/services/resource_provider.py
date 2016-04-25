@@ -182,7 +182,8 @@ def _get_proxy_server_resources():
     'publicKeyText': (
         'For the public key, you can usually get this value from '
         '/etc/ssh/ssh_host_rsa_key.pub of the proxy server. '
-        'This public key must also be added to /root/.ssh/authorized_keys'),
+        'This public key must also be added to /root/.ssh/authorized_keys '
+        'to authorize the above private key.'),
     'rsaText': ('For now, please be sure to use an RSA key (the text should '
                 'begin with ssh-rsa)'),
   }
