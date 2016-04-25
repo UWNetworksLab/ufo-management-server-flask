@@ -4,6 +4,7 @@
   <title>{% block title %}{% endblock %}</title>
   <link rel="import" href="{{ url_for('static', filename='vulcanized.html') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon"/>
   {% block head %}{% endblock %}
 </head>
 <style is="custom-style">
