@@ -174,13 +174,15 @@ def _get_proxy_server_resources():
     'name': '',
     'private_key': '',
     'public_key': '',
-    'privateKeyText': ('For the private key, please copy the full contents of '
-                       'a private key file with the ability to access a proxy '
-                       'server. The beginning of the file should resemble '
-                       '"-----BEGIN RSA PRIVATE KEY-----".'),
-    'publicKeyText': ('For the hosts public key, you can usually get this '
-                      'value from either /etc/ssh/ssh_host_rsa_key.pub or from'
-                      ' the line in $HOME/.ssh/known_hosts on your server.'),
+    'privateKeyText': (
+        'For the private key, you can usually get this value from '
+        '/etc/ssh/ssh_host_rsa_key of the proxy server. '
+        'The beginning of the file should have:<br>'
+        '"-----BEGIN RSA PRIVATE KEY-----".'),
+    'publicKeyText': (
+        'For the public key, you can usually get this value from '
+        '/etc/ssh/ssh_host_rsa_key.pub of the proxy server. '
+        'This public key must also be added to /root/.ssh/authorized_keys'),
     'rsaText': ('For now, please be sure to use an RSA key (the text should '
                 'begin with ssh-rsa)'),
   }
