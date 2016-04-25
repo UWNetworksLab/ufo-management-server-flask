@@ -177,7 +177,7 @@ def _get_proxy_server_resources():
     'privateKeyText': (
         'For the private key, you can usually get this value from '
         '/etc/ssh/ssh_host_rsa_key of the proxy server. '
-        'The beginning of the file should have:<br>'
+        'The beginning of the file should have: '
         '"-----BEGIN RSA PRIVATE KEY-----".'),
     'publicKeyText': (
         'For the public key, you can usually get this value from '
