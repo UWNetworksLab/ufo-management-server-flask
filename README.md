@@ -9,9 +9,9 @@ Management Server component of uProxy for Orgs (UfO)
 
 ## Feedback
 
-If you would like to provide report a problem or request a new feature with the management server or uProxy overall, feel free to use the issue tracker on [this repo](https://github.com/uProxy/ufo-management-server-flask/issues) or on the [uProxy issue tracker](https://github.com/uProxy/uproxy/issues). Wherever you file, please include as much pertinent information as possible, such as the version of the management server being used, date and time the issue was encountered, steps to reproduce the issue, what browser and platform the issue was encountered upon, etc.
+If you would like to report a problem or request a new feature with the management server or uProxy overall, feel free to use the issue tracker on [this repo](https://github.com/uProxy/ufo-management-server-flask/issues) or on the [uProxy issue tracker](https://github.com/uProxy/uproxy/issues). Wherever you file, please include as much pertinent information as possible, such as the version of the management server being used, date and time the issue was encountered, steps to reproduce the issue, what browser and platform the issue was encountered upon, etc.
 
-You can also give feedback in the uProxy app itself by navigating to the "Submit Feedback" section in the menu or via email to [info@uproxy.org](info@uproxy.org).
+You can also give feedback in the uProxy app itself by navigating to the "Submit Feedback" section in the menu or via email to [info@uproxy.org](mailto:info@uproxy.org).
 
 ## Tools
 
