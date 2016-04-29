@@ -23,7 +23,7 @@
         <paper-input label="{{resources.ipLabel}}" type="text" id="ipInput" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" on-keypress="submitIfEnter">{{resources.ip_address}}</paper-input>
         <paper-input label="{{resources.nameLabel}}" type="text" id="nameInput" name="name" required on-keypress="submitIfEnter">{{resources.name}}</paper-input>
         <!-- TODO add the ability to upload files -->
-        <ufo-textarea label="{{resources.privateKeyLabel}}" id="privateKeyInput" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="{{resources.private_key}}" on-keypress="submitIfEnter"></ufo-textarea>
+        <ufo-textarea label="{{resources.privateKeyLabel}}" id="privateKeyInput" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="{{resources.private_key}}"></ufo-textarea>
         <br>
         <p>{{resources.privateKeyText}}</p>
 
