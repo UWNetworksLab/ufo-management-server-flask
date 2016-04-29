@@ -23,44 +23,44 @@
 
     <input type="hidden" name$="[[name]]" value="{{value}}" />
   </template>
-</dom-module>
 
-<script>
-  Polymer({
-    is: 'ufo-textarea',
-    properties: {
-      name: {
-        type: String
-      },
-      label: {
-        type: String
-      },
-      disabled: {
-        type: Boolean,
-        value: false
-      },
-      required: {
-        type: Boolean,
-        value: false
-      },
-      autoValidate: {
-        type: Boolean,
-        value: false
-      },
-      pattern: {
-        type: String
-      },
-      errorMessage: {
-        type: String
-      },
-      value: {
-        notify: true,
-        type: String
-      },
-      maxRows: {
-        type: Number,
-        value: 10,
-      },
-    }
-  });
-</script>
+  <script>
+    Polymer({
+      is: 'ufo-textarea',
+      properties: {
+        name: {
+          type: String
+        },
+        label: {
+          type: String
+        },
+        disabled: {
+          type: Boolean,
+          value: false
+        },
+        required: {
+          type: Boolean,
+          value: false
+        },
+        autoValidate: {
+          type: Boolean,
+          value: false
+        },
+        pattern: {
+          type: String
+        },
+        errorMessage: {
+          type: String
+        },
+        value: {
+          notify: true,
+          type: String
+        },
+        maxRows: {
+          type: Number,
+          value: 10,
+        },
+      }
+    });
+  </script>
+</dom-module>

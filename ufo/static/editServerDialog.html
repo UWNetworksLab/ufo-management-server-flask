@@ -4,8 +4,9 @@
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
-<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="textarea.html" />
 
 <dom-module id="edit-server-dialog">
   <style is="custom-style">
@@ -64,7 +65,7 @@
           <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter"></paper-input>
           <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter"></paper-input>
           <!-- TODO add the ability to upload files -->
-          <ufo-textarea class="editInputFields" disabled label="{{resources.privateKeyLabel}}" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="[[item.private_key]]" on-keypress="submitIfEnter"></ufo-textarea>
+          <paper-input class="editInputFields" disabled label="[[resources.privateKeyLabel]]" name="private_key" required max-rows="[[resources.textAreaMaxRows]]" pattern="[[resources.regexes.privateKeyPattern]]" error-message="[[resources.regexes.privateKeyError]]" value="[[item.private_key]]"></paper-input>
           <br>
           <p class="editElements hideElement">{{resources.privateKeyText}}</p>
 
