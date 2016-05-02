@@ -27,7 +27,7 @@ function runAndAssertCmd ()
 
 function runInTestDirAndAssertCmd ()
 {
-  echo "Running: $1"
+  echo "Running: python ui_test_suite.py with hidden params"
   # We use set -e to make sure this will fail if the command returns an error
   # code.
   if [ -d  "$TEST_DIR" ]; then
@@ -39,6 +39,7 @@ function runInTestDirAndAssertCmd ()
     echo
     set -e && cd $ROOT_DIR && eval $1
   fi
+  return $?
 }
 
 function installChromeDriver ()
@@ -90,6 +91,9 @@ elif [ "$1" == 'test' ]; then
     PASSWORD=$TRAVIS_ADMIN_PASSWORD
   fi
   runUITests
+  if [ $? != 0 ]; then
+    exit -1
+  fi
 else
   printHelp
   exit 0

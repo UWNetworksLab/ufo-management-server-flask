@@ -1,5 +1,6 @@
 """Test base module functionality."""
 
+import os
 import unittest
 
 from Crypto.PublicKey import RSA
@@ -40,6 +41,9 @@ class BaseTest(unittest.TestCase):
 
   def setUp(self):
     """Setup for test methods."""
+    print "Terminal path:  " + os.getcwd()
+    print "Chrome driver: " + CHROME_DRIVER_LOCATION
+    print "File path:  " + __file__
     self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION)
     # TODO(eholder) Re-enable this once we have a login module again.
     # LoginPage(self.driver).Login(self.args)
