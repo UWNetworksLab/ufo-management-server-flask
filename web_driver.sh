@@ -79,10 +79,16 @@ function printHelp ()
 
 if [ "$1" == 'install' ]; then
   installChromeDriver
-elif [ "$1" == 'test' ] && [ $# -eq 4 ]; then
-  SERVER_URL=$2
-  USERNAME=$3
-  PASSWORD=$4
+elif [ "$1" == 'test' ]; then
+  if [ $# -eq 4 ]; then
+    SERVER_URL=$2
+    USERNAME=$3
+    PASSWORD=$4
+  else
+    SERVER_URL="http://ufo-nightly.herokuapp.com"
+    USERNAME=$TRAVIS_ADMIN_USERNAME
+    PASSWORD=$TRAVIS_ADMIN_PASSWORD
+  fi
   runUITests
 else
   printHelp
