@@ -6,6 +6,7 @@ import unittest
 from Crypto.PublicKey import RSA
 import flask
 from selenium import webdriver
+from selenium.webdriver.chrome import options
 
 from landing_page import LandingPage
 from layout import UfOPageLayout
@@ -44,7 +45,10 @@ class BaseTest(unittest.TestCase):
     print "Terminal path:  " + os.getcwd()
     print "Chrome driver: " + CHROME_DRIVER_LOCATION
     print "File path:  " + __file__
-    self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION)
+    custom_options = options.Options()
+    custom_options.add_argument('--no-sandbox')
+    self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
+                                   chrome_options=custom_options)
     # TODO(eholder) Re-enable this once we have a login module again.
     # LoginPage(self.driver).Login(self.args)
 
