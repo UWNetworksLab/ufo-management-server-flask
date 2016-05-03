@@ -1,6 +1,5 @@
 """Test base module functionality."""
 
-import os
 import unittest
 
 from Crypto.PublicKey import RSA
