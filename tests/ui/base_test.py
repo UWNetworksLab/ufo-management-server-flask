@@ -42,15 +42,10 @@ class BaseTest(unittest.TestCase):
 
   def setUp(self):
     """Setup for test methods."""
-    print "Terminal path:  " + os.getcwd()
-    print "Chrome driver: " + CHROME_DRIVER_LOCATION
-    print "File path:  " + __file__
     custom_options = options.Options()
     custom_options.add_argument('--no-sandbox')
     self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
                                    chrome_options=custom_options)
-    # TODO(eholder) Re-enable this once we have a login module again.
-    # LoginPage(self.driver).Login(self.args)
 
   def setContext(self):
     """Set context as test_request_context so we can use flask.url_for."""
