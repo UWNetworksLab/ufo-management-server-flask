@@ -54,9 +54,15 @@ class BaseTest(unittest.TestCase):
       'class': 'org.openqa.selenium.Proxy',
       'autodetect': False
     }
-    self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
-                                   chrome_options=custom_options,
-                                   desired_capabilities=capabilities)
+    try:
+      self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
+                                     chrome_options=custom_options,
+                                     desired_capabilities=capabilities)
+    except Error as e:
+      print str(e)
+      print str(type(e))
+      print str(e.message)
+      raise e
 
   def setContext(self):
     """Set context as test_request_context so we can use flask.url_for."""
