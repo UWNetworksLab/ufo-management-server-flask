@@ -6,6 +6,7 @@ from Crypto.PublicKey import RSA
 import flask
 from selenium import webdriver
 from selenium.webdriver.chrome import options
+from selenium.webdriver.common import desired_capabilities
 
 from landing_page import LandingPage
 from layout import UfOPageLayout
@@ -43,8 +44,19 @@ class BaseTest(unittest.TestCase):
     """Setup for test methods."""
     custom_options = options.Options()
     custom_options.add_argument('--no-sandbox')
+    capabilities = desired_capabilities.DesiredCapabilities.CHROME.copy()
+    capabilities['proxy'] = {
+      'httpProxy': self.args.server_url,
+      'ftpProxy': self.args.server_url,
+      'sslProxy': self.args.server_url,
+      'noProxy': None,
+      'proxyType': 'MANUAL',
+      'class': 'org.openqa.selenium.Proxy',
+      'autodetect': False
+    }
     self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
-                                   chrome_options=custom_options)
+                                   chrome_options=custom_options,
+                                   desired_capabilities=capabilities)
 
   def setContext(self):
     """Set context as test_request_context so we can use flask.url_for."""
