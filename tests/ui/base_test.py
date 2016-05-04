@@ -58,7 +58,7 @@ class BaseTest(unittest.TestCase):
       self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
                                      chrome_options=custom_options,
                                      desired_capabilities=capabilities)
-    except Error as e:
+    except Exception as e:
       print str(e)
       print str(type(e))
       print str(e.message)
