@@ -30,6 +30,10 @@
   #dialogMenuHolder {
     position: absolute;
   }
+  #hiddenCopyInput {
+    position: fixed;
+    zIndex: -1;
+  }
 </style>
 <body class="fullbleed layout vertical">
   <div>  <!-- Prevent the main-holder from pushing into the header. -->
@@ -69,5 +73,6 @@
   <error-notification id='error-notification'></error-notification>
 
   <script src="{{ url_for('static', filename='globalHelperFunctions.js') }}"></script>
+  <input id="hiddenCopyInput" value=""/>
 </body>
 </html>
