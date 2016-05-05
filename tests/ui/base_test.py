@@ -45,24 +45,32 @@ class BaseTest(unittest.TestCase):
     custom_options = options.Options()
     custom_options.add_argument('--no-sandbox')
     capabilities = desired_capabilities.DesiredCapabilities.CHROME.copy()
-    capabilities['proxy'] = {
-      'httpProxy': self.args.server_url,
-      'ftpProxy': self.args.server_url,
-      'sslProxy': self.args.server_url,
-      'noProxy': None,
-      'proxyType': 'MANUAL',
-      'class': 'org.openqa.selenium.Proxy',
-      'autodetect': False
-    }
-    try:
+    # capabilities['proxy'] = {
+    #   'httpProxy': self.args.server_url,
+    #   'ftpProxy': self.args.server_url,
+    #   'sslProxy': self.args.server_url,
+    #   'noProxy': None,
+    #   'proxyType': 'MANUAL',
+    #   'class': 'org.openqa.selenium.Proxy',
+    #   'autodetect': False
+    # }
+    remote_variables_found = (
+        self.args.sauce_username is not None and
+        self.args.sauce_access_key is not None and
+        self.args.travis_job_number is not None)
+    if remote_variables_found:
+      capabilities["tunnel-identifier"] = self.args.travis_job_number
+      hub_url = "%s:%s@localhost:4445" % (self.args.sauce_username,
+                                          self.args.sauce_access_key)
+      self.driver = webdriver.Remote(
+          desired_capabilities=capabilities,
+          command_executor="http://%s/wd/hub" % hub_url)
+    else:
       self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
-                                     chrome_options=custom_options,
-                                     desired_capabilities=capabilities)
-    except Exception as e:
-      print str(e)
-      print str(type(e))
-      print str(e.message)
-      raise e
+                                     chrome_options=custom_options)
+    # self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
+    #                                chrome_options=custom_options,
+    #                                desired_capabilities=capabilities)
 
   def setContext(self):
     """Set context as test_request_context so we can use flask.url_for."""

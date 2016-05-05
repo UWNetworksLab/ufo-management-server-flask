@@ -58,6 +58,13 @@ function runUITests ()
   runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$USERNAME' --password='$PASSWORD'"
 }
 
+function runRemoteUITests ()
+{
+  # Do some intelligent check here that we're running against production branch
+  # and quit if not.
+  runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$TRAVIS_ADMIN_USERNAME' --password='$TRAVIS_ADMIN_PASSWORD' --sauce-username='$SAUCE_USERNAME' --sauce-access-key='$SAUCE_ACCESS_KEY' --travis-job-number='$TRAVIS_JOB_NUMBER'"
+}
+
 function printHelp ()
 {
   echo
@@ -85,12 +92,14 @@ elif [ "$1" == 'test' ]; then
     SERVER_URL=$2
     USERNAME=$3
     PASSWORD=$4
+    runUITests
+  elif [ -z "$TRAVIS_ADMIN_USERNAME" ]  ||  [ -z "$TRAVIS_ADMIN_PASSWORD" ]  ||  [ -z "$SAUCE_USERNAME" ]  ||  [ -z "$SAUCE_ACCESS_KEY" ]  ||  [ -z "$TRAVIS_JOB_NUMBER" ]; then
+    printHelp
+    exit 0
   else
     SERVER_URL="http://ufo-nightly.herokuapp.com"
-    USERNAME=$TRAVIS_ADMIN_USERNAME
-    PASSWORD=$TRAVIS_ADMIN_PASSWORD
+    runRemoteUITests
   fi
-  runUITests
   if [ $? != 0 ]; then
     exit -1
   fi

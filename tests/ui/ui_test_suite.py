@@ -28,6 +28,15 @@ def _ParseArgs():
   parser.add_argument('--password', action='store',
                       dest='password', default=None,
                       help='Password of the user to login.')
+  parser.add_argument('--sauce-username', action='store',
+                      dest='sauce_username', default=None,
+                      help='Sauce username for a remote session.')
+  parser.add_argument('--sacue-access-key', action='store',
+                      dest='sauce_access_key', default=None,
+                      help='Sauce access key for a remote session.')
+  parser.add_argument('--travis-job-number', action='store',
+                      dest='travis_job_number', default=None,
+                      help='Travis job number for multiple tunnels.')
   return parser.parse_args()
 
 def MakeSuite(testcase_class):
