@@ -62,6 +62,7 @@ function runRemoteUITests ()
 {
   # Do some intelligent check here that we're running against production branch
   # and quit if not.
+  echo "$TRAVIS_BRANCH"
   runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$TRAVIS_ADMIN_USERNAME' --password='$TRAVIS_ADMIN_PASSWORD' --sauce-username='$SAUCE_USERNAME' --sauce-access-key='$SAUCE_ACCESS_KEY' --travis-job-number='$TRAVIS_JOB_NUMBER'"
 }
 

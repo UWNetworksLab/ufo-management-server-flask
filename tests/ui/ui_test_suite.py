@@ -1,6 +1,7 @@
 """Test runner for functional testing."""
 import argparse
 import unittest
+import sys
 
 from admin_flow_test import AdminFlowTest
 from error_notification_test import ErrorNotificationTest
@@ -65,4 +66,6 @@ SUITE.addTest(MakeSuite(SettingsComponentTest))
 SUITE.addTest(MakeSuite(SetupPageTest))
 SUITE.addTest(MakeSuite(UndefinedURLTest))
 
-unittest.TextTestRunner().run(SUITE)
+result = unittest.TextTestRunner().run(SUITE)
+if not result.wasSuccessful():
+  sys.exit(1)
