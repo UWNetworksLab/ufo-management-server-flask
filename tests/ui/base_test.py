@@ -59,12 +59,15 @@ class BaseTest(unittest.TestCase):
         self.args.sauce_access_key is not None and
         self.args.travis_job_number is not None)
     if remote_variables_found:
-      capabilities["tunnel-identifier"] = self.args.travis_job_number
-      hub_url = "%s:%s@localhost:4445" % (self.args.sauce_username,
+      capabilities['platform'] = 'OS X 10.11'
+      capabilities['version'] = '48.0'
+      capabilities['screenResolution'] = '1920x1080'
+      capabilities['tunnel-identifier'] = self.args.travis_job_number
+      hub_url = '%s:%s@localhost:4445' % (self.args.sauce_username,
                                           self.args.sauce_access_key)
       self.driver = webdriver.Remote(
           desired_capabilities=capabilities,
-          command_executor="http://%s/wd/hub" % hub_url)
+          command_executor='http://%s/wd/hub' % hub_url)
     else:
       self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
                                      chrome_options=custom_options)

@@ -60,10 +60,21 @@ function runUITests ()
 
 function runRemoteUITests ()
 {
-  # Do some intelligent check here that we're running against production branch
-  # and quit if not.
-  echo "$TRAVIS_BRANCH"
-  runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$TRAVIS_ADMIN_USERNAME' --password='$TRAVIS_ADMIN_PASSWORD' --sauce-username='$SAUCE_USERNAME' --sauce-access-key='$SAUCE_ACCESS_KEY' --travis-job-number='$TRAVIS_JOB_NUMBER'"
+  # The if statement below is to ensure that remote tests only run against the
+  # production branch. This has multiple paths due to how travis presents that
+  # branch. If a pull request is just started, then the branch being targeted
+  # is what travis branch will show. As in, when I start PR from master to
+  # production, travis branch will say production. For subsequent commits or
+  # rebuilds however, travis branch will show the branch being built. So if I
+  # create a PR from master to production then add some extra commits to it or
+  # have to restart the build, travis branch would say master.
+  # Finally. there is also an override built in so that we can force tests to
+  # run if need be.
+  if [ "$TRAVIS_BRANCH" == 'production' ]  ||  [ [ "$TRAVIS_BRANCH" == 'master' ]  &&  [ "$TRAVIS_PULL_REQUEST" == 'false' ] ] || [ "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'true' ]; then
+    runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$TRAVIS_ADMIN_USERNAME' --password='$TRAVIS_ADMIN_PASSWORD' --sauce-username='$SAUCE_USERNAME' --sauce-access-key='$SAUCE_ACCESS_KEY' --travis-job-number='$TRAVIS_JOB_NUMBER'"
+  else
+    exit 0
+  fi
 }
 
 function printHelp ()
@@ -74,14 +85,25 @@ function printHelp ()
   echo "  install   - Installs web driver from chromedriver on googleapis."
   echo "  test      - Runs the UI test suite."
   echo
+  echo "If you have trouble with permissions while installing, try using sudo."
+  echo "Example: sudo ./web_driver.sh install"
+  echo
   echo "The test command takes three additional arguments as follows:"
   echo "test server_url username password"
   echo "Example:"
   echo "./web_driver.sh test https://my-server-staging.appspot.com"
   echo "ui_tester@mydomain.com your-password-goes-here"
   echo
-  echo "If you have trouble with permissions while installing, try using sudo."
-  echo "Example: sudo ./web_driver.sh install"
+  echo "The test command can also be run against remote servers, but relies on"
+  echo "environment variables to do so. This is NOT advised as it will require"
+  echo "Sauce Labs account and connecting through Travis CI. If you think this"
+  echo "is what you need, then setup the following environment variables:"
+  echo "TRAVIS_ADMIN_USERNAME is the admin username for the nightly instance."
+  echo "TRAVIS_ADMIN_PASSWORD is the admin password for the nightly instance."
+  echo "SAUCE_USERNAME is the username to an account on Sauce Labs."
+  echo "SAUCE_ACCESS_KEY is the access key to run an account on Sauce Labs."
+  echo "TRAVIS_JOB_NUMBER is the current job number for the running process to"
+  echo "denote one from another (for simultaneous sauce labs tunnels)."
   echo
 }
 
@@ -95,14 +117,14 @@ elif [ "$1" == 'test' ]; then
     PASSWORD=$4
     runUITests
   elif [ -z "$TRAVIS_ADMIN_USERNAME" ]  ||  [ -z "$TRAVIS_ADMIN_PASSWORD" ]  ||  [ -z "$SAUCE_USERNAME" ]  ||  [ -z "$SAUCE_ACCESS_KEY" ]  ||  [ -z "$TRAVIS_JOB_NUMBER" ]; then
+    # The if statement above just checks that all the necessary values are
+    # present for doing remote UI tests. If they aren't, then we just fail out
+    # here.
     printHelp
     exit 0
   else
     SERVER_URL="http://ufo-nightly.herokuapp.com"
     runRemoteUITests
-  fi
-  if [ $? != 0 ]; then
-    exit -1
   fi
 else
   printHelp
