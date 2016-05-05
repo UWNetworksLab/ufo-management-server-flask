@@ -60,7 +60,7 @@ class BaseTest(unittest.TestCase):
         self.args.travis_job_number is not None)
     if remote_variables_found:
       capabilities['browserName'] = 'chrome'
-      capabilities['platform'] = 'OS X 10.11'
+      capabilities['platform'] = 'OS X 10.10'
       capabilities['version'] = '48.0'
       capabilities['screenResolution'] = '1920x1080'
       capabilities['tunnel-identifier'] = self.args.travis_job_number
