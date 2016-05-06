@@ -89,7 +89,9 @@ def _fix_new_line_key_format(private_key_string):
     private_key_string: A private key as a string without newlines.
 
   Returns:
-    The same private key string with new lines inserted as necessary.
+    The same private key string with new lines inserted as necessary. If the
+    format of the input string is not as expected, the original string is
+    returned, unaltered instead.
   """
   newline = '\n'
   private_key_dash = ' PRIVATE KEY-----'

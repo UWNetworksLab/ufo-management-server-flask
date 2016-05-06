@@ -11,8 +11,6 @@ class AddEditServerForm(UfOPageLayout):
 
   """Add and edit server form methods."""
 
-  # pylint: disable=too-few-public-methods
-
   def addTestServer(self, containing_element, ip, name, private_key,
                     public_key):
     """Add a test server using the element container to find the add form.
