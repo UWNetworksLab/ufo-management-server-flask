@@ -73,7 +73,7 @@
           <template is="dom-if" if="{{resources.isProxyServer}}">
             <div class="first-div"><strong>{{item.name}}</strong></div>
             <div class="second-div flex">{{item.ip_address}}</div>
-            <paper-button on-tap="openServerEdit" class="third-div topLineButton leftTextAlign"><strong>{{resources.editText}}</strong></paper-button>
+            <paper-button on-tap="openServerEdit" class="third-div topLineButton leftTextAlign" id="{{resources.editButtonId}}"><strong>{{resources.editText}}</strong></paper-button>
             <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
           </template>
           <paper-icon-button icon="expand-more" title="{{resources.detailsExpandText}}" id="{{resources.detailsButtonId}}"></paper-icon-button>

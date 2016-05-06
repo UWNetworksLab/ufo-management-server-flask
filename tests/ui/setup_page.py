@@ -2,7 +2,7 @@
 
 import flask
 
-from add_server_form import AddServerForm
+from add_edit_server_form import AddEditServerForm
 from add_user_form import AddUserForm
 from layout import UfOPageLayout
 from settings_component import SettingsComponent
@@ -51,7 +51,7 @@ class SetupPage(UfOPageLayout):
     proxy_server_add_template = self.GetElement(
         UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE)
 
-    add_server_form = AddServerForm(self.driver)
-    add_server_form.addTestServer(proxy_server_add_template, ip, name,
-                                  private_key, public_key)
+    add_edit_server_form = AddEditServerForm(self.driver)
+    add_edit_server_form.addTestServer(proxy_server_add_template, ip, name,
+                                       private_key, public_key)
 
