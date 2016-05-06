@@ -61,16 +61,17 @@ function runUITests ()
 function runRemoteUITests ()
 {
   # The if statement below is to ensure that remote tests only run against the
-  # production branch. This has multiple paths due to how travis presents that
-  # branch. If a pull request is just started, then the branch being targeted
-  # is what travis branch will show. As in, when I start PR from master to
-  # production, travis branch will say production. For subsequent commits or
-  # rebuilds however, travis branch will show the branch being built. So if I
-  # create a PR from master to production then add some extra commits to it or
-  # have to restart the build, travis branch would say master.
-  # Finally. there is also an override built in so that we can force tests to
-  # run if need be.
-  if [ "$TRAVIS_BRANCH" == 'production' ]  ||  [ [ "$TRAVIS_BRANCH" == 'master' ]  &&  [ "$TRAVIS_PULL_REQUEST" == 'false' ] ] || [ "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'true' ]; then
+  # production branch. Travis sets TRAVIS_BRANCH to the target of a pull
+  # request for those types of builds. For regular commits and pushes,
+  # TRAVIS_BRANCH is branch being built , so if you're pushing from master to
+  # production, TRAVIS_BRANCH would say master (unless its a pull request).
+  # We check that TRAVIS_BRANCH is in fact production and that the override is
+  # set to auto (the typical case). If the override is set to true, then we
+  # ignore TRAVIS_BRANCH and run anyway. This should only happen when we need
+  # to reexecute web driver tests if the first run failed. However, this should
+  # not be done often as running multiple tests at the same time will cause
+  # interference (since both modify a standing instance).
+  if [ [ "$TRAVIS_BRANCH" == 'production' ]  &&  [ "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'auto' ] ] || [ "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'true' ]; then
     runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$TRAVIS_ADMIN_USERNAME' --password='$TRAVIS_ADMIN_PASSWORD' --sauce-username='$SAUCE_USERNAME' --sauce-access-key='$SAUCE_ACCESS_KEY' --travis-job-number='$TRAVIS_JOB_NUMBER'"
   else
     exit 0
