@@ -5,7 +5,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from add_edit_server_form import AddEditServerForm
+from server_form import ServerForm
 from add_user_form import AddUserForm
 from layout import UfOPageLayout
 
@@ -104,9 +104,8 @@ class LandingPage(UfOPageLayout):
                                      UfOPageLayout.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((UfOPageLayout.ADD_SERVER_MODAL))))
 
-    add_edit_server_form = AddEditServerForm(self.driver)
-    add_edit_server_form.addTestServer(add_server_modal, ip, name, private_key,
-                                       public_key)
+    server_form = ServerForm(self.driver)
+    server_form.addServer(add_server_modal, ip, name, private_key, public_key)
 
   def removeTestServer(self, name, server_url, should_raise_exception=True):
     """Remove a test server using the landing page (the only way).
@@ -177,9 +176,8 @@ class LandingPage(UfOPageLayout):
     edit_button.click()
 
     # Perform the actual edits
-    add_edit_server_form = AddEditServerForm(self.driver)
-    add_edit_server_form.editTestServer(details_modal, ip, name, private_key,
-                                        public_key)
+    server_form = ServerForm(self.driver)
+    server_form.editServer(details_modal, ip, name, private_key, public_key)
 
   def getContainerElementForItem(self, item, should_use_listbox):
     """Given an item, get the container element for it based on the boolean.

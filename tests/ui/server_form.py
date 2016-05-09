@@ -7,12 +7,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from layout import UfOPageLayout
 
-class AddEditServerForm(UfOPageLayout):
+class ServerForm(UfOPageLayout):
 
   """Add and edit server form methods."""
 
-  def addTestServer(self, containing_element, ip, name, private_key,
-                    public_key):
+  def addServer(self, containing_element, ip, name, private_key, public_key):
     """Add a test server using the element container to find the add form.
 
     Args:
@@ -37,8 +36,7 @@ class AddEditServerForm(UfOPageLayout):
         EC.invisibility_of_element_located(((
             UfOPageLayout.ADD_SERVER_SPINNER))))
 
-  def editTestServer(self, containing_element, ip, name, private_key,
-                     public_key):
+  def editServer(self, containing_element, ip, name, private_key, public_key):
     """Edit a test server using the element container to find the edit form.
 
     Args:
