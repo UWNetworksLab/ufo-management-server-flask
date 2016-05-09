@@ -38,6 +38,9 @@
     .spacer {
       width: 20px;
     }
+    .buttons paper-button {
+      height: 40px;
+    }
   </style>
   <!-- TODO(eholder): Figure out how to make hover work with focused. -->
   <template>
@@ -73,11 +76,15 @@
       <br>
       <div class="buttons">
         <template is="dom-if" if="[[invitCodeJson.invite_code]]">
-          <paper-button on-tap="copyInviteCode" class="anchor-button" id="copyInviteCodeButton"><strong>{{resources.copyLabel}}</strong></paper-button>
+          <paper-button on-tap="copyInviteCode" class="anchor-button" id="copyInviteCodeButton" type="submit">
+            <iron-icon icon="content-copy"></iron-icon> <strong>{{resources.copyLabel}}</strong>
+          </paper-button>
           <form is="iron-form" method="post" action="{{resources.rotateKeysUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="enableSpinner">
             <input type="hidden" name="user_id" value="{{item.id}}">
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-            <paper-button on-tap="submitForm" class="anchor-button" id="rotateKeysButton" type="submit"><strong>{{resources.rotateKeysLabel}}</strong></paper-button>
+            <paper-button on-tap="submitForm" class="anchor-button" id="rotateKeysButton" type="submit">
+              <iron-icon icon="refresh"></iron-icon> <strong>{{resources.rotateKeysLabel}}</strong>
+            </paper-button>
           </form>
         </template>
         <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
@@ -177,16 +184,12 @@
         var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
         dialog.close();
       },
-      copyInviteCode: function(e, details) {
-        var elem = this.$.lastInviteCode;
-        var input = document.createElement('input');
-        input.style.position = 'fixed';
-        input.style.zIndex = '-1';
-        input.value = elem.value;
-        document.body.appendChild(input);
+      copyInviteCode: function(e) {
+        var elem = this.querySelector('#lastInviteCode');
+        var input = document.getElementById('hiddenCopyInput');
+        input.setAttribute('value', elem.value);
         input.select();
         document.execCommand('copy');
-        document.body.removeChild(input);
       },
       getUpdatedInviteCode: function() {
         this.$.getInviteCodeAjax.submit()
