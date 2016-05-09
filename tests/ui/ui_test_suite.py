@@ -1,6 +1,7 @@
 """Test runner for functional testing."""
 import argparse
 import unittest
+import sys
 
 from admin_flow_test import AdminFlowTest
 from error_notification_test import ErrorNotificationTest
@@ -28,6 +29,15 @@ def _ParseArgs():
   parser.add_argument('--password', action='store',
                       dest='password', default=None,
                       help='Password of the user to login.')
+  parser.add_argument('--sauce-username', action='store',
+                      dest='sauce_username', default=None,
+                      help='Sauce username for a remote session.')
+  parser.add_argument('--sauce-access-key', action='store',
+                      dest='sauce_access_key', default=None,
+                      help='Sauce access key for a remote session.')
+  parser.add_argument('--travis-job-number', action='store',
+                      dest='travis_job_number', default=None,
+                      help='Travis job number for multiple tunnels.')
   return parser.parse_args()
 
 def MakeSuite(testcase_class):
@@ -56,4 +66,6 @@ SUITE.addTest(MakeSuite(SettingsComponentTest))
 SUITE.addTest(MakeSuite(SetupPageTest))
 SUITE.addTest(MakeSuite(UndefinedURLTest))
 
-unittest.TextTestRunner().run(SUITE)
+result = unittest.TextTestRunner().run(SUITE)
+if not result.wasSuccessful():
+  sys.exit(1)

@@ -5,6 +5,8 @@ import unittest
 from Crypto.PublicKey import RSA
 import flask
 from selenium import webdriver
+from selenium.webdriver.chrome import options
+from selenium.webdriver.common import desired_capabilities
 
 from landing_page import LandingPage
 from layout import UfOPageLayout
@@ -54,9 +56,27 @@ class BaseTest(unittest.TestCase):
 
   def setUp(self):
     """Setup for test methods."""
-    self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION)
-    # TODO(eholder) Re-enable this once we have a login module again.
-    # LoginPage(self.driver).Login(self.args)
+    custom_options = options.Options()
+    custom_options.add_argument('--no-sandbox')
+    capabilities = desired_capabilities.DesiredCapabilities.CHROME.copy()
+    remote_variables_found = (
+        self.args.sauce_username is not None and
+        self.args.sauce_access_key is not None and
+        self.args.travis_job_number is not None)
+    if remote_variables_found:
+      capabilities['browserName'] = 'chrome'
+      capabilities['platform'] = 'OS X 10.10'
+      capabilities['version'] = '48.0'
+      capabilities['screenResolution'] = '1920x1080'
+      capabilities['tunnel-identifier'] = self.args.travis_job_number
+      hub_url = '%s:%s@localhost:4445' % (self.args.sauce_username,
+                                          self.args.sauce_access_key)
+      self.driver = webdriver.Remote(
+          desired_capabilities=capabilities,
+          command_executor='http://%s/wd/hub' % hub_url)
+    else:
+      self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
+                                     chrome_options=custom_options)
 
   def setContext(self):
     """Set context as test_request_context so we can use flask.url_for."""
