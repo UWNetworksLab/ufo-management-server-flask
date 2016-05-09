@@ -55,14 +55,30 @@ function installChromeDriver ()
 
 # These tests run from the local machine pointing out to whatever instance is
 # passed as the server url.
-function runUITestsLocally ()
+function runUITests ()
 {
   runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$USERNAME' --password='$PASSWORD'"
 }
 
 # These tests run on Travis but tunneling to a Sauce Labs machine. They will
-# still point to whatever instance is passed as the server url.
-function runUITestsOnSauceLabs ()
+# still point to whatever instance is passed as the server url. This is
+# triggered by pull requests to the production branch. As documented below,
+# when running in Travis CI, this function is called to determine the branch
+# and decide whether or not to test. If we do test on Sauce Labs, our Travis
+# setup handles tunneling to Sauce Labs to run the actual tests. You can see
+# that in the .travis.yml file. The extra arguments passed in are the sauce
+# labs username and access key to authenticate our webdriver instance with
+# that tunnel. Check tests/ui/base_test.py for how sauce labs is actually
+# called into.
+# The environment variables for connecting with Sauce Labs are defined in our
+# Travis CI settings, so that they are available as needed without having to be
+# shared out between developers. Check there to change them as necessary.
+# The reason for using sauce labs is to automate running our functional tests
+# without worrying about maintaining OS architecture and browser versions. We
+# just specify what we need, and Sauce Labs will provide it.
+# Most of this setup is per Travis CI's guide to integrating with Sauce Labs,
+# see here for more info: https://docs.travis-ci.com/user/sauce-connect/
+function runUITestsViaSauceLabs ()
 {
   # The if statement below is to ensure that remote tests only run against the
   # production branch. Travis sets TRAVIS_BRANCH to the target of a pull
@@ -120,7 +136,7 @@ elif [ "$1" == 'test' ]; then
     SERVER_URL=$2
     USERNAME=$3
     PASSWORD=$4
-    runUITestsLocally
+    runUITests
   elif [ -z "$TRAVIS_ADMIN_USERNAME" ]  ||  [ -z "$TRAVIS_ADMIN_PASSWORD" ]  ||  [ -z "$SAUCE_USERNAME" ]  ||  [ -z "$SAUCE_ACCESS_KEY" ]  ||  [ -z "$TRAVIS_JOB_NUMBER" ]; then
     # The if statement above just checks that all the necessary values are
     # present for doing remote UI tests. If they aren't, then we just fail out
@@ -129,7 +145,7 @@ elif [ "$1" == 'test' ]; then
     exit 0
   else
     SERVER_URL="http://ufo-nightly.herokuapp.com"
-    runUITestsOnSauceLabs
+    runUITestsViaSauceLabs
   fi
 else
   printHelp
