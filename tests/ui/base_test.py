@@ -28,6 +28,13 @@ class BaseTest(unittest.TestCase):
       'private_key': 'to be filled in',
       'public_key': 'to be filled in',
   }
+  TEST_SERVER_EDIT_AS_DICT = {
+      'ip': '127.0.0.127',
+      # This name is intentionally made to be different from the user name.
+      'name': 'Editted Machine Name',
+      'private_key': 'to be filled in',
+      'public_key': 'to be filled in',
+  }
 
   def __init__(self, methodName='runTest', args=None, **kwargs):
     """Create the base test object for others to inherit."""
@@ -39,6 +46,13 @@ class BaseTest(unittest.TestCase):
     BaseTest.TEST_SERVER_AS_DICT['private_key'] = private_key
     BaseTest.TEST_SERVER_AS_DICT['public_key'] = (
         public_key + ' ' + BaseTest.TEST_USER_AS_DICT['email'])
+
+    rsa_key = RSA.generate(2048)
+    private_key_edit = rsa_key.exportKey()
+    public_key_edit = rsa_key.publickey().exportKey('OpenSSH')
+    BaseTest.TEST_SERVER_EDIT_AS_DICT['private_key'] = private_key_edit
+    BaseTest.TEST_SERVER_EDIT_AS_DICT['public_key'] = (
+        public_key_edit + ' ' + BaseTest.TEST_USER_AS_DICT['email'])
 
   def setUp(self):
     """Setup for test methods."""
@@ -102,7 +116,9 @@ class BaseTest(unittest.TestCase):
     else:
       self.assertIsNone(test_user_item)
 
-  def assertTestServerPresenceOnPage(self, is_present, go_to_landing=True):
+  def assertTestServerPresenceOnPage(
+      self, is_present, go_to_landing=True,
+      name=TEST_SERVER_AS_DICT['name']):
     """Helper to assert whether a server is present on the landing page.
 
     Args:
@@ -110,14 +126,15 @@ class BaseTest(unittest.TestCase):
       go_to_landing: True to get the landing page again (effectively a refresh
                      if the page is already on the landing) and False to use
                      whatever page the test is already on.
+      name: The name of the server to assert upon, which defaults to the test
+            server.
     """
     if go_to_landing:
       self.driver.get(self.args.server_url + flask.url_for('landing'))
     landing_page = LandingPage(self.driver)
     server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
     server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
-    test_server_item = landing_page.findItemInListing(
-        server_listbox, BaseTest.TEST_SERVER_AS_DICT['name'])
+    test_server_item = landing_page.findItemInListing(server_listbox, name)
     if is_present:
       self.assertIsNotNone(test_server_item)
       self.assertTrue(test_server_item.is_displayed())
