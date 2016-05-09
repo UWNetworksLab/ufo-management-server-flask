@@ -18,7 +18,7 @@ class SetupPageTest(BaseTest):
     """Setup for test methods."""
     super(SetupPageTest, self).setUp()
     super(SetupPageTest, self).setContext()
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
   def tearDown(self):

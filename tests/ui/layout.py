@@ -39,7 +39,7 @@ class UfOPageLayout(BaseDriver):
   ADD_ADMIN_BUTTON = (By.ID, 'addAdminButton')
   ADD_ADMIN_DIALOG = (By.ID, 'addAdminDialog')
   ADD_ADMIN_FORM = (By.ID, 'addAdminForm')
-  ADD_ADMIN_USERNAME = (By.ID, 'paperAdminUsername')
+  ADD_ADMIN_EMAIL = (By.ID, 'paperAdminEmail')
   ADD_ADMIN_PASSWORD = (By.ID, 'paperAdminPassword')
   ADD_ADMIN_SUBMIT = (By.ID, 'adminFormSubmitButton')
   ADD_ADMIN_RESPONSE_STATUS = (By.ID, 'addAdminResponseStatus')

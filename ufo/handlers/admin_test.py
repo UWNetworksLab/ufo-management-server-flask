@@ -11,10 +11,10 @@ from ufo.database import models
 from ufo.handlers import admin
 
 
-MOCK_ADMIN_USERNAME = 'foobar admin'
+MOCK_ADMIN_EMAIL = 'foobar@admin.com'
 MOCK_ADMIN_PASSWORD = 'random password'
 MOCK_ADMIN_DATA = {
-  'admin_username': json.dumps(MOCK_ADMIN_USERNAME),
+  'admin_email': json.dumps(MOCK_ADMIN_EMAIL),
   'admin_password': json.dumps(MOCK_ADMIN_PASSWORD)
 }
 
@@ -35,19 +35,19 @@ class AdminTest(base_test.BaseTest):
 
     self.assertEquals(len(admin_list_output), 1)
     test_admin = admin_list_output[0]
-    self.assertEquals(base_test.FAKE_ADMIN_USERNAME, test_admin['username'])
+    self.assertEquals(base_test.FAKE_ADMIN_EMAIL, test_admin['email'])
     self.assertNotIn('password', test_admin)
 
   def testAddAdminHandler(self):
     """Test the add admin handler calls to insert the specified admin."""
-    admin_user = models.AdminUser.get_by_username(MOCK_ADMIN_USERNAME)
+    admin_user = models.AdminUser.get_by_email(MOCK_ADMIN_EMAIL)
     self.assertIsNone(admin_user)
 
     response =  self.client.post(flask.url_for('add_admin'),
                                  data=MOCK_ADMIN_DATA,
                                  follow_redirects=False)
 
-    admin_user = models.AdminUser.get_by_username(MOCK_ADMIN_USERNAME)
+    admin_user = models.AdminUser.get_by_email(MOCK_ADMIN_EMAIL)
     self.assertIsNotNone(admin_user)
 
     self.assert_redirects(response, flask.url_for('admin_list'))
@@ -60,18 +60,18 @@ class AdminTest(base_test.BaseTest):
     response =  self.client.post(flask.url_for('add_admin'),
                                  data=MOCK_ADMIN_DATA,
                                  follow_redirects=False)
-    query = models.AdminUser.query.filter_by(username=MOCK_ADMIN_USERNAME)
+    query = models.AdminUser.query.filter_by(email=MOCK_ADMIN_EMAIL)
     self.assertEqual(1, query.count())
     admin_in_db = query.one_or_none()
     self.assertIsNotNone(admin_in_db)
-    self.assertEqual(MOCK_ADMIN_USERNAME, admin_in_db.username)
+    self.assertEqual(MOCK_ADMIN_EMAIL, admin_in_db.email)
     self.assertIsNotNone(admin_in_db.password)
 
   def testDeleteAdminPostHandler(self):
     """Test the delete admin handler calls to delete the specified admin."""
     self.client.post(flask.url_for('add_admin'), data=MOCK_ADMIN_DATA,
                      follow_redirects=False)
-    query = models.AdminUser.query.filter_by(username=MOCK_ADMIN_USERNAME)
+    query = models.AdminUser.query.filter_by(email=MOCK_ADMIN_EMAIL)
     admin_in_db = query.one_or_none()
     admin_id = admin_in_db.id
 

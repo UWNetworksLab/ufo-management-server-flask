@@ -15,7 +15,7 @@ from ufo.services import oauth
 # something else that is useful with them.
 DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
 NON_ADMIN_TEXT = 'Credentials do not have admin access.'
-NO_ADMINISTRATOR = 'Please enter an administrator username or password.'
+NO_ADMINISTRATOR = 'Please enter an administrator email or password.'
 
 
 def _get_oauth_configration_resources_dict(config, oauth_url):
@@ -96,15 +96,15 @@ def setup():
           oauth_configuration_resources=json.dumps(oauth_resources_dict))
 
   if not config.isConfigured:
-    admin_username = flask.request.form.get('admin_username', None)
+    admin_email = flask.request.form.get('admin_email', None)
     admin_password = flask.request.form.get('admin_password', None)
 
-    if admin_username is None or admin_password is None:
+    if admin_email is None or admin_password is None:
       return flask.render_template(
           'setup.html', error=NO_ADMINISTRATOR,
           oauth_configuration_resources=json.dumps(oauth_resources_dict))
 
-    admin_user = models.AdminUser(username=admin_username)
+    admin_user = models.AdminUser(email=admin_email)
     admin_user.set_password(admin_password)
     admin_user.save()
 

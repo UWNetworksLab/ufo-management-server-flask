@@ -19,7 +19,7 @@
   </style>
   <template>
     <form id="loginForm" method="POST">
-      <paper-input label="{{resources.usernameLabel}}" id="username" name="username" required  on-keypress="submitIfEnter"></paper-input>
+      <paper-input label="{{resources.emailLabel}}" id="email" name="email" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
       <paper-input type="password" label="{{resources.passwordLabel}}" id="password" name="password" required on-keypress="submitIfEnter"></paper-input>
 
       <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">

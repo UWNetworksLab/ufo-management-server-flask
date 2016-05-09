@@ -25,19 +25,20 @@ def _get_landing_resources():
     'settingsUrl': flask.url_for('setup') + '#settingsDisplayTemplate',
     'listAdminUrl': flask.url_for('admin_list'),
     'addAdminUrl': flask.url_for('add_admin'),
-    'adminUsernameLabel': 'Admin Username',
+    'adminEmailLabel': 'Admin Email',
     'adminPasswordlabel': 'Admin Password',
     'addAdminSubmitText': 'Add Admin',
     'adminListGetError': ('Error: Getting the list of admins failed. Try again'
                           ' later.'),
-    'adminExistsError': ('Error: An admin with the specified username already '
+    'adminExistsError': ('Error: An admin with the specified email already '
                          'exists.'),
     'adminAddSuccessText': 'Success! The specified admin was added.',
     'adminAddFailureText': ('Error: Adding the specified admin failed. Try '
                             'again later.'),
     'removeAdminUrl': flask.url_for('delete_admin'),
-    'removeAdminInstructions': 'Select an Admin below by username to remove.',
+    'removeAdminInstructions': 'Select an Admin below by email to remove.',
     'removeAdminSubmitText': 'Remove Admin',
+    'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
   }
 
 def _get_login_resources():
@@ -49,9 +50,10 @@ def _get_login_resources():
   return {
     'titleText': 'Please Log In',
     'loginUrl': flask.url_for('login'),
-    'usernameLabel': 'Username',
+    'emailLabel': 'Email',
     'passwordLabel': 'Password',
     'loginText': 'Login',
+    'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
   }
 
 def _get_oauth_resources():
@@ -90,7 +92,7 @@ def _get_oauth_resources():
     'connectYourDomainButtonText': 'Connect to Your Domain',
     'pasteTheCodeText': ('Once you finish authorizing access, please paste the'
         ' code you receive in the box below.'),
-    'adminUsernameLabel': 'Admin Username',
+    'adminEmailLabel': 'Admin Email',
     'adminPasswordlabel': 'Admin Password',
     'submitButtonText': 'Submit',
   }

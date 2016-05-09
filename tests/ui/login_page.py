@@ -16,12 +16,12 @@ class LoginPage(UfOPageLayout):
   # pylint: disable=too-few-public-methods
 
   LOGIN_FORM = (By.ID, 'loginForm')
-  USERNAME_INPUT = (By.ID, 'username')
+  EMAIL_INPUT = (By.ID, 'email')
   PASSWORD_INPUT = (By.ID, 'password')
   SIGN_IN_BUTTON = (By.ID, 'signIn')
   LOGIN_PAGE_ELEMENTS = [
     LOGIN_FORM,
-    USERNAME_INPUT,
+    EMAIL_INPUT,
     PASSWORD_INPUT,
     SIGN_IN_BUTTON
   ]
@@ -41,12 +41,12 @@ class LoginPage(UfOPageLayout):
       return False
     return True
 
-  def Login(self, server_url, username, password):
+  def Login(self, server_url, email, password):
     """Go through the login and authorization flows.
 
     Args:
       server_url: The base url for the server, such as http://0.0.0.0:5000.
-      username: The username to supply for login.
+      email: The email to supply for login.
       password: The password to supply for login.
     """
     self.driver.get(server_url + flask.url_for('login'))
@@ -54,9 +54,9 @@ class LoginPage(UfOPageLayout):
     login_form = WebDriverWait(self.driver,
                                UfOPageLayout.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((self.LOGIN_FORM))))
-    username_paper_input = login_form.find_element(*self.USERNAME_INPUT)
-    username_input = username_paper_input.find_element(By.ID, 'input')
-    username_input.send_keys(username)
+    email_paper_input = login_form.find_element(*self.EMAIL_INPUT)
+    email_input = email_paper_input.find_element(By.ID, 'input')
+    email_input.send_keys(email)
 
     password_paper_input = login_form.find_element(*self.PASSWORD_INPUT)
     password_input = password_paper_input.find_element(By.ID, 'input')

@@ -18,7 +18,7 @@ class SearchPageTest(BaseTest):
     """Search for test methods."""
     super(SearchPageTest, self).setUp()
     super(SearchPageTest, self).setContext()
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
   def tearDown(self):

@@ -54,7 +54,7 @@ function installChromeDriver ()
 
 function runUITests ()
 {
-  runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$USERNAME' --password='$PASSWORD'"
+  runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --email='$EMAIL' --password='$PASSWORD'"
 }
 
 function printHelp ()
@@ -66,7 +66,7 @@ function printHelp ()
   echo "  test      - Runs the UI test suite."
   echo
   echo "The test command takes three additional arguments as follows:"
-  echo "test server_url username password"
+  echo "test server_url email password"
   echo "Example:"
   echo "./web_driver.sh test https://my-server-staging.appspot.com"
   echo "ui_tester@mydomain.com your-password-goes-here"
@@ -81,7 +81,7 @@ if [ "$1" == 'install' ]; then
   installChromeDriver
 elif [ "$1" == 'test' ] && [ $# -eq 4 ]; then
   SERVER_URL=$2
-  USERNAME=$3
+  EMAIL=$3
   PASSWORD=$4
   runUITests
 else

@@ -22,9 +22,9 @@ def _ParseArgs():
   parser.add_argument('--server_url', action='store',
                       dest='server_url', default=None,
                       help='URL of the server to test.')
-  parser.add_argument('--username', action='store',
-                      dest='username', default=None,
-                      help='Username of the user to login.')
+  parser.add_argument('--email', action='store',
+                      dest='email', default=None,
+                      help='Email of the user to login.')
   parser.add_argument('--password', action='store',
                       dest='password', default=None,
                       help='Password of the user to login.')
