@@ -53,12 +53,16 @@ function installChromeDriver ()
   runAndAssertCmd "mv chromedriver ${CHROME_DRIVER_DIR}/"
 }
 
-function runUITests ()
+# These tests run from the local machine pointing out to whatever instance is
+# passed as the server url.
+function runUITestsLocally ()
 {
   runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$USERNAME' --password='$PASSWORD'"
 }
 
-function runRemoteUITests ()
+# These tests run on Travis but tunneling to a Sauce Labs machine. They will
+# still point to whatever instance is passed as the server url.
+function runUITestsOnSauceLabs ()
 {
   # The if statement below is to ensure that remote tests only run against the
   # production branch. Travis sets TRAVIS_BRANCH to the target of a pull
@@ -116,7 +120,7 @@ elif [ "$1" == 'test' ]; then
     SERVER_URL=$2
     USERNAME=$3
     PASSWORD=$4
-    runUITests
+    runUITestsLocally
   elif [ -z "$TRAVIS_ADMIN_USERNAME" ]  ||  [ -z "$TRAVIS_ADMIN_PASSWORD" ]  ||  [ -z "$SAUCE_USERNAME" ]  ||  [ -z "$SAUCE_ACCESS_KEY" ]  ||  [ -z "$TRAVIS_JOB_NUMBER" ]; then
     # The if statement above just checks that all the necessary values are
     # present for doing remote UI tests. If they aren't, then we just fail out
@@ -125,7 +129,7 @@ elif [ "$1" == 'test' ]; then
     exit 0
   else
     SERVER_URL="http://ufo-nightly.herokuapp.com"
-    runRemoteUITests
+    runUITestsOnSauceLabs
   fi
 else
   printHelp
