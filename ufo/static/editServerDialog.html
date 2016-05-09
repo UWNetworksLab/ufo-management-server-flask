@@ -53,7 +53,7 @@
           <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.ip_address}}</div>
-          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
+          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton" id="{{resources.editButtonId}}"><strong>{{resources.editText}}</strong></paper-button>
           <paper-icon-button icon="close" title="{{resources.detailsCloseText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
@@ -62,14 +62,14 @@
       </template>
       <div id="rowHolder" class="vertical center-justified layout">
         <form is="iron-form" id="serverEditForm" method="post" action="{{resources.editUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
-          <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter"></paper-input>
-          <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter"></paper-input>
+          <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
+          <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter" id="{{resources.nameInput}}"></paper-input>
           <!-- TODO add the ability to upload files -->
-          <paper-input class="editInputFields" disabled label="[[resources.privateKeyLabel]]" name="private_key" required max-rows="[[resources.textAreaMaxRows]]" pattern="[[resources.regexes.privateKeyPattern]]" error-message="[[resources.regexes.privateKeyError]]" value="[[item.private_key]]"></paper-input>
+          <paper-input class="editInputFields" disabled label="[[resources.privateKeyLabel]]" name="private_key" required max-rows="[[resources.textAreaMaxRows]]" pattern="[[resources.regexes.privateKeyPattern]]" error-message="[[resources.regexes.privateKeyError]]" value="[[item.private_key]]" id="{{resources.privateKeyInput}}"></paper-input>
           <br>
           <p class="editElements hideElement">{{resources.privateKeyText}}</p>
 
-          <paper-input class="editInputFields" disabled label="{{resources.publicKeyLabel}}" type="text" name="public_key" required pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}" value="[[item.public_key]]" on-keypress="submitIfEnter"></paper-input>
+          <paper-input class="editInputFields" disabled label="{{resources.publicKeyLabel}}" type="text" name="public_key" required pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}" value="[[item.public_key]]" on-keypress="submitIfEnter" id="{{resources.publicKeyInput}}"></paper-input>
           <br>
           <p class="editElements hideElement">{{resources.publicKeyText}}</p>
           <p class="editElements hideElement">{{resources.rsaText}}</p>
@@ -82,7 +82,7 @@
         <paper-button class="editElements hideElement anchor-button" on-tap="cancelServerEdit">
         <strong>{{resources.dismissText}}</strong>
         </paper-button>
-        <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm">
+        <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm" id="serverEditSubmitButton">
         <strong>{{resources.saveText}}</strong>
         </paper-button>
         <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
