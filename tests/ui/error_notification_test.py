@@ -19,7 +19,7 @@ class ErrorNotificationTest(BaseTest):
     """Setup for test methods."""
     super(ErrorNotificationTest, self).setUp()
     super(ErrorNotificationTest, self).setContext()
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
   def tearDown(self):

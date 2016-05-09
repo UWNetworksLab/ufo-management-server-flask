@@ -32,11 +32,11 @@ def add_admin():
   Returns:
     A redirect to the admin_list handler after inserting the specified admin.
   """
-  admin_username = flask.request.form.get('admin_username', None)
+  admin_email = flask.request.form.get('admin_email', None)
   admin_password = flask.request.form.get('admin_password', None)
 
-  if admin_username is not None or admin_password is not None:
-    admin_user = models.AdminUser(username=json.loads(admin_username))
+  if admin_email is not None or admin_password is not None:
+    admin_user = models.AdminUser(email=json.loads(admin_email))
     admin_user.set_password(json.loads(admin_password))
     try:
       admin_user.save()

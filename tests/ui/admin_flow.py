@@ -55,34 +55,34 @@ class AdminFlow(UfOPageLayout):
             UfOPageLayout.REMOVE_ADMIN_DIALOG))))
     return remove_admin_dialog
 
-  def findTestAdminOnRemoveForm(self, username, remove_admin_form):
+  def findTestAdminOnRemoveForm(self, email, remove_admin_form):
     """Find and return the test admin element on the remove admin form.
 
     Args:
-      username: A string for the username of the test admin to find.
+      email: A string for the email of the test admin to find.
       remove_admin_form: The remove admin form to search through.
 
     Returns:
       The test admin element once found.
     """
     menu = remove_admin_form.find_element(By.TAG_NAME, 'paper-menu')
-    return self.findItemInListing(menu, username,
+    return self.findItemInListing(menu, email,
                                   should_find_by_icon_item=False)
 
-  def addTestAdmin(self, username, password, add_admin_dialog):
+  def addTestAdmin(self, email, password, add_admin_dialog):
     """Add a test admin account using the add admin form.
 
     Args:
-      username: A string for the username of the test admin to add.
-      passwprd: A string for the password of the test admin to add.
+      email: A string for the email of the test admin to add.
+      password: A string for the password of the test admin to add.
       add_admin_dialog: The add admin dialog element to find the add form on.
     """
     add_admin_form = add_admin_dialog.find_element(
         *UfOPageLayout.ADD_ADMIN_FORM)
-    username_paper_input = add_admin_form.find_element(
-        *UfOPageLayout.ADD_ADMIN_USERNAME)
-    username_input = username_paper_input.find_element(By.ID, 'input')
-    username_input.send_keys(username)
+    email_paper_input = add_admin_form.find_element(
+        *UfOPageLayout.ADD_ADMIN_EMAIL)
+    email_input = email_paper_input.find_element(By.ID, 'input')
+    email_input.send_keys(email)
 
     password_paper_input = add_admin_form.find_element(
         *UfOPageLayout.ADD_ADMIN_PASSWORD)
@@ -97,11 +97,11 @@ class AdminFlow(UfOPageLayout):
         EC.invisibility_of_element_located(((
             UfOPageLayout.DROPDOWN_MENU_SPINNER))))
 
-  def removeTestAdmin(self, username, server_url, should_raise_exception=True):
+  def removeTestAdmin(self, email, server_url, should_raise_exception=True):
     """Remove a test admin account using a form post (the only way currently).
 
     Args:
-      username: A string for the username of the test admin to remove.
+      email: A string for the email of the test admin to remove.
       server_url: The base url portion of the landing page.
       should_raise_exception: True to raise an exception if the admin is not
                               found.
@@ -112,7 +112,7 @@ class AdminFlow(UfOPageLayout):
     remove_admin_dialog = self.getRemoveAdminDialog(dropdown_menu)
     remove_admin_form = remove_admin_dialog.find_element(
         *UfOPageLayout.REMOVE_ADMIN_FORM)
-    admin_item = self.findTestAdminOnRemoveForm(username, remove_admin_form)
+    admin_item = self.findTestAdminOnRemoveForm(email, remove_admin_form)
 
     if admin_item is None:
       if should_raise_exception:

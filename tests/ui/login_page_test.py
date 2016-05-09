@@ -80,7 +80,7 @@ class LoginPageTest(BaseTest):
   def testLoginThenLogoutCorrectlyResetsState(self):
     """Test restricted pages redirects to login after logout."""
     # Login first with a valid user.
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
     # Assert that the login worked.

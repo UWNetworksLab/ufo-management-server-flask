@@ -27,7 +27,7 @@ class SettingsComponentTest(BaseTest):
     """Setup for test methods."""
     super(SettingsComponentTest, self).setUp()
     super(SettingsComponentTest, self).setContext()
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
     settings_component = SettingsComponent(self.driver)
     self.driver.get(self.args.server_url + settings_component.setting_url)

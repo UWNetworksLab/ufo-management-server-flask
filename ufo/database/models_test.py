@@ -109,51 +109,51 @@ class ConfigTest(base_test.BaseTest):
 
 class AdminUserTest(base_test.BaseTest):
   """Test for admin user model class functionality."""
-  FAKE_ADMIN_USERNAME = 'fake admin username'
-  FAKE_ADMIN_USERNAME_2 = 'fake admin username 2'
+  FAKE_ADMIN_EMAIL = 'fake_admin@email.com'
+  FAKE_ADMIN_EMAIL_2 = 'fake_admin_2@email.com'
   FAKE_ADMIN_PASSWORD = 'fake admin password'
 
   def testAdminUserToDict(self):
     """Whether the necessary fields match in a dictionary representation."""
     admin_user = models.AdminUser()
-    admin_user.username = self.FAKE_ADMIN_USERNAME
+    admin_user.email = self.FAKE_ADMIN_EMAIL
     admin_user.set_password(self.FAKE_ADMIN_PASSWORD)
     admin_user.save()
     admin_dict = admin_user.to_dict()
 
     self.assertEqual(admin_dict['id'], admin_user.id)
-    self.assertEqual(admin_dict['username'], admin_user.username)
+    self.assertEqual(admin_dict['email'], admin_user.email)
     self.assertNotIn('password', admin_dict)
 
   def testGetAdminByUsername(self):
-    """Test if getting by username works as intended."""
-    # The username should not exist initially.
-    self.assertIsNone(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME))
+    """Test if getting by email works as intended."""
+    # The email should not exist initially.
+    self.assertIsNone(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL))
 
     admin_user = models.AdminUser()
-    admin_user.username = self.FAKE_ADMIN_USERNAME
+    admin_user.email = self.FAKE_ADMIN_EMAIL
     admin_user.set_password(self.FAKE_ADMIN_PASSWORD)
     admin_user.save()
 
-    self.assertIsNotNone(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME))
-    self.assertEquals(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME), admin_user)
+    self.assertIsNotNone(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL))
+    self.assertEquals(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL), admin_user)
 
     admin_user_2 = models.AdminUser()
-    admin_user_2.username = self.FAKE_ADMIN_USERNAME_2
+    admin_user_2.email = self.FAKE_ADMIN_EMAIL_2
     admin_user_2.set_password(self.FAKE_ADMIN_PASSWORD)
     admin_user_2.save()
 
-    self.assertIsNotNone(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME_2))
-    self.assertEquals(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME_2), admin_user_2)
+    self.assertIsNotNone(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL_2))
+    self.assertEquals(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL_2), admin_user_2)
 
     admin_user.delete()
-    self.assertIsNone(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME))
+    self.assertIsNone(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL))
 
   def testAdminPassword(self):
     """Test that setting password and comparing works."""
@@ -161,7 +161,7 @@ class AdminUserTest(base_test.BaseTest):
     self.assertNotEqual(other_password, self.FAKE_ADMIN_PASSWORD)
 
     admin_user = models.AdminUser()
-    admin_user.username = self.FAKE_ADMIN_USERNAME
+    admin_user.email = self.FAKE_ADMIN_EMAIL
     admin_user.set_password(self.FAKE_ADMIN_PASSWORD)
     admin_user.save()
 

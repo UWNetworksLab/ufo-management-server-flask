@@ -15,7 +15,7 @@ class AdminFlowTest(BaseTest):
 
   """Test admin flows."""
   TEST_ADMIN_AS_DICT = {
-      'username': 'Test Admin Fake Name 01',
+      'email': 'test_admin_fake_name_01@fake.com',
       'password': 'fake admin password that could be anything'
   }
 
@@ -27,9 +27,9 @@ class AdminFlowTest(BaseTest):
   def tearDown(self):
     """Teardown for test methods."""
     admin_flow = AdminFlow(self.driver)
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
-    admin_flow.removeTestAdmin(self.TEST_ADMIN_AS_DICT['username'],
+    admin_flow.removeTestAdmin(self.TEST_ADMIN_AS_DICT['email'],
                                self.args.server_url,
                                should_raise_exception=False)
     LoginPage(self.driver).Logout(self.args.server_url)
@@ -40,7 +40,7 @@ class AdminFlowTest(BaseTest):
     admin_flow = AdminFlow(self.driver)
     for handler in self.handlers:
       self._verifyAnotherAdminCanBeAdded(self.args.server_url + handler)
-      admin_flow.removeTestAdmin(self.TEST_ADMIN_AS_DICT['username'],
+      admin_flow.removeTestAdmin(self.TEST_ADMIN_AS_DICT['email'],
                                  self.args.server_url,
                                  should_raise_exception=False)
       LoginPage(self.driver).Logout(self.args.server_url)
@@ -51,15 +51,15 @@ class AdminFlowTest(BaseTest):
       self._verifyAdminCanBeRemoved(self.args.server_url + handler)
       LoginPage(self.driver).Logout(self.args.server_url)
 
-  def testAdminUsernameIsDisplayed(self):
-    """Test that the admin's username is displayed while logged in."""
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+  def testAdminEmailIsDisplayed(self):
+    """Test that the admin's email is displayed while logged in."""
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
     for handler in self.handlers:
       self.driver.get(self.args.server_url + handler)
       dropdown_button = self.driver.find_element(*AdminFlow.OPEN_MENU_BUTTON)
       self.assertEquals(dropdown_button.text.lower(),
-                        self.args.username.lower())
+                        self.args.email.lower())
     LoginPage(self.driver).Logout(self.args.server_url)
 
   def _verifyAnotherAdminCanBeAdded(self, test_url):
@@ -71,7 +71,7 @@ class AdminFlowTest(BaseTest):
     # Try to login with the uncreated admin to ensure it does not exist.
     with self.assertRaises(TimeoutException):
       LoginPage(self.driver).Login(self.args.server_url,
-                                   self.TEST_ADMIN_AS_DICT['username'],
+                                   self.TEST_ADMIN_AS_DICT['email'],
                                    self.TEST_ADMIN_AS_DICT['password'])
     self.driver.get(test_url)
 
@@ -80,7 +80,7 @@ class AdminFlowTest(BaseTest):
     self.assertEquals(login_url, self.driver.current_url)
 
     # Login as an existing admin to get access.
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
     self.driver.get(test_url)
 
@@ -94,7 +94,7 @@ class AdminFlowTest(BaseTest):
       self.assertIsNone(response_status)
 
     # Add the new admin.
-    admin_flow.addTestAdmin(self.TEST_ADMIN_AS_DICT['username'],
+    admin_flow.addTestAdmin(self.TEST_ADMIN_AS_DICT['email'],
                             self.TEST_ADMIN_AS_DICT['password'],
                             add_admin_dialog)
 
@@ -108,7 +108,7 @@ class AdminFlowTest(BaseTest):
 
     # Login as the newly created test admin.
     LoginPage(self.driver).Login(self.args.server_url,
-                                 self.TEST_ADMIN_AS_DICT['username'],
+                                 self.TEST_ADMIN_AS_DICT['email'],
                                  self.TEST_ADMIN_AS_DICT['password'])
     self.driver.get(test_url)
 
@@ -122,7 +122,7 @@ class AdminFlowTest(BaseTest):
       test_url: The url to remove the admin from.
     """
     # Login as an existing admin to get access.
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
     self.driver.get(test_url)
 
@@ -132,12 +132,12 @@ class AdminFlowTest(BaseTest):
     add_admin_dialog = admin_flow.getAddAdminDialog(dropdown_menu)
 
     # Add the test admin.
-    admin_flow.addTestAdmin(self.TEST_ADMIN_AS_DICT['username'],
+    admin_flow.addTestAdmin(self.TEST_ADMIN_AS_DICT['email'],
                             self.TEST_ADMIN_AS_DICT['password'],
                             add_admin_dialog)
 
     # Remove the test admin.
-    admin_flow.removeTestAdmin(self.TEST_ADMIN_AS_DICT['username'],
+    admin_flow.removeTestAdmin(self.TEST_ADMIN_AS_DICT['email'],
                                self.args.server_url,
                                should_raise_exception=True)
 
@@ -148,7 +148,7 @@ class AdminFlowTest(BaseTest):
     remove_admin_form = remove_admin_dialog.find_element(
         *AdminFlow.REMOVE_ADMIN_FORM)
     admin_item = admin_flow.findTestAdminOnRemoveForm(
-        self.TEST_ADMIN_AS_DICT['username'], remove_admin_form)
+        self.TEST_ADMIN_AS_DICT['email'], remove_admin_form)
 
     self.assertIsNone(admin_item)
 

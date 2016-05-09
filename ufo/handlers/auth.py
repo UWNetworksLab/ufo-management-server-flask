@@ -17,10 +17,10 @@ def is_user_logged_in():
   Returns:
     True when a user is logged into the current session. False otherwise.
   """
-  if 'username' not in flask.session:
+  if 'email' not in flask.session:
     return False
 
-  user = models.AdminUser.get_by_username(flask.session['username'])
+  user = models.AdminUser.get_by_email(flask.session['email'])
   return user is not None
 
 def login_required(f):
@@ -104,17 +104,17 @@ def login():
     return flask.render_template('login.html',
                                  error=flask.request.form.get('error'))
 
-  username = flask.request.form.get('username')
+  email = flask.request.form.get('email')
   password = flask.request.form.get('password')
 
-  user = models.AdminUser.get_by_username(username)
+  user = models.AdminUser.get_by_email(email)
   if user is None:
     return flask.redirect(flask.url_for('login', error='No valid user found',))
 
   if not user.does_password_match(password):
     return flask.redirect(flask.url_for('login', error='Invalid password'))
 
-  flask.session['username'] = user.username
+  flask.session['email'] = user.email
 
   return flask.redirect(flask.url_for('landing'))
 
@@ -125,6 +125,6 @@ def logout():
   Returns:
     A redirect to the login page.
   """
-  flask.session.pop('username', None)
+  flask.session.pop('email', None)
 
   return flask.redirect(flask.url_for('login'))

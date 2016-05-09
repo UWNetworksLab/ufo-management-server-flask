@@ -57,7 +57,7 @@ function installChromeDriver ()
 # passed as the server url.
 function runUITests ()
 {
-  runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$USERNAME' --password='$PASSWORD'"
+  runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --email='$EMAIL' --password='$PASSWORD'"
 }
 
 # These tests run on Travis but tunneling to a Sauce Labs machine. They will
@@ -110,7 +110,7 @@ function printHelp ()
   echo "Example: sudo ./web_driver.sh install"
   echo
   echo "The test command takes three additional arguments as follows:"
-  echo "test server_url username password"
+  echo "test server_url email password"
   echo "Example:"
   echo "./web_driver.sh test https://my-server-staging.appspot.com"
   echo "ui_tester@mydomain.com your-password-goes-here"
@@ -134,7 +134,7 @@ if [ "$1" == 'install' ]; then
 elif [ "$1" == 'test' ]; then
   if [ $# -eq 4 ]; then
     SERVER_URL=$2
-    USERNAME=$3
+    EMAIL=$3
     PASSWORD=$4
     runUITests
   elif [ -z "$TRAVIS_ADMIN_USERNAME" ]  ||  [ -z "$TRAVIS_ADMIN_PASSWORD" ]  ||  [ -z "$SAUCE_USERNAME" ]  ||  [ -z "$SAUCE_ACCESS_KEY" ]  ||  [ -z "$TRAVIS_JOB_NUMBER" ]; then
