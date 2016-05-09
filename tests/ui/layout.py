@@ -80,15 +80,22 @@ class UfOPageLayout(BaseDriver):
 
   ADD_SERVER_MODAL = (By.ID, 'serverModal')
   ADD_SERVER_FORM = (By.ID, 'serverAddForm')
-  ADD_SERVER_INPUT_IP = (By.ID, 'ipInput')
-  ADD_SERVER_INPUT_NAME = (By.ID, 'nameInput')
-  ADD_SERVER_INPUT_PRIVATE_KEY = (By.ID, 'privateKeyInput')
-  ADD_SERVER_INPUT_PUBLIC_KEY = (By.ID, 'publicKeyInput')
   ADD_SERVER_SUBMIT_BUTTON = (By.ID, 'serverAddSubmitButton')
   ADD_SERVER_SPINNER = (By.ID, 'serverSpinner')
 
+  EDIT_SERVER_FORM = (By.ID, 'serverEditForm')
+  EDIT_SERVER_SUBMIT_BUTTON = (By.ID, 'serverEditSubmitButton')
+
+  # These are shared between the add and edit flows for simplicity.
+  SERVER_INPUT_IP = (By.ID, 'ipInput')
+  SERVER_INPUT_NAME = (By.ID, 'nameInput')
+  SERVER_INPUT_PRIVATE_KEY = (By.ID, 'privateKeyInput')
+  SERVER_INPUT_PUBLIC_KEY = (By.ID, 'publicKeyInput')
+
   SERVER_DELETE_BUTTON = (By.ID, 'serverDeleteButton')
-  SERVER_DELETE_SPINNER = (By.ID, 'serverDetailsSpinner')
+  SERVER_DETAILS_BUTTON = (By.ID, 'serverDetailsButton')
+  SERVER_EDIT_BUTTON = (By.ID, 'serverEditButton')
+  SERVER_DETAILS_SPINNER = (By.ID, 'serverDetailsSpinner')
 
   CHROME_POLICY_DOWNLOAD_BUTTON = (By.ID, 'chromePolicyDownloadButton')
 
