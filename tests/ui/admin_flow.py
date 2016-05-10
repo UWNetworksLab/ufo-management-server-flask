@@ -36,6 +36,25 @@ class AdminFlow(UfOPageLayout):
             UfOPageLayout.ADD_ADMIN_DIALOG))))
     return add_admin_dialog
 
+  def getChangeAdminPasswordDialog(self, dropdown_menu):
+    """Navigates to the change admin password dialog on a given page.
+
+    Args:
+      dropdown_menu: The dropdown menu to navigate upon.
+
+    Returns:
+      The change admin password dialog element once found.
+    """
+    change_admin_password_button = dropdown_menu.find_element(
+        *UfOPageLayout.CHANGE_ADMIN_PASSWORD_BUTTON)
+    change_admin_password_button.click()
+
+    change_admin_password_dialog = WebDriverWait(
+        self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+            EC.visibility_of_element_located(((
+                UfOPageLayout.CHANGE_ADMIN_PASSWORD_DIALOG))))
+    return change_admin_password_dialog
+
   def getRemoveAdminDialog(self, dropdown_menu):
     """Navigates to the remove admin dialog on a given page.
 
@@ -91,6 +110,36 @@ class AdminFlow(UfOPageLayout):
 
     submit_button = add_admin_form.find_element(
         *UfOPageLayout.ADD_ADMIN_SUBMIT)
+    submit_button.click()
+
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+        EC.invisibility_of_element_located(((
+            UfOPageLayout.DROPDOWN_MENU_SPINNER))))
+
+  def changeAdminPassword(self, old_password, new_password,
+                          change_admin_password_dialog):
+    """Change the password for an admin account using the dialog passed in.
+
+    Args:
+      old_password: A string for the current password of the admin.
+      new_password: A string for the new password to set on the admin.
+      change_admin_password_dialog: The change admin password dialog element
+                                    to find the change admin password form on.
+    """
+    change_admin_password_form = change_admin_password_dialog.find_element(
+        *UfOPageLayout.CHANGE_ADMIN_PASSWORD_FORM)
+    old_password_paper_input = change_admin_password_form.find_element(
+        *UfOPageLayout.CHANGE_ADMIN_PASSWORD_OLD_PASSWORD)
+    old_password_input = old_password_paper_input.find_element(By.ID, 'input')
+    old_password_input.send_keys(old_password)
+
+    new_password_paper_input = change_admin_password_form.find_element(
+        *UfOPageLayout.CHANGE_ADMIN_PASSWORD_NEW_PASSWORD)
+    new_password_input = new_password_paper_input.find_element(By.ID, 'input')
+    new_password_input.send_keys(new_password)
+
+    submit_button = change_admin_password_dialog.find_element(
+        *UfOPageLayout.CHANGE_ADMIN_PASSWORD_SUBMIT)
     submit_button.click()
 
     WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
