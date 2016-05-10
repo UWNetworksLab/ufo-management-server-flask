@@ -66,3 +66,27 @@ def delete_admin():
     flask.abort(e.code, e.message)
 
   return flask.redirect(flask.url_for('admin_list'))
+
+@ufo.app.route('/admin/changePassword', methods=['POST'])
+@ufo.setup_required
+@auth.login_required
+def change_admin_password():
+  """Changes the password for the admin specified.
+
+  Returns:
+    A redirect to the admin_list page after modifying the given admin.
+  """
+  admin_user = models.AdminUser.get_by_email(flask.session['email'])
+  old_password = json.loads(flask.request.form.get('old_password'))
+  new_password = json.loads(flask.request.form.get('new_password'))
+
+  if not admin_user.does_password_match(old_password):
+    e = custom_exceptions.IncorrectCredential()
+    flask.abort(e.code, e.message)
+  admin_user.set_password(new_password)
+  try:
+    admin_user.save()
+  except custom_exceptions.UnableToSaveToDB as e:
+    flask.abort(e.code, e.message)
+
+  return flask.redirect(flask.url_for('admin_list'))

@@ -31,3 +31,13 @@ class AttemptToRemoveLastAdmin(Exception):
   code = 409
   message = ('Can\'t delete the last admin in the database. Add another ' +
              'admin then try to delete this one again.')
+
+
+class IncorrectCredential(Exception):
+  """An exception for when a user sends incorrect credentials.
+
+  This is likely caused when the wrong current password is sent when attempting
+  to change the password to something new.
+  """
+  code = 401
+  message = 'Username or password does not match.'

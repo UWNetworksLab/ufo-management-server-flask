@@ -18,6 +18,7 @@ def _get_landing_resources():
     'searchJsonUrl': flask.url_for('search'),
     'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
     'addAdminText': 'Add an Admin',
+    'changeAdminPasswordText': 'Change Your Password',
     'removeAdminText': 'Remove an Admin',
     'settingsText': 'Settings',
     'logoutText': 'Log Out',
@@ -35,6 +36,12 @@ def _get_landing_resources():
     'adminAddSuccessText': 'Success! The specified admin was added.',
     'adminAddFailureText': ('Error: Adding the specified admin failed. Try '
                             'again later.'),
+    'changeAdminPasswordUrl': flask.url_for('change_admin_password'),
+    'changeAdminPasswordInstructions': ('Enter your current password and a ' +
+      'new one then submit to update it.'),
+    'changeAdminPasswordOldLabel': 'Current Password',
+    'changeAdminPasswordNewLabel': 'New Password',
+    'changeAdminPasswordSubmitText': 'Update Password',
     'removeAdminUrl': flask.url_for('delete_admin'),
     'removeAdminInstructions': 'Select an Admin below by email to remove.',
     'removeAdminSubmitText': 'Remove Admin',
