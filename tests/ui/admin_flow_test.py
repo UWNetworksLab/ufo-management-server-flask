@@ -16,7 +16,8 @@ class AdminFlowTest(BaseTest):
   """Test admin flows."""
   TEST_ADMIN_AS_DICT = {
       'email': 'test_admin_fake_name_01@fake.com',
-      'password': 'fake admin password that could be anything'
+      'password': 'fake admin password that could be anything',
+      'new_password': 'fake admin password different from the first'
   }
 
   def setUp(self):
@@ -44,6 +45,54 @@ class AdminFlowTest(BaseTest):
                                  self.args.server_url,
                                  should_raise_exception=False)
       LoginPage(self.driver).Logout(self.args.server_url)
+
+  def testChangingAdminPasswordWorks(self):
+    """Test that removing an admin works."""
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
+                                 self.args.password)
+    test_url = self.args.server_url + flask.url_for('landing')
+    self.driver.get(test_url)
+
+    # Find the add admin dialog.
+    admin_flow = AdminFlow(self.driver)
+    dropdown_menu = admin_flow.getDropdownMenu()
+    add_admin_dialog = admin_flow.getAddAdminDialog(dropdown_menu)
+
+    # Add the test admin.
+    admin_flow.addTestAdmin(self.TEST_ADMIN_AS_DICT['email'],
+                            self.TEST_ADMIN_AS_DICT['password'],
+                            add_admin_dialog)
+
+    # Logout of the existing admin account.
+    LoginPage(self.driver).Logout(self.args.server_url)
+
+    # Login as the newly created test admin.
+    LoginPage(self.driver).Login(self.args.server_url,
+                                 self.TEST_ADMIN_AS_DICT['email'],
+                                 self.TEST_ADMIN_AS_DICT['password'])
+
+    self.driver.get(test_url)
+    dropdown_menu = admin_flow.getDropdownMenu()
+    change_admin_password_dialog = admin_flow.getChangeAdminPasswordDialog(
+        dropdown_menu)
+
+    # Change the test admin's password.
+    admin_flow.changeAdminPassword(self.TEST_ADMIN_AS_DICT['password'],
+                                   self.TEST_ADMIN_AS_DICT['new_password'],
+                                   change_admin_password_dialog)
+
+    # Logout of the existing admin account.
+    LoginPage(self.driver).Logout(self.args.server_url)
+
+    # Login with the new credentials.
+    LoginPage(self.driver).Login(self.args.server_url,
+                                 self.TEST_ADMIN_AS_DICT['email'],
+                                 self.TEST_ADMIN_AS_DICT['new_password'])
+
+    # Assert that login succeeded (we're now on the test_url page).
+    self.assertEquals(test_url, self.driver.current_url)
+
+    LoginPage(self.driver).Logout(self.args.server_url)
 
   def testRemovingAdminWorks(self):
     """Test that removing an admin works."""
