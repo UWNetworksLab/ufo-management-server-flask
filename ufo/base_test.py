@@ -14,7 +14,7 @@ FAKE_EMAILS_AND_NAMES = [
   {'email': 'bar@yahoo.com', 'name': 'bob', 'pri': 'barpri', 'pub': 'barpub'},
   {'email': 'baz@gmail.com', 'name': 'mark', 'pri': 'bazpri', 'pub': 'bazpub'}
 ]
-FAKE_ADMIN_USERNAME = 'testuser'
+FAKE_ADMIN_EMAIL = 'fakeadmin@admin.com'
 FAKE_ADMIN_PASSWORD = 'testpass'
 
 
@@ -37,13 +37,13 @@ class BaseTest(TestCase):
   def setup_auth(self):
     """Sets up a user in the database and in the current session."""
     user = models.AdminUser()
-    user.username = FAKE_ADMIN_USERNAME
+    user.email = FAKE_ADMIN_EMAIL
     user.set_password(FAKE_ADMIN_PASSWORD)
     user.save()
 
     with self.client as c:
       with c.session_transaction() as sess:
-        sess['username'] = FAKE_ADMIN_USERNAME
+        sess['email'] = FAKE_ADMIN_EMAIL
 
   def setup_config(self):
     """Setup the config that is needed for @setup_required decorator."""

@@ -18,6 +18,7 @@ def _get_landing_resources():
     'searchJsonUrl': flask.url_for('search'),
     'addIconUrl': flask.url_for('static', filename='img/add-users.svg'),
     'addAdminText': 'Add an Admin',
+    'changeAdminPasswordText': 'Change Your Password',
     'removeAdminText': 'Remove an Admin',
     'settingsText': 'Settings',
     'logoutText': 'Log Out',
@@ -25,19 +26,26 @@ def _get_landing_resources():
     'settingsUrl': flask.url_for('setup') + '#settingsDisplayTemplate',
     'listAdminUrl': flask.url_for('admin_list'),
     'addAdminUrl': flask.url_for('add_admin'),
-    'adminUsernameLabel': 'Admin Username',
+    'adminEmailLabel': 'Admin Email',
     'adminPasswordlabel': 'Admin Password',
     'addAdminSubmitText': 'Add Admin',
     'adminListGetError': ('Error: Getting the list of admins failed. Try again'
                           ' later.'),
-    'adminExistsError': ('Error: An admin with the specified username already '
+    'adminExistsError': ('Error: An admin with the specified email already '
                          'exists.'),
     'adminAddSuccessText': 'Success! The specified admin was added.',
     'adminAddFailureText': ('Error: Adding the specified admin failed. Try '
                             'again later.'),
+    'changeAdminPasswordUrl': flask.url_for('change_admin_password'),
+    'changeAdminPasswordInstructions': ('Enter your current password and a ' +
+      'new one then submit to update it.'),
+    'changeAdminPasswordOldLabel': 'Current Password',
+    'changeAdminPasswordNewLabel': 'New Password',
+    'changeAdminPasswordSubmitText': 'Update Password',
     'removeAdminUrl': flask.url_for('delete_admin'),
-    'removeAdminInstructions': 'Select an Admin below by username to remove.',
+    'removeAdminInstructions': 'Select an Admin below by email to remove.',
     'removeAdminSubmitText': 'Remove Admin',
+    'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
   }
 
 def _get_login_resources():
@@ -49,9 +57,10 @@ def _get_login_resources():
   return {
     'titleText': 'Please Log In',
     'loginUrl': flask.url_for('login'),
-    'usernameLabel': 'Username',
+    'emailLabel': 'Email',
     'passwordLabel': 'Password',
     'loginText': 'Login',
+    'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
   }
 
 def _get_oauth_resources():
@@ -90,7 +99,7 @@ def _get_oauth_resources():
     'connectYourDomainButtonText': 'Connect to Your Domain',
     'pasteTheCodeText': ('Once you finish authorizing access, please paste the'
         ' code you receive in the box below.'),
-    'adminUsernameLabel': 'Admin Username',
+    'adminEmailLabel': 'Admin Email',
     'adminPasswordlabel': 'Admin Password',
     'submitButtonText': 'Submit',
   }
@@ -146,7 +155,8 @@ def _get_proxy_server_resources():
     'listLimit': 10,
     'detailsExpandText': 'Expand Server',
     'detailsCloseText': 'Close',
-    'detailsButtonId': 'serverEditButton',
+    'detailsButtonId': 'serverDetailsButton',
+    'editButtonId': 'serverEditButton',
     'detailsOverlayId': 'serverDetailsOverlay',
     'editText': 'Edit',
     'saveText': 'Save',
@@ -170,6 +180,10 @@ def _get_proxy_server_resources():
     'nameLabel': 'Server Name',
     'privateKeyLabel': 'SSH Private Key',
     'publicKeyLabel': 'SSH Host Public Key',
+    'ipInput': 'ipInput',
+    'nameInput': 'nameInput',
+    'privateKeyInput': 'privateKeyInput',
+    'publicKeyInput': 'publicKeyInput',
     'ip_address': '',
     'name': '',
     'private_key': '',

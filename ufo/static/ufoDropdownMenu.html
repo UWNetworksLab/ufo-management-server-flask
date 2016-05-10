@@ -49,6 +49,10 @@
           <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
           {{resources.addAdminText}}
         </paper-icon-item>
+        <paper-icon-item class="dropdown-button" id="changeAdminPasswordButton" on-tap="flipToChangeAdminPasswordFlow">
+          <iron-icon class="dropdown-icon" icon="editor:mode-edit" item-icon></iron-icon>
+          {{resources.changeAdminPasswordText}}
+        </paper-icon-item>
         <paper-icon-item class="dropdown-button" id="removeAdminButton" on-tap="flipToRemoveAdminFlow">
           <iron-icon class="dropdown-icon" icon="close" item-icon></iron-icon>
           {{resources.removeAdminText}}
@@ -81,9 +85,9 @@
         <p id="addAdminResponseStatus">{{responseStatus}}</p>
       </template>
       <form is="iron-form" id="addAdminForm" method="post" action="{{resources.addAdminUrl}}" on-iron-form-response="parseAddAdminResponse" on-iron-form-presubmit="enableSpinner">
-        <paper-input label="{{resources.adminUsernameLabel}}" id="paperAdminUsername" name="paperUsername"required on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="{{resources.adminEmailLabel}}" id="paperAdminEmail" name="paperEmail" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
         <paper-input label="{{resources.adminPasswordlabel}}" id="paperAdminPassword" name="paperPassword" required on-keypress="submitIfEnter"></paper-input>
-        <input type="hidden" name="admin_username" id="jsonUsername" value="" />
+        <input type="hidden" name="admin_email" id="jsonEmail" value="" />
         <input type="hidden" name="admin_password" id="jsonPassword" value="" />
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
         <paper-button on-tap="submitAddAdminForm" class="floatToTheRight anchor-button" id="adminFormSubmitButton" type="submit">
@@ -93,6 +97,26 @@
       <p></p>
       <br>
       <p></p>
+    </paper-dialog>
+
+    <paper-dialog id="changeAdminPasswordDialog" with-backdrop>
+      <paper-button on-tap="flipToDropdownFlowFromChangeAdminPassword" class="header">
+        <iron-icon icon="arrow-back" item-icon></iron-icon>
+      </paper-button>
+      {{resources.changeAdminPasswordInstructions}}
+      <paper-button class="floatToTheRight" on-tap="exitAll">
+        <iron-icon icon="close" item-icon></iron-icon>
+      </paper-button>
+      <form is="iron-form" id="changeAdminPasswordForm" method="post" action="{{resources.changeAdminPasswordUrl}}" on-iron-form-response="parseChangeAdminPasswordResponse" on-iron-form-presubmit="enableSpinner">
+        <paper-input label="{{resources.changeAdminPasswordOldLabel}}" id="paperAdminOldPassword" name="paperAdminOldPassword" required on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="{{resources.changeAdminPasswordNewLabel}}" id="paperAdminNewPassword" name="paperAdminNewPassword" required on-keypress="submitIfEnter"></paper-input>
+        <input type="hidden" name="old_password" id="jsonOldPassword" value="" />
+        <input type="hidden" name="new_password" id="jsonNewPassword" value="" />
+        <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+      </form>
+      <div class="buttons">
+        <paper-button on-tap="submitChangeAdminPasswordForm" class="anchor-button" id="changeAdminPasswordSubmitButton" type="submit"><strong>{{resources.changeAdminPasswordSubmitText}}</strong></paper-button>
+      </div>
     </paper-dialog>
 
     <paper-dialog id="removeAdminDialog" with-backdrop>
@@ -109,14 +133,14 @@
             <template is="dom-if" if="[[!hasMoreThanOne(ajaxResponse.items)]]">
               <template is="dom-repeat" items="[[ajaxResponse.items]]">
                 <paper-item id="{{item.id}}" class="horizontal layout" disabled>
-                  <strong>{{item.username}}</strong>
+                  <strong>{{item.email}}</strong>
                 </paper-item>
               </template>
             </template>
             <template is="dom-if" if="[[hasMoreThanOne(ajaxResponse.items)]]">
               <template is="dom-repeat" items="[[ajaxResponse.items]]">
                 <paper-item id="{{item.id}}" class="horizontal layout">
-                  <strong>{{item.username}}</strong>
+                  <strong>{{item.email}}</strong>
                 </paper-item>
               </template>
             </template>
@@ -129,52 +153,6 @@
         <paper-button on-tap="submitRemoveAdminForm" class="anchor-button" id="removeAdminSubmitButton" type="submit"><strong>{{resources.removeAdminSubmitText}}</strong></paper-button>
       </div>
     </paper-dialog>
-
-    <!-- TODO(eholder): Figure out how to style the UI so that the dialog
-    appears in the correct place. Below are some alternative methods that
-    present the same basic UI flow. These did not work because of stacking, as
-    in they ended up being rendered underneath other elements and z-index did
-    not fix the issue. If I can figure out how to fix that, we can use one of
-    approach below, so they are kept around for now. I will clean this up once
-    we have some feedback on the UI. -->
-
-    <!-- Paper menu button approach.
-    <paper-menu-button horizontal-align="right">
-      <paper-button class="dropdown-trigger" id="openMenuButton">
-       {{username}} <iron-icon icon="arrow-drop-down"></iron-icon>
-      </paper-button>
-      <paper-menu class="dropdown-content" id="ufoDropdownMenu">
-        <paper-icon-item class="dropdown-button">
-          <iron-icon class="dropdown-icon" src="{{resources.addIconUrl}}" item-icon></iron-icon>
-          Add an Admin
-        </paper-icon-item>
-        <paper-icon-item class="dropdown-button">
-          <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
-          Settings
-        </paper-icon-item>
-        <paper-item class="dropdown-button">
-          Log Out
-        </paper-item>
-      </paper-menu>
-    </paper-menu-button> -->
-
-
-    <!-- Paper dropdown menu approach.
-    <paper-dropdown-menu label="{{session['username']}}" id="username-and-menu" class="custom-dropdown flex">
-      <paper-listbox class="dropdown-content">
-        <paper-icon-item class="dropdown-button">
-          <iron-icon class="dropdown-icon" src="{{url_for('static', filename='img/add-users.svg')}}" item-icon></iron-icon>
-          Add an Admin
-        </paper-icon-item>
-        <paper-icon-item class="dropdown-button">
-          <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
-          Settings
-        </paper-icon-item>
-        <paper-item class="dropdown-button">
-          Log Out
-        </paper-item>
-      </paper-listbox>
-    </paper-dropdown-menu>-->
   </template>
 
   <script>
@@ -223,6 +201,10 @@
         this.closeMenu();
         this.openAddAdminDialog();
       },
+      flipToChangeAdminPasswordFlow: function(e, details) {
+        this.closeMenu();
+        this.openChangeAdminPasswordDialog();
+      },
       flipToRemoveAdminFlow: function(e, details) {
         this.closeMenu();
         this.openRemoveAdminDialog();
@@ -233,6 +215,9 @@
       openAddAdminDialog: function() {
         this.$.addAdminDialog.open();
       },
+      openChangeAdminPasswordDialog: function() {
+        this.$.changeAdminPasswordDialog.open();
+      },
       openRemoveAdminDialog: function() {
         this.$.removeAdminDialog.open();
       },
@@ -242,6 +227,11 @@
         var addAdminDialog = document.getElementById('addAdminDialog');
         if (addAdminDialog) {
           this.$.addAdminDialog.close();
+        }
+
+        var changeAdminPasswordDialog = document.getElementById('changeAdminPasswordDialog');
+        if (changeAdminPasswordDialog) {
+          this.$.changeAdminPasswordDialog.close();
         }
 
         var removeAdminDialog = document.getElementById('removeAdminDialog');
@@ -262,6 +252,11 @@
         this.set('showResponseStatus', false);
         this.set('responseStatus', '');
       },
+      flipToDropdownFlowFromChangeAdminPassword: function(e, details) {
+        this.openMenu();
+        this.closeAdminDialog();
+        this.resetChangeAdminPasswordForm();
+      },
       flipToDropdownFlowFromRemoveAdmin: function(e, details) {
         this.openMenu();
         this.closeAdminDialog();
@@ -271,12 +266,20 @@
         this.set('loading', true);
       },
       makeAdminJson: function() {
-        var username = this.querySelector('#paperAdminUsername').value;
+        var email = this.querySelector('#paperAdminEmail').value;
         var password = this.querySelector('#paperAdminPassword').value;
-        var jsonUsername = this.querySelector('#jsonUsername');
+        var jsonEmail = this.querySelector('#jsonEmail');
         var jsonPassword = this.querySelector('#jsonPassword');
-        jsonUsername.value = JSON.stringify(username);
+        jsonEmail.value = JSON.stringify(email);
         jsonPassword.value = JSON.stringify(password);
+      },
+      makeAdminPasswordsJson: function() {
+        var oldPassword = this.querySelector('#paperAdminOldPassword').value;
+        var newPassword = this.querySelector('#paperAdminNewPassword').value;
+        var jsonOldPassword = this.querySelector('#jsonOldPassword');
+        var jsonNewPassword = this.querySelector('#jsonNewPassword');
+        jsonOldPassword.value = JSON.stringify(oldPassword);
+        jsonNewPassword.value = JSON.stringify(newPassword);
       },
       makeAdminIdJson: function() {
         var adminId = this.$.menuOfAdmins.selectedItem.id;
@@ -291,6 +294,11 @@
         this.makeAdminJson();
         this.querySelector('#addAdminForm').submit();
       },
+      submitChangeAdminPasswordForm: function() {
+        this.enableSpinner();
+        this.makeAdminPasswordsJson();
+        this.querySelector('#changeAdminPasswordForm').submit();
+      },
       submitRemoveAdminForm: function() {
         if (this.$.menuOfAdmins.selectedItem) {
           this.enableSpinner();
@@ -299,10 +307,10 @@
         }
       },
       parseAddAdminResponse: function(e, details) {
-        var username = this.querySelector('#paperAdminUsername').value;
+        var email = this.querySelector('#paperAdminEmail').value;
         var admins = details.xhr.response.items;
         if (admins) {
-          var found = this._findUsernameInAdminList(admins, username);
+          var found = this._findEmailInAdminList(admins, email);
           if (found) {
             this.set('showResponseStatus', true);
             this.set('responseStatus', this.resources.adminAddSuccessText);
@@ -318,6 +326,11 @@
         }
         this.set('loading', false);
       },
+      parseChangeAdminPasswordResponse: function(e, details) {
+        this.set('ajaxResponse', details.xhr.response);
+        this.set('loading', false);
+        this.resetChangeAdminPasswordForm();
+      },
       parseRemoveAdminResponse: function(e, details) {
         this.set('ajaxResponse', details.xhr.response);
         this.set('loading', false);
@@ -325,6 +338,9 @@
       },
       resetAddAdminForm: function() {
         this.querySelector('#addAdminForm').reset();
+      },
+      resetChangeAdminPasswordForm: function() {
+        this.querySelector('#changeAdminPasswordForm').reset();
       },
       resetRemoveAdminForm: function() {
         this.querySelector('#removeAdminForm').reset();
@@ -339,11 +355,11 @@
         this.closeMenu();
         this.closeAdminDialog();
       },
-      _findUsernameInAdminList: function(admins, username) {
+      _findEmailInAdminList: function(admins, email) {
         var found = false;
         var i = 0;
         for (; i < admins.length; ++i) {
-          if (admins[i].username === username) {
+          if (admins[i].email === email) {
             found = true;
             break;
           }

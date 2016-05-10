@@ -18,7 +18,7 @@ class LandingPageTest(BaseTest):
     """Setup for test methods."""
     super(LandingPageTest, self).setUp()
     super(LandingPageTest, self).setContext()
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
   def tearDown(self):
@@ -173,6 +173,32 @@ class LandingPageTest(BaseTest):
                                   should_raise_exception=False)
 
     self.assertTestServerPresenceOnPage(False)
+
+  def testEditServer(self):
+    """Test that editing a server displays the modified server."""
+    landing_page = LandingPage(self.driver)
+    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
+                               BaseTest.TEST_SERVER_AS_DICT['name'],
+                               BaseTest.TEST_SERVER_AS_DICT['private_key'],
+                               BaseTest.TEST_SERVER_AS_DICT['public_key'],
+                               self.args.server_url)
+
+    self.assertTestServerPresenceOnPage(True)
+
+    landing_page.editTestServer(
+        BaseTest.TEST_SERVER_AS_DICT['name'],
+        BaseTest.TEST_SERVER_EDIT_AS_DICT['ip'],
+        BaseTest.TEST_SERVER_EDIT_AS_DICT['name'],
+        BaseTest.TEST_SERVER_EDIT_AS_DICT['private_key'],
+        BaseTest.TEST_SERVER_EDIT_AS_DICT['public_key'], self.args.server_url)
+
+    self.assertTestServerPresenceOnPage(False)
+    self.assertTestServerPresenceOnPage(
+        True, name=BaseTest.TEST_SERVER_EDIT_AS_DICT['name'])
+
+    landing_page.removeTestServer(BaseTest.TEST_SERVER_EDIT_AS_DICT['name'],
+                                  self.args.server_url,
+                                  should_raise_exception=False)
 
   def testDownloadChromePolicyFromLandingPage(self):
     """Test that the chrome policy download link is present and wired up."""

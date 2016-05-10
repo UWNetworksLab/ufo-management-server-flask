@@ -317,26 +317,25 @@ class ProxyServer(Model):
 class AdminUser(Model):
   """People who have access to the management server, as in admins."""
   __tablename__ = "admin_user"
-  __searchable__ = ['username']
+  __searchable__ = ['email']
 
   id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
-  username = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
-                                         index=True, unique=True)
+  email = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH), index=True,
+                        unique=True)
   password = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
 
-  # TODO(eholder): Followup with unit tests for each of these.
   @classmethod
-  def get_by_username(cls, username):
-    """Lookup an admin user by username.
+  def get_by_email(cls, email):
+    """Lookup an admin user by email.
 
     Agrs:
-      username: The username to search for an admin user by.
+      email: The email to search for an admin user by.
 
     Returns:
       The specified admin user or None if not found.
     """
-    return cls.query.filter_by(username=username).one_or_none()
+    return cls.query.filter_by(email=email).one_or_none()
 
   def set_password(self, password):
     """Sets the password on a given admin user.
@@ -387,6 +386,6 @@ class AdminUser(Model):
     """
     return {
       "id": self.id,
-      "username": self.username,
+      "email": self.email,
     }
 
