@@ -22,8 +22,9 @@ class SparkpostEmail(object):
     sparky = SparkPost()
     domain = os.environ.get('SPARKPOST_SANDBOX_DOMAIN')
     from_email = SparkpostEmail.FROM_USERNAME + '@' + domain
-    message = RECOVERY_MESSAGE_START + new_password + RECOVERY_MESSAGE_END
-    subject_line = domain + ' ' + RECOVERY_SUBJECT
+    message = (SparkpostEmail.RECOVERY_MESSAGE_START + new_password +
+               SparkpostEmail.RECOVERY_MESSAGE_END)
+    subject_line = domain + ' ' + SparkpostEmail.RECOVERY_SUBJECT
 
     response = sparky.transmission.send(
         recipients=[recipient],

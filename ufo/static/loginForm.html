@@ -1,5 +1,7 @@
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 
 <dom-module id="login-form">
   <style is="custom-style">
@@ -18,17 +20,27 @@
     }
   </style>
   <template>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner id="spinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
+    </template>
     <form id="loginForm" method="POST">
-      <paper-input label="{{resources.emailLabel}}" id="email" name="email" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
+      <paper-input label="{{resources.emailLabel}}" id="email" name="email" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter" value="{{emailInput}}"></paper-input>
       <paper-input type="password" label="{{resources.passwordLabel}}" id="password" name="password" required on-keypress="submitIfEnter"></paper-input>
 
       <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
     </form>
     <div class="buttons">
+      <paper-button on-tap="submitForgotPasswordForm" class="anchor-no-button" type="submit" id="forgotPassword">
+        <strong>{{resources.forgotPasswordText}}</strong>
+      </paper-button>
       <paper-button on-tap="submitLoginForm" class="anchor-button" type="submit" id="signIn">
         <strong>{{resources.loginText}}</strong>
       </paper-button>
     </div>
+    <form is="iron-form" id="forgotPasswordForm" method="post" action="{{resources.forgotPasswordUrl}}" on-iron-form-response="parseForgotPasswordResponse" on-iron-form-presubmit="enableSpinner">
+      <input type="hidden" name="email" value="{{emailInput}}">
+      <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+    </form>
   </template>
 
   <script>
@@ -38,17 +50,35 @@
         resources: {
           type: Object,
         },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
       },
+      submitForgotPasswordForm: function() {
+        this.querySelector('#forgotPasswordForm').submit();
+      },
       submitLoginForm: function() {
+        this.enableSpinner();
         this.querySelector('#loginForm').submit();
       },
       submitIfEnter: function(e) {
         if (e.keyCode === 13) {
           this.submitLoginForm();
         }
+      },
+      parseForgotPasswordResponse: function(e, details) {
+        /*this.sendUsersJsonToList(details.xhr.response);
+        this.resetForms();
+        this.closeModal();*/
+        this.set('loading', false);
       },
     });
   </script>

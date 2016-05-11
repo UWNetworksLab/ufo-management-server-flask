@@ -56,9 +56,11 @@ def _get_login_resources():
   """
   return {
     'titleText': 'Please Log In',
+    'forgotPasswordUrl': flask.url_for('forgot_password'),
     'loginUrl': flask.url_for('login'),
     'emailLabel': 'Email',
     'passwordLabel': 'Password',
+    'forgotPasswordText': 'Forgot Your Password?',
     'loginText': 'Login',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
   }

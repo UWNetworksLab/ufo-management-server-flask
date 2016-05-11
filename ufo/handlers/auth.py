@@ -1,6 +1,8 @@
 """Auth module which provides login handlers and decorators."""
 
 import json
+import random
+import string
 
 import flask
 import functools
@@ -8,6 +10,7 @@ import functools
 import ufo
 from ufo.database import models
 from ufo.services.custom_exceptions import NotLoggedIn
+from ufo.services.sparkpost_email import SparkpostEmail
 
 
 # TODO(eholder): Add functional or unit tests for each decorator.
@@ -109,7 +112,7 @@ def login():
 
   user = models.AdminUser.get_by_email(email)
   if user is None:
-    return flask.redirect(flask.url_for('login', error='No valid user found',))
+    return flask.redirect(flask.url_for('login', error='No valid user found'))
 
   if not user.does_password_match(password):
     return flask.redirect(flask.url_for('login', error='Invalid password'))
@@ -128,3 +131,48 @@ def logout():
   flask.session.pop('email', None)
 
   return flask.redirect(flask.url_for('login'))
+
+@ufo.app.route('/forgot_password/', methods=['POST'])
+def forgot_password():
+  """Handle when a user forgets their password by resetting and emailing.
+
+  Returns:
+    A redirect to the landing page if the user is signed in, a redirect back to
+    the login page along with an error if the user does not exist, or just a
+    json response message if successful.
+  """
+  if is_user_logged_in():
+    response = {'message': 'forgotPasswordUserLoggedIn'}
+    return flask.Response(json.dumps((response)), mimetype='application/json')
+
+  email = flask.request.form.get('email')
+  admin_user = models.AdminUser.get_by_email(email)
+  if admin_user is None:
+    response = {'message': 'forgotPasswordUserNotFound'}
+    return flask.Response(json.dumps((response)), mimetype='application/json')
+
+  new_password = _generate_new_random_password()
+  admin_user.set_password(new_password)
+  try:
+    admin_user.save()
+  except custom_exceptions.UnableToSaveToDB as e:
+    flask.abort(e.code, e.message)
+
+  emailer = SparkpostEmail()
+  emailer.send_recovery_email(email, new_password)
+
+  response = {'message': 'forgotPasswordSuccess'}
+  return flask.Response(json.dumps((response)), mimetype='application/json')
+
+def _generate_new_random_password():
+  """Generate a new random password using the random library.
+
+  This implementation is based on the following post:
+  http://stackoverflow.com/a/23728630/2216222
+
+  Returns:
+    A string for a new password.
+  """
+  length = 20 # This is fairly arbitrary, but seemed long enough.
+  choices = string.ascii_uppercase + string.ascii_lowercase + string.digits
+  return ''.join(random.SystemRandom().choice(choices) for _ in range(length))

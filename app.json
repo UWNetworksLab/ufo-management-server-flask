@@ -17,7 +17,8 @@
   },
   "addons": [
     "heroku-postgresql",
-    "redistogo"
+    "redistogo",
+    "sparkpost"
   ],
   "buildpacks": [
     {
