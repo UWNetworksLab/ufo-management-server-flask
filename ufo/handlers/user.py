@@ -40,7 +40,7 @@ def _get_users_to_add(get_all, group_key, user_key):
   if not credentials:
     dictionary = {'directory_users': [], 'error': 'OAuth is not set up'}
     json_obj = json.dumps((dictionary))
-    return flask.Response(json_obj, mimetype='application/json')
+    return flask.Response(ufo.JSON_PREFIX + json_obj, headers=ufo.JSON_HEADERS)
 
   try:
     directory_service = google_directory_service.GoogleDirectoryService(
@@ -63,11 +63,11 @@ def _get_users_to_add(get_all, group_key, user_key):
       users_to_output.append(user_for_display)
 
     json_obj = json.dumps(({'directory_users': users_to_output}))
-    return flask.Response(json_obj, mimetype='application/json')
+    return flask.Response(ufo.JSON_PREFIX + json_obj, headers=ufo.JSON_HEADERS)
 
   except errors.HttpError as error:
     json_obj = json.dumps(({'directory_users': [], 'error': str(error)}))
-    return flask.Response(json_obj, mimetype='application/json')
+    return flask.Response(ufo.JSON_PREFIX + json_obj, headers=ufo.JSON_HEADERS)
 
 def _get_random_server_ip():
   """Gets the ip address of a random proxy server of those in the db.
@@ -140,7 +140,7 @@ def user_list():
     A json object with 'items' set to the list of users in the db.
   """
   users_json = json.dumps(({'items': models.User.get_items_as_list_of_dict()}))
-  return flask.Response(users_json, mimetype='application/json')
+  return flask.Response(ufo.JSON_PREFIX + users_json, headers=ufo.JSON_HEADERS)
 
 @ufo.app.route('/user/add', methods=['GET', 'POST'])
 @ufo.setup_required
@@ -240,7 +240,7 @@ def user_get_invite_code():
   else:
     invite_url = INVITE_CODE_URL_PREFIX + invite_code
     code_json = json.dumps(({'invite_code': invite_url}))
-  return flask.Response(code_json, mimetype='application/json')
+  return flask.Response(ufo.JSON_PREFIX + code_json, headers=ufo.JSON_HEADERS)
 
 @ufo.app.route('/user/toggleRevoked', methods=['POST'])
 @ufo.setup_required

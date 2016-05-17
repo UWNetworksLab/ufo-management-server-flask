@@ -34,7 +34,8 @@ def get_settings():
   Returns:
     A flask response with the json settings.
   """
-  return flask.Response(_make_settings_json(), mimetype='application/json')
+  return flask.Response(ufo.JSON_PREFIX + _make_settings_json(),
+                        headers=ufo.JSON_HEADERS)
 
 
 @ufo.app.route('/chromepolicy/edit', methods=['POST'])

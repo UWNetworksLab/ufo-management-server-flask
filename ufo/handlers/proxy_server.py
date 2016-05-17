@@ -17,7 +17,8 @@ from ufo.services import custom_exceptions
 def proxyserver_list():
   proxy_server_dict = {'items': models.ProxyServer.get_items_as_list_of_dict()}
   proxy_servers_json = json.dumps((proxy_server_dict))
-  return flask.Response(proxy_servers_json, mimetype='application/json')
+  return flask.Response(ufo.JSON_PREFIX + proxy_servers_json,
+                        headers=ufo.JSON_HEADERS)
 
 @ufo.app.route('/proxyserver/add', methods=['GET', 'POST'])
 @ufo.setup_required
@@ -69,7 +70,7 @@ def proxyserver_edit():
   server.read_private_key_from_file_contents(private_key_contents)
   server.save()
 
-  return flask.redirect(flask.url_for('proxyserver_list'))
+  return proxyserver_list()
 
 @ufo.app.route('/proxyserver/delete', methods=['POST'])
 @ufo.setup_required

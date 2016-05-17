@@ -47,7 +47,7 @@
     <template is="dom-if" if="{{loading}}">
       <paper-spinner id="userDetailsSpinner" class="fixedPositionSpinner" active$={{loading}}></paper-spinner>
     </template>
-    <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" loading="{{loading}}" last-response="{{inviteCodeJson}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax" on-iron-form-error="inviteCodeErrorResponse">
+    <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax" on-iron-form-error="inviteCodeErrorResponse">
       <input type="hidden" name="user_id" value="{{item.id}}">
     </form>
     <paper-dialog id="{{resources.detailsOverlayId}}" with-backdrop>
@@ -56,7 +56,7 @@
           <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.email}}</div>
-          <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="third-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
+          <form is="iron-form" id="userDisableEnableForm" method="post" action="{{resources.revokeToggleUrl}}" class="third-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
             <input type="hidden" name="user_id" value="{{item.id}}">
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
             <paper-button on-tap="submitForm" class="topLineButton" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
@@ -79,7 +79,7 @@
           <paper-button on-tap="copyInviteCode" class="anchor-button" id="copyInviteCodeButton" type="submit">
             <iron-icon icon="content-copy"></iron-icon> <strong>{{resources.copyLabel}}</strong>
           </paper-button>
-          <form is="iron-form" method="post" action="{{resources.rotateKeysUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="enableSpinner">
+          <form is="iron-form" id="rotateKeysForm" method="post" action="{{resources.rotateKeysUrl}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="setRotateKeysAndEnable">
             <input type="hidden" name="user_id" value="{{item.id}}">
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
             <paper-button on-tap="submitForm" class="anchor-button" id="rotateKeysButton" type="submit">
@@ -87,7 +87,7 @@
             </paper-button>
           </form>
         </template>
-        <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
+        <form is="iron-form" id="userDeleteForm" method="post" action="{{resources.deleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="user_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
           <paper-button on-tap="submitForm" class="delete-button" id="userDeleteButton" type="submit">
@@ -111,10 +111,6 @@
           type: Object,
           notify: true,
         },
-        ajaxResponse: {
-          type: Object,
-          notify: true,
-        },
         loading: {
           type: Boolean,
           value: false,
@@ -126,8 +122,23 @@
           notify: true,
         },
       },
-      setAjaxResponse: function(response) {
-        this.set('ajaxResponse', response);
+      ready: function() {
+        this.$.getInviteCodeAjax.request.handleAs = "json";
+        this.$.getInviteCodeAjax.request.jsonPrefix = this.resources
+          .jsonPrefix;
+        this.$.userDisableEnableForm.request.handleAs = "json";
+        this.$.userDisableEnableForm.request.jsonPrefix = this.resources
+          .jsonPrefix;
+        this.$.userDeleteForm.request.handleAs = "json";
+        this.$.userDeleteForm.request.jsonPrefix = this.resources.jsonPrefix;
+      },
+      setRotateKeysAndEnable: function() {
+        this.setRotateKeysJsonPrefix();
+        this.enableSpinner();
+      },
+      setRotateKeysJsonPrefix: function() {
+        this.querySelector('#rotateKeysForm').request.handleAs = "json";
+        this.querySelector('#rotateKeysForm').request.jsonPrefix = this.resources.jsonPrefix;
       },
       enableSpinner: function() {
         this.set('loading', true);
@@ -138,7 +149,7 @@
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
       },
-      submitForm: function(e, details) {
+      submitForm: function(e, detail) {
         var elem = e.target;
         while (elem.tagName.toLowerCase() != 'form') {
           elem = elem.parentElement;
@@ -151,19 +162,19 @@
         }
         elem.submit();
       },
-      parseRevokeResponse: function(e, details) {
-        this.sendUsersJsonToList(details.xhr.response);
+      parseRevokeResponse: function(e, detail) {
+        this.sendUsersJsonToList(this.$.userDisableEnableForm.request.lastResponse);
       },
-      parseRotateResponse: function(e, details) {
-        this.sendUsersJsonToList(details.xhr.response);
+      parseRotateResponse: function(e, detail) {
+        this.sendUsersJsonToList(e.target.request.lastResponse);
         this.getUpdatedInviteCode();
       },
-      parseDeleteResponse: function(e, details) {
-        this.sendUsersJsonToList(details.xhr.response);
+      parseDeleteResponse: function(e, detail) {
+        this.sendUsersJsonToList(this.$.userDeleteForm.request.lastResponse);
         this.closeDialog();
       },
-      parseInviteCodeResponse: function(e, details) {
-        this.set('inviteCodeJson', details.xhr.response);
+      parseInviteCodeResponse: function(e, detail) {
+        this.set('inviteCodeJson', this.$.getInviteCodeAjax.request.lastResponse);
         this.set('loading', false);
       },
       sendUsersJsonToList: function(updatedUsersJson) {
@@ -192,7 +203,7 @@
         document.execCommand('copy');
       },
       getUpdatedInviteCode: function() {
-        this.$.getInviteCodeAjax.submit()
+        this.$.getInviteCodeAjax.submit();
       },
     });
   </script>

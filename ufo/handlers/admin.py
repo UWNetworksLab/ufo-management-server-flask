@@ -21,7 +21,8 @@ def admin_list():
     A json object with 'items' set to the list of admins in the db.
   """
   items_dict = {'items': models.AdminUser.get_items_as_list_of_dict()}
-  return flask.Response(json.dumps((items_dict)), mimetype='application/json')
+  return flask.Response(ufo.JSON_PREFIX + json.dumps((items_dict)),
+                        headers=ufo.JSON_HEADERS)
 
 @ufo.app.route('/admin/add', methods=['POST'])
 @ufo.setup_required

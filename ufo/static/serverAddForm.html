@@ -61,6 +61,10 @@
       listeners: {
         'iron-form-error': 'handleFormError',
       },
+      ready: function() {
+        this.$.serverAddForm.request.handleAs = "json";
+        this.$.serverAddForm.request.jsonPrefix = this.resources.jsonPrefix;
+      },
       enableSpinner: function() {
         this.set('loading', true);
       },
@@ -83,7 +87,7 @@
         this.closeModal();
       },
       parsePostResponse: function(e, detail) {
-        this.sendServersJsonToList(detail.xhr.response);
+        this.sendServersJsonToList(this.$.serverAddForm.request.lastResponse);
         this.closeModal();
       },
       sendServersJsonToList: function(updatedServersJson) {
