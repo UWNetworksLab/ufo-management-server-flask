@@ -63,12 +63,16 @@ paper-dialog {
 }
 
 paper-dialog-scrollable {
+  display: flex;
+  flex-direction: column;
   max-height: 300px;
 }
 
 paper-dialog-scrollable > div {
   max-width: none!important;
   max-height: 250px;
+  position: static!important;
+  flex: 1;
 }
 
 .title {

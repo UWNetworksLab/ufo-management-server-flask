@@ -9,6 +9,7 @@ ROOT_DIR="$(cd "$(dirname $0)"; pwd)";
 STATIC_DIR="${ROOT_DIR}/ufo/static/"
 
 VULCANIZE_COMMAND="${ROOT_DIR}/node_modules/.bin/vulcanize"
+CRISPER_COMMAND="${ROOT_DIR}/node_modules/.bin/crisper"
 BOWER_COMMAND="${ROOT_DIR}/node_modules/.bin/bower"
 
 BOWER_OPTIONS="--allow-root --config.interactive=false"
@@ -16,6 +17,7 @@ BOWER_OPTIONS="--allow-root --config.interactive=false"
 TEMP_FILE_LIST="temp_file_for_vulcanize_list"
 HTML_FILE_TO_VULCANIZE="vulcanize_input.html"
 VULCANIZED_HTML_FILE="vulcanized.html"
+VULCANIZED_JS_FILE="vulcanized.js"
 
 IMPORT_BEFORE_STATEMENT='<link rel="import" href="'
 IMPORT_AFTER_STATEMENT='" />'
@@ -54,6 +56,7 @@ function findHtmlFilesToVulcanize ()
 {
   runInStaticDirAndAssertCmd "rm -fr $TEMP_FILE_LIST"
   runInStaticDirAndAssertCmd "rm -fr $HTML_FILE_TO_VULCANIZE"
+  runInStaticDirAndAssertCmd "rm -fr $VULCANIZED_HTML_FILE"
   runInStaticDirAndAssertCmd "touch $TEMP_FILE_LIST"
   # This searches through the ufo/static/ directory recursively and finds all
   # files that match *html, but excludes index.html, basic.html, and files
@@ -84,9 +87,10 @@ function createSingleHtmlFileToVulcanize ()
 function vulcanizeSingleFileForImports ()
 {
   runInStaticDirAndAssertCmd "rm -fr $VULCANIZED_HTML_FILE"
+  runInStaticDirAndAssertCmd "rm -fr $VULCANIZED_JS_FILE"
   # This finally vulcanizes all the import statements into one flat file,
   # $VULCANIZED_HTML_FILE, with comments removed and scripts inlined.
-  runInStaticDirAndAssertCmd "${VULCANIZE_COMMAND} $HTML_FILE_TO_VULCANIZE > $VULCANIZED_HTML_FILE --strip-comments --inline-scripts"
+  runInStaticDirAndAssertCmd "${VULCANIZE_COMMAND} $HTML_FILE_TO_VULCANIZE --strip-comments --inline-scripts | ${CRISPER_COMMAND} --html ${VULCANIZED_HTML_FILE} --js ${VULCANIZED_JS_FILE}"
   runInStaticDirAndAssertCmd "rm -fr $HTML_FILE_TO_VULCANIZE"
 }
 

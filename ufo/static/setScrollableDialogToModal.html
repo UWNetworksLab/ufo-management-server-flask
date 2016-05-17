@@ -1,0 +1,25 @@
+
+<dom-module id="set-scrollable-dialog-to-modal">
+  <template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'set-scrollable-dialog-to-modal',
+      attached: function() {
+        var modal = document.getElementById('userModal');
+        console.log(modal);
+        if (modal) {
+          var scrollables = modal.getElementsByTagName(
+            'paper-dialog-scrollable');
+          console.log(scrollables);
+          var otherScrollables = modal.querySelectorAll('paper-dialog-scrollable');
+          console.log(otherScrollables);
+          for (var i in scrollables) {
+            scrollables[i].dialogElement = modal;
+          }
+        }
+      },
+    });
+  </script>
+</dom-module>

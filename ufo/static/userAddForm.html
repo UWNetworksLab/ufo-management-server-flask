@@ -33,7 +33,7 @@
       </template>
       <template is="dom-if" if="{{!showInputFields}}">
         <template is="dom-if" if="{{shouldDisplayWithDialog}}">
-          <paper-dialog-scrollable>
+          <paper-dialog-scrollable dialog-element="">
             <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
               <paper-listbox>
                 <template is="dom-repeat" items="[[lastResponse.directory_users]]">
@@ -48,16 +48,7 @@
               <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
             </form>
           </paper-dialog-scrollable>
-          <script>
-          var modal = document.getElementById('userModal');
-          if (modal) {
-            var scrollables = modal.getElementsByTagName(
-              'paper-dialog-scrollable');
-            for (var i in scrollables) {
-              scrollables[i].dialogElement = modal;
-            }
-          }
-          </script>
+          <set-scrollable-dialog-to-modal></set-scrollable-dialog-to-modal>
         </template>
         <template is="dom-if" if="{{!shouldDisplayWithDialog}}">
           <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
@@ -141,8 +132,8 @@
         this.querySelector('#addPostForm').submit();
       },
       parseGetResponse: function(e, details) {
-        this.set('lastResponse', e.target.request.lastResponse);
         this.set('showInputFields', false);
+        this.set('lastResponse', e.target.request.lastResponse);
         this.set('loading', false);
       },
       closeModal: function() {
