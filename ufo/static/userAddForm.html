@@ -33,7 +33,7 @@
       </template>
       <template is="dom-if" if="{{!showInputFields}}">
         <template is="dom-if" if="{{shouldDisplayWithDialog}}">
-          <paper-dialog-scrollable dialog-element="">
+          <paper-dialog-scrollable>
             <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
               <paper-listbox>
                 <template is="dom-repeat" items="[[lastResponse.directory_users]]">
@@ -132,8 +132,8 @@
         this.querySelector('#addPostForm').submit();
       },
       parseGetResponse: function(e, details) {
-        this.set('showInputFields', false);
         this.set('lastResponse', e.target.request.lastResponse);
+        this.set('showInputFields', false);
         this.set('loading', false);
       },
       closeModal: function() {
