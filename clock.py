@@ -2,6 +2,8 @@
 
 https://devcenter.heroku.com/articles/clock-processes-python
 """
+import logging
+
 # Use the default import to avoid module AttributeError (http://goo.gl/YM7kyZ)
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -9,6 +11,9 @@ import ufo
 from ufo.services import key_distributor
 from ufo.services import user_synchronizer
 
+
+# http://stackoverflow.com/questions/28724459/no-handlers-could-be-found-for-logger-apscheduler-executors-default
+logging.basicConfig()
 
 SCHEDULER = BlockingScheduler()
 
