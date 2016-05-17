@@ -48,16 +48,7 @@
               <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
             </form>
           </paper-dialog-scrollable>
-          <script>
-          var modal = document.getElementById('userModal');
-          if (modal) {
-            var scrollables = modal.getElementsByTagName(
-              'paper-dialog-scrollable');
-            for (var i in scrollables) {
-              scrollables[i].dialogElement = modal;
-            }
-          }
-          </script>
+          <set-scrollable-dialog-to-modal></set-scrollable-dialog-to-modal>
         </template>
         <template is="dom-if" if="{{!shouldDisplayWithDialog}}">
           <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">

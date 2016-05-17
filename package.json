@@ -2,7 +2,8 @@
   "name": "ufo-management-server",
   "dependencies": {
     "bower": "^1.7.1",
-    "vulcanize": "1.14.8"
+    "vulcanize": "1.14.8",
+    "crisper": "2.0.2"
   },
   "scripts": {
     "postinstall": "bower install && ./vulcanize.sh"
