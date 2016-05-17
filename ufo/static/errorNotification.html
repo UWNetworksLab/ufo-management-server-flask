@@ -98,6 +98,7 @@
         'ApplicationError': 'showErrorNotification',
       },
       showErrorNotification: function(event, detail) {
+        console.log(detail);
         this.errorCode = detail.code;
         this.errorMessage = detail.message;
         this.$.errorNotificationDialog.open();

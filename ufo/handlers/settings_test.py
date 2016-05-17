@@ -23,7 +23,7 @@ class SettingsTest(base_test.BaseTest):
     """Test the get settings handler downloads json."""
     resp = self.client.get(flask.url_for('get_settings'))
 
-    json_data = json.loads(resp.data)
+    json_data = json.loads(resp.data[len(ufo.JSON_PREFIX):])
     self.assertNotIn('validProxyServers', json_data)
     self.assertIn('enforce_proxy_server_validity', json_data)
     self.assertIn('enforce_network_jail', json_data)

@@ -70,7 +70,7 @@ def proxyserver_edit():
   server.read_private_key_from_file_contents(private_key_contents)
   server.save()
 
-  return proxyserver_list()
+  return flask.redirect(flask.url_for('proxyserver_list'))
 
 @ufo.app.route('/proxyserver/delete', methods=['POST'])
 @ufo.setup_required

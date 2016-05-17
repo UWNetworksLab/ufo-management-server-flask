@@ -37,11 +37,7 @@ whooshalchemy.whoosh_index(app, models.User)
 whooshalchemy.whoosh_index(app, models.ProxyServer)
 
 JSON_HEADERS = {'Content-Type': 'application/javascript; charset=utf-8'}
-JSON_PREFIX_FOR_HTML = ")]}'"
-# JSON_PREFIX_FOR_HTML is the value that gets stripped in the client side, not
-# JSON_PREFIX since handling the extra new line character is difficult.
-# JSON_PREFIX is the value that gets prefixed server side.
-JSON_PREFIX = JSON_PREFIX_FOR_HTML + "\n"
+JSON_PREFIX = ")]}'\n"
 
 @app.after_request
 def checkCredentialChange(response):
