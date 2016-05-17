@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>{% block title %}{% endblock %}</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src http:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'">
   <!-- Include web components script for Polymer to work on firefox. -->
   <script src="{{ url_for('static', filename='bower_components/webcomponentsjs/webcomponents-lite.min.js') }}"></script>
   <link rel="import" href="{{ url_for('static', filename='vulcanized.html') }}" />
