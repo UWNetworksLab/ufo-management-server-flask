@@ -34,7 +34,7 @@ def get_settings():
   Returns:
     A flask response with the json settings.
   """
-  return flask.Response(ufo.JSON_PREFIX + _make_settings_json(),
+  return flask.Response(ufo.XSSI_PREFIX + _make_settings_json(),
                         headers=ufo.JSON_HEADERS)
 
 

@@ -44,7 +44,7 @@ def search():
     'servers': _search_proxy_server(search_text),
   }
   results_json = json.dumps((results_dict))
-  return flask.Response(ufo.JSON_PREFIX + results_json,
+  return flask.Response(ufo.XSSI_PREFIX + results_json,
                         headers=ufo.JSON_HEADERS)
 
 def _search_user(search_text):

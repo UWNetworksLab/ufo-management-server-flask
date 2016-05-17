@@ -40,7 +40,7 @@ class ErrorHandlerTest(base_test.BaseTest):
     """Test error handler can process HTTP error."""
     error_500 = exceptions.InternalServerError()
     resp = error_handler.handle_error(error_500)
-    resp_obj = json.loads(resp.data[len(ufo.JSON_PREFIX):])
+    resp_obj = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
 
     self.assertEqual(error_500.code, resp_obj['code'])
     self.assertEqual(error_500.description, resp_obj['message'])

@@ -33,7 +33,7 @@ class AdminTest(base_test.BaseTest):
   def testListAdminsHandler(self):
     """Test the list admin handler gets admins from the database."""
     resp = self.client.get(flask.url_for('admin_list'))
-    admin_list_output = json.loads(resp.data[len(ufo.JSON_PREFIX):])['items']
+    admin_list_output = json.loads(resp.data[len(ufo.XSSI_PREFIX):])['items']
 
     self.assertEquals(len(admin_list_output), 1)
     test_admin = admin_list_output[0]

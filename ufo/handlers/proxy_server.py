@@ -17,7 +17,7 @@ from ufo.services import custom_exceptions
 def proxyserver_list():
   proxy_server_dict = {'items': models.ProxyServer.get_items_as_list_of_dict()}
   proxy_servers_json = json.dumps((proxy_server_dict))
-  return flask.Response(ufo.JSON_PREFIX + proxy_servers_json,
+  return flask.Response(ufo.XSSI_PREFIX + proxy_servers_json,
                         headers=ufo.JSON_HEADERS)
 
 @ufo.app.route('/proxyserver/add', methods=['GET', 'POST'])

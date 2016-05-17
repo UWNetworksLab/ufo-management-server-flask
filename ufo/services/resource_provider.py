@@ -46,7 +46,7 @@ def _get_landing_resources():
     'removeAdminInstructions': 'Select an Admin below by email to remove.',
     'removeAdminSubmitText': 'Remove Admin',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
-    'jsonPrefix': ufo.JSON_PREFIX,
+    'jsonPrefix': ufo.XSSI_PREFIX,
   }
 
 def _get_login_resources():
@@ -62,7 +62,7 @@ def _get_login_resources():
     'passwordLabel': 'Password',
     'loginText': 'Login',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
-    'jsonPrefix': ufo.JSON_PREFIX,
+    'jsonPrefix': ufo.XSSI_PREFIX,
   }
 
 def _get_oauth_resources():
@@ -104,7 +104,7 @@ def _get_oauth_resources():
     'adminEmailLabel': 'Admin Email',
     'adminPasswordlabel': 'Admin Password',
     'submitButtonText': 'Submit',
-    'jsonPrefix': ufo.JSON_PREFIX,
+    'jsonPrefix': ufo.XSSI_PREFIX,
   }
 
 def _get_policy_resources():
@@ -139,7 +139,7 @@ def _get_policy_resources():
         'file you just downloaded. You may have to click override to edit '
         'Force Installation or Configure\'s values. Finally, click Save.'),
     'downloadText': 'Download',
-    'jsonPrefix': ufo.JSON_PREFIX,
+    'jsonPrefix': ufo.XSSI_PREFIX,
   }
 
 
@@ -179,7 +179,7 @@ def _get_proxy_server_resources():
     'dismissText': 'Cancel',
     'confirmText': 'Add Server',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
-    'jsonPrefix': ufo.JSON_PREFIX,
+    'jsonPrefix': ufo.XSSI_PREFIX,
     'textAreaMaxRows': 10,
     'ipLabel': 'IP Address',
     'nameLabel': 'Server Name',
@@ -220,7 +220,7 @@ def _get_settings_resources():
     'proxyValidityText': 'Enforce Proxy Server Check from Invitation Link',
     'networkJailText': 'Enforce Network Jail Before Google Login',
     'saveText': 'Save',
-    'jsonPrefix': ufo.JSON_PREFIX,
+    'jsonPrefix': ufo.XSSI_PREFIX,
   }
 
 def _get_user_resources():
@@ -267,7 +267,7 @@ def _get_user_resources():
     'modalId': 'userModal',
     'dismissText': 'Cancel',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
-    'jsonPrefix': ufo.JSON_PREFIX,
+    'jsonPrefix': ufo.XSSI_PREFIX,
     'addFlowTextDicts': [
         {
           'id': 'groupAdd',

@@ -67,7 +67,7 @@ class UserTest(base_test.BaseTest):
       users.append(user)
 
     resp = self.client.get(flask.url_for('user_list'))
-    user_list_output = json.loads(resp.data[len(ufo.JSON_PREFIX):])['items']
+    user_list_output = json.loads(resp.data[len(ufo.XSSI_PREFIX):])['items']
 
     self.assertEquals(len(user_list_output),
                       len(base_test.FAKE_EMAILS_AND_NAMES))
@@ -95,7 +95,7 @@ class UserTest(base_test.BaseTest):
     response = self.client.get(flask.url_for('add_user'))
 
     args, kwargs = mock_response.call_args
-    json_output = json.loads(args[0][len(ufo.JSON_PREFIX):])
+    json_output = json.loads(args[0][len(ufo.XSSI_PREFIX):])
     self.assertEquals([], json_output['directory_users'])
     self.assertIsNotNone(json_output['error'])
     self.assertEquals(ufo.JSON_HEADERS, kwargs['headers'])
@@ -113,7 +113,7 @@ class UserTest(base_test.BaseTest):
     response = self.client.get(flask.url_for('add_user'))
 
     args, kwargs = mock_response.call_args
-    json_output = json.loads(args[0][len(ufo.JSON_PREFIX):])
+    json_output = json.loads(args[0][len(ufo.XSSI_PREFIX):])
     self.assertEquals([], json_output['directory_users'])
     self.assertEquals(ufo.JSON_HEADERS, kwargs['headers'])
 
@@ -135,7 +135,7 @@ class UserTest(base_test.BaseTest):
     response = self.client.get(flask.url_for('add_user', group_key=group_key))
 
     args, kwargs = mock_response.call_args
-    json_output = json.loads(args[0][len(ufo.JSON_PREFIX):])
+    json_output = json.loads(args[0][len(ufo.XSSI_PREFIX):])
     self.assertEquals(FAKE_USERS_FOR_DISPLAY_ARRAY,
                       json_output['directory_users'])
     self.assertEquals(ufo.JSON_HEADERS, kwargs['headers'])
@@ -158,7 +158,7 @@ class UserTest(base_test.BaseTest):
     response = self.client.get(flask.url_for('add_user', user_key=user_key))
 
     args, kwargs = mock_response.call_args
-    json_output = json.loads(args[0][len(ufo.JSON_PREFIX):])
+    json_output = json.loads(args[0][len(ufo.XSSI_PREFIX):])
     self.assertEquals(FAKE_USERS_FOR_DISPLAY_ARRAY,
                       json_output['directory_users'])
     self.assertEquals(ufo.JSON_HEADERS, kwargs['headers'])
@@ -179,7 +179,7 @@ class UserTest(base_test.BaseTest):
     response = self.client.get(flask.url_for('add_user', get_all=True))
 
     args, kwargs = mock_response.call_args
-    json_output = json.loads(args[0][len(ufo.JSON_PREFIX):])
+    json_output = json.loads(args[0][len(ufo.XSSI_PREFIX):])
     self.assertEquals(FAKE_USERS_FOR_DISPLAY_ARRAY,
                       json_output['directory_users'])
     self.assertEquals(ufo.JSON_HEADERS, kwargs['headers'])
@@ -208,7 +208,7 @@ class UserTest(base_test.BaseTest):
     response = self.client.get(flask.url_for('add_user'))
 
     args, kwargs = mock_response.call_args
-    json_output = json.loads(args[0][len(ufo.JSON_PREFIX):])
+    json_output = json.loads(args[0][len(ufo.XSSI_PREFIX):])
     self.assertEquals([], json_output['directory_users'])
     self.assertEquals(str(fake_error), json_output['error'])
     self.assertEquals(ufo.JSON_HEADERS, kwargs['headers'])
@@ -297,7 +297,7 @@ class UserTest(base_test.BaseTest):
     get_data = {'user_id': created_user.id}
     resp = self.client.get(flask.url_for('user_get_invite_code'),
                            query_string=get_data)
-    fixed_json_obj = json.loads(resp.data[len(ufo.JSON_PREFIX):])
+    fixed_json_obj = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
     invite_url = str(fixed_json_obj['invite_code'])
 
     self.assertIn(user.INVITE_CODE_URL_PREFIX, invite_url)
@@ -319,7 +319,7 @@ class UserTest(base_test.BaseTest):
     get_data = {'user_id': created_user.id}
     resp = self.client.get(flask.url_for('user_get_invite_code'),
                            query_string=get_data)
-    invite_code = json.loads(resp.data[len(ufo.JSON_PREFIX):])['invite_code']
+    invite_code = json.loads(resp.data[len(ufo.XSSI_PREFIX):])['invite_code']
 
     self.assertFalse(invite_code)
 

@@ -34,7 +34,7 @@ def handle_error(error):
     return flask.render_template('error.html', error=error)
 
   error_dict = {'code': error.code, 'message': error.description}
-  resp = flask.Response(ufo.JSON_PREFIX + json.dumps((error_dict)),
+  resp = flask.Response(ufo.XSSI_PREFIX + json.dumps((error_dict)),
                         headers=ufo.JSON_HEADERS)
   resp.status_code = error.code
   return resp
