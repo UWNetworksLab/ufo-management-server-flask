@@ -18,7 +18,7 @@
         <paper-spinner id="spinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <template is="dom-if" if="{{showInputFields}}">
-        <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinner">
+        <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinnerAndSetPrefixes">
           <template is="dom-if" if="[[!idMatches(addFlowTextObj.id, 'domainAdd')]]">
             <paper-input label="{{addFlowTextObj.label1}}" type="textbox" name="{{addFlowTextObj.name1}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="{{resources.regexes.keyLookupError}}"></paper-input>
             <br>
@@ -121,17 +121,28 @@
       listeners: {
         'iron-form-error': 'handleFormError',
       },
+      setJsonPrefixes: function() {
+        var addForm = document.getElementById(this.addFlowTextObj.id);
+        addForm.request.handleAs = "json";
+        addForm.request.jsonPrefix = this.resources.jsonPrefix;
+      },
       enableSpinner: function() {
         this.set('loading', true);
+      },
+      enableSpinnerAndSetPrefixes: function() {
+        this.setJsonPrefixes();
+        this.enableSpinner();
       },
       submitGetForm: function() {
         this.querySelector('#' + this.addFlowTextObj.id).submit();
       },
       submitPostForm: function() {
+        this.querySelector('#addPostForm').request.handleAs = "json";
+        this.querySelector('#addPostForm').request.jsonPrefix = this.resources.jsonPrefix;
         this.setSelectedUsersFromCheckboxes();
         this.querySelector('#addPostForm').submit();
       },
-      parseGetResponse: function(e, details) {
+      parseGetResponse: function(e, detail) {
         this.set('lastResponse', e.target.request.lastResponse);
         this.set('showInputFields', false);
         this.set('loading', false);
@@ -143,18 +154,26 @@
           userModal.close();
         }
       },
-      parsePostResponse: function(e, details) {
-        this.sendUsersJsonToList(details.xhr.response);
+      parsePostResponse: function(e, detail) {
+        this.sendUsersJsonToList(e.target.request.lastResponse);
         this.resetForms();
         this.closeModal();
       },
       handleFormError: function(event, detail) {
-        var errorDetail = {'detail': detail.request.xhr.response};
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
         this.closeModal();
       },
-      resetForms: function(e, details) {
+      resetForms: function(e, detail) {
         this.set('showInputFields', true);
         document.getElementById(this.addFlowTextObj.id).reset();
         var addPostForm = this.querySelector('#addPostForm');

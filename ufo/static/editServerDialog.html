@@ -85,7 +85,7 @@
         <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm" id="serverEditSubmitButton">
         <strong>{{resources.saveText}}</strong>
         </paper-button>
-        <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
+        <form is="iron-form" id="serverDeleteForm" method="post" action="{{resources.deleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="server_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
           <paper-button on-tap="submitForm" class="delete-button" id="serverDeleteButton" type="submit">
@@ -109,10 +109,6 @@
           type: Object,
           notify: true,
         },
-        ajaxResponse: {
-          type: Object,
-          notify: true,
-        },
         loading: {
           type: Boolean,
           value: false,
@@ -122,8 +118,11 @@
           type: Object,
         },
       },
-      setAjaxResponse: function(response) {
-        this.set('ajaxResponse', response);
+      ready: function() {
+        this.$.serverEditForm.request.handleAs = "json";
+        this.$.serverEditForm.request.jsonPrefix = this.resources.jsonPrefix;
+        this.$.serverDeleteForm.request.handleAs = "json";
+        this.$.serverDeleteForm.request.jsonPrefix = this.resources.jsonPrefix;
       },
       enableSpinner: function() {
         this.set('loading', true);
@@ -131,7 +130,7 @@
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
       },
-      submitForm: function(e, details) {
+      submitForm: function(e, detail) {
         var elem = e.target;
         while (elem.tagName.toLowerCase() != 'form') {
           elem = elem.parentElement;
@@ -144,17 +143,17 @@
         }
         elem.submit();
       },
-      submitEditForm: function(e, details) {
+      submitEditForm: function(e, detail) {
         this.$.serverEditForm.submit();
       },
-      parseEditResponse: function(e, details) {
-        this.sendJsonToList(details.xhr.response);
+      parseEditResponse: function(e, detail) {
+        this.sendJsonToList(this.$.serverEditForm.request.lastResponse);
         this.set('loading', false);
         this.set('oldItem', this.item);
         this.showHideEdit(true);
       },
-      parseDeleteResponse: function(e, details) {
-        this.sendJsonToList(details.xhr.response);
+      parseDeleteResponse: function(e, detail) {
+        this.sendJsonToList(this.$.serverDeleteForm.request.lastResponse);
         this.set('loading', false);
         this.closeDialog();
       },
@@ -176,11 +175,11 @@
         this.openDialog();
         this.switchToServerEdit();
       },
-      switchToServerEdit: function(e, details) {
+      switchToServerEdit: function(e, detail) {
         this.set('oldItem', this.item);
         this.showHideEdit(false);
       },
-      cancelServerEdit: function(e, details) {
+      cancelServerEdit: function(e, detail) {
         this.resetInputs();
         this.showHideEdit(true);
       },

@@ -94,6 +94,15 @@
       listeners: {
         'iron-form-error': 'handleFormError',
       },
+      setJsonPrefixes: function() {
+        var i = 0;
+        for (; i < this.resources.addFlowTextDicts.length; i++) {
+          var elementId = this.resources.addFlowTextDicts[i].id;
+          var addForm = document.getElementById(elementId);
+          addForm.request.handleAs = "json";
+          addForm.request.jsonPrefix = this.resources.jsonPrefix;
+        }
+      },
       enableSpinner: function() {
         this.set('loading', true);
       },
@@ -107,11 +116,10 @@
         input.value = JSON.stringify(userArray);
       },
       submitPostForm: function() {
+        this.setJsonPrefixes();
         this.makeManualInputsJsonArray();
         this.querySelector('#manualAdd').submit();
       },
-
-
       closeModal: function() {
         this.set('loading', false);
         var userModal = document.getElementById('userModal');
@@ -120,12 +128,20 @@
         }
       },
       parsePostResponse: function(e, detail) {
-        this.sendUsersJsonToList(detail.xhr.response);
+        this.sendUsersJsonToList(e.target.request.lastResponse);
         this.resetForm();
         this.closeModal();
       },
       handleFormError: function(event, detail) {
-        var errorDetail = {'detail': detail.request.xhr.response};
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
         this.closeModal();

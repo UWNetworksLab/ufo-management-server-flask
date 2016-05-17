@@ -1,8 +1,10 @@
 import flask
+import json
 from mock import MagicMock
 from mock import patch
 from werkzeug import exceptions
 
+import ufo
 from ufo import base_test
 from ufo.services import error_handler
 from ufo.services.custom_exceptions import SetupNeeded
@@ -38,10 +40,10 @@ class ErrorHandlerTest(base_test.BaseTest):
     """Test error handler can process HTTP error."""
     error_500 = exceptions.InternalServerError()
     resp = error_handler.handle_error(error_500)
+    resp_obj = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
 
-    self.assertEqual(error_500.code, resp[1])
-    self.assertTrue(str(error_500.code) in resp[0].data)
-    self.assertTrue(error_500.message in resp[0].data)
+    self.assertEqual(error_500.code, resp_obj['code'])
+    self.assertEqual(error_500.description, resp_obj['message'])
 
   def ErrorHandlerCanProcessCustomError(self):
     """Test error handler can process custom error."""

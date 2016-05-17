@@ -36,6 +36,15 @@ from ufo.database import models
 whooshalchemy.whoosh_index(app, models.User)
 whooshalchemy.whoosh_index(app, models.ProxyServer)
 
+# The headers and prefix listed below are to help guard against XSSI. The
+# prefix specifically causes us to escape out of any client that attempts to
+# execute the JSON as code. We don't use any callbacks or functions in our
+# returned JSON, but the prefix would catch it by causing execution to stop if
+# so. The prefix is supplied in the resource dictionaries so that it can be
+# stripped away on the client side when making AJAX calls.
+JSON_HEADERS = {'Content-Type': 'application/javascript; charset=utf-8'}
+XSSI_PREFIX = ")]}'\n"
+
 @app.after_request
 def checkCredentialChange(response):
   """Save credentials if changed"""

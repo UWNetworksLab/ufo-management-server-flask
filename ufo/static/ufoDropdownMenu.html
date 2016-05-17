@@ -37,7 +37,8 @@
       handle-as="json"
       id="getAdminsAjax"
       loading="{{loading}}"
-      last-response="{{ajaxResponse}}">
+      last-response="{{ajaxResponse}}"
+      json-prefix="{{resources.jsonPrefix}}">
     </iron-ajax>
 
     <paper-dialog class="dropdown-content" id="ufoDropdownMenu" with-backdrop>
@@ -188,6 +189,14 @@
       listeners: {
         'iron-form-error': 'handleFormError',
       },
+      ready: function() {
+        this.$.addAdminForm.request.handleAs = "json";
+        this.$.addAdminForm.request.jsonPrefix = this.resources.jsonPrefix;
+        this.$.changeAdminPasswordForm.request.handleAs = "json";
+        this.$.changeAdminPasswordForm.request.jsonPrefix = this.resources.jsonPrefix;
+        this.$.removeAdminForm.request.handleAs = "json";
+        this.$.removeAdminForm.request.jsonPrefix = this.resources.jsonPrefix;
+      },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
       },
@@ -240,7 +249,15 @@
         }
       },
       handleFormError: function(event, detail) {
-        var errorDetail = {'detail': detail.request.xhr.response};
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
         this.closeAdminDialog();
@@ -308,13 +325,13 @@
       },
       parseAddAdminResponse: function(e, details) {
         var email = this.querySelector('#paperAdminEmail').value;
-        var admins = details.xhr.response.items;
+        var admins = this.$.addAdminForm.request.lastResponse.items;
         if (admins) {
           var found = this._findEmailInAdminList(admins, email);
           if (found) {
             this.set('showResponseStatus', true);
             this.set('responseStatus', this.resources.adminAddSuccessText);
-            this.set('ajaxResponse', details.xhr.response);
+            this.set('ajaxResponse', this.$.addAdminForm.request.lastResponse);
             this.resetAddAdminForm();
           } else {
             this.set('showResponseStatus', true);
@@ -327,12 +344,12 @@
         this.set('loading', false);
       },
       parseChangeAdminPasswordResponse: function(e, details) {
-        this.set('ajaxResponse', details.xhr.response);
+        this.set('ajaxResponse', this.$.changeAdminPasswordForm.request.lastResponse);
         this.set('loading', false);
         this.resetChangeAdminPasswordForm();
       },
       parseRemoveAdminResponse: function(e, details) {
-        this.set('ajaxResponse', details.xhr.response);
+        this.set('ajaxResponse', this.$.removeAdminForm.request.lastResponse);
         this.set('loading', false);
         this.resetRemoveAdminForm();
       },

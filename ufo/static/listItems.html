@@ -47,7 +47,8 @@
       handle-as="json"
       id="getItemsAjax"
       loading="{{loading}}"
-      last-response="{{ajaxResponse}}">
+      last-response="{{ajaxResponse}}"
+      json-prefix="{{resources.jsonPrefix}}">
     </iron-ajax>
     <paper-listbox>
       <paper-icon-item id="columnHeader" class="horizontal layout">
@@ -175,6 +176,8 @@
         var name = 'form';
         var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
         if (elem) {
+          elem.request.handleAs = "json";
+          elem.request.jsonPrefix = this.resources.jsonPrefix;
           elem.submit();
         }
       },

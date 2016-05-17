@@ -6,6 +6,7 @@ import flask
 from mock import MagicMock
 from mock import patch
 
+import ufo
 from ufo import base_test
 from ufo.database import models
 from ufo.handlers import admin
@@ -32,7 +33,7 @@ class AdminTest(base_test.BaseTest):
   def testListAdminsHandler(self):
     """Test the list admin handler gets admins from the database."""
     resp = self.client.get(flask.url_for('admin_list'))
-    admin_list_output = json.loads(resp.data)['items']
+    admin_list_output = json.loads(resp.data[len(ufo.XSSI_PREFIX):])['items']
 
     self.assertEquals(len(admin_list_output), 1)
     test_admin = admin_list_output[0]

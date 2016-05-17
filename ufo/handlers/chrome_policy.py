@@ -45,5 +45,5 @@ def download_chrome_policy():
   Returns:
     A json file of the current managed chrome policy.
   """
-  return flask.Response(_make_chrome_policy_json(),
-                        mimetype='application/json')
+  return flask.Response(ufo.XSSI_PREFIX + _make_chrome_policy_json(),
+                        headers=ufo.JSON_HEADERS)
