@@ -1,0 +1,24 @@
+<dom-module id="set-scrollable-dialog-to-modal">
+  <template>
+  </template>
+
+  <script>
+    // This is a helper element that just sets a scrollable dialog element when
+    // attached to the page. It is used for the scrollable dialog in the user
+    // add flow, since it is not a direct descendant of the element we need it
+    // to scroll within.
+    Polymer({
+      is: 'set-scrollable-dialog-to-modal',
+      attached: function() {
+        var modal = document.getElementById('userModal');
+        if (modal) {
+          var scrollables = modal.getElementsByTagName(
+            'paper-dialog-scrollable');
+          for (var i in scrollables) {
+            scrollables[i].dialogElement = modal;
+          }
+        }
+      },
+    });
+  </script>
+</dom-module>
