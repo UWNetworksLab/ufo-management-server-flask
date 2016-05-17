@@ -164,7 +164,6 @@
         }
       },
       parsePostResponse: function(e, detail) {
-        console.log(e.target.request.lastResponse);
         this.sendUsersJsonToList(e.target.request.lastResponse);
         this.resetForms();
         this.closeModal();
