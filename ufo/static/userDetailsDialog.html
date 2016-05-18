@@ -70,7 +70,7 @@
           <p>{{resources.inviteCodeNeedServerText}}</p>
         </template>
         <template is="dom-if" if="[[inviteCodeJson.invite_code]]">
-          <paper-input disabled type="text" id="lastInviteCode" value="{{inviteCodeJson.invite_code}}"></paper-input>
+          <paper-input readonly type="text" id="lastInviteCode" value="{{inviteCodeJson.invite_code}}"></paper-input>
         </template>
       </div>
       <br>
