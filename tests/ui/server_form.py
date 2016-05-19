@@ -86,7 +86,7 @@ class ServerForm(UfOPageLayout):
     name_input.send_keys(name)
 
     private_key_paper_input = form_element.find_element(
-        *UfOPageLayout.SERVER_INPUT_PRIVATE_KEY)
+        *UfOPageLayout.SERVER_INPUT_SSH_PRIVATE_KEY)
     private_key_input = None
     if is_add:
       private_key_input = private_key_paper_input.find_element(By.ID,
@@ -97,7 +97,7 @@ class ServerForm(UfOPageLayout):
     private_key_input.send_keys(private_key)
 
     public_key_paper_input = form_element.find_element(
-        *UfOPageLayout.SERVER_INPUT_PUBLIC_KEY)
+        *UfOPageLayout.SERVER_INPUT_HOST_PUBLIC_KEY)
     public_key_input = public_key_paper_input.find_element(By.ID, 'input')
     self._cleanInputIfNecessary(public_key_input, is_add)
     public_key_input.send_keys(public_key)
