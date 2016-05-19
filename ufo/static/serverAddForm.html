@@ -23,13 +23,26 @@
         <paper-input label="{{resources.ipLabel}}" type="text" id="{{resources.ipInput}}" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" on-keypress="submitIfEnter">{{resources.ip_address}}</paper-input>
         <paper-input label="{{resources.nameLabel}}" type="text" id="{{resources.nameInput}}" name="name" required on-keypress="submitIfEnter">{{resources.name}}</paper-input>
         <!-- TODO add the ability to upload files -->
-        <ufo-textarea label="{{resources.privateKeyLabel}}" id="{{resources.privateKeyInput}}" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="{{resources.private_key}}"></ufo-textarea>
+        <ufo-textarea label="{{resources.sshPrivateKeyLabel}}"
+                      id="{{resources.sshPrivateKeyInput}}"
+                      name="ssh_private_key"
+                      required max-rows="{{resources.textAreaMaxRows}}"
+                      pattern="{{resources.regexes.privateKeyPattern}}"
+                      error-message="{{resources.regexes.privateKeyError}}"
+                      value="{{resources.ssh_private_key}}">
+        </ufo-textarea>
         <br>
-        <p>{{resources.privateKeyText}}</p>
-
-        <paper-input label="{{resources.publicKeyLabel}}" type="text" id="{{resources.publicKeyInput}}" name="public_key" required pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}" on-keypress="submitIfEnter">{{resources.public_key}}</paper-input>
+        <p>{{resources.sshPrivateKeyText}}</p>
+        <paper-input label="{{resources.hostPublicKeyLabel}}"
+                     type="text"
+                     id="{{resources.hostPublicKeyInput}}"
+                     name="host_public_key"
+                     required pattern="{{resources.regexes.publicKeyPattern}}"
+                     error-message="{{resources.regexes.publicKeyError}}"
+                     on-keypress="submitIfEnter">{{resources.host_public_key}}
+        </paper-input>
         <br>
-        <p>{{resources.publicKeyText}}</p>
+        <p>{{resources.hostPublicKeyText}}</p>
         <p>{{resources.rsaText}}</p>
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
       </form>
