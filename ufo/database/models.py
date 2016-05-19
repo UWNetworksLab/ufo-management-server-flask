@@ -240,9 +240,9 @@ class User(Model):
 class ProxyServer(Model):
   """Class for information about the proxy servers.
 
-  The ssh_private_key is the private_key of someone who can access the
-  proxy server as root via ssh.  This will be used by the ssh client
-  to access the proxy server to distribute user keys.
+  The ssh_private_key is the private_key that can access the proxy server
+  as root via ssh.  This will be used by the ssh client to access
+  the proxy server to distribute user keys.
 
   The host_public_key is the public key of the proxy server as can be found in
   /etc/ssh/ssh_host_rsa_key.pub
