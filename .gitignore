@@ -1,5 +1,6 @@
 instance/*
 postgresql:/*
+tests/ui/postgresql:/*
 sqlite:/*
 tests/ui/sqlite:/*
 venv/*
