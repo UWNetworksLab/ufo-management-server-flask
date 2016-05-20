@@ -241,12 +241,12 @@ class ProxyServer(Model):
   """Class for information about the proxy servers.
 
   The ssh_private_key is the private key that can access the proxy server
-  as root via ssh.  This is be used by the ssh client to access
+  as root via ssh.  This is used by the ssh client to access
   the proxy server to distribute user keys.
 
   The host_public_key is the public key of the proxy server as can be found in
-  /etc/ssh/ssh_host_rsa_key.pub
-  This is used to authenticate the proxy server.
+  /etc/ssh/ssh_host_rsa_key.pub file.  This is used to authenticate
+  the proxy server.
   """
   __tablename__ = "proxyserver"
   __searchable__ = ['ip_address', 'name']
