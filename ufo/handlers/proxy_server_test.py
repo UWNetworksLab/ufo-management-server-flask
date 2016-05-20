@@ -203,8 +203,8 @@ class ProxyServerTest(base_test.BaseTest):
     return {
       'name': server['name'],
       'ip_address': server['ip_address'],
-      'private_key': key.exportKey(),
-      'public_key': key.publickey().exportKey('OpenSSH'),
+      'ssh_private_key': key.exportKey(),
+      'host_public_key': key.publickey().exportKey('OpenSSH'),
     }
 
   def _CreateAndSaveFakeProxyServer(self, i=0):
