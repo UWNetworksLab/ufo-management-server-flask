@@ -25,15 +25,15 @@ class BaseTest(unittest.TestCase):
       'ip': '127.0.0.1',
       # This name is intentionally made to be different from the user name.
       'name': 'Server Fake con nombre 02',
-      'private_key': 'to be filled in',
-      'public_key': 'to be filled in',
+      'ssh_private_key': 'to be filled in',
+      'host_public_key': 'to be filled in',
   }
   TEST_SERVER_EDIT_AS_DICT = {
       'ip': '127.0.0.127',
       # This name is intentionally made to be different from the user name.
       'name': 'Editted Machine Name',
-      'private_key': 'to be filled in',
-      'public_key': 'to be filled in',
+      'ssh_private_key': 'to be filled in',
+      'host_public_key': 'to be filled in',
   }
 
   def __init__(self, methodName='runTest', args=None, **kwargs):

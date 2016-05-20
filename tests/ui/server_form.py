@@ -36,21 +36,22 @@ class ServerForm(UfOPageLayout):
         EC.invisibility_of_element_located(((
             UfOPageLayout.ADD_SERVER_SPINNER))))
 
-  def editServer(self, containing_element, ip, name, private_key, public_key):
+  def editServer(self, containing_element, ip, name, ssh_private_key,
+                 host_public_key):
     """Edit a test server using the element container to find the edit form.
 
     Args:
       containing_element: An element containing the edit server form.
       ip: A string for the ip address of the server to insert.
       name: A string for the name of the server to insert.
-      private_key: A string for the private key of the server to insert.
-      public_key: A string for the public key of the server to insert.
+      ssh_private_key: A string for the ssh private key of the server to insert.
+      host_public_key: A string for the host public key of the server to insert.
     """
     edit_server_form = containing_element.find_element(
         *UfOPageLayout.EDIT_SERVER_FORM)
 
-    self._sendServerInputsToForm(edit_server_form, ip, name, private_key,
-                                 public_key, False)
+    self._sendServerInputsToForm(edit_server_form, ip, name, ssh_private_key,
+                                 host_public_key, False)
 
     submit_button = containing_element.find_element(
         *UfOPageLayout.EDIT_SERVER_SUBMIT_BUTTON)
@@ -61,16 +62,16 @@ class ServerForm(UfOPageLayout):
         EC.invisibility_of_element_located(((
             UfOPageLayout.SERVER_DETAILS_SPINNER))))
 
-  def _sendServerInputsToForm(self, form_element, ip, name, private_key,
-                              public_key, is_add):
+  def _sendServerInputsToForm(self, form_element, ip, name, ssh_private_key,
+                              host_public_key, is_add):
     """Send the necessary inputs to the form element.
 
     Args:
       form_element: A form element for adding or editing a server.
       ip: A string for the ip address of the server.
       name: A string for the name of the server.
-      private_key: A string for the private key of the server.
-      public_key: A string for the public key of the server.
+      ssh_private_key: A string for the ssh private key of the server.
+      host_public_key: A string for the host public key of the server.
       is_add: A boolean value, true for add flow or false for edit flow.
     """
     ip_paper_input = form_element.find_element(
@@ -94,13 +95,13 @@ class ServerForm(UfOPageLayout):
     else:
       private_key_input = private_key_paper_input.find_element(By.ID, 'input')
       self._cleanInputIfNecessary(private_key_input, is_add)
-    private_key_input.send_keys(private_key)
+    private_key_input.send_keys(ssh_private_key)
 
     public_key_paper_input = form_element.find_element(
         *UfOPageLayout.SERVER_INPUT_HOST_PUBLIC_KEY)
     public_key_input = public_key_paper_input.find_element(By.ID, 'input')
     self._cleanInputIfNecessary(public_key_input, is_add)
-    public_key_input.send_keys(public_key)
+    public_key_input.send_keys(host_public_key)
 
   def _cleanInputIfNecessary(self, input_element, is_add):
     """If necessary, remove the existing text in the input element.

@@ -189,8 +189,9 @@ class LandingPageTest(BaseTest):
         BaseTest.TEST_SERVER_AS_DICT['name'],
         BaseTest.TEST_SERVER_EDIT_AS_DICT['ip'],
         BaseTest.TEST_SERVER_EDIT_AS_DICT['name'],
-        BaseTest.TEST_SERVER_EDIT_AS_DICT['private_key'],
-        BaseTest.TEST_SERVER_EDIT_AS_DICT['public_key'], self.args.server_url)
+        BaseTest.TEST_SERVER_EDIT_AS_DICT['ssh_private_key'],
+        BaseTest.TEST_SERVER_EDIT_AS_DICT['host_public_key'],
+        self.args.server_url)
 
     self.assertTestServerPresenceOnPage(False)
     self.assertTestServerPresenceOnPage(
