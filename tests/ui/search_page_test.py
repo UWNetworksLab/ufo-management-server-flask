@@ -75,8 +75,8 @@ class SearchPageTest(BaseTest):
     landing_page = LandingPage(self.driver)
     landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
                                BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['public_key'],
+                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
                                self.args.server_url)
     self.assertTestServerPresenceOnPage(True)
 
@@ -97,8 +97,8 @@ class SearchPageTest(BaseTest):
                              self.args.server_url)
     landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
                                BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['public_key'],
+                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
                                self.args.server_url)
 
     # Verify they both show up.
@@ -145,8 +145,8 @@ class SearchPageTest(BaseTest):
     setup_page = SetupPage(self.driver)
     setup_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
                              BaseTest.TEST_SERVER_AS_DICT['name'],
-                             BaseTest.TEST_SERVER_AS_DICT['private_key'],
-                             BaseTest.TEST_SERVER_AS_DICT['public_key'],
+                             BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+                             BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
                              self.args.server_url)
     self.assertTestServerPresenceOnPage(True)
     self.driver.get(self.args.server_url + flask.url_for('setup'))
@@ -168,8 +168,8 @@ class SearchPageTest(BaseTest):
                            self.args.server_url)
     setup_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
                              BaseTest.TEST_SERVER_AS_DICT['name'],
-                             BaseTest.TEST_SERVER_AS_DICT['private_key'],
-                             BaseTest.TEST_SERVER_AS_DICT['public_key'],
+                             BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+                             BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
                              self.args.server_url)
 
     # Verify they both show up.
