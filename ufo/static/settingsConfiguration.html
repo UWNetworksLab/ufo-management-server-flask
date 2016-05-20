@@ -31,7 +31,7 @@
         <template is="dom-if" if="{{loading}}">
           <paper-spinner id="settingsSpinner" active$={{loading}}></paper-spinner>
         </template>
-        <paper-button class="anchor-button" id="saveSettingsButton" onclick="submitByFormId('policyConfigForm')" type="submit">
+        <paper-button class="anchor-button" id="saveSettingsButton" on-tap="submitConfig" type="submit">
           <strong>{{resources.saveText}}</strong>
         </paper-button>
       </div>
@@ -64,7 +64,10 @@
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;
       },
-      parseConfigResponse: function(e, details) {
+      submitConfig: function(e, detail) {
+        this.$.policyConfigForm.submit();
+      },
+      parseConfigResponse: function(e, detail) {
         this.set('ajaxResponse', this.$.policyConfigForm.request.lastResponse);
         this.set('loading', false);
       },

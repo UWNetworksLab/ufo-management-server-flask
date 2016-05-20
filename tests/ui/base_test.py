@@ -41,18 +41,18 @@ class BaseTest(unittest.TestCase):
     super(BaseTest, self).__init__(methodName, **kwargs)
     self.args = args
     rsa_key = RSA.generate(2048)
-    private_key = rsa_key.exportKey()
-    public_key = rsa_key.publickey().exportKey('OpenSSH')
-    BaseTest.TEST_SERVER_AS_DICT['private_key'] = private_key
-    BaseTest.TEST_SERVER_AS_DICT['public_key'] = (
-        public_key + ' ' + BaseTest.TEST_USER_AS_DICT['email'])
+    ssh_private_key = rsa_key.exportKey()
+    host_public_key = rsa_key.publickey().exportKey('OpenSSH')
+    BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'] = ssh_private_key
+    BaseTest.TEST_SERVER_AS_DICT['host_public_key'] = (
+        host_public_key + ' ' + BaseTest.TEST_USER_AS_DICT['email'])
 
     rsa_key = RSA.generate(2048)
-    private_key_edit = rsa_key.exportKey()
-    public_key_edit = rsa_key.publickey().exportKey('OpenSSH')
-    BaseTest.TEST_SERVER_EDIT_AS_DICT['private_key'] = private_key_edit
-    BaseTest.TEST_SERVER_EDIT_AS_DICT['public_key'] = (
-        public_key_edit + ' ' + BaseTest.TEST_USER_AS_DICT['email'])
+    ssh_private_key_edit = rsa_key.exportKey()
+    host_public_key_edit = rsa_key.publickey().exportKey('OpenSSH')
+    BaseTest.TEST_SERVER_EDIT_AS_DICT['ssh_private_key'] = ssh_private_key_edit
+    BaseTest.TEST_SERVER_EDIT_AS_DICT['host_public_key'] = (
+        host_public_key_edit + ' ' + BaseTest.TEST_USER_AS_DICT['email'])
 
   def setUp(self):
     """Setup for test methods."""
