@@ -144,7 +144,7 @@ class LandingPage(UfOPageLayout):
         EC.invisibility_of_element_located(((
             LandingPage.SERVER_DETAILS_SPINNER))))
 
-  def editTestServer(self, old_name, ip, name, private_key, public_key,
+  def editTestServer(self, old_name, ip, name, ssh_private_key, host_public_key,
                      server_url):
     """Edit a test server using the landing page (the only way).
 
@@ -152,8 +152,8 @@ class LandingPage(UfOPageLayout):
       old_name: A string for the name of the test server to edit.
       ip: A string for the ip address of the server to insert.
       name: A string for the name of the server to insert.
-      private_key: A string for the private key of the server to insert.
-      public_key: A string for the public key of the server to insert.
+      ssh_private_key: A string for the ssh private key of the server to insert.
+      host_public_key: A string for the host public key of the server to insert.
       server_url: The base url portion of the landing page.
     """
     # Find the server and navigate to its details page.
@@ -177,7 +177,8 @@ class LandingPage(UfOPageLayout):
 
     # Perform the actual edits
     server_form = ServerForm(self.driver)
-    server_form.editServer(details_modal, ip, name, private_key, public_key)
+    server_form.editServer(details_modal, ip, name, ssh_private_key,
+                           host_public_key)
 
   def getContainerElementForItem(self, item, should_use_listbox):
     """Given an item, get the container element for it based on the boolean.

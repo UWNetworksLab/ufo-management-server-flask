@@ -95,8 +95,8 @@ class UfOPageLayout(BaseDriver):
   # These are shared between the add and edit flows for simplicity.
   SERVER_INPUT_IP = (By.ID, 'ipInput')
   SERVER_INPUT_NAME = (By.ID, 'nameInput')
-  SERVER_INPUT_PRIVATE_KEY = (By.ID, 'privateKeyInput')
-  SERVER_INPUT_PUBLIC_KEY = (By.ID, 'publicKeyInput')
+  SERVER_INPUT_SSH_PRIVATE_KEY = (By.ID, 'sshPrivateKeyInput')
+  SERVER_INPUT_HOST_PUBLIC_KEY = (By.ID, 'hostPublicKeyInput')
 
   SERVER_DELETE_BUTTON = (By.ID, 'serverDeleteButton')
   SERVER_DETAILS_BUTTON = (By.ID, 'serverDetailsButton')

@@ -78,8 +78,9 @@ class ProxyServerTest(base_test.BaseTest):
     self.assertEqual(server_dict['id'], server.id)
     self.assertEqual(server_dict['ip_address'], server.ip_address)
     self.assertEqual(server_dict['name'], server.name)
-    self.assertEqual(server_dict['public_key'], server.get_public_key_as_authorization_file_string())
-    self.assertIn('private_key', server_dict)
+    self.assertEqual(server_dict['host_public_key'],
+                     server.get_public_key_as_authorization_file_string())
+    self.assertIn('ssh_private_key', server_dict)
 
 
 class ConfigTest(base_test.BaseTest):

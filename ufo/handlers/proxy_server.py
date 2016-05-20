@@ -34,16 +34,16 @@ def proxyserver_add():
       ip_address=flask.request.form.get('ip_address'))
 
   #TODO more robust validation here and in proxyserver_edit
-  public_key_contents = flask.request.form.get('public_key')
-  if public_key_contents is None:
+  host_public_key_contents = flask.request.form.get('host_public_key')
+  if host_public_key_contents is None:
     flask.abort(400)
 
-  private_key_contents = flask.request.form.get('private_key')
-  if private_key_contents is None:
+  ssh_private_key_contents = flask.request.form.get('ssh_private_key')
+  if ssh_private_key_contents is None:
     flask.abort(400)
 
-  server.read_public_key_from_file_contents(public_key_contents)
-  server.read_private_key_from_file_contents(private_key_contents)
+  server.read_public_key_from_file_contents(host_public_key_contents)
+  server.read_private_key_from_file_contents(ssh_private_key_contents)
 
   try:
     server.save()
@@ -62,12 +62,13 @@ def proxyserver_edit():
   server.name = flask.request.form.get('name')
   server.ip_address = flask.request.form.get('ip_address')
 
-  public_key_contents = flask.request.form.get('public_key')
-  private_key_contents = flask.request.form.get('private_key')
-  if private_key_contents.find('\n') == -1:
-    private_key_contents = _fix_new_line_key_format(private_key_contents)
-  server.read_public_key_from_file_contents(public_key_contents)
-  server.read_private_key_from_file_contents(private_key_contents)
+  host_public_key_contents = flask.request.form.get('host_public_key')
+  ssh_private_key_contents = flask.request.form.get('ssh_private_key')
+  if ssh_private_key_contents.find('\n') == -1:
+    ssh_private_key_contents = (
+        _fix_new_line_key_format(ssh_private_key_contents))
+  server.read_public_key_from_file_contents(host_public_key_contents)
+  server.read_private_key_from_file_contents(ssh_private_key_contents)
   server.save()
 
   return flask.redirect(flask.url_for('proxyserver_list'))
@@ -114,10 +115,3 @@ def _fix_new_line_key_format(private_key_string):
     lines.append(actual_key[i:i+every])
   lines.append(ending_portion)
   return newline.join(lines)
-
-
-
-
-
-
-

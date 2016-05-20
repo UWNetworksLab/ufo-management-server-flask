@@ -183,26 +183,26 @@ def _get_proxy_server_resources():
     'textAreaMaxRows': 10,
     'ipLabel': 'IP Address',
     'nameLabel': 'Server Name',
-    'privateKeyLabel': 'SSH Private Key',
-    'publicKeyLabel': 'SSH Host Public Key',
+    'sshPrivateKeyLabel': 'SSH Private Key',
+    'hostPublicKeyLabel': 'Host Public Key',
     'ipInput': 'ipInput',
     'nameInput': 'nameInput',
-    'privateKeyInput': 'privateKeyInput',
-    'publicKeyInput': 'publicKeyInput',
+    'sshPrivateKeyInput': 'sshPrivateKeyInput',
+    'hostPublicKeyInput': 'hostPublicKeyInput',
     'ip_address': '',
     'name': '',
-    'private_key': '',
-    'public_key': '',
-    'privateKeyText': (
-        'For the private key, you can usually get this value from '
-        '/etc/ssh/ssh_host_rsa_key of the proxy server. '
-        'The beginning of the file should have: '
-        '"-----BEGIN RSA PRIVATE KEY-----".'),
-    'publicKeyText': (
+    'ssh_private_key': '',
+    'host_public_key': '',
+    'sshPrivateKeyText': (
+        'For the private key, please copy the full contents of '
+        'a private key file with the ability to access a proxy '
+        'server. This key is used by the ssh client. '
+        'The beginning of the file should resemble '
+        '"-----BEGIN RSA PRIVATE KEY-----".'),    
+    'hostPublicKeyText': (
         'For the public key, you can usually get this value from '
         '/etc/ssh/ssh_host_rsa_key.pub of the proxy server. '
-        'This public key must also be added to /root/.ssh/authorized_keys '
-        'to authorize the above private key.'),
+        'This public key is used to authenticate the proxy server.'),
     'rsaText': ('For now, please be sure to use an RSA key (the text should '
                 'begin with ssh-rsa)'),
   }
