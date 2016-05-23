@@ -70,6 +70,7 @@ def get_user_config():
   if config is None:
     config = models.Config()
     config.id = 0
+    config.failed_login_attempts = 0
 
     config.save()
 

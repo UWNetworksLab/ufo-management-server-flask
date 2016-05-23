@@ -19,7 +19,7 @@ ENABLE_TEXT = 'Enable'
 # We can add support using enum34 and pypi if we ever choose, but this method
 # using a dictionary should be sufficient until that time.
 # TODO(eholder): Follow up on whether to convert to pypi for real enums. See
-# here for more info: http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
+# here for more info: http://stackoverflow.com/q/36932/2216222
 CRON_JOB_ACTIONS = {
   'nothing': 'nothing',
   'revoke': 'revoke',
@@ -162,6 +162,9 @@ class Config(Model):
                                        default=CRON_JOB_ACTIONS['nothing'])
   user_undelete_action = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
                                        default=CRON_JOB_ACTIONS['nothing'])
+  # This is not a total, but the current string of failed login attempts in a
+  # row.
+  failed_login_attempts = ufo.db.Column(ufo.db.Integer, default=0)
 
   def to_dict(self):
     """Get the config as a dict.

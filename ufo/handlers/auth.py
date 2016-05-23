@@ -9,6 +9,8 @@ import ufo
 from ufo.database import models
 from ufo.services.custom_exceptions import NotLoggedIn
 
+MAX_FAILED_LOGINS_BEFORE_RECAPTCHA = 5
+
 
 # TODO(eholder): Add functional or unit tests for each decorator.
 def is_user_logged_in():
@@ -100,7 +102,12 @@ def login():
   if is_user_logged_in():
     return flask.redirect(flask.url_for('landing'))
 
+  config = ufo.get_user_config()
+  show_recaptcha = (
+      config.failed_login_attempts >= MAX_FAILED_LOGINS_BEFORE_RECAPTCHA)
   if flask.request.method == 'GET':
+    flask.session['failures'] = config.failed_login_attempts
+    flask.session['show_recaptcha'] = show_recaptcha
     return flask.render_template('login.html',
                                  error=flask.request.form.get('error'))
 
@@ -111,10 +118,14 @@ def login():
   if user is None:
     return flask.redirect(flask.url_for('login', error='No valid user found.'))
 
-  if not ufo.RECAPTCHA.verify():
+  if show_recaptcha and not ufo.RECAPTCHA.verify():
+    config.failed_login_attempts = config.failed_login_attempts + 1
+    config.save()
     return flask.redirect(flask.url_for('login', error='Failed recaptcha.'))
 
   if not user.does_password_match(password):
+    config.failed_login_attempts = config.failed_login_attempts + 1
+    config.save()
     return flask.redirect(flask.url_for('login', error='Invalid password.'))
 
   flask.session['email'] = user.email
