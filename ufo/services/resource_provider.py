@@ -63,6 +63,7 @@ def _get_login_resources():
     'loginText': 'Login',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
     'jsonPrefix': ufo.XSSI_PREFIX,
+    'recaptchaKey': ufo.app.config['RECAPTCHA_SITE_KEY'],
   }
 
 def _get_oauth_resources():
@@ -198,7 +199,7 @@ def _get_proxy_server_resources():
         'a private key file with the ability to access a proxy '
         'server. This key is used by the ssh client. '
         'The beginning of the file should resemble '
-        '"-----BEGIN RSA PRIVATE KEY-----".'),    
+        '"-----BEGIN RSA PRIVATE KEY-----".'),
     'hostPublicKeyText': (
         'For the public key, you can usually get this value from '
         '/etc/ssh/ssh_host_rsa_key.pub of the proxy server. '

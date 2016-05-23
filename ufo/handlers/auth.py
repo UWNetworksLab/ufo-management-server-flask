@@ -109,10 +109,13 @@ def login():
 
   user = models.AdminUser.get_by_email(email)
   if user is None:
-    return flask.redirect(flask.url_for('login', error='No valid user found',))
+    return flask.redirect(flask.url_for('login', error='No valid user found.'))
+
+  if not ufo.RECAPTCHA.verify():
+    return flask.redirect(flask.url_for('login', error='Failed recaptcha.'))
 
   if not user.does_password_match(password):
-    return flask.redirect(flask.url_for('login', error='Invalid password'))
+    return flask.redirect(flask.url_for('login', error='Invalid password.'))
 
   flask.session['email'] = user.email
 

@@ -1,6 +1,7 @@
 import flask
 from flask.ext import sqlalchemy
 from flask.ext import whooshalchemy
+from flask_recaptcha import ReCaptcha
 import functools
 import os
 import sys
@@ -20,6 +21,9 @@ app.logger.setLevel(logging.INFO)
 if 'DATABASE_URL' in os.environ:
   app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
   app.config['WHOOSH_BASE'] = os.environ['DATABASE_URL']
+
+if 'RECAPTCHA_SECRET_KEY' in os.environ:
+  app.config['RECAPTCHA_SECRET_KEY'] = os.environ['RECAPTCHA_SECRET_KEY']
 
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
@@ -44,6 +48,8 @@ whooshalchemy.whoosh_index(app, models.ProxyServer)
 # stripped away on the client side when making AJAX calls.
 JSON_HEADERS = {'Content-Type': 'application/javascript; charset=utf-8'}
 XSSI_PREFIX = ")]}'\n"
+
+RECAPTCHA = ReCaptcha(app=app)
 
 @app.after_request
 def checkCredentialChange(response):

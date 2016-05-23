@@ -5,13 +5,13 @@
 
 <dom-module id="oauth-configuration">
   <style is="custom-style">
-    p, #oauth-configuration-form {
+    p, #oauthConfigurationForm {
       margin-left: 40px;
     }
-    #oauth-configuration-form {
+    #oauthConfigurationForm {
       margin-left: 50px;
     }
-    p, #oauth-configuration-form {
+    p, #oauthConfigurationForm {
       margin-right: 25px;
       margin-bottom: 25px;
     }
@@ -68,7 +68,7 @@
          </p>
 
       <!-- TODO make this form be more useful -->
-      <form id="oauth-configuration-form" method="post" action="{{resources.setup_url}}">
+      <form id="oauthConfigurationForm" method="post" action="{{resources.setup_url}}">
         <paper-input label="Domain" name="domain" required on-keypress="submitIfEnter"></paper-input>
         <paper-input label="OAuth Code" name="oauth_code" required on-keypress="submitIfEnter"></paper-input>
         <template is="dom-if" if="{{!configuration.config.is_configured}}">
@@ -77,7 +77,7 @@
         </template>
         <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
         <div class="buttons">
-          <paper-button onclick="submitByFormId('oauth-configuration-form')" class="form-submit-button anchor-button" type="submit">
+          <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
             <strong>{{resources.submitButtonText}}</strong>
           </paper-button>
         </div>
@@ -103,9 +103,12 @@
       isDomainConfigured: function(config) {
         return config.domain && config.credentials;
       },
+      submitOauth: function(e, detail) {
+        this.$.oauthConfigurationForm.submit();
+      },
       submitIfEnter: function(e) {
         if (e.keyCode === 13) {
-          submitByFormId('oauth-configuration-form');
+          this.submitOauth();
         }
       },
     });
