@@ -60,7 +60,7 @@ class KeyDistributor(object):
       # TODO: Notify admin in some way, that the keys distribution have error.
       return
 
-    key_string = pipes.quote(key_string)
+    key_string = pipes.quote(key_string)  # Prevent shell injection.
     data = {
         'key_string': key_string,
         'tmp_file_path': '/tmp/ufo-keys',
