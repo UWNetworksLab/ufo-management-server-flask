@@ -162,9 +162,6 @@ class Config(Model):
                                        default=CRON_JOB_ACTIONS['nothing'])
   user_undelete_action = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
                                        default=CRON_JOB_ACTIONS['nothing'])
-  # This is not a total, but the current string of failed login attempts in a
-  # row.
-  failed_login_attempts = ufo.db.Column(ufo.db.Integer, default=0)
 
   def to_dict(self):
     """Get the config as a dict.
@@ -179,6 +176,16 @@ class Config(Model):
       'proxy_server_validity': self.proxy_server_validity,
       'network_jail_until_google_auth': self.network_jail_until_google_auth,
     }
+
+
+class FailedLoginAttempt(Model):
+  """Simple class for data about failed login attempts."""
+  __tablename__ = 'failed_login_attempt'
+  __searchable__ = []
+
+  id = ufo.db.Column(ufo.db.Integer, primary_key=True)
+
+  occurred = ufo.db.Column(ufo.db.DateTime())
 
 
 class User(Model):
