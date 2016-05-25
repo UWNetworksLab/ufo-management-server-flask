@@ -114,7 +114,7 @@ def login():
   if user is None:
     return flask.redirect(flask.url_for('login', error='No valid user found.'))
 
-  if show_recaptcha and not ufo.RECAPTCHA.verify():
+  if ufo.get_user_config().show_recaptcha and not ufo.RECAPTCHA.verify():
     _create_new_failed_login()
     return flask.redirect(flask.url_for('login', error='Failed recaptcha.'))
 
