@@ -27,7 +27,6 @@ class KeyDistributorTest(base_test.BaseTest):
     self.assertEquals(0, key_string.count('END PUBLIC KEY'))
 
     for fake_user in fake_users:
-      self.assertIn(fake_user.email, key_string)
       self.assertIn(
           RSA.importKey(fake_user.public_key).exportKey('OpenSSH'),
           key_string)
