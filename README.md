@@ -317,6 +317,15 @@ To run a local instance:
 To view the logs of an instance:
 * `heroku logs --app <your_instance_name> (optional)`
 
+### Setup SSH Keys to Access Proxy Server
+
+1. Know which user the ssh-client will be using to access the proxy server.  Currently, this is hard-coded to root.
+1. Either have an existing a key-pair or generate it.
+1. Copy the public key to the user who the ssh-client will be accessing the proxy server.
+  * `ssh-copy-id <root_or_other_user>@<proxy_server_ip_address>`
+  * [More details here](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-14-04) especially if you want to setup other non-root user.
+1. Save the corresponding private key to the management server for this proxy server.
+
 ## Troubleshooting
 
 ### SQLAlchemy Unable to Open Database/app.instance_path Not Pointing to App Directory
@@ -333,3 +342,14 @@ Furthermore, if you need to reset your entire environment, you can with the foll
 1. Reset the database: `rm -fr instance/app.db` and `python setup_database.py`
 1. Start the server (if it isn't already): `python run.py`
 1. Go through the setup flow. `http://your-app-instance/setup`
+
+### Debugging Enqueued Jobs
+
+The free nano instance of redis is prone to run out of memory upon repeated exceptions. Here are some general tips on debugging / flushing enqueued job on redis.
+
+* Heroku has an integrated dashboard of redis info. You can also find the redis host, port, and access parameters here.
+* You can login via CLI to get more info.
+  * `redis-cli -h catfish.redistogo.com -p 10290 -a fa537e8f6dfa5c327ff2825759d71b91 info`
+* You can also wipe redis clean and start over.
+  * `redis-cli -h catfish.redistogo.com -p 10290 -a fa537e8f6dfa5c327ff2825759d71b91 flushall'
+
