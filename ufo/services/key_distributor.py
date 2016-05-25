@@ -1,6 +1,7 @@
 """The module for distributing user keys to proxy servers."""
 
 from Crypto.PublicKey import RSA
+import pipes
 from rq import Queue
 import string
 
@@ -59,6 +60,7 @@ class KeyDistributor(object):
       # TODO: Notify admin in some way, that the keys distribution have error.
       return
 
+    key_string = pipes.quote(key_string)  # Prevent shell injection.
     data = {
         'key_string': key_string,
         'tmp_file_path': '/tmp/ufo-keys',
@@ -69,7 +71,7 @@ class KeyDistributor(object):
     }
     # '>' will overwrite existing file, versus '>>' which will append
 
-    make_file = "echo '{key_string}' > {tmp_file_path}".format(**data)
+    make_file = "echo {key_string} > {tmp_file_path}".format(**data)
     copy_file = "docker cp {tmp_file_path} {container_name}:{authorized_keys_path}".format(**data)
     mod_file = "docker exec {container_name} chmod 666 {authorized_keys_path}".format(**data)
     own_file = "docker exec {container_name} chown {getter_user}:{getter_group} /home/getter/.ssh/authorized_keys".format(**data)
