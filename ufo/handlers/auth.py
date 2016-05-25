@@ -144,19 +144,20 @@ def _handle_login_get():
     A rendered login page template possibly with or without recaptcha.
   """
   config = ufo.get_user_config()
+  failed_attempts_count = 0
   failed_login_attempts = models.FailedLoginAttempt.query.order_by(
       models.FailedLoginAttempt.id).all()
   now = datetime.datetime.now()
 
   if config.show_recaptcha:
-    attempts_since_recaptcha = _count_failed_logins_since_datetime(
+    failed_attempts_count = _count_failed_logins_since_datetime(
         failed_login_attempts, config.recaptcha_start_datetime)
     if config.recaptcha_end_datetime < now:
       # This is the case when the recaptcha was on and timed out so turn it off
       config.show_recaptcha = False
       _purge_old_failed_login_attempts(
           failed_login_attempts, config.recaptcha_end_datetime)
-    elif attempts_since_recaptcha >= MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
+    elif failed_attempts_count >= MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
       # This is the case when the recaptcha was on and has since seen more
       # failures over the threshold, so it needs to be extended.
       delta = (
@@ -164,15 +165,15 @@ def _handle_login_get():
       _turn_on_recaptcha(config, now, delta * 2)
   else:
     delta = datetime.timedelta(minutes=INITIAL_RECAPTCHA_TIMEFRAME_MINUTES)
-    attempts_in_initial_timeframe = _count_failed_logins_since_datetime(
+    failed_attempts_count = _count_failed_logins_since_datetime(
         failed_login_attempts, now - delta)
-    if attempts_in_initial_timeframe >= MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
+    if failed_attempts_count >= MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
       # This is the case when I need to turn on recaptcha initially.
       _turn_on_recaptcha(config, now, delta)
 
   config.save()
 
-  flask.session['failures'] = config.failed_login_attempts
+  flask.session['failures'] = failed_attempts_count
   flask.session['show_recaptcha'] = config.show_recaptcha
   return flask.render_template('login.html',
                                error=flask.request.form.get('error'))
