@@ -162,6 +162,9 @@ class Config(Model):
                                        default=CRON_JOB_ACTIONS['nothing'])
   user_undelete_action = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
                                        default=CRON_JOB_ACTIONS['nothing'])
+  show_recaptcha = ufo.db.Column(ufo.db.Boolean(), default=False)
+  recaptcha_start_datetime = ufo.db.Column(ufo.db.DateTime())
+  recaptcha_end_datetime = ufo.db.Column(ufo.db.DateTime())
 
   def to_dict(self):
     """Get the config as a dict.
