@@ -73,7 +73,6 @@ class AuthTest(base_test.BaseTest):
     new_delta = config.recaptcha_end_datetime - config.recaptcha_start_datetime
     self.assertEquals(2*initial_delta, new_delta)
 
-
   def testTurnOnRecaptchaIfRecaptchaWasOffAndFailedAttemptsOverMax(self):
     """Test recaptcha turns on if it was off and went over max failed login."""
     # Add enough failed attempts to the DB after start datetime to hit max.
