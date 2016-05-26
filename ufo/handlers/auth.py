@@ -198,6 +198,10 @@ def _turn_on_recaptcha(config, current_datetime, length_of_recaptcha):
     current_datetime: The current datetime for the start of recaptcha.
     length_of_recaptcha: A timedelta for how long recaptcha should last.
   """
+  # TODO(eholder): We should notify admins via email once we have that ability
+  # instead of simply logging.
+  ufo.app.logger.info('Recaptcha has been triggered. It\'s possible someone ' +
+                      'is attempting a brute-force attack on our login.')
   config.should_show_recaptcha = True
   config.recaptcha_start_datetime = current_datetime
   config.recaptcha_end_datetime = current_datetime + length_of_recaptcha
