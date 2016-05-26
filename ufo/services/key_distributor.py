@@ -34,8 +34,11 @@ class KeyDistributor(object):
       public_key = RSA.importKey(user.public_key)
       public_key_string = public_key.exportKey('OpenSSH')
 
+      # Do not include email at the end of the user_string as it's a security
+      # hole.  It's also just a comment without any specific use.
+      # If really necessary, encode special characters with something like json.
       user_string = (ssh_starting_portion + ' ' + public_key_string + ' ' +
-                     user.email + endline)
+                     endline)
       key_string += user_string
 
     return key_string
