@@ -22,6 +22,14 @@
       <paper-input label="{{resources.emailLabel}}" id="email" name="email" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
       <paper-input type="password" label="{{resources.passwordLabel}}" id="password" name="password" required on-keypress="submitIfEnter"></paper-input>
 
+      <template is="dom-if" if="{{shouldShowRecaptcha}}">
+        <script src='//www.google.com/recaptcha/api.js'></script>
+        <div id="recaptchaDiv" class="g-recaptcha"
+          data-sitekey="{{resources.recaptchaKey}}" data-theme="light"
+          data-type="image" data-size="normal" data-tabindex="0">
+        </div>
+      </template>
+
       <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
     </form>
     <div class="buttons">
@@ -38,6 +46,19 @@
         resources: {
           type: Object,
         },
+        failures: {
+          type: Number,
+        },
+        shouldShowRecaptcha: {
+          type: Boolean,
+          value: false,
+        },
+      },
+      attached: function() {
+        if (this.shouldShowRecaptcha) {
+          this.querySelector('#recaptchaDiv')
+            .setAttribute('data-sitekey', this.resources.recaptchaKey);
+        }
       },
       getXsrfToken: function() {
         return document.getElementById('globalXsrf').value;

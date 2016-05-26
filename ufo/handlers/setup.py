@@ -117,6 +117,7 @@ def setup():
     config.domain = domain
 
   config.isConfigured = True
+  config.should_show_recaptcha = False
   config.save()
 
   return flask.redirect(flask.url_for('setup'))

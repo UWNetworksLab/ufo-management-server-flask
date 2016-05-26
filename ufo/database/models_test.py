@@ -1,5 +1,6 @@
 """Test for models module functionality."""
 
+import datetime
 import os
 import unittest
 
@@ -106,6 +107,60 @@ class ConfigTest(base_test.BaseTest):
                      config.proxy_server_validity)
     self.assertEqual(config_dict['network_jail_until_google_auth'],
                      config.network_jail_until_google_auth)
+
+
+class FailedLoginAttempt(base_test.BaseTest):
+  """Test for FailedLoginAttempt model class functionality."""
+
+  def testCreate(self):
+    """Test whether a new instance shows up in the DB."""
+    failed_login_attempts = models.FailedLoginAttempt.get_all()
+    self.assertEqual(0, len(failed_login_attempts))
+
+    now = datetime.datetime.now()
+    models.FailedLoginAttempt.create()
+
+    failed_login_attempts = models.FailedLoginAttempt.get_all()
+    self.assertEqual(1, len(failed_login_attempts))
+    self.assertTrue(now <= failed_login_attempts[0].occurred_datetime)
+
+  def testCountSinceDatetime(self):
+    """Test count since datetime properly counts entries."""
+    start = datetime.datetime.now()
+    failed_login_count = models.FailedLoginAttempt.count_since_datetime(start)
+    self.assertEqual(0, failed_login_count)
+
+    expected_count = 3
+    for x in range(expected_count):
+      models.FailedLoginAttempt.create()
+
+    failed_login_count = models.FailedLoginAttempt.count_since_datetime(start)
+    self.assertEqual(expected_count, failed_login_count)
+
+    middle = datetime.datetime.now()
+    failed_login_count = models.FailedLoginAttempt.count_since_datetime(middle)
+    self.assertEqual(0, failed_login_count)
+
+    for x in range(expected_count):
+      models.FailedLoginAttempt.create()
+
+    failed_login_count = models.FailedLoginAttempt.count_since_datetime(start)
+    self.assertEqual(2*expected_count, failed_login_count)
+
+  def testDeleteBeforeDatetime(self):
+    """Test count since datetime properly counts entries."""
+    start = datetime.datetime.now()
+
+    expected_count = 3
+    for x in range(expected_count):
+      models.FailedLoginAttempt.create()
+
+    models.FailedLoginAttempt.delete_before_datetime(start)
+    self.assertEqual(expected_count, len(models.FailedLoginAttempt.get_all()))
+
+    end = datetime.datetime.now()
+    models.FailedLoginAttempt.delete_before_datetime(end)
+    self.assertEqual(0, len(models.FailedLoginAttempt.get_all()))
 
 
 class AdminUserTest(base_test.BaseTest):
