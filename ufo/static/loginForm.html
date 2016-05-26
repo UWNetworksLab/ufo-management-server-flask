@@ -22,7 +22,7 @@
       <paper-input label="{{resources.emailLabel}}" id="email" name="email" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
       <paper-input type="password" label="{{resources.passwordLabel}}" id="password" name="password" required on-keypress="submitIfEnter"></paper-input>
 
-      <template is="dom-if" if="{{showRecaptcha}}">
+      <template is="dom-if" if="{{shouldShowRecaptcha}}">
         <script src='//www.google.com/recaptcha/api.js'></script>
         <div id="recaptchaDiv" class="g-recaptcha"
           data-sitekey="{{resources.recaptchaKey}}" data-theme="light"
@@ -49,13 +49,13 @@
         failures: {
           type: Number,
         },
-        showRecaptcha: {
+        shouldShowRecaptcha: {
           type: Boolean,
           value: false,
         },
       },
       attached: function() {
-        if (this.showRecaptcha) {
+        if (this.shouldShowRecaptcha) {
           this.querySelector('#recaptchaDiv')
             .setAttribute('data-sitekey', this.resources.recaptchaKey);
         }

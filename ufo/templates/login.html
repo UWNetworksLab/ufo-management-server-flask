@@ -7,8 +7,8 @@
   </style>
   <paper-display-template resources="{{login_resources}}">
     <header-container resources="{{login_resources}}">
-      {% if session['show_recaptcha'] %}
-        <login-form resources="{{login_resources}}" failures="{{session['failures'] or 0}}" show-recaptcha></login-form>
+      {% if session['should_show_recaptcha'] %}
+        <login-form resources="{{login_resources}}" failures="{{session['failures'] or 0}}" should-show-recaptcha></login-form>
       {% else %}
         <login-form resources="{{login_resources}}" failures="{{session['failures'] or 0}}"></login-form>
       {% endif %}

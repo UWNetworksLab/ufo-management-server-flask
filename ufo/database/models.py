@@ -1,3 +1,5 @@
+
+import datetime
 import StringIO
 
 import bcrypt
@@ -104,7 +106,7 @@ class Model(ufo.db.Model):
     Returns:
       A list of entities in dictionary form from the database.
     """
-    return cls.make_items_into_list_of_dict(cls.query.order_by(cls.id).all())
+    return cls.make_items_into_list_of_dict(cls.get_all())
 
   @classmethod
   def search(cls, search_text):
@@ -136,6 +138,15 @@ class Model(ufo.db.Model):
       to_return.append(item.to_dict())
     return to_return
 
+  @classmethod
+  def get_all(cls):
+    """Retrieves a list of all the entities in the database of the given class.
+
+    Returns:
+      A list of the entities.
+    """
+    return cls.query.order_by(cls.id).all()
+
 
 class Config(Model):
   """Class for anything that needs to be stored as a singleton for the site
@@ -162,7 +173,7 @@ class Config(Model):
                                        default=CRON_JOB_ACTIONS['nothing'])
   user_undelete_action = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
                                        default=CRON_JOB_ACTIONS['nothing'])
-  show_recaptcha = ufo.db.Column(ufo.db.Boolean(), default=False)
+  should_show_recaptcha = ufo.db.Column(ufo.db.Boolean(), default=False)
   recaptcha_start_datetime = ufo.db.Column(ufo.db.DateTime())
   recaptcha_end_datetime = ufo.db.Column(ufo.db.DateTime())
 
@@ -188,7 +199,38 @@ class FailedLoginAttempt(Model):
 
   id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
-  occurred = ufo.db.Column(ufo.db.DateTime())
+  occurred_datetime = ufo.db.Column(ufo.db.DateTime())
+
+  @staticmethod
+  def create():
+    """Create a new failed login attempt entry in the database."""
+    new_failed_login = FailedLoginAttempt()
+    new_failed_login.occurred_datetime = datetime.datetime.now()
+    new_failed_login.save()
+
+  @staticmethod
+  def count_since_datetime(previous_datetime):
+    """Retrieve how many failed logins happened after a specified time.
+
+    Args:
+      previous_datetime: The datetime to compare if the attempt was after.
+
+    Return:
+      An integer for how many failed logins were after the specified time.
+    """
+    return FailedLoginAttempt.query.filter(
+        FailedLoginAttempt.occurred_datetime >= previous_datetime).count()
+
+  @staticmethod
+  def delete_before_datetime(previous_datetime):
+    """Delete the entries in the db before the specified datetime.
+
+    Args:
+      previous_datetime: The datetime to compare if the attempt was before.
+    """
+    failed_login_attempts_before = FailedLoginAttempt.query.filter(
+        FailedLoginAttempt.occurred_datetime < previous_datetime).delete()
+    ufo.db.session.commit()
 
 
 class User(Model):

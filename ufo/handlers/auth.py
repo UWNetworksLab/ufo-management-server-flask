@@ -114,12 +114,13 @@ def login():
   if user is None:
     return flask.redirect(flask.url_for('login', error='No valid user found.'))
 
-  if ufo.get_user_config().show_recaptcha and not ufo.RECAPTCHA.verify():
-    _create_new_failed_login()
+  config = ufo.get_user_config()
+  if config.should_show_recaptcha and not ufo.RECAPTCHA.verify():
+    models.FailedLoginAttempt.create()
     return flask.redirect(flask.url_for('login', error='Failed recaptcha.'))
 
   if not user.does_password_match(password):
-    _create_new_failed_login()
+    models.FailedLoginAttempt.create()
     return flask.redirect(flask.url_for('login', error='Invalid password.'))
 
   flask.session['email'] = user.email
@@ -143,20 +144,33 @@ def _handle_login_get():
   Return:
     A rendered login page template possibly with or without recaptcha.
   """
+  should_show_recaptcha, failed_attempts_count = determine_if_recaptcha_should_be_turned_on_or_off()
+
+  flask.session['failures'] = failed_attempts_count
+  flask.session['should_show_recaptcha'] = should_show_recaptcha
+  return flask.render_template('login.html',
+                               error=flask.request.form.get('error'))
+
+
+def determine_if_recaptcha_should_be_turned_on_or_off():
+  """Determines whether or not to show the recaptcha and updates the DB.
+
+  Return:
+    A tuple where the first entry is a boolean for whether or not to show
+    recaptcha and the second entry is the count of failed login attempts.
+  """
   config = ufo.get_user_config()
   failed_attempts_count = 0
-  failed_login_attempts = models.FailedLoginAttempt.query.order_by(
-      models.FailedLoginAttempt.id).all()
   now = datetime.datetime.now()
 
-  if config.show_recaptcha:
-    failed_attempts_count = _count_failed_logins_since_datetime(
-        failed_login_attempts, config.recaptcha_start_datetime)
+  if config.should_show_recaptcha:
+    failed_attempts_count = models.FailedLoginAttempt.count_since_datetime(
+        config.recaptcha_start_datetime)
     if config.recaptcha_end_datetime < now:
       # This is the case when the recaptcha was on and timed out so turn it off
-      config.show_recaptcha = False
-      _purge_old_failed_login_attempts(
-          failed_login_attempts, config.recaptcha_end_datetime)
+      config.should_show_recaptcha = False
+      models.FailedLoginAttempt.delete_before_datetime(
+          config.recaptcha_end_datetime)
     elif failed_attempts_count >= MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
       # This is the case when the recaptcha was on and has since seen more
       # failures over the threshold, so it needs to be extended.
@@ -165,24 +179,14 @@ def _handle_login_get():
       _turn_on_recaptcha(config, now, delta * 2)
   else:
     delta = datetime.timedelta(minutes=INITIAL_RECAPTCHA_TIMEFRAME_MINUTES)
-    failed_attempts_count = _count_failed_logins_since_datetime(
-        failed_login_attempts, now - delta)
+    failed_attempts_count = models.FailedLoginAttempt.count_since_datetime(
+        now - delta)
     if failed_attempts_count >= MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
       # This is the case when I need to turn on recaptcha initially.
       _turn_on_recaptcha(config, now, delta)
 
   config.save()
-
-  flask.session['failures'] = failed_attempts_count
-  flask.session['show_recaptcha'] = config.show_recaptcha
-  return flask.render_template('login.html',
-                               error=flask.request.form.get('error'))
-
-def _create_new_failed_login():
-  """Create a new failed login attempt entry in the database."""
-  new_failed_login = models.FailedLoginAttempt()
-  new_failed_login.occurred = datetime.datetime.now()
-  new_failed_login.save()
+  return config.should_show_recaptcha, failed_attempts_count
 
 def _turn_on_recaptcha(config, current_datetime, length_of_recaptcha):
   """Turn on recaptcha in the configuration object.
@@ -192,35 +196,6 @@ def _turn_on_recaptcha(config, current_datetime, length_of_recaptcha):
     current_datetime: The current datetime for the start of recaptcha.
     length_of_recaptcha: A timedelta for how long recaptcha should last.
   """
-  config.show_recaptcha = True
+  config.should_show_recaptcha = True
   config.recaptcha_start_datetime = current_datetime
   config.recaptcha_end_datetime = current_datetime + length_of_recaptcha
-
-def _count_failed_logins_since_datetime(failed_login_attempts,
-                                        previous_datetime):
-  """For the failed logins, return how many happened after a specified time.
-
-  Args:
-    failed_login_attempts: The set of all failed login attempts to review.
-    previous_datetime: The datetime to compare if the attempt was after.
-
-  Return:
-    An integer for how many failed logins were after the specified time.
-  """
-  recent_failures = 0
-  for attempt in failed_login_attempts:
-    if attempt.occurred >= previous_datetime:
-      recent_failures = recent_failures + 1
-  return recent_failures
-
-def _purge_old_failed_login_attempts(failed_login_attempts, previous_datetime):
-  """Delete the failed login attempts in the db before the specified datetime.
-
-  Args:
-    failed_login_attempts: The set of all failed login attempts to review.
-    previous_datetime: The datetime to compare if the attempt was before.
-  """
-  for attempt in failed_login_attempts:
-    if attempt.occurred < previous_datetime:
-      attempt.delete(commit=False)
-  ufo.db.session.commit()
