@@ -114,6 +114,8 @@ def login():
   if user is None:
     return flask.redirect(flask.url_for('login', error='No valid user found.'))
 
+  # TODO(eholder): Add a functional test to verify that recaptcha does trigger,
+  # but the test must be at the end since we won't be able to login afterwards.
   config = ufo.get_user_config()
   if config.should_show_recaptcha and not ufo.RECAPTCHA.verify():
     models.FailedLoginAttempt.create()
