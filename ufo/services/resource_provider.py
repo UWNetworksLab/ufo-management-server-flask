@@ -316,6 +316,12 @@ def _get_user_resources():
 
 def set_jinja_globals():
   """Set the jinja global environment to contain all the resource dicts."""
+
+  # The resource keys will not be present.
+  ufo.app.logger.info('Start setting resources into jinja globals.\n'
+                      'Current jinja globals: %s' %
+                      ufo.app.jinja_env.globals.keys())
+
   ufo.app.jinja_env.globals['landing_resources'] = json.dumps(
       _get_landing_resources())
   ufo.app.jinja_env.globals['login_resources'] = json.dumps(
@@ -330,3 +336,8 @@ def set_jinja_globals():
       _get_settings_resources())
   ufo.app.jinja_env.globals['user_resources'] = json.dumps(
       _get_user_resources())
+
+  # The resource keys should be present if set.
+  ufo.app.logger.info('Finished setting resources into jinja globals.\n'
+                      'Current jinja globals: %s' %
+                      ufo.app.jinja_env.globals.keys())
