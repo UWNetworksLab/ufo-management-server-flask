@@ -7,7 +7,11 @@
   </style>
   <paper-display-template resources="{{login_resources}}">
     <header-container resources="{{login_resources}}">
-      <login-form resources="{{login_resources}}"></login-form>
+      {% if session['should_show_recaptcha'] %}
+        <login-form resources="{{login_resources}}" failures="{{session['failures'] or 0}}" should-show-recaptcha></login-form>
+      {% else %}
+        <login-form resources="{{login_resources}}" failures="{{session['failures'] or 0}}"></login-form>
+      {% endif %}
     </header-container>
   </paper-display-template>
   <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">

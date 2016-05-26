@@ -57,6 +57,7 @@ function findHtmlFilesToVulcanize ()
   runInStaticDirAndAssertCmd "rm -fr $TEMP_FILE_LIST"
   runInStaticDirAndAssertCmd "rm -fr $HTML_FILE_TO_VULCANIZE"
   runInStaticDirAndAssertCmd "rm -fr $VULCANIZED_HTML_FILE"
+  runInStaticDirAndAssertCmd "rm -fr $VULCANIZED_JS_FILE"
   runInStaticDirAndAssertCmd "touch $TEMP_FILE_LIST"
   # This searches through the ufo/static/ directory recursively and finds all
   # files that match *html, but excludes index.html, basic.html, and files
