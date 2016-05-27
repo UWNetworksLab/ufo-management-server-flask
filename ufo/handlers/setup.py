@@ -115,6 +115,7 @@ def setup():
   if credentials is not None:
     config.credentials = credentials.to_json()
     config.domain = domain
+    flask.session['domain'] = domain
 
   config.isConfigured = True
   config.should_show_recaptcha = False

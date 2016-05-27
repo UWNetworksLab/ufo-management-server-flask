@@ -22,12 +22,14 @@
     </left-icon-container>
   </paper-display-template>
 
-  <paper-display-template resources="{{policy_resources}}" id="chromePolicyDisplayTemplate">
-    <header-container resources="{{policy_resources}}">
-      <chrome-policy resources="{{policy_resources}}">
-      </chrome-policy>
-    </header-container>
-  </paper-display-template>
+  {% if session['domain'] %}
+    <paper-display-template resources="{{policy_resources}}" id="chromePolicyDisplayTemplate">
+      <header-container resources="{{policy_resources}}">
+        <chrome-policy resources="{{policy_resources}}">
+        </chrome-policy>
+      </header-container>
+    </paper-display-template>
+  {% endif %}
 
   <paper-display-template resources="{{settings_resources}}" id="settingsDisplayTemplate">
     <header-container resources="{{settings_resources}}">

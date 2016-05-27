@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}New Landing{% endblock %}
+{% block title %}Landing{% endblock %}
 {% block body %}
   <paper-display-template resources="{{user_resources}}" id="userDisplayTemplate">
     <header-container resources="{{user_resources}}" has-add-flow="true">
@@ -13,11 +13,13 @@
       </list-items>
     </header-container>
   </paper-display-template>
-  <paper-display-template resources="{{policy_resources}}" id="chromePolicyDisplayTemplate">
-    <header-container resources="{{policy_resources}}">
-      <chrome-policy resources="{{policy_resources}}">
-      </chrome-policy>
-    </header-container>
-  </paper-display-template>
+  {% if session['domain'] %}
+    <paper-display-template resources="{{policy_resources}}" id="chromePolicyDisplayTemplate">
+      <header-container resources="{{policy_resources}}">
+        <chrome-policy resources="{{policy_resources}}">
+        </chrome-policy>
+      </header-container>
+    </paper-display-template>
+  {% endif %}
   <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
 {% endblock %}
