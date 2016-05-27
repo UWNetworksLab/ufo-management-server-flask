@@ -126,6 +126,7 @@ def login():
     return flask.redirect(flask.url_for('login', error='Invalid password.'))
 
   flask.session['email'] = user.email
+  flask.session['domain'] = config.domain
 
   return flask.redirect(flask.url_for('landing'))
 
