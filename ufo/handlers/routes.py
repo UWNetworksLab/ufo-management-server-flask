@@ -1,6 +1,7 @@
 import json
 
 import flask
+from flask import request
 
 import ufo
 from ufo.handlers import auth
@@ -13,7 +14,10 @@ from ufo.handlers import user
 @ufo.setup_required
 @auth.login_required
 def landing():
-
+  print "Headers"
+  print "Accept: " + request.headers.get('Accept')
+  print "Accept-Encoding: " + request.headers.get('Accept-Encoding')
+  print "Accept-Language: " + request.headers.get('Accept-Language')
   return flask.render_template('landing.html')
 
 
