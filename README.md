@@ -207,6 +207,18 @@ https://github.com/uProxy/ufo-management-server-flask/issues/126
 
 Thanks!
 
+### Automating a Pull Request to Production
+
+One of the goals of our release process is to have an automated nightly build and test that will push to production on success. In order to do that, we set up a [Sauce Labs account](https://saucelabs.com/beta/tunnels) (based on the github project to allow free automated tests) and configured it to perform functional tests for us through Travis CI on pull requests to the production branch. Travis CI handles this by triggering our web_driver.sh script on each test which then determines what branch the test is being executed against ($TRAVIS_BRANCH environment variable). If the branch is production or if the override ($TRAVIS_WEB_DRIVER_OVERRIDE environment variable) is set to true, then the webdriver tests will proceed. Since these tests take a while, we don’t want to run them on every single PR, so this is a means to keep our typical tests as quick as possible.
+
+Now that those tests are in place, the last piece is actually triggering them automatically via a pull request to the production branch from the master branch. We’ve implemented this as a cron job. The configuration of the job can be seen below:
+
+`00 02 * * * curl -X POST -k -d '{"title": "Automated Nightly Release to Production", "head": "master", "base": "production"}' https://api.github.com/repos/uProxy/ufo-management-server-flask/pulls?access_token=YOUR_GITHUB_ACCESS_TOKEN_GOES_HERE`
+
+The `00 02 * * *` part is the syntax for cron which denotes that the job will run at 2am every day. The actual request trigger is afterwards, via a curl command that specifies the title of the PR (`Automated Nightly Release to Production`), the head branch to pull from (`master`), the base branch to pull onto (`production`), the repo to perform this within (`https://api.github.com/repos/uProxy/ufo-management-server-flask`), and finally an access token (`YOUR_GITHUB_ACCESS_TOKEN_GOES_HERE`) that authenticates the request. Users on github.com can generate these access tokens by going [here](https://github.com/settings/tokens). Since they authenticate a user for various access scopes, they should be treated as secret, which is why ours is omitted here.
+
+Ethan Holder (eholder@) set this up on his machine already. No other developer should need to do this, but it is documented here for informational purposes.
+
 ## Deployment
 
 ### Create an Instance
