@@ -91,8 +91,10 @@ function runUITestsViaSauceLabs ()
   # to reexecute web driver tests if the first run failed. However, this should
   # not be done often as running multiple tests at the same time will cause
   # interference (since both modify a standing instance).
+  echo "Travis Branch is $TRAVIS_BRANCH"
+  echo "Web Driver Override is $TRAVIS_WEB_DRIVER_OVERRIDE"
   if [ [ "$TRAVIS_BRANCH" == 'production' ]  &&  [ "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'auto' ] ] || [ "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'true' ]; then
-    runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --username='$TRAVIS_ADMIN_USERNAME' --password='$TRAVIS_ADMIN_PASSWORD' --sauce-username='$SAUCE_USERNAME' --sauce-access-key='$SAUCE_ACCESS_KEY' --travis-job-number='$TRAVIS_JOB_NUMBER'"
+    runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --email='$TRAVIS_ADMIN_USERNAME' --password='$TRAVIS_ADMIN_PASSWORD' --sauce-username='$SAUCE_USERNAME' --sauce-access-key='$SAUCE_ACCESS_KEY' --travis-job-number='$TRAVIS_JOB_NUMBER'"
   else
     exit 0
   fi
