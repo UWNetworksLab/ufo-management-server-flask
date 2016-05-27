@@ -217,7 +217,9 @@ Now that those tests are in place, the last piece is actually triggering them au
 
 The `00 02 * * *` part is the syntax for cron which denotes that the job will run at 2am every day. The actual request trigger is afterwards, via a curl command that specifies the title of the PR (`Automated Nightly Release to Production`), the head branch to pull from (`master`), the base branch to pull onto (`production`), the repo to perform this within (`https://api.github.com/repos/uProxy/ufo-management-server-flask`), and finally an access token (`YOUR_GITHUB_ACCESS_TOKEN_GOES_HERE`) that authenticates the request. Users on github.com can generate these access tokens by going [here](https://github.com/settings/tokens). Since they authenticate a user for various access scopes, they should be treated as secret, which is why ours is omitted here.
 
-Ethan Holder (eholder@) set this up on his machine already. No other developer should need to do this, but it is documented here for informational purposes.
+This is already configured to run on a test machine. No developer should need to do this, but it is documented here for informational purposes and in case of errors for debugging.
+
+Once the pull request has been created and the tests have executed, all that remains is a final approval on the PR and the actual merge. Travis CI will maintain the results of the tests in case there is a failure, in which case a developer should reject the PR, and create a fix for whatever is broken. If all tests pass and there are no further concerns, a thumbs up can be given and the merge performed.
 
 ## Deployment
 
