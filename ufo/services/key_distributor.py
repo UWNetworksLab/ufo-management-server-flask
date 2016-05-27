@@ -76,7 +76,7 @@ class KeyDistributor(object):
 
     make_file = "echo {key_string} > {tmp_file_path}".format(**data)
     copy_file = "docker cp {tmp_file_path} {container_name}:{authorized_keys_path}".format(**data)
-    mod_file = "docker exec {container_name} chmod 666 {authorized_keys_path}".format(**data)
+    mod_file = "docker exec {container_name} chmod 644 {authorized_keys_path}".format(**data)
     own_file = "docker exec {container_name} chown {getter_user}:{getter_group} /home/getter/.ssh/authorized_keys".format(**data)
     cleanup = "rm -f {tmp_file_path}".format(**data)
     command = string.join([make_file, copy_file, mod_file, own_file, cleanup], ' && ')
