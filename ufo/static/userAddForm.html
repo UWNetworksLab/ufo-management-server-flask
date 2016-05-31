@@ -11,6 +11,9 @@
     paper-listbox {
       background: #EEE;
     }
+    .addTopMargin {
+      margin-top: 12px;
+    }
   </style>
   <template>
     <div>
@@ -36,6 +39,11 @@
           <paper-dialog-scrollable>
             <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
               <paper-listbox>
+              <template is="dom-if" if="[[!areAnyUsersFound()]]">
+                <paper-item id="noResultsItem" class="horizontal layout">
+                  <span class="flex"><strong>{{resources.addFlowNoResults}}</strong></span>
+                </paper-item>
+              </template>
                 <template is="dom-repeat" items="[[lastResponse.directory_users]]">
                   <paper-item id="{{item.name}}" class="horizontal layout">
                     <paper-checkbox name="checkboxes" value="{{item}}"></paper-checkbox>
@@ -53,6 +61,11 @@
         <template is="dom-if" if="{{!shouldDisplayWithDialog}}">
           <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
             <paper-listbox>
+              <template is="dom-if" if="[[!areAnyUsersFound()]]">
+                <paper-item id="noResultsItem" class="horizontal layout">
+                  <span class="flex"><strong>{{resources.addFlowNoResults}}</strong></span>
+                </paper-item>
+              </template>
               <template is="dom-repeat" items="[[lastResponse.directory_users]]">
                 <paper-item id="{{item.name}}" class="horizontal layout">
                   <paper-checkbox name="checkboxes" value="{{item}}"></paper-checkbox>
@@ -66,7 +79,7 @@
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
           </form>
         </template>
-        <paper-button on-tap="resetForms" class="anchor-button"><strong>{{resources.lookAgainText}}</strong></paper-button>
+        <paper-button on-tap="resetForms" class="anchor-button addTopMargin"><strong>{{resources.lookAgainText}}</strong></paper-button>
       </template>
     </div>
     <div class="buttons">
@@ -220,6 +233,9 @@
         var formElem = document.getElementById('addPostForm');
         var input = formElem.querySelector('#hiddenUsers');
         input.value = jsonUsers;
+      },
+      areAnyUsersFound: function() {
+        return this.lastResponse.directory_users.length > 0;
       },
     });
   </script>
