@@ -11,7 +11,7 @@
     }
   </style>
   <template>
-    <paper-dialog id="{{resources.modalId}}" modal>
+    <paper-dialog id="{{resources.modalId}}" with-backdrop>
       <h2 class="title">{{resources.addText}}</h2>
       <div id="contentHolder">
         <template is="dom-if" if="{{resources.isUser}}">

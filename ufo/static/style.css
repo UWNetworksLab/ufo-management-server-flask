@@ -75,6 +75,14 @@ paper-dialog-scrollable > div {
   flex: 1;
 }
 
+.biggerScrollable {
+  max-height: 450px;
+}
+
+.biggerScrollable > div {
+  max-height: 400px;
+}
+
 .title {
   color: black!important;
 }

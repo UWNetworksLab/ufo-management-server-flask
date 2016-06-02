@@ -30,7 +30,7 @@ function runInTestDirAndAssertCmd ()
   echo "Running: python ui_test_suite.py with hidden params"
   # We use set -e to make sure this will fail if the command returns an error
   # code.
-  if [ -d  "$TEST_DIR" ]; then
+  if [[ -d  "$TEST_DIR" ]]; then
     echo "In: $TEST_DIR"
     echo
     set -e && cd $TEST_DIR && eval $1
@@ -93,7 +93,7 @@ function runUITestsViaSauceLabs ()
   # interference (since both modify a standing instance).
   echo "Travis Branch is $TRAVIS_BRANCH"
   echo "Web Driver Override is $TRAVIS_WEB_DRIVER_OVERRIDE"
-  if [ [ "$TRAVIS_BRANCH" == 'production' ]  &&  [ "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'auto' ] ] || [ "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'true' ]; then
+  if [[ ( "$TRAVIS_BRANCH" == 'production' && "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'auto' ) || "$TRAVIS_WEB_DRIVER_OVERRIDE" == 'true' ]]; then
     runInTestDirAndAssertCmd "python ui_test_suite.py --server_url='$SERVER_URL' --email='$TRAVIS_ADMIN_USERNAME' --password='$TRAVIS_ADMIN_PASSWORD' --sauce-username='$SAUCE_USERNAME' --sauce-access-key='$SAUCE_ACCESS_KEY' --travis-job-number='$TRAVIS_JOB_NUMBER'"
   else
     exit 0
@@ -131,15 +131,15 @@ function printHelp ()
 }
 
 
-if [ "$1" == 'install' ]; then
+if [[ "$1" == 'install' ]]; then
   installChromeDriver
-elif [ "$1" == 'test' ]; then
-  if [ $# -eq 4 ]; then
+elif [[ "$1" == 'test' ]]; then
+  if [[ $# -eq 4 ]]; then
     SERVER_URL=$2
     EMAIL=$3
     PASSWORD=$4
     runUITests
-  elif [ -z "$TRAVIS_ADMIN_USERNAME" ]  ||  [ -z "$TRAVIS_ADMIN_PASSWORD" ]  ||  [ -z "$SAUCE_USERNAME" ]  ||  [ -z "$SAUCE_ACCESS_KEY" ]  ||  [ -z "$TRAVIS_JOB_NUMBER" ]; then
+  elif [[ -z "$TRAVIS_ADMIN_USERNAME" ]]  ||  [[ -z "$TRAVIS_ADMIN_PASSWORD" ]]  ||  [[ -z "$SAUCE_USERNAME" ]]  ||  [[ -z "$SAUCE_ACCESS_KEY" ]]  ||  [[ -z "$TRAVIS_JOB_NUMBER" ]]; then
     # The if statement above just checks that all the necessary values are
     # present for doing remote UI tests. If they aren't, then we just fail out
     # here.

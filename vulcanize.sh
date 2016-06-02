@@ -36,7 +36,7 @@ function runInStaticDirAndAssertCmd ()
   echo "Running: $1"
   # We use set -e to make sure this will fail if the command returns an error
   # code.
-  if [ -d  "$STATIC_DIR" ]; then
+  if [[ -d  "$STATIC_DIR" ]]; then
     echo "In: $STATIC_DIR"
     echo
     set -e && cd $STATIC_DIR && eval $1
@@ -112,7 +112,7 @@ function printHelp ()
 }
 
 
-if [ "$#" == 0 ]; then
+if [[ "$#" == 0 ]]; then
   updateBowerPackages
   findHtmlFilesToVulcanize
   createSingleHtmlFileToVulcanize
