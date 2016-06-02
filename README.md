@@ -340,6 +340,12 @@ To view the logs of an instance:
   * [More details here](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-14-04) especially if you want to setup other non-root user.
 1. Save the corresponding private key to the management server for this proxy server.
 
+### Securing the Server with TLS
+
+When deployed on Heroku, the Management Server utilizes an [nginx buildpack](https://github.com/uProxy/nginx-buildpack) with [our own configuration](https://github.com/uProxy/nginx-buildpack/blob/master/config/nginx.conf.erb#L43) to provide a secure layer for HTTPS/HTTP + TLS. We redirect all traffic to the HTTPS version via a 301 Moved Permanently redirect and also provide the [HTTP Strict Transport Security (HSTS)](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security) header to prevent clients that have visited via HTTPS to get downgraded to HTTP without the browser recognizing the potential attack. This is automatically configured out of the box during deployment and works by using Heroku’s SSL cert. When using a custom domain name, an SSL cert for that domain must be provided, but from our perspective it will function identically.
+
+Outside of Heroku however, the nginx setup is entirely avoided since we do not anticipate users to deploy with gunicorn or a Procfile (as required by Heroku). We encourage anyone running the management server off of Heroku to use a similar system to nginx to provide their own HTTPS/HTTP + TLS security where available.
+
 ## Troubleshooting
 
 ### SQLAlchemy Unable to Open Database/app.instance_path Not Pointing to App Directory
