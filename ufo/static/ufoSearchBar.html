@@ -68,9 +68,9 @@
         this.$.searchForm.request.jsonPrefix = this.searchResources.jsonPrefix;
       },
       presubmit: function() {
-        var userList = document.getElementById(this.userResources.listId);
+        var userList = document.getElementById(this.userResources.userListId);
         var serverList = document.getElementById(
-          this.proxyServerResources.listId);
+          this.proxyServerResources.proxyServerListId);
         if (!userList && !serverList) {
           var queryString = "?search_text=" + this.$.hiddenSearch.value;
           var locationString = this.searchResources.searchPageUrl + queryString;
@@ -96,11 +96,11 @@
       parseSearchResponse: function(e, details) {
         var searchJson = this.$.searchForm.request.lastResponse;
         if (searchJson.users) {
-          this.sendJsonToList(searchJson.users, this.userResources.listId);
+          this.sendJsonToList(searchJson.users, this.userResources.userListId);
         }
         if (searchJson.servers) {
           this.sendJsonToList(searchJson.servers,
-            this.proxyServerResources.listId);
+            this.proxyServerResources.proxyServerListId);
         }
         this.set('loading', false);
       },
@@ -111,12 +111,12 @@
         }
       },
       resetLists: function(e, details) {
-        var userList = document.getElementById(this.userResources.listId);
+        var userList = document.getElementById(this.userResources.userListId);
         if (userList) {
           userList.resendRequest();
         }
         var serverList = document.getElementById(
-          this.proxyServerResources.listId);
+          this.proxyServerResources.proxyServerListId);
         if (serverList) {
           serverList.resendRequest();
         }

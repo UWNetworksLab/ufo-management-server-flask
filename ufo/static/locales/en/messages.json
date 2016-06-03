@@ -1,19 +1,4 @@
-"""Resource provider module to set resource dictionaries for all pages."""
-
-import flask
-import json
-
-import ufo
-from ufo.services import regex
-
-
-def _get_landing_resources():
-  """Get the resources for the general landing component.
-
-    Returns:
-      A dict of the resources for the general landing component.
-  """
-  return {
+{
     'searchPageUrl': flask.url_for('search_page'),
     'searchJsonUrl': flask.url_for('search'),
     'userAddIconUrl': flask.url_for('static', filename='img/add-users.svg'),
@@ -49,15 +34,6 @@ def _get_landing_resources():
     'closeText': 'Close',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
     'jsonPrefix': ufo.XSSI_PREFIX,
-  }
-
-def _get_login_resources():
-  """Get the resources for the login component.
-
-    Returns:
-      A dict of the resources for the login component.
-  """
-  return {
     'loginTitleText': 'Please Log In',
     'loginUrl': flask.url_for('login'),
     'emailLabel': 'Email',
@@ -66,15 +42,6 @@ def _get_login_resources():
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
     'jsonPrefix': ufo.XSSI_PREFIX,
     'recaptchaKey': ufo.app.config['RECAPTCHA_SITE_KEY'],
-  }
-
-def _get_oauth_resources():
-  """Get the resources for the oauth component.
-
-    Returns:
-      A dict of the resources for the oauth component.
-  """
-  return {
     'setup_url': flask.url_for('setup'),
     'oauthTitleText': 'Oauth Configuration',
     'welcomeText': ('Hey there! Welcome to the uProxy for Organizations '
@@ -108,15 +75,6 @@ def _get_oauth_resources():
     'adminPasswordlabel': 'Admin Password',
     'submitButtonText': 'Submit',
     'jsonPrefix': ufo.XSSI_PREFIX,
-  }
-
-def _get_policy_resources():
-  """Get the resources for the chrome policy component.
-
-    Returns:
-      A dict of the resources for the chrome policy component.
-  """
-  return {
     'download_chrome_policy': flask.url_for('download_chrome_policy'),
     'policy_filename': 'chrome_policy.json',
     'chromePolicyTitleText': 'Chrome Policy',
@@ -142,16 +100,6 @@ def _get_policy_resources():
         'Force Installation or Configure\'s values. Finally, click Save.'),
     'downloadText': 'Download',
     'jsonPrefix': ufo.XSSI_PREFIX,
-  }
-
-
-def _get_proxy_server_resources():
-  """Get the resources for the proxy server component.
-
-    Returns:
-      A dict of the resources for the proxy server component.
-  """
-  return {
     'proxyServerAddUrl': flask.url_for('proxyserver_add'),
     'proxyServerAddIconUrl': flask.url_for('static', filename='img/add-servers.svg'),
     'proxyServerInverseAddIconUrl': flask.url_for('static', filename='img/add-servers-inverse.svg'),
@@ -206,15 +154,6 @@ def _get_proxy_server_resources():
         'This public key is used to authenticate the proxy server.'),
     'rsaText': ('For now, please be sure to use an RSA key (the text should '
                 'begin with ssh-rsa)'),
-  }
-
-def _get_settings_resources():
-  """Get the resources for the settings configuration component.
-
-    Returns:
-      A dict of the resources for the settings configuration component.
-  """
-  return {
     'settingsTitleText': 'Management Server Settings',
     'getSettingsUrl': flask.url_for('get_settings'),
     'settingsEditUrl': flask.url_for('edit_settings'),
@@ -222,15 +161,6 @@ def _get_settings_resources():
     'networkJailText': 'Enforce Network Jail Before Google Login',
     'saveText': 'Save',
     'jsonPrefix': ufo.XSSI_PREFIX,
-  }
-
-def _get_user_resources():
-  """Get the resources for the user component(s).
-
-    Returns:
-      A dict of the resources for the user component(s).
-  """
-  return {
     'userAddUrl': flask.url_for('add_user'),
     'userAddIconUrl': flask.url_for('static', filename='img/add-users.svg'),
     'userInverseAddIconUrl': flask.url_for('static', filename='img/add-users-inverse.svg'),
@@ -297,32 +227,4 @@ def _get_user_resources():
     'manualEmailAddressLabel': 'Email Address',
     'saveMultipleUsersButton': 'Add Users',
     'saveIndividualUserButton': 'Add User',
-  }
-
-def set_jinja_globals():
-  """Set the jinja global environment to contain all the resource dicts."""
-
-  # The resource keys will not be present.
-  ufo.app.logger.info('Start setting resources into jinja globals.\n'
-                      'Current jinja globals: %s' %
-                      ufo.app.jinja_env.globals.keys())
-
-  ufo.app.jinja_env.globals['landing_resources'] = json.dumps(
-      _get_landing_resources())
-  ufo.app.jinja_env.globals['login_resources'] = json.dumps(
-      _get_login_resources())
-  ufo.app.jinja_env.globals['oauth_resources'] = json.dumps(
-      _get_oauth_resources())
-  ufo.app.jinja_env.globals['policy_resources'] = json.dumps(
-      _get_policy_resources())
-  ufo.app.jinja_env.globals['proxy_server_resources'] = (
-      json.dumps(_get_proxy_server_resources()))
-  ufo.app.jinja_env.globals['settings_resources'] = json.dumps(
-      _get_settings_resources())
-  ufo.app.jinja_env.globals['user_resources'] = json.dumps(
-      _get_user_resources())
-
-  # The resource keys should be present if set.
-  ufo.app.logger.info('Finished setting resources into jinja globals.\n'
-                      'Current jinja globals: %s' %
-                      ufo.app.jinja_env.globals.keys())
+}
