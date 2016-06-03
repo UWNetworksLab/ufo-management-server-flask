@@ -14,7 +14,7 @@ from ufo.services import custom_exceptions
 from ufo.services import google_directory_service
 from ufo.services import oauth
 
-INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
+INVITE_CODE_URL_PREFIX = 'https://uproxy.org/invite/#'
 
 
 def _get_users_to_add(get_all, group_key, user_key):
@@ -121,8 +121,8 @@ def _make_invite_code(user):
       'networkName': 'Cloud',
       'networkData': {
         'host': ip,
-        'user': user.email.split("@")[0],
-        'pass': user.private_key,
+        'user': 'getter',
+        'key': base64.urlsafe_b64encode(user.private_key),
       },
   }
   json_data = json.dumps(invite_code_data)
