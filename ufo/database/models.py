@@ -7,6 +7,7 @@ from Crypto.PublicKey import RSA
 from paramiko import hostkeys
 from paramiko import pkey
 import sqlalchemy
+import streql
 
 import ufo
 from ufo.services import custom_exceptions
@@ -419,7 +420,9 @@ class AdminUser(Model):
       True if the password matches the admin user and False otherwise.
     """
     hashed = bcrypt.hashpw(password.encode('utf-8'), self.password.encode('utf-8'))
-    return hashed == self.password
+    # streql is a constant time string comparison tool to prevent timing-based
+    # attacks. See here for more info: https://github.com/PeterScott/streql
+    return streql.equals(hashed, self.password)
 
   def delete(self, commit=True):
     """Delete the given entity and save if specified.
