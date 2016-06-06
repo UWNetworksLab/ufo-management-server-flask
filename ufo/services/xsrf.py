@@ -2,6 +2,7 @@ import binascii
 import os
 
 import flask
+import streql
 
 import ufo
 
@@ -19,7 +20,7 @@ def xsrf_protect():
     return
 
   token = flask.session['_xsrf_token']
-  if not token or token != flask.request.form.get('_xsrf_token'):
+  if not token or not streql.equals(token, flask.request.form.get('_xsrf_token')):
     flask.abort(403)
 
 def generate_xsrf_token():
