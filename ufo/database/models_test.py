@@ -54,7 +54,7 @@ class UserTest(base_test.BaseTest):
     user_1.email = 'alpha@beta.gamma'
     user_2.save()
 
-    unrevoked_users = models.User.get_unrevoked_entries()
+    unrevoked_users = models.User.get_unrevoked_users()
     self.assertEqual(1, len(unrevoked_users))
     self.assertIn(user_1, unrevoked_users)
     self.assertNotIn(user_2, unrevoked_users)

@@ -23,7 +23,7 @@ class KeyDistributor(object):
       key_string: A string of users with associated key.
     """
     # TODO: Improve this so that we only do this if there are relevant changes.
-    users = models.User.get_unrevoked_entries()
+    users = models.User.get_unrevoked_users()
     key_string = ''
     ssh_starting_portion = 'command="/login.sh",permitopen="zork:9000",no-agent-forwarding,no-pty,no-user-rc,no-X11-forwarding'
     endline = '\n'
