@@ -276,6 +276,11 @@ class User(Model):
     self.private_key = key_pair['private_key']
     self.public_key = key_pair['public_key']
 
+  @staticmethod
+  def get_unrevoked_users():
+    """Return all user entries from the database which are not revoked."""
+    return User.query.filter(User.is_key_revoked == False).all()
+
   def to_dict(self):
     """Get the user as a dictionary.
 
