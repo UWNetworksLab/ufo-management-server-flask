@@ -27,9 +27,16 @@
         {{resources.policyUploadText}}
       </p>
       <div class="buttons">
-        <a href="{{resources.download_chrome_policy}}" download="{{resources.policy_filename}}" id="chromePolicyDownloadButton">
-          <paper-button class="anchor-button"><iron-icon icon="file-download"></iron-icon> {{resources.downloadText}}</paper-button>
-        </a>
+        <form is="iron-form" id="chromePolicyForm" method="post" action="{{resources.download_chrome_policy}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseChromePolicyResponse">
+          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <template is="dom-if" if="{{loading}}">
+            <paper-spinner id="chromePolicySpinner" active$={{loading}}></paper-spinner>
+          </template>
+          <paper-button class="anchor-button" id="chromePolicyDownloadButton" on-tap="submitChromePolicy" type="submit">
+            <strong><iron-icon icon="file-download"></iron-icon> {{resources.downloadText}}</strong>
+          </paper-button>
+          <a href="data:text/json,{{ajaxResponse}}" download="{{resources.policy_filename}}" hidden id="hiddenChromePolicyButton"></a>
+        </form>
       </div>
     </div>
   </template>
@@ -41,6 +48,29 @@
         resources: {
           type: Object,
         },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        ajaxResponse: {
+          type: String,
+          notify: true,
+        },
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      getXsrfToken: function() {
+        return document.getElementById('globalXsrf').value;
+      },
+      submitChromePolicy: function(e, detail) {
+        this.$.chromePolicyForm.submit();
+      },
+      parseChromePolicyResponse: function(e, detail) {
+        this.set('ajaxResponse', JSON.stringify(this.$.chromePolicyForm.request.lastResponse));
+        this.set('loading', false);
+        this.$.hiddenChromePolicyButton.click();
       },
     });
   </script>
