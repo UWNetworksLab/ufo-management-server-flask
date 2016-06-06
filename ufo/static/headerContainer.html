@@ -13,9 +13,9 @@
       <paper-toolbar class="medium-tall">
         <div class="middle flex">
           <div class="horizontal center-justified layout">
-            <div class="title">{{resources.titleText}}</div>
+            <div class="title">{{titleText}}</div>
             <template is="dom-if" if="{{hasAddFlow}}">
-              <add-item-button resources="{{resources}}"></add-item-button>
+              <add-item-button resources="{{resources}}" add-type="{{headerType}}"></add-item-button>
             </template>
           </div>
         </div>
@@ -25,7 +25,7 @@
       <content></content>
     </div>
     <template is="dom-if" if="{{hasAddFlow}}">
-      <add-modal resources="{{resources}}"></add-modal>
+      <add-modal resources="{{resources}}" add-type="{{headerType}}"></add-modal>
     </template>
   </template>
 
@@ -40,6 +40,33 @@
           type: Boolean,
           notify: true,
         },
+        headerType: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+      },
+      ready: function() {
+        switch (this.headerType) {
+          case 'chromePolicy':
+            this.titleText = this.resources.chromePolicyTitleText;
+            break;
+          case 'login':
+            this.titleText = this.resources.loginTitleText;
+            break;
+          case 'oauth':
+            this.titleText = this.resources.oauthTitleText;
+            break;
+          case 'proxyServer':
+            this.titleText = this.resources.proxyServerTitleText;
+            break;
+          case 'settings':
+            this.titleText = this.resources.settingsTitleText;
+            break;
+          default:
+            this.titleText = this.resources.userTitleText;
+            break;
+        }
       },
     });
   </script>

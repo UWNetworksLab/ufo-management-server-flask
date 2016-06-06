@@ -2,21 +2,21 @@
 {% block title %}Setup{% endblock %}
 {% block body %}
   <paper-display-template resources="{{oauth_resources}}" id="oauthDisplayTemplate">
-    <header-container resources="{{oauth_resources}}">
+    <header-container resources="{{oauth_resources}}" header-type="oauth">
       <oauth-configuration resources="{{oauth_resources}}" configuration="{{oauth_configuration_resources}}">
       </oauth-configuration>
     </header-container>
   </paper-display-template>
 
   <paper-display-template resources="{{user_resources}}" id="userDisplayTemplate">
-    <left-icon-container resources="{{user_resources}}">
+    <left-icon-container resources="{{user_resources}}" add-type="user">
       <user-add-tabs resources="{{user_resources}}">
       </user-add-tabs>
     </left-icon-container>
   </paper-display-template>
 
   <paper-display-template resources="{{proxy_server_resources}}" id="proxyServerDisplayTemplate">
-    <left-icon-container resources="{{proxy_server_resources}}">
+    <left-icon-container resources="{{proxy_server_resources}}" add-type="proxyServer">
       <server-add-form resources="{{proxy_server_resources}}">
       </server-add-form>
     </left-icon-container>
@@ -24,7 +24,7 @@
 
   {% if session['domain'] %}
     <paper-display-template resources="{{policy_resources}}" id="chromePolicyDisplayTemplate">
-      <header-container resources="{{policy_resources}}">
+      <header-container resources="{{policy_resources}}" header-type="chromePolicy">
         <chrome-policy resources="{{policy_resources}}">
         </chrome-policy>
       </header-container>
@@ -32,7 +32,7 @@
   {% endif %}
 
   <paper-display-template resources="{{settings_resources}}" id="settingsDisplayTemplate">
-    <header-container resources="{{settings_resources}}">
+    <header-container resources="{{settings_resources}}" header-type="settings">
       <settings-configuration resources="{{settings_resources}}">
       </settings-configuration>
     </header-container>

@@ -24,7 +24,7 @@ class LoginPageTest(BaseTest):
       flask.url_for('admin_list'), # GET
       # flask.url_for('add_admin'), # POST
       # flask.url_for('delete_admin'), # POST
-      flask.url_for('download_chrome_policy'), # GET
+      # flask.url_for('download_chrome_policy'), # POST
       flask.url_for('proxyserver_list'), # GET
       flask.url_for('proxyserver_add'), # GET or POST
       # flask.url_for('proxyserver_edit'), # POST
