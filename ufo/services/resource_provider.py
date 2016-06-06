@@ -29,8 +29,8 @@ def _get_landing_resources():
     'adminEmailLabel': 'Admin Email',
     'adminPasswordlabel': 'Admin Password',
     'addAdminSubmitText': 'Add Admin',
-    'adminListGetError': ('Error: Getting the list of admins failed. Try again'
-                          ' later.'),
+    'adminListGetError': ('Error: Getting the list of admins failed. Try '
+                          'again later.'),
     'adminExistsError': ('Error: An admin with the specified email already '
                          'exists.'),
     'adminAddSuccessText': 'Success! The specified admin was added.',
@@ -38,7 +38,7 @@ def _get_landing_resources():
                             'again later.'),
     'changeAdminPasswordUrl': flask.url_for('change_admin_password'),
     'changeAdminPasswordInstructions': ('Enter your current password and a ' +
-      'new one then submit to update it.'),
+                                        'new one then submit to update it.'),
     'changeAdminPasswordOldLabel': 'Current Password',
     'changeAdminPasswordNewLabel': 'New Password',
     'changeAdminPasswordSubmitText': 'Update Password',
@@ -78,32 +78,32 @@ def _get_oauth_resources():
     'setup_url': flask.url_for('setup'),
     'oauthTitleText': 'Oauth Configuration',
     'welcomeText': ('Hey there! Welcome to the uProxy for Organizations '
-        'management server! To start, we want to get a bit of information from'
-        ' you to get everything set up.'),
+        'management server! To start, we want to get a bit of information '
+        'from you to get everything set up.'),
     'googleDomainPromptText': ('First of all, if you are planning on using '
         'this application with a Google apps domain, we\'re going to need to '
         'get permission from you to access that. This will be used to keep '
         'the list of users in your domain in sync with who is allowed to '
         'access the uProxy servers. The credentials you authorize will be '
         'shared by any administrators who log into this server. If you do not '
-        'plan on using a Google apps domain with this product, you can just go'
-        ' straight to adding users.'),
+        'plan on using a Google apps domain with this product, you can just '
+        'go straight to adding users.'),
     'successSetupText': ('You have already successfully configured this '
         'deployment! If you want to change the settings, you may do so below. '
         'Please note: submitting the form even without filling in any '
         'parameters will cause the previous saved configuration to be lost.'),
     'domainConfiguredText': ('This site is set up to work with the following '
         'domain. If that is not correct, please update the configuration.'),
-    'noDomainConfiguredText': ('This site is not set up to use any Google apps'
-        ' domain name. All users will need to be manually input.'),
+    'noDomainConfiguredText': ('This site is not set up to use any Google '
+        'apps domain name. All users will need to be manually input.'),
     'betaWarningText': ('Please keep in mind that this is a much simpler '
         'version than what you would actually expect to see in a finished '
         'version of the site. Noteably, this page should include something '
         'about authenticating yourself in the future (and actually include a '
         'way to skip).'),
     'connectYourDomainButtonText': 'Connect to Your Domain',
-    'pasteTheCodeText': ('Once you finish authorizing access, please paste the'
-        ' code you receive in the box below.'),
+    'pasteTheCodeText': ('Once you finish authorizing access, please paste '
+        'the code you receive in the box below.'),
     'adminEmailLabel': 'Admin Email',
     'adminPasswordlabel': 'Admin Password',
     'submitButtonText': 'Submit',
@@ -120,12 +120,12 @@ def _get_policy_resources():
     'download_chrome_policy': flask.url_for('download_chrome_policy'),
     'policy_filename': 'chrome_policy.json',
     'chromePolicyTitleText': 'Chrome Policy',
-    'policyExplanationText': ('Chrome policy is a feature of enterprise Google'
-        ' devices which can be used to securely add extra configuration to the'
-        ' uProxy frontend. If you use enterprise Google devices through Google'
-        ' Apps for Work, you can for example turn on validation for invitation'
-        ' links to ensure you are proxying through an endpoint controlled by '
-        'the management console.'),
+    'policyExplanationText': ('Chrome policy is a feature of enterprise '
+        'Google devices which can be used to securely add extra configuration '
+        'to the uProxy frontend. If you use enterprise Google devices through '
+        'Google Apps for Work, you can for example turn on validation for '
+        'invitation links to ensure you are proxying through an endpoint '
+        'controlled by the management console.'),
     'policyEditText': ('You can adjust the values below in the Management '
         'Server Settings section and save to update the managed policy json.'
         'Once you are ready, you can click the download link to get your json '
@@ -135,8 +135,8 @@ def _get_policy_resources():
         'visit Google Admin Console at the link above and navigate to the '
         'uProxy Chrome App/Extension under Device Management -> Chrome '
         'Management -> App Management. For the App and Extension, select the '
-        'entry listed, then click User settings. From the list of Orgs, choose'
-        ' which you want the policy to apply to, then enable Force '
+        'entry listed, then click User settings. From the list of Orgs, '
+        'choose which you want the policy to apply to, then enable Force '
         'Installation and select Upload Configuration File. Choose the json '
         'file you just downloaded. You may have to click override to edit '
         'Force Installation or Configure\'s values. Finally, click Save.'),
@@ -153,8 +153,10 @@ def _get_proxy_server_resources():
   """
   return {
     'proxyServerAddUrl': flask.url_for('proxyserver_add'),
-    'proxyServerAddIconUrl': flask.url_for('static', filename='img/add-servers.svg'),
-    'proxyServerInverseAddIconUrl': flask.url_for('static', filename='img/add-servers-inverse.svg'),
+    'proxyServerAddIconUrl': flask.url_for('static',
+                                           filename='img/add-servers.svg'),
+    'proxyServerInverseAddIconUrl': flask.url_for(
+        'static', filename='img/add-servers-inverse.svg'),
     'proxyServerAddText': 'Add a Server',
     'proxyServerListId': 'proxyList',
     'proxyServerListUrl': flask.url_for('proxyserver_list'),
@@ -233,7 +235,8 @@ def _get_user_resources():
   return {
     'userAddUrl': flask.url_for('add_user'),
     'userAddIconUrl': flask.url_for('static', filename='img/add-users.svg'),
-    'userInverseAddIconUrl': flask.url_for('static', filename='img/add-users-inverse.svg'),
+    'userInverseAddIconUrl': flask.url_for(
+        'static', filename='img/add-users-inverse.svg'),
     'userAddText': 'Add Users',
     'lookAgainText': 'Search Again',
     'userListId': 'userList',
@@ -247,10 +250,10 @@ def _get_user_resources():
     'closeText': 'Close',
     'userDetailsButtonId': 'userDetailsButton',
     'userDetailsOverlayId': 'userDetailsOverlay',
-    'inviteCodeNeedServerText': ('Invite codes aren\'t available without any' +
-                                 ' proxy server configured. Configure a ' +
-                                 'proxy server to have an invite code ' +
-                                 'created automatically.'),
+    'inviteCodeNeedServerText': ('Invite codes aren\'t available without any '
+                                 'proxy server configured. Configure a proxy '
+                                 'server to have an invite code created '
+                                 'automatically.'),
     'inviteCodeLabel': 'Invite Code',
     'privateKeyLabel': 'SSH Private Key',
     'publicKeyLabel': 'SSH Public Key',
@@ -284,8 +287,9 @@ def _get_user_resources():
     'userAddSearchButton': 'Search for Individual User',
     'userAddEmailAddressLabel': 'Email Address',
     'userAddInputName': 'user_key',
-    'userAddEmailAddressDefinition': ('To add individual users, please provide'
-                                      ' a valid email address or unique id.'),
+    'userAddEmailAddressDefinition': ('To add individual users, please '
+                                      'provide a valid email address or '
+                                      'unique id.'),
     'domainAddTabId': 'domainAddTab',
     'domainAddTab': 'View All Users in the Domain',
     'domainAddFormId': 'domainAdd',
