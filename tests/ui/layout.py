@@ -104,6 +104,7 @@ class UfOPageLayout(BaseDriver):
   SERVER_DETAILS_SPINNER = (By.ID, 'serverDetailsSpinner')
 
   CHROME_POLICY_DOWNLOAD_BUTTON = (By.ID, 'chromePolicyDownloadButton')
+  CHROME_POLICY_HIDDEN_BUTTON = (By.ID, 'hiddenChromePolicyButton')
 
 
   def GetSearchBar(self):

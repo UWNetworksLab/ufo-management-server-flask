@@ -145,11 +145,9 @@ class BaseTest(unittest.TestCase):
     """Helper to assert that chrome policy download links to download url."""
     generic_page = UfOPageLayout(self.driver)
     download_button = generic_page.GetElement(
-        UfOPageLayout.CHROME_POLICY_DOWNLOAD_BUTTON)
-    actual_download_url = (
-        self.args.server_url + flask.url_for('download_chrome_policy'))
-    self.assertEquals(actual_download_url,
-                      download_button.get_attribute('href'))
+        UfOPageLayout.CHROME_POLICY_HIDDEN_BUTTON)
+    prefix = 'data:text/json,'
+    self.assertTrue(download_button.get_attribute('href').startswith(prefix))
 
   def assertLogoLinksToLandingPage(self):
     """Helper to assert the UfO logo is an anchor to the landing page."""
