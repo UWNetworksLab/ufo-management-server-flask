@@ -23,13 +23,11 @@ class KeyDistributor(object):
       key_string: A string of users with associated key.
     """
     # TODO: Improve this so that we only do this if there are relevant changes.
-    users = models.User.query.all()
+    users = models.User.get_unrevoked_users()
     key_string = ''
     ssh_starting_portion = 'command="/login.sh",permitopen="zork:9000",no-agent-forwarding,no-pty,no-user-rc,no-X11-forwarding'
     endline = '\n'
     for user in users:
-      if user.is_key_revoked:
-        continue
 
       public_key = RSA.importKey(user.public_key)
       public_key_string = public_key.exportKey('OpenSSH')
@@ -55,7 +53,7 @@ class KeyDistributor(object):
 
     try:
       client.connect(proxy_server)
-    except (ssh_client.SSHConnectionException, 
+    except (ssh_client.SSHConnectionException,
             ssh_client.InvalidKeyTypeException):
       ufo.app.logger.error(
           'Unable to connect to proxy server %s to distribute keys.',
