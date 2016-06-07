@@ -86,14 +86,15 @@ class LandingPage(UfOPageLayout):
     user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
     return self.findItemInListing(user_listbox, name)
 
-  def addTestServer(self, ip, name, private_key, public_key, server_url):
+  def addTestServer(self, ip, name, ssh_private_key, host_public_key,
+                    server_url):
     """Add a test server using the landing page.
 
     Args:
       ip: A string for the ip address of the server to add.
       name: A string for the name of the server to add.
-      private_key: A string for the private key of the server to add.
-      public_key: A string for the public key of the server to add.
+      ssh_private_key: A string for the ssh private key of the server to add.
+      host_public_key: A string for the host public key of the server to add.
       server_url: The base url portion of the setup page.
     """
     # Navigate to add server.
@@ -105,7 +106,8 @@ class LandingPage(UfOPageLayout):
         EC.visibility_of_element_located(((UfOPageLayout.ADD_SERVER_MODAL))))
 
     server_form = ServerForm(self.driver)
-    server_form.addServer(add_server_modal, ip, name, private_key, public_key)
+    server_form.addServer(add_server_modal, ip, name, ssh_private_key,
+                          host_public_key)
 
   def removeTestServer(self, name, server_url, should_raise_exception=True):
     """Remove a test server using the landing page (the only way).
@@ -144,16 +146,16 @@ class LandingPage(UfOPageLayout):
         EC.invisibility_of_element_located(((
             LandingPage.SERVER_DETAILS_SPINNER))))
 
-  def editTestServer(self, old_name, ip, name, ssh_private_key, host_public_key,
-                     server_url):
+  def editTestServer(self, old_name, ip, name, ssh_private_key,
+                     host_public_key, server_url):
     """Edit a test server using the landing page (the only way).
 
     Args:
       old_name: A string for the name of the test server to edit.
-      ip: A string for the ip address of the server to insert.
-      name: A string for the name of the server to insert.
-      ssh_private_key: A string for the ssh private key of the server to insert.
-      host_public_key: A string for the host public key of the server to insert.
+      ip: A string for the ip address of the server to edit.
+      name: A string for the name of the server to edit.
+      ssh_private_key: A string for the ssh private key of the server to edit.
+      host_public_key: A string for the host public key of the server to edit.
       server_url: The base url portion of the landing page.
     """
     # Find the server and navigate to its details page.
