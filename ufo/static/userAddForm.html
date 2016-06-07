@@ -188,6 +188,7 @@
         this.set('loading', false);
       },
       closeModal: function() {
+        this.set('loading', false);
         var userAddTabs = document.getElementsByTagName('user-add-tabs');
         if (userAddTabs && userAddTabs[0]) {
           userAddTabs[0].closeModal();
