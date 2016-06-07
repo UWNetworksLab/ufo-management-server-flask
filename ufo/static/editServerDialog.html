@@ -140,6 +140,7 @@
       },
       listeners: {
         'iron-form-error': 'handleFormError',
+        'iron-overlay-canceled': 'closeDialog',
       },
       ready: function() {
         this.$.serverEditForm.request.handleAs = "json";

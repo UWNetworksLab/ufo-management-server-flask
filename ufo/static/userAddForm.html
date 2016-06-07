@@ -188,15 +188,13 @@
         this.set('loading', false);
       },
       closeModal: function() {
-        this.set('loading', false);
-        var userModal = document.getElementById('userModal');
-        if (userModal) {
-          userModal.close();
+        var userAddTabs = document.getElementsByTagName('user-add-tabs');
+        if (userAddTabs && userAddTabs[0]) {
+          userAddTabs[0].closeModal();
         }
       },
       parsePostResponse: function(e, detail) {
         this.sendUsersJsonToList(e.target.request.lastResponse);
-        this.resetForms();
         this.closeModal();
       },
       handleFormError: function(event, detail) {
@@ -211,7 +209,7 @@
         var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
-        this.closeModal();
+        this.set('loading', false);
       },
       resetForms: function(e, detail) {
         this.set('showInputFields', true);
