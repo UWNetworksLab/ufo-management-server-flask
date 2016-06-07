@@ -3,15 +3,15 @@
 {% block body %}
 <!-- TODO(eholder): Verify this page will/will not be needed according
                     to John Cassidy and remove or keep as appropriate. -->
-  <paper-display-template resources="{{user_resources}}" id="userDisplayTemplate">
-    <header-container resources="{{user_resources}}" header-type="user">
-      <user-list resources="{{user_resources}}" id="userList" ajax-response="{{user_items}}">
+  <paper-display-template id="userDisplayTemplate">
+    <header-container resources="{{resource_dictionary}}" header-type="user">
+      <user-list resources="{{resource_dictionary}}" id="userList" ajax-response="{{user_items}}">
       </user-list>
     </header-container>
   </paper-display-template>
-  <paper-display-template resources="{{proxy_server_resources}}" id="proxyServerDisplayTemplate">
-    <header-container resources="{{proxy_server_resources}}" header-type="proxyServer">
-      <server-list resources="{{proxy_server_resources}}" id="proxyList" ajax-response="{{proxy_server_items}}">
+  <paper-display-template id="proxyServerDisplayTemplate">
+    <header-container resources="{{resource_dictionary}}" header-type="proxyServer">
+      <server-list resources="{{resource_dictionary}}" id="proxyList" ajax-response="{{proxy_server_items}}">
       </server-list>
     </header-container>
   </paper-display-template>
