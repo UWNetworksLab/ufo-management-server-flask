@@ -53,7 +53,7 @@ class RegexTest(unittest.TestCase):
     potentialPublicKeys = []
     for email in POTENTIAL_EMAIL_ADDRESSES:
       ssh_key = RSA.generate(2048).publickey().exportKey('OpenSSH')
-      potentialPublicKeys.append(ssh_key + ' ' + email)
+      potentialPublicKeys.append(ssh_key)
     self._patternMatchHelper(pattern, potentialPublicKeys)
 
   def testPrivateKeyPatternMatchesValidPrivateKeys(self):
