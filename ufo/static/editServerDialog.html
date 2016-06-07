@@ -47,21 +47,21 @@
     }
   </style>
   <template>
-    <paper-dialog id="{{resources.detailsOverlayId}}" with-backdrop>
+    <paper-dialog id="{{resources.proxyServerDetailsOverlayId}}" with-backdrop>
       <paper-listbox>
         <paper-icon-item id="topBar" class="horizontal center-justified layout">
-          <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
+          <iron-icon src="{{resources.proxyServerIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.ip_address}}</div>
           <paper-button on-tap="switchToServerEdit" class="third-div topLineButton" id="{{resources.editButtonId}}"><strong>{{resources.editText}}</strong></paper-button>
-          <paper-icon-button icon="close" title="{{resources.detailsCloseText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+          <paper-icon-button icon="close" title="{{resources.closeText}}" id="{{resources.proxyServerDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
       <template is="dom-if" if="{{loading}}">
         <paper-spinner id="serverDetailsSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <div id="rowHolder" class="vertical center-justified layout">
-        <form is="iron-form" id="serverEditForm" method="post" action="{{resources.editUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
+        <form is="iron-form" id="serverEditForm" method="post" action="{{resources.proxyServerEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
           <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
           <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter" id="{{resources.nameInput}}"></paper-input>
           <!-- TODO add the ability to upload files -->
@@ -105,12 +105,12 @@
         <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm" id="serverEditSubmitButton">
         <strong>{{resources.saveText}}</strong>
         </paper-button>
-        <form is="iron-form" id="serverDeleteForm" method="post" action="{{resources.deleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
+        <form is="iron-form" id="serverDeleteForm" method="post" action="{{resources.proxyServerDeleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="server_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
           <paper-button on-tap="submitForm" class="delete-button" id="serverDeleteButton" type="submit">
             <iron-icon icon="delete"></iron-icon>
-            <strong>{{resources.deleteLabel}}</strong>
+            <strong>{{resources.proxyServerDeleteLabel}}</strong>
           </paper-button>
         </form>
       </div>
@@ -178,17 +178,17 @@
         this.closeDialog();
       },
       sendJsonToList: function(updatedJson) {
-        var listElem = document.getElementById(this.resources.listId);
+        var listElem = document.getElementById(this.resources.proxyServerListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedJson);
         }
       },
       openDialog: function() {
-        var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
+        var dialog = this.querySelector('#' + this.resources.proxyServerDetailsOverlayId);
         dialog.open();
       },
       closeDialog: function() {
-        var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
+        var dialog = this.querySelector('#' + this.resources.proxyServerDetailsOverlayId);
         dialog.close();
       },
       openServerEdit: function() {

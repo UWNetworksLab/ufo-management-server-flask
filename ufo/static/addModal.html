@@ -11,13 +11,13 @@
     }
   </style>
   <template>
-    <paper-dialog id="{{resources.modalId}}" with-backdrop>
-      <h2 class="title">{{resources.addText}}</h2>
+    <paper-dialog id="{{modalId}}" with-backdrop>
+      <h2 class="title">{{addText}}</h2>
       <div id="contentHolder">
-        <template is="dom-if" if="{{resources.isUser}}">
+        <template is="dom-if" if="{{isUser}}">
           <user-add-tabs resources="{{resources}}" should-display-with-dialog></user-add-tabs>
         </template>
-        <template is="dom-if" if="{{resources.isProxyServer}}">
+        <template is="dom-if" if="{{isProxyServer}}">
           <server-add-form resources="{{resources}}"></server-add-form>
         </template>
       </div>
@@ -31,6 +31,25 @@
         resources: {
           type: Object,
         },
+        addType: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+      },
+      ready: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.modalId = this.resources.proxyServerModalId;
+            this.addText = this.resources.proxyServerAddText;
+            this.isProxyServer = true;
+            break;
+          default:
+            this.modalId = this.resources.userModalId;
+            this.addText = this.resources.userAddText;
+            this.isUser= true;
+            break;
+        }
       },
     });
   </script>

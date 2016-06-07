@@ -7,6 +7,7 @@ from Crypto.PublicKey import RSA
 from paramiko import hostkeys
 from paramiko import pkey
 import sqlalchemy
+import streql
 
 import ufo
 from ufo.services import custom_exceptions
@@ -275,6 +276,11 @@ class User(Model):
     self.private_key = key_pair['private_key']
     self.public_key = key_pair['public_key']
 
+  @staticmethod
+  def get_unrevoked_users():
+    """Return all user entries from the database which are not revoked."""
+    return User.query.filter(User.is_key_revoked == False).all()
+
   def to_dict(self):
     """Get the user as a dictionary.
 
@@ -419,7 +425,9 @@ class AdminUser(Model):
       True if the password matches the admin user and False otherwise.
     """
     hashed = bcrypt.hashpw(password.encode('utf-8'), self.password.encode('utf-8'))
-    return hashed == self.password
+    # streql is a constant time string comparison tool to prevent timing-based
+    # attacks. See here for more info: https://github.com/PeterScott/streql
+    return streql.equals(hashed, self.password)
 
   def delete(self, commit=True):
     """Delete the given entity and save if specified.

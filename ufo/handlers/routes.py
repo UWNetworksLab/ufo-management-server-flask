@@ -13,7 +13,6 @@ from ufo.handlers import user
 @ufo.setup_required
 @auth.login_required
 def landing():
-
   return flask.render_template('landing.html')
 
 

@@ -21,7 +21,7 @@
       last-response="{{ajaxResponse}}"
       json-prefix="{{resources.jsonPrefix}}">
     </iron-ajax>
-    <form is="iron-form" id="policyConfigForm" method="post" action="{{resources.editUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseConfigResponse">
+    <form is="iron-form" id="policyConfigForm" method="post" action="{{resources.settingsEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseConfigResponse">
       <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="{{resources.proxyValidityText}}" checked$={{ajaxResponse.enforce_proxy_server_validity}}></ufo-toggle-input>
       <br>
       <ufo-toggle-input input-name="enforce_network_jail" button-text="{{resources.networkJailText}}" checked$={{ajaxResponse.enforce_network_jail}}></ufo-toggle-input>

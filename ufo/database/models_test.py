@@ -42,6 +42,23 @@ class UserTest(base_test.BaseTest):
     self.assertNotEqual(original_public_key, user.public_key)
     self.assertNotEqual(original_private_key, user.private_key)
 
+  def testGetUnrevokedEntries(self):
+    """Test that getting unrevoked entries returns all unrevoked users."""
+    user_1 = models.User()
+    user_1.is_key_revoked = False
+    user_1.email = 'foo@bar.baz'
+    user_1.save()
+
+    user_2 = models.User()
+    user_2.is_key_revoked = True
+    user_1.email = 'alpha@beta.gamma'
+    user_2.save()
+
+    unrevoked_users = models.User.get_unrevoked_users()
+    self.assertEqual(1, len(unrevoked_users))
+    self.assertIn(user_1, unrevoked_users)
+    self.assertNotIn(user_2, unrevoked_users)
+
   def testUserToDict(self):
     """Whether the necessary fields match in a dictionary representation."""
     user = models.User()

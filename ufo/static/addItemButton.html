@@ -12,9 +12,9 @@
     <paper-button
         class="anchor-button"
         on-tap="openModal"
-        id="{{resources.addButtonId}}">
-      <iron-icon src="{{resources.inverseAddIconUrl}}"></iron-icon>
-      <strong>{{resources.addText}}</strong>
+        id="{{addButtonId}}">
+      <iron-icon src="{{inverseAddIconUrl}}"></iron-icon>
+      <strong>{{addText}}</strong>
     </paper-button>
   </template>
 
@@ -25,9 +25,30 @@
         resources: {
           type: Object,
         },
+        addType: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+      },
+      ready: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addButtonId = this.resources.proxyServerAddButtonId;
+            this.inverseAddIconUrl = this.resources.proxyServerInverseAddIconUrl;
+            this.addText = this.resources.proxyServerAddText;
+            this.modalId = this.resources.proxyServerModalId;
+            break;
+          default:
+            this.addButtonId = this.resources.userAddButtonId;
+            this.inverseAddIconUrl = this.resources.userInverseAddIconUrl;
+            this.addText = this.resources.userAddText;
+            this.modalId = this.resources.userModalId;
+            break;
+        }
       },
       openModal: function() {
-        document.getElementById(this.resources.modalId).open();
+        document.getElementById(this.modalId).open();
       },
     });
   </script>
