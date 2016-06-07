@@ -11,21 +11,22 @@ class ServerForm(UfOPageLayout):
 
   """Add and edit server form methods."""
 
-  def addServer(self, containing_element, ip, name, private_key, public_key):
+  def addServer(self, containing_element, ip, name, ssh_private_key,
+                host_public_key):
     """Add a test server using the element container to find the add form.
 
     Args:
       containing_element: An element containing the add server form.
       ip: A string for the ip address of the server to add.
       name: A string for the name of the server to add.
-      private_key: A string for the private key of the server to add.
-      public_key: A string for the public key of the server to add.
+      ssh_private_key: A string for the ssh private key of the server to add.
+      host_public_key: A string for the host public key of the server to add.
     """
     add_server_form = containing_element.find_element(
         *UfOPageLayout.ADD_SERVER_FORM)
 
-    self._sendServerInputsToForm(add_server_form, ip, name, private_key,
-                                 public_key, True)
+    self._sendServerInputsToForm(add_server_form, ip, name, ssh_private_key,
+                                 host_public_key, True)
 
     submit_button = self.driver.find_element(
         *UfOPageLayout.ADD_SERVER_SUBMIT_BUTTON)
