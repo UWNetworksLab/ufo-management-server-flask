@@ -138,6 +138,9 @@
           type: Object,
         },
       },
+      listeners: {
+        'iron-form-error': 'handleFormError',
+      },
       ready: function() {
         this.$.serverEditForm.request.handleAs = "json";
         this.$.serverEditForm.request.jsonPrefix = this.resources.jsonPrefix;
@@ -166,6 +169,20 @@
       submitEditForm: function(e, detail) {
         this.$.serverEditForm.submit();
       },
+      handleFormError: function(event, detail) {
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
+        var errorEvent = new CustomEvent('ApplicationError', errorDetail);
+        document.getElementById('error-notification').dispatchEvent(errorEvent);
+        this.set('loading', false);
+      },
       parseEditResponse: function(e, detail) {
         this.sendJsonToList(this.$.serverEditForm.request.lastResponse);
         this.set('loading', false);
@@ -188,6 +205,7 @@
         dialog.open();
       },
       closeDialog: function() {
+        this.cancelServerEdit();
         var dialog = this.querySelector('#' + this.resources.proxyServerDetailsOverlayId);
         dialog.close();
       },

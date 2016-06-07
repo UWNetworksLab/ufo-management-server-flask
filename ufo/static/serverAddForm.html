@@ -106,7 +106,7 @@
         var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
-        this.closeModal();
+        this.set('loading', false);
       },
       parsePostResponse: function(e, detail) {
         this.sendServersJsonToList(this.$.serverAddForm.request.lastResponse);
