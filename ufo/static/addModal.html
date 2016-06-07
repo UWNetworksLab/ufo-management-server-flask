@@ -37,6 +37,9 @@
           value: '',
         },
       },
+      listeners: {
+        'iron-overlay-canceled': 'handleCancelled',
+      },
       ready: function() {
         switch (this.addType) {
           case 'proxyServer':
@@ -49,6 +52,16 @@
             this.addText = this.resources.userAddText;
             this.isUser= true;
             break;
+        }
+      },
+      handleCancelled: function(event, detail) {
+        var serverAdd = this.querySelector('server-add-form');
+        var userAdd = this.querySelector('user-add-tabs');
+        if (this.isProxyServer && serverAdd) {
+          serverAdd.closeModal();
+        }
+        if (this.isUser && userAdd) {
+          userAdd.closeModal();
         }
       },
     });
