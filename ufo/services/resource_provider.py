@@ -7,8 +7,23 @@ import ufo
 from ufo.services import regex
 
 
-def _get_resource_dictionary():
+def _get_resources():
   """Get the resources for all UI components including messages for i18n.
+
+    This dictionary of resources is returned as one giant blob for the time
+    being to simplify passing all these parameters to the UI. These could be
+    separated, but the messages for i18n are easier to edit and pickup in a
+    build process as a single file. Those messages will be extracted in the
+    future. The plan for these resources is to limit them to one object on the
+    UI rather than passing them around by utilizing Polymer behaviors
+    https://www.polymer-project.org/1.0/docs/devguide/behaviors . Overall,
+    whether this is one dictionary or multiple, they are set within the session
+    regardless of whether they are used, so they all get loaded during a
+    request, though perhaps not parsed out on the client side.
+
+    TODO(eholder): Refactor the UI to utilize Polymer behaviors to parse this
+    rather than passing it around between components.
+    TODO(eholder): Pull text messages and labels out of this for i18n.
 
     Returns:
       A dict of the resources for UI components.
@@ -238,8 +253,7 @@ def set_jinja_globals():
                       'Current jinja globals: %s' %
                       ufo.app.jinja_env.globals.keys())
 
-  ufo.app.jinja_env.globals['resource_dictionary'] = json.dumps(
-      _get_resource_dictionary())
+  ufo.app.jinja_env.globals['resources'] = json.dumps(_get_resources())
 
   # The resource keys should be present if set.
   ufo.app.logger.info('Finished setting resources into jinja globals.\n'

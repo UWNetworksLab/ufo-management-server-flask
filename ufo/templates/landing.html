@@ -2,21 +2,21 @@
 {% block title %}Landing{% endblock %}
 {% block body %}
   <paper-display-template id="userDisplayTemplate">
-    <header-container resources="{{resource_dictionary}}" has-add-flow="true" header-type="user">
-      <user-list resources="{{resource_dictionary}}" id="userList" auto-get=true>
+    <header-container resources="{{resources}}" has-add-flow="true" header-type="user">
+      <user-list resources="{{resources}}" id="userList" auto-get=true>
       </user-list>
     </header-container>
   </paper-display-template>
   <paper-display-template id="proxyServerDisplayTemplate">
-    <header-container resources="{{resource_dictionary}}" has-add-flow="true" header-type="proxyServer">
-      <server-list resources="{{resource_dictionary}}" id="proxyList" auto-get=true>
+    <header-container resources="{{resources}}" has-add-flow="true" header-type="proxyServer">
+      <server-list resources="{{resources}}" id="proxyList" auto-get=true>
       </server-list>
     </header-container>
   </paper-display-template>
   {% if session['domain'] %}
     <paper-display-template id="chromePolicyDisplayTemplate">
-      <header-container resources="{{resource_dictionary}}" header-type="chromePolicy">
-        <chrome-policy resources="{{resource_dictionary}}">
+      <header-container resources="{{resources}}" header-type="chromePolicy">
+        <chrome-policy resources="{{resources}}">
         </chrome-policy>
       </header-container>
     </paper-display-template>

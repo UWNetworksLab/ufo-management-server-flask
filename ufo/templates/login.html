@@ -7,11 +7,11 @@
   }
   </style>
   <paper-display-template>
-    <header-container resources="{{resource_dictionary}}" header-type="login">
+    <header-container resources="{{resources}}" header-type="login">
       {% if session['should_show_recaptcha'] %}
-        <login-form resources="{{resource_dictionary}}" failures="{{session['failures'] or 0}}" should-show-recaptcha></login-form>
+        <login-form resources="{{resources}}" failures="{{session['failures'] or 0}}" should-show-recaptcha></login-form>
       {% else %}
-        <login-form resources="{{resource_dictionary}}" failures="{{session['failures'] or 0}}"></login-form>
+        <login-form resources="{{resources}}" failures="{{session['failures'] or 0}}"></login-form>
       {% endif %}
     </header-container>
   </paper-display-template>
