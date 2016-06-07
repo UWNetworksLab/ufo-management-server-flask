@@ -8,7 +8,7 @@ EMAIL_VALIDATION_ERROR = 'Please supply a valid email address.'
 # Key lookup for users and group allows email or unique id.
 KEY_LOOKUP_PATTERN = r'([^@]+@[^@]+.[^@]+|[a-zA-Z0-9]+)'
 KEY_LOOKUP_ERROR = 'Please supply a valid email address or unique id.'
-PUBLIC_KEY_PATTERN = r'ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ([^@]+@[^@]+)'
+PUBLIC_KEY_PATTERN = r'ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3}'
 PUBLIC_KEY_ERROR = ('Please supply a valid public key in a format such as '
                     '"ssh-rsa AAAA..."')
 PRIVATE_KEY_PATTERN = (r'-----BEGIN RSA PRIVATE KEY-----[0-9A-Za-z+\/=\r\n ]+'
