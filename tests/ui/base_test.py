@@ -44,15 +44,13 @@ class BaseTest(unittest.TestCase):
     ssh_private_key = rsa_key.exportKey()
     host_public_key = rsa_key.publickey().exportKey('OpenSSH')
     BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'] = ssh_private_key
-    BaseTest.TEST_SERVER_AS_DICT['host_public_key'] = (
-        host_public_key + ' ' + BaseTest.TEST_USER_AS_DICT['email'])
+    BaseTest.TEST_SERVER_AS_DICT['host_public_key'] = host_public_key
 
     rsa_key = RSA.generate(2048)
     ssh_private_key_edit = rsa_key.exportKey()
     host_public_key_edit = rsa_key.publickey().exportKey('OpenSSH')
     BaseTest.TEST_SERVER_EDIT_AS_DICT['ssh_private_key'] = ssh_private_key_edit
-    BaseTest.TEST_SERVER_EDIT_AS_DICT['host_public_key'] = (
-        host_public_key_edit + ' ' + BaseTest.TEST_USER_AS_DICT['email'])
+    BaseTest.TEST_SERVER_EDIT_AS_DICT['host_public_key'] = host_public_key_edit
 
   def setUp(self):
     """Setup for test methods."""
