@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 {% block title %}Landing{% endblock %}
 {% block body %}
-  <paper-display-template resources="{{user_resources}}" id="userDisplayTemplate">
-    <header-container resources="{{user_resources}}" has-add-flow="true" header-type="user">
-      <user-list resources="{{user_resources}}" id="userList" auto-get=true>
+  <paper-display-template id="userDisplayTemplate">
+    <header-container resources="{{resources}}" has-add-flow="true" header-type="user">
+      <user-list resources="{{resources}}" id="userList" auto-get=true>
       </user-list>
     </header-container>
   </paper-display-template>
-  <paper-display-template resources="{{proxy_server_resources}}" id="proxyServerDisplayTemplate">
-    <header-container resources="{{proxy_server_resources}}" has-add-flow="true" header-type="proxyServer">
-      <server-list resources="{{proxy_server_resources}}" id="proxyList" auto-get=true>
+  <paper-display-template id="proxyServerDisplayTemplate">
+    <header-container resources="{{resources}}" has-add-flow="true" header-type="proxyServer">
+      <server-list resources="{{resources}}" id="proxyList" auto-get=true>
       </server-list>
     </header-container>
   </paper-display-template>
   {% if session['domain'] %}
-    <paper-display-template resources="{{policy_resources}}" id="chromePolicyDisplayTemplate">
-      <header-container resources="{{policy_resources}}" header-type="chromePolicy">
-        <chrome-policy resources="{{policy_resources}}">
+    <paper-display-template id="chromePolicyDisplayTemplate">
+      <header-container resources="{{resources}}" header-type="chromePolicy">
+        <chrome-policy resources="{{resources}}">
         </chrome-policy>
       </header-container>
     </paper-display-template>

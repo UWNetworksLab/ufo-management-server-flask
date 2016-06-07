@@ -47,7 +47,7 @@
           <div class="flex"></div>
           <div class="vertical layout flex-4">
             <div class="verticalSpacer"><p></div>
-            <ufo-search-bar class="flex toHideOnLoginPage" user-resources="{{user_resources}}" proxy-server-resources="{{proxy_server_resources}}" search-resources="{{landing_resources}}">
+            <ufo-search-bar class="flex toHideOnLoginPage" resources="{{resources}}">
             </ufo-search-bar>
             <div class="verticalSpacer"></div>
           </div>
@@ -60,7 +60,7 @@
   </div>
   <div class="layout vertical">
     <div class="horizontal center-justified layout" id="dialogMenuHolder">
-      <ufo-dropdown-menu resources="{{landing_resources}}">
+      <ufo-dropdown-menu resources="{{resources}}">
       </ufo-dropdown-menu>
     </div>
   </div>
@@ -69,7 +69,7 @@
     <br>
     <p></p>
   </div>
-  <error-notification resources="{{landing_resources}}" id='error-notification'></error-notification>
+  <error-notification resources="{{resources}}" id='error-notification'></error-notification>
 
   <script src="{{ url_for('static', filename='globalHelperFunctions.js') }}"></script>
   <input id="hiddenCopyInput" type="hidden" value=""/>
