@@ -117,7 +117,10 @@
         },
       },
       ready: function() {
-        this.xsrfToken = document.getElementById('globalXsrf').value;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
       },
       _limitCharacters: function(text) {
         if (text.length > this.characterLimit) {

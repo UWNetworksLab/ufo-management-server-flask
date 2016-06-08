@@ -55,7 +55,10 @@
         },
       },
       ready: function() {
-        this.xsrfToken = document.getElementById('globalXsrf').value;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
       },
       attached: function() {
         if (this.shouldShowRecaptcha) {

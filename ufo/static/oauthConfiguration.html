@@ -110,7 +110,10 @@
         },
       },
       ready: function() {
-        this.xsrfToken = document.getElementById('globalXsrf').value;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
       },
       isDomainConfigured: function(config) {
         return config.domain && config.credentials;

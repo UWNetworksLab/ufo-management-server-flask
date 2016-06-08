@@ -59,7 +59,10 @@
         },
       },
       ready: function() {
-        this.xsrfToken = document.getElementById('globalXsrf').value;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
       },
       enableSpinner: function() {
         this.set('loading', true);

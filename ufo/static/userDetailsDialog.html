@@ -131,7 +131,10 @@
           .jsonPrefix;
         this.$.userDeleteForm.request.handleAs = "json";
         this.$.userDeleteForm.request.jsonPrefix = this.resources.jsonPrefix;
-        this.xsrfToken = document.getElementById('globalXsrf').value;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
       },
       setRotateKeysAndEnable: function() {
         this.setRotateKeysJsonPrefix();

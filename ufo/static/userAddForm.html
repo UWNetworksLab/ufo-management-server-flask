@@ -162,7 +162,10 @@
         'iron-form-error': 'handleFormError',
       },
       ready: function() {
-        this.xsrfToken = document.getElementById('globalXsrf').value;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.formId);

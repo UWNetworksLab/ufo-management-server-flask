@@ -205,7 +205,10 @@
         this.$.changeAdminPasswordForm.request.jsonPrefix = this.resources.jsonPrefix;
         this.$.removeAdminForm.request.handleAs = "json";
         this.$.removeAdminForm.request.jsonPrefix = this.resources.jsonPrefix;
-        this.xsrfToken = document.getElementById('globalXsrf').value;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
       },
       openMenu: function() {
         this.$.ufoDropdownMenu.open();
