@@ -14,7 +14,7 @@ from ufo.services import custom_exceptions
 from ufo.services import google_directory_service
 from ufo.services import oauth
 
-INVITE_CODE_URL_PREFIX = 'https://uproxy.org/invite/#'
+INVITE_CODE_URL_PREFIX = 'https://uproxy.org/invite#'
 
 
 def _get_users_to_add(get_all, group_key, user_key):
