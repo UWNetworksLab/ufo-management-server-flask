@@ -6,6 +6,6 @@
     "crisper": "2.0.2"
   },
   "scripts": {
-    "postinstall": "bower install && ./vulcanize.sh"
+    "postinstall": "bower install --allow-root --config.interactive=false && ./vulcanize.sh"
   }
 }
