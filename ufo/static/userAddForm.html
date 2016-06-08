@@ -53,7 +53,7 @@
                 </template>
               </paper-listbox>
               <input type="hidden" id="hiddenUsers" name="users" value="{{usersJson}}">
-              <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+              <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
             </form>
           </paper-dialog-scrollable>
           <set-scrollable-dialog-to-modal></set-scrollable-dialog-to-modal>
@@ -76,7 +76,7 @@
             </paper-listbox>
             <br>
             <input type="hidden" id="hiddenUsers" name="users" value="{{usersJson}}">
-            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           </form>
         </template>
         <paper-button on-tap="resetForms" class="anchor-button addTopMargin"><strong>{{resources.lookAgainText}}</strong></paper-button>
@@ -161,6 +161,12 @@
       listeners: {
         'iron-form-error': 'handleFormError',
       },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
+      },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.formId);
         addForm.request.handleAs = "json";
@@ -230,9 +236,6 @@
       },
       idMatches: function(id, string1) {
         return id === string1;
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       updateCheckedUsers: function(e) {
         var checkboxElem = event.path[0];

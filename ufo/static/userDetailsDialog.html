@@ -58,7 +58,7 @@
           <div class="second-div">{{item.email}}</div>
           <form is="iron-form" id="userDisableEnableForm" method="post" action="{{resources.revokeToggleUrl}}" class="third-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
             <input type="hidden" name="user_id" value="{{item.id}}">
-            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
             <paper-button on-tap="submitForm" class="topLineButton" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
           </form>
           <paper-icon-button icon="close" title="{{resources.closeText}}" id="{{resources.userDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
@@ -81,7 +81,7 @@
           </paper-button>
           <form is="iron-form" id="rotateKeysForm" method="post" action="{{resources.rotateKeysUrl}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="setRotateKeysAndEnable">
             <input type="hidden" name="user_id" value="{{item.id}}">
-            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
             <paper-button on-tap="submitForm" class="anchor-button" id="rotateKeysButton" type="submit">
               <iron-icon icon="refresh"></iron-icon> <strong>{{resources.rotateKeysLabel}}</strong>
             </paper-button>
@@ -89,7 +89,7 @@
         </template>
         <form is="iron-form" id="userDeleteForm" method="post" action="{{resources.userDeleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="user_id" value="{{item.id}}">
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <paper-button on-tap="submitForm" class="delete-button" id="userDeleteButton" type="submit">
             <iron-icon icon="delete"></iron-icon>
             <strong>{{resources.userDeleteLabel}}</strong>
@@ -131,6 +131,10 @@
           .jsonPrefix;
         this.$.userDeleteForm.request.handleAs = "json";
         this.$.userDeleteForm.request.jsonPrefix = this.resources.jsonPrefix;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
       },
       setRotateKeysAndEnable: function() {
         this.setRotateKeysJsonPrefix();
@@ -145,9 +149,6 @@
       },
       inviteCodeErrorResponse: function() {
         this.set('loading', false);
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       submitForm: function(e, detail) {
         var elem = e.target;

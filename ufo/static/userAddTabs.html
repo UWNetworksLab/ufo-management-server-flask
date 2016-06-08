@@ -74,7 +74,7 @@
             </paper-input>
             <input type="hidden" name="users" id="manualUserInput" value="">
             <input type="hidden" name="manual" value="true">
-            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
             <br>
           </form>
           <div class="buttons">
@@ -114,6 +114,12 @@
       },
       listeners: {
         'iron-form-error': 'handleFormError',
+      },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.resources.manualAddFormId);
@@ -179,9 +185,6 @@
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
         }
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       submitIfEnter: function(e) {
         if (e.keyCode === 13) {

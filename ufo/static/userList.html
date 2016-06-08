@@ -65,7 +65,7 @@
           <div class="second-div flex">{{_limitCharacters(item.email)}}</div>
           <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="third-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
             <input type="hidden" name="user_id" value="{{item.id}}">
-            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
             <paper-button on-tap="submitRevokeForm" class="topLineButton leftTextAlign" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
           </form>
           <user-details-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></user-details-dialog>
@@ -116,6 +116,12 @@
           notify: true,
         },
       },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
+      },
       _limitCharacters: function(text) {
         if (text.length > this.characterLimit) {
           return text.substring(0, this.characterLimit) + '...';
@@ -146,9 +152,6 @@
       },
       enableSpinner: function() {
         this.set('loading', true);
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       _findAncestorMatchingTagnameFromTarget: function(target, tagName) {
         var elem = target;

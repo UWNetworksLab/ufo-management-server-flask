@@ -143,9 +143,6 @@
       enableSpinner: function() {
         this.set('loading', true);
       },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
-      },
       _findAncestorMatchingTagnameFromTarget: function(target, tagName) {
         var elem = target;
         while (elem.tagName.toLowerCase() !== tagName) {
