@@ -26,6 +26,14 @@
     #removeAdminDialog {
       font-size: 16px;
     }
+    #logoutButton {
+      min-width: 0px;
+      margin: 0px;
+      padding: 0px;
+    }
+    .adminDialog {
+      min-width: 350px;
+    }
   </style>
   <template>
     <template is="dom-if" if="{{loading}}">
@@ -41,41 +49,42 @@
       json-prefix="{{resources.jsonPrefix}}">
     </iron-ajax>
 
-    <paper-dialog class="dropdown-content" id="ufoDropdownMenu" with-backdrop>
+    <paper-dialog class="dropdown-content adminDialog" id="ufoDropdownMenu" with-backdrop>
       <paper-button class="floatToTheRight" on-tap="exitAll">
         <iron-icon icon="close" item-icon></iron-icon>
       </paper-button>
       <paper-listbox>
         <paper-icon-item class="dropdown-button" id="addAdminButton" on-tap="flipToAddAdminFlow">
           <iron-icon class="dropdown-icon" src="{{resources.userAddIconUrl}}" item-icon></iron-icon>
-          {{resources.addAdminText}}
+          <strong>{{resources.addAdminText}}</strong>
         </paper-icon-item>
         <paper-icon-item class="dropdown-button" id="changeAdminPasswordButton" on-tap="flipToChangeAdminPasswordFlow">
           <iron-icon class="dropdown-icon" icon="editor:mode-edit" item-icon></iron-icon>
-          {{resources.changeAdminPasswordText}}
+          <strong>{{resources.changeAdminPasswordText}}</strong>
         </paper-icon-item>
         <paper-icon-item class="dropdown-button" id="removeAdminButton" on-tap="flipToRemoveAdminFlow">
-          <iron-icon class="dropdown-icon" icon="close" item-icon></iron-icon>
-          {{resources.removeAdminText}}
+          <iron-icon class="dropdown-icon" icon="remove-circle-outline" item-icon></iron-icon>
+          <strong>{{resources.removeAdminText}}</strong>
         </paper-icon-item>
         <a href="{{resources.settingsUrl}}" id="settingsAnchor">
           <paper-icon-item class="dropdown-button">
             <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
-            {{resources.settingsText}}
+            <strong>{{resources.settingsText}}</strong>
           </paper-icon-item>
         </a>
-        <paper-item class="dropdown-button">
+        <paper-icon-item class="dropdown-button">
+          <iron-icon class="dropdown-icon" icon="subdirectory-arrow-right" item-icon></iron-icon>
           <form id="logoutForm" method="post" action="{{resources.logoutUrl}}">
             <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
-            <paper-button type="submit" on-tap="submitLogoutForm">
+            <paper-button type="submit" on-tap="submitLogoutForm" id="logoutButton">
               <strong>{{resources.logoutText}}</strong>
             </paper-button>
           </form>
-        </paper-item>
+        </paper-icon-item>
       </paper-listbox>
     </paper-dialog>
 
-    <paper-dialog id="addAdminDialog" with-backdrop>
+    <paper-dialog id="addAdminDialog" with-backdrop class="adminDialog">
       <paper-button on-tap="flipToDropdownFlowFromAddAdmin">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
@@ -100,7 +109,7 @@
       <p></p>
     </paper-dialog>
 
-    <paper-dialog id="changeAdminPasswordDialog" with-backdrop>
+    <paper-dialog id="changeAdminPasswordDialog" with-backdrop class="adminDialog">
       <paper-button on-tap="flipToDropdownFlowFromChangeAdminPassword" class="header">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
@@ -120,7 +129,7 @@
       </div>
     </paper-dialog>
 
-    <paper-dialog id="removeAdminDialog" with-backdrop>
+    <paper-dialog id="removeAdminDialog" with-backdrop class="adminDialog">
       <paper-button on-tap="flipToDropdownFlowFromRemoveAdmin" class="header">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
