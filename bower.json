@@ -28,6 +28,7 @@
     "paper-spinner": "PolymerElements/paper-spinner#~1.1.1",
     "paper-tabs": "PolymerElements/paper-tabs#~1.2.5",
     "paper-toggle-button": "PolymerElements/paper-toggle-button#~1.0.14",
-    "paper-toolbar": "PolymerElements/paper-toolbar#~1.1.4"
+    "paper-toolbar": "PolymerElements/paper-toolbar#~1.1.4",
+    "web-animations": "web-animations/web-animations-js#~2.2.1"
   }
 }
