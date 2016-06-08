@@ -30,7 +30,7 @@
         </div>
       </template>
 
-      <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+      <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
     </form>
     <div class="buttons">
       <paper-button on-tap="submitLoginForm" class="anchor-button" type="submit" id="signIn">
@@ -54,14 +54,14 @@
           value: false,
         },
       },
+      ready: function() {
+        this.xsrfToken = document.getElementById('globalXsrf').value;
+      },
       attached: function() {
         if (this.shouldShowRecaptcha) {
           this.querySelector('#recaptchaDiv')
             .setAttribute('data-sitekey', this.resources.recaptchaKey);
         }
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       submitLoginForm: function() {
         this.querySelector('#loginForm').submit();

@@ -75,7 +75,7 @@
         <paper-icon-item class="dropdown-button">
           <iron-icon class="dropdown-icon" icon="subdirectory-arrow-right" item-icon></iron-icon>
           <form id="logoutForm" method="post" action="{{resources.logoutUrl}}">
-            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
             <paper-button type="submit" on-tap="submitLogoutForm" id="logoutButton">
               <strong>{{resources.logoutText}}</strong>
             </paper-button>
@@ -99,7 +99,7 @@
         <paper-input label="{{resources.adminPasswordlabel}}" id="paperAdminPassword" name="paperPassword" required on-keypress="submitIfEnter"></paper-input>
         <input type="hidden" name="admin_email" id="jsonEmail" value="" />
         <input type="hidden" name="admin_password" id="jsonPassword" value="" />
-        <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
+        <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
         <paper-button on-tap="submitAddAdminForm" class="floatToTheRight anchor-button" id="adminFormSubmitButton" type="submit">
           <strong>{{resources.addAdminSubmitText}}</strong>
         </paper-button>
@@ -122,7 +122,7 @@
         <paper-input label="{{resources.changeAdminPasswordNewLabel}}" id="paperAdminNewPassword" name="paperAdminNewPassword" required on-keypress="submitIfEnter"></paper-input>
         <input type="hidden" name="old_password" id="jsonOldPassword" value="" />
         <input type="hidden" name="new_password" id="jsonNewPassword" value="" />
-        <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+        <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       </form>
       <div class="buttons">
         <paper-button on-tap="submitChangeAdminPasswordForm" class="anchor-button" id="changeAdminPasswordSubmitButton" type="submit"><strong>{{resources.changeAdminPasswordSubmitText}}</strong></paper-button>
@@ -156,7 +156,7 @@
             </template>
           </paper-menu>
           <input type="hidden" id="hiddenAdminId" name="admin_id" value="">
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
         </form>
       </paper-dialog-scrollable>
       <div class="buttons">
@@ -205,9 +205,7 @@
         this.$.changeAdminPasswordForm.request.jsonPrefix = this.resources.jsonPrefix;
         this.$.removeAdminForm.request.handleAs = "json";
         this.$.removeAdminForm.request.jsonPrefix = this.resources.jsonPrefix;
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
+        this.xsrfToken = document.getElementById('globalXsrf').value;
       },
       openMenu: function() {
         this.$.ufoDropdownMenu.open();

@@ -72,7 +72,7 @@
         <form id="oauthConfigurationForm" method="post" action="{{resources.setup_url}}">
           <paper-input label="Domain" name="domain" required on-keypress="submitIfEnter"></paper-input>
           <paper-input label="OAuth Code" name="oauth_code" required on-keypress="submitIfEnter"></paper-input>
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
           <div class="buttons">
             <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
               <strong>{{resources.submitButtonText}}</strong>
@@ -86,7 +86,7 @@
           <paper-input label="OAuth Code" name="oauth_code" on-keypress="submitIfEnter"></paper-input>
           <paper-input label="{{resources.adminEmailLabel}}" required name="admin_email"></paper-input>
           <paper-input label="{{resources.adminPasswordlabel}}" required name="admin_password" on-keypress="submitIfEnter"></paper-input>
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}" />
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
           <div class="buttons">
             <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
               <strong>{{resources.submitButtonText}}</strong>
@@ -109,8 +109,8 @@
           notify: true,
         },
       },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
+      ready: function() {
+        this.xsrfToken = document.getElementById('globalXsrf').value;
       },
       isDomainConfigured: function(config) {
         return config.domain && config.credentials;

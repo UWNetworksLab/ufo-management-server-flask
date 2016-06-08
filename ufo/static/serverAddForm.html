@@ -45,7 +45,7 @@
         <br>
         <p>{{resources.hostPublicKeyText}}</p>
         <p>{{resources.rsaText}}</p>
-        <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+        <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       </form>
       <div class="buttons">
         <paper-button class="anchor-button" dialog-dismiss on-tap="resetForm">
@@ -78,6 +78,7 @@
       ready: function() {
         this.$.serverAddForm.request.handleAs = "json";
         this.$.serverAddForm.request.jsonPrefix = this.resources.jsonPrefix;
+        this.xsrfToken = document.getElementById('globalXsrf').value;
       },
       enableSpinner: function() {
         this.set('loading', true);
@@ -119,9 +120,6 @@
       },
       resetForm: function(e, details) {
         document.getElementById('serverAddForm').reset();
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       submitIfEnter: function(e) {
         if (e.keyCode === 13) {

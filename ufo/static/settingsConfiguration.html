@@ -26,7 +26,7 @@
       <br>
       <ufo-toggle-input input-name="enforce_network_jail" button-text="{{resources.networkJailText}}" checked$={{ajaxResponse.enforce_network_jail}}></ufo-toggle-input>
       <br>
-      <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+      <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       <div class="buttons">
         <template is="dom-if" if="{{loading}}">
           <paper-spinner id="settingsSpinner" active$={{loading}}></paper-spinner>
@@ -57,12 +57,10 @@
       ready: function() {
         this.$.policyConfigForm.request.handleAs = "json";
         this.$.policyConfigForm.request.jsonPrefix = this.resources.jsonPrefix;
+        this.xsrfToken = document.getElementById('globalXsrf').value;
       },
       enableSpinner: function() {
         this.set('loading', true);
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       submitConfig: function(e, detail) {
         this.$.policyConfigForm.submit();

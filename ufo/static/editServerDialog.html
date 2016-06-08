@@ -93,7 +93,7 @@
           <br>
           <p class="editElements hideElement">{{resources.hostPublicKeyText}}</p>
           <p class="editElements hideElement">{{resources.rsaText}}</p>
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <input type="hidden" name="server_id" value="{{item.id}}">
         </form>
       </div>
@@ -107,7 +107,7 @@
         </paper-button>
         <form is="iron-form" id="serverDeleteForm" method="post" action="{{resources.proxyServerDeleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="server_id" value="{{item.id}}">
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <paper-button on-tap="submitForm" class="delete-button" id="serverDeleteButton" type="submit">
             <iron-icon icon="delete"></iron-icon>
             <strong>{{resources.proxyServerDeleteLabel}}</strong>
@@ -147,12 +147,10 @@
         this.$.serverEditForm.request.jsonPrefix = this.resources.jsonPrefix;
         this.$.serverDeleteForm.request.handleAs = "json";
         this.$.serverDeleteForm.request.jsonPrefix = this.resources.jsonPrefix;
+        this.xsrfToken = document.getElementById('globalXsrf').value;
       },
       enableSpinner: function() {
         this.set('loading', true);
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       submitForm: function(e, detail) {
         var elem = e.target;
