@@ -146,7 +146,7 @@ elif [[ "$1" == 'test' ]]; then
     printHelp
     exit 0
   else
-    SERVER_URL="http://ufo-nightly.herokuapp.com"
+    SERVER_URL="https://ufo-nightly.herokuapp.com"
     runUITestsViaSauceLabs
   fi
 else

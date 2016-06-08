@@ -74,7 +74,7 @@
             </paper-input>
             <input type="hidden" name="users" id="manualUserInput" value="">
             <input type="hidden" name="manual" value="true">
-            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
             <br>
           </form>
           <div class="buttons">
@@ -115,6 +115,12 @@
       listeners: {
         'iron-form-error': 'handleFormError',
       },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
+      },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.resources.manualAddFormId);
         addForm.request.handleAs = "json";
@@ -138,6 +144,12 @@
         this.querySelector('#manualAdd').submit();
       },
       closeModal: function() {
+        this.resetForm();
+        var subForms = this.querySelectorAll('user-add-form');
+        var i;
+        for (i = 0; i < subForms.length; i++) {
+          subForms[i].resetForms();
+        }
         this.set('loading', false);
         var userModal = document.getElementById('userModal');
         if (userModal) {
@@ -146,7 +158,6 @@
       },
       parsePostResponse: function(e, detail) {
         this.sendUsersJsonToList(e.target.request.lastResponse);
-        this.resetForm();
         this.closeModal();
       },
       handleFormError: function(event, detail) {
@@ -161,7 +172,7 @@
         var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
-        this.closeModal();
+        this.set('loading', false);
       },
       resetForm: function() {
         var formElem = document.getElementById('manualAdd');
@@ -174,9 +185,6 @@
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
         }
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       submitIfEnter: function(e) {
         if (e.keyCode === 13) {

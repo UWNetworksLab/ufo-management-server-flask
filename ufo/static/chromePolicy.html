@@ -28,7 +28,7 @@
       </p>
       <div class="buttons">
         <form is="iron-form" id="chromePolicyForm" method="post" action="{{resources.download_chrome_policy}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseChromePolicyResponse">
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <template is="dom-if" if="{{loading}}">
             <paper-spinner id="chromePolicySpinner" active$={{loading}}></paper-spinner>
           </template>
@@ -58,11 +58,14 @@
           notify: true,
         },
       },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = .value;
+        }
+      },
       enableSpinner: function() {
         this.set('loading', true);
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       submitChromePolicy: function(e, detail) {
         this.$.chromePolicyForm.submit();

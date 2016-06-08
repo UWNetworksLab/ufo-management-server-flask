@@ -35,6 +35,7 @@
   }
 </style>
 <body class="fullbleed layout vertical">
+  <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
   <div>  <!-- Prevent the main-holder from pushing into the header. -->
     <paper-scroll-header-panel>
       <paper-toolbar class="tall" id="main-toolbar">
