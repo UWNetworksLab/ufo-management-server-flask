@@ -58,7 +58,7 @@ paper-toolbar {
   background: #ffffff!important;
 }
 
-paper-dialog {
+paper-dialog:not(ufo-dropdown-dialog > paper-dialog) {
   width: 1000px;
 }
 
