@@ -207,7 +207,7 @@
         this.$.removeAdminForm.request.jsonPrefix = this.resources.jsonPrefix;
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
-          this.xsrfToken = .value;
+          this.xsrfToken = xsrfElement.value;
         }
       },
       openMenu: function() {
