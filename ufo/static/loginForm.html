@@ -57,7 +57,7 @@
       ready: function() {
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
-          this.xsrfToken = .value;
+          this.xsrfToken = xsrfElement.value;
         }
       },
       attached: function() {

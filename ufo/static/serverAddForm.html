@@ -80,7 +80,7 @@
         this.$.serverAddForm.request.jsonPrefix = this.resources.jsonPrefix;
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
-          this.xsrfToken = .value;
+          this.xsrfToken = xsrfElement.value;
         }
       },
       enableSpinner: function() {
