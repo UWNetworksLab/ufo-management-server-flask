@@ -14,7 +14,7 @@ from ufo.services import custom_exceptions
 from ufo.services import google_directory_service
 from ufo.services import oauth
 
-INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
+INVITE_CODE_URL_PREFIX = 'https://uproxy.org/invite#'
 
 
 def _get_users_to_add(get_all, group_key, user_key):
@@ -92,13 +92,13 @@ def _make_invite_code(user):
     "networkName": "Cloud",
     "networkData": "{
       \"host\":\"178.62.123.172\",
-      \"user\":\"giver\",
+      \"user\":\"getter\",
       \"key\":\"base64_key"
     }"
   }
 
   It includes the host ip (of the proxy server or load balancer) to connect
-  the user to, the user username (user's email) to connect with, and
+  the user to, the user (getter)) to connect with, and
   the credential (private key) necessary to authenticate with the host.
 
   TODO: Guard against any future breakage when the invite code format
@@ -109,9 +109,10 @@ def _make_invite_code(user):
     user: A user from the datastore to generate an invite code for.
 
   Returns:
-    invite_code: A base64 encoded dictionary of host, user, and pass which
-    correspond to the proxy server/load balancer's ip, the user's email, and
-    the user's private key, respectively.  See example above.
+    invite_code: A base64 encoded dictionary of network name and data, which
+    includes the host, user, and key corresponding to the proxy server/load
+    balancer's ip, the user account (getter), and the user's private key,
+    respectively.  See example above.
   """
   ip = _get_random_server_ip()
   if ip is None:
@@ -121,8 +122,8 @@ def _make_invite_code(user):
       'networkName': 'Cloud',
       'networkData': {
         'host': ip,
-        'user': user.email.split("@")[0],
-        'pass': user.private_key,
+        'user': 'getter',
+        'key': base64.urlsafe_b64encode(user.private_key),
       },
   }
   json_data = json.dumps(invite_code_data)
