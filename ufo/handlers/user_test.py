@@ -307,10 +307,10 @@ class UserTest(base_test.BaseTest):
 
     self.assertEquals('Cloud', invite_code['networkName'])
     self.assertEquals(fake_ip, invite_code['networkData']['host'])
-    self.assertEquals(created_user.email.split("@")[0],
-                      invite_code['networkData']['user'])
-    self.assertEquals(created_user.private_key,
-                      invite_code['networkData']['pass'])
+    self.assertEquals('getter', invite_code['networkData']['user'])
+    self.assertEquals(base64.urlsafe_b64encode(created_user.private_key),
+                      invite_code['networkData']['key'])
+
 
   def testUserGetInviteCodeWithoutProxy(self):
     """Test the user get invite code does not throw an error."""
