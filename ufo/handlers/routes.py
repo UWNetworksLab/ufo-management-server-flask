@@ -16,8 +16,6 @@ def landing():
   return flask.render_template('landing.html')
 
 @ufo.app.route('/vulcanized')
-@ufo.setup_required
-@auth.login_required
 def vulcanized():
   return flask.send_file('static/vulcanized.js', cache_timeout=1)
 
