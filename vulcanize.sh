@@ -91,7 +91,7 @@ function vulcanizeSingleFileForImports ()
   runInStaticDirAndAssertCmd "rm -fr $VULCANIZED_JS_FILE"
   # This finally vulcanizes all the import statements into one flat file,
   # $VULCANIZED_HTML_FILE, with comments removed and scripts inlined.
-  runInStaticDirAndAssertCmd "${VULCANIZE_COMMAND} $HTML_FILE_TO_VULCANIZE --strip-comments --inline-scripts | ${CRISPER_COMMAND} --html ${VULCANIZED_HTML_FILE} --js ${VULCANIZED_JS_FILE}"
+  runInStaticDirAndAssertCmd "${VULCANIZE_COMMAND} $HTML_FILE_TO_VULCANIZE --strip-comments --inline-scripts | ${CRISPER_COMMAND} --html ${VULCANIZED_HTML_FILE} --js ${VULCANIZED_JS_FILE} --only-split"
   runInStaticDirAndAssertCmd "rm -fr $HTML_FILE_TO_VULCANIZE"
 }
 
