@@ -14,7 +14,7 @@ from ufo.services import custom_exceptions
 from ufo.services import google_directory_service
 from ufo.services import oauth
 
-INVITE_CODE_URL_PREFIX = 'https://uproxy.org/connect/#'
+INVITE_CODE_URL_PREFIX = 'https://uproxy.org/invite#'
 
 
 def _get_users_to_add(get_all, group_key, user_key):
@@ -40,7 +40,7 @@ def _get_users_to_add(get_all, group_key, user_key):
   if not credentials:
     dictionary = {'directory_users': [], 'error': 'OAuth is not set up'}
     json_obj = json.dumps((dictionary))
-    return flask.Response(json_obj, mimetype='application/json')
+    return flask.Response(ufo.XSSI_PREFIX + json_obj, headers=ufo.JSON_HEADERS)
 
   try:
     directory_service = google_directory_service.GoogleDirectoryService(
@@ -63,11 +63,11 @@ def _get_users_to_add(get_all, group_key, user_key):
       users_to_output.append(user_for_display)
 
     json_obj = json.dumps(({'directory_users': users_to_output}))
-    return flask.Response(json_obj, mimetype='application/json')
+    return flask.Response(ufo.XSSI_PREFIX + json_obj, headers=ufo.JSON_HEADERS)
 
   except errors.HttpError as error:
     json_obj = json.dumps(({'directory_users': [], 'error': str(error)}))
-    return flask.Response(json_obj, mimetype='application/json')
+    return flask.Response(ufo.XSSI_PREFIX + json_obj, headers=ufo.JSON_HEADERS)
 
 def _get_random_server_ip():
   """Gets the ip address of a random proxy server of those in the db.
@@ -92,13 +92,13 @@ def _make_invite_code(user):
     "networkName": "Cloud",
     "networkData": "{
       \"host\":\"178.62.123.172\",
-      \"user\":\"giver\",
+      \"user\":\"getter\",
       \"key\":\"base64_key"
     }"
   }
 
   It includes the host ip (of the proxy server or load balancer) to connect
-  the user to, the user username (user's email) to connect with, and
+  the user to, the user (getter)) to connect with, and
   the credential (private key) necessary to authenticate with the host.
 
   TODO: Guard against any future breakage when the invite code format
@@ -109,9 +109,10 @@ def _make_invite_code(user):
     user: A user from the datastore to generate an invite code for.
 
   Returns:
-    invite_code: A base64 encoded dictionary of host, user, and pass which
-    correspond to the proxy server/load balancer's ip, the user's email, and
-    the user's private key, respectively.  See example above.
+    invite_code: A base64 encoded dictionary of network name and data, which
+    includes the host, user, and key corresponding to the proxy server/load
+    balancer's ip, the user account (getter), and the user's private key,
+    respectively.  See example above.
   """
   ip = _get_random_server_ip()
   if ip is None:
@@ -121,8 +122,8 @@ def _make_invite_code(user):
       'networkName': 'Cloud',
       'networkData': {
         'host': ip,
-        'user': user.email,
-        'pass': user.private_key,
+        'user': 'getter',
+        'key': base64.urlsafe_b64encode(user.private_key),
       },
   }
   json_data = json.dumps(invite_code_data)
@@ -140,7 +141,7 @@ def user_list():
     A json object with 'items' set to the list of users in the db.
   """
   users_json = json.dumps(({'items': models.User.get_items_as_list_of_dict()}))
-  return flask.Response(users_json, mimetype='application/json')
+  return flask.Response(ufo.XSSI_PREFIX + users_json, headers=ufo.JSON_HEADERS)
 
 @ufo.app.route('/user/add', methods=['GET', 'POST'])
 @ufo.setup_required
@@ -234,9 +235,13 @@ def user_get_invite_code():
   user_id = json.loads(flask.request.args.get('user_id'))
   user = models.User.query.get_or_404(user_id)
   invite_code = _make_invite_code(user)
-  invite_url = INVITE_CODE_URL_PREFIX + invite_code
-  code_json = json.dumps(({'invite_code': invite_url}))
-  return flask.Response(code_json, mimetype='application/json')
+  code_json = None
+  if invite_code is None:
+    code_json = json.dumps(({'invite_code': False}))
+  else:
+    invite_url = INVITE_CODE_URL_PREFIX + invite_code
+    code_json = json.dumps(({'invite_code': invite_url}))
+  return flask.Response(ufo.XSSI_PREFIX + code_json, headers=ufo.JSON_HEADERS)
 
 @ufo.app.route('/user/toggleRevoked', methods=['POST'])
 @ufo.setup_required

@@ -21,56 +21,71 @@
       margin-bottom: 24px;
       padding: 0px 24px;
     }
-    #spinner {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
   </style>
   <template>
     <!--Portion for finding users via group, individual, domain, or manual
     specification. -->
     <paper-tabs id="tabs" selected="{{ selected }}">
-      <template is="dom-repeat" items="[[resources.addFlowTextDicts]]">
-        <paper-tab id="{{item.tabId}}">{{item.tab}}</paper-tab>
-      </template>
+      <paper-tab id="{{resources.groupAddTabId}}">{{resources.groupAddTab}}</paper-tab>
+      <paper-tab id="{{resources.userAddTabId}}">{{resources.userAddTab}}</paper-tab>
+      <paper-tab id="{{resources.domainAddTabId}}">{{resources.domainAddTab}}</paper-tab>
+      <paper-tab id="{{resources.manualAddTabId}}">{{resources.manualAddTab}}</paper-tab>
     </paper-tabs>
 
     <div id="ironPagesHolder">
       <iron-pages id="pages" selected="{{ selected }}">
-        <template is="dom-repeat" items="[[resources.addFlowTextDicts]]">
-          <template is="dom-if" if="{{item.isManual}}">
-            <div>
-              <template is="dom-if" if="{{isSpinnerOn}}">
-                <paper-spinner id="manualAddSpinner" active$={{isSpinnerOn}}></paper-spinner>
-              </template>
-              <form is="iron-form" id="{{item.id}}" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-                <paper-input label="{{item.label1}}" type="textbox" name="name" value="" id="manualUserName" required>
-                </paper-input>
-                <paper-input label="{{item.label2}}" type="email" name="email" value="" id="manualUserEmail" required
-                auto-validate pattern="{{resources.regexes.emailValidationPattern}}"
-                error-message="{{resources.regexes.emailValidationError}}">
-                </paper-input>
-                <input type="hidden" name="users" id="manualUserInput" value="">
-                <input type="hidden" name="manual" value="true">
-                <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
-                <br>
-              </form>
-              <div class="buttons">
-                <paper-button class="anchor-button" dialog-dismiss>
-                <strong>{{resources.dismissText}}</strong>
-                </paper-button>
-                <paper-button class="anchor-button" autofocus on-tap="submitPostForm" id="manualAddSubmitButton">
-                <strong>{{item.saveButton}}</strong>
-                </paper-button>
-              </div>
-            </div>
+        <user-add-form
+          resources="{{resources}}"
+          should-display-with-dialog$="[[shouldDisplayWithDialog]]"
+          form-id="{{resources.groupAddFormId}}"
+          save-button="{{resources.saveMultipleUsersButton}}"
+          search-button="{{resources.groupAddSearchButton}}"
+          email-label="{{resources.groupAddEmailAddressLabel}}"
+          input-name="{{resources.groupAddInputName}}"
+          input-definition="{{resources.groupAddEmailAddressDefinition}}">
+        </user-add-form>
+        <user-add-form
+          resources="{{resources}}"
+          should-display-with-dialog$="[[shouldDisplayWithDialog]]"
+          form-id="{{resources.userAddFormId}}"
+          save-button="{{resources.saveIndividualUserButton}}"
+          search-button="{{resources.userAddSearchButton}}"
+          email-label="{{resources.userAddEmailAddressLabel}}"
+          input-name="{{resources.userAddInputName}}"
+          input-definition="{{resources.userAddEmailAddressDefinition}}">
+        </user-add-form>
+        <user-add-form
+          resources="{{resources}}"
+          should-display-with-dialog$="[[shouldDisplayWithDialog]]"
+          form-id="{{resources.domainAddFormId}}"
+          save-button="{{resources.saveMultipleUsersButton}}"
+          search-button="{{resources.domainAddSearchButton}}">
+        </user-add-form>
+        <div>
+          <template is="dom-if" if="{{loading}}">
+            <paper-spinner id="manualAddSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
           </template>
-          <template is="dom-if" if="{{!item.isManual}}">
-            <user-add-form resources="{{resources}}" add-flow-text-obj="{{item}}"></user-add-form>
-          </template>
-        </template>
+          <form is="iron-form" id="{{resources.manualAddFormId}}" method="post" action="{{resources.userAddUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
+            <paper-input label="{{resources.manualFullNameLabel}}" type="textbox" name="name" value="" id="manualUserName" required on-keypress="submitIfEnter">
+            </paper-input>
+            <paper-input label="{{resources.manualEmailAddressLabel}}" type="email" name="email" value="" id="manualUserEmail" required
+            pattern="{{resources.regexes.emailValidationPattern}}"
+            error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter">
+            </paper-input>
+            <input type="hidden" name="users" id="manualUserInput" value="">
+            <input type="hidden" name="manual" value="true">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+            <br>
+          </form>
+          <div class="buttons">
+            <paper-button class="anchor-button" dialog-dismiss>
+            <strong>{{resources.dismissText}}</strong>
+            </paper-button>
+            <paper-button class="anchor-button" autofocus on-tap="submitPostForm" id="manualAddSubmitButton">
+            <strong>{{resources.saveIndividualUserButton}}</strong>
+            </paper-button>
+          </div>
+        </div>
       </iron-pages>
     </div>
   </template>
@@ -86,7 +101,12 @@
           value: 0,
           type: Number,
         },
-        isSpinnerOn: {
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        shouldDisplayWithDialog: {
           type: Boolean,
           value: false,
           notify: true,
@@ -95,8 +115,19 @@
       listeners: {
         'iron-form-error': 'handleFormError',
       },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      setJsonPrefixes: function() {
+        var addForm = document.getElementById(this.resources.manualAddFormId);
+        addForm.request.handleAs = "json";
+        addForm.request.jsonPrefix = this.resources.jsonPrefix;
+      },
       enableSpinner: function() {
-        this.set('isSpinnerOn', true);
+        this.set('loading', true);
       },
       makeManualInputsJsonArray: function() {
         var formElem = document.getElementById('manualAdd');
@@ -108,28 +139,40 @@
         input.value = JSON.stringify(userArray);
       },
       submitPostForm: function() {
+        this.setJsonPrefixes();
         this.makeManualInputsJsonArray();
         this.querySelector('#manualAdd').submit();
       },
-
-
       closeModal: function() {
-        this.set('isSpinnerOn', false);
+        this.resetForm();
+        var subForms = this.querySelectorAll('user-add-form');
+        var i;
+        for (i = 0; i < subForms.length; i++) {
+          subForms[i].resetForms();
+        }
+        this.set('loading', false);
         var userModal = document.getElementById('userModal');
         if (userModal) {
           userModal.close();
         }
       },
       parsePostResponse: function(e, detail) {
-        this.sendUsersJsonToList(detail.xhr.response);
-        this.resetForm();
+        this.sendUsersJsonToList(e.target.request.lastResponse);
         this.closeModal();
       },
       handleFormError: function(event, detail) {
-        var errorDetail = {'detail': detail.request.xhr.response};
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
-        this.closeModal();
+        this.set('loading', false);
       },
       resetForm: function() {
         var formElem = document.getElementById('manualAdd');
@@ -138,13 +181,15 @@
         formElem.reset();
       },
       sendUsersJsonToList: function(updatedUsersJson) {
-        var listElem = document.getElementById(this.resources.listId);
+        var listElem = document.getElementById(this.resources.userListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
         }
       },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitPostForm();
+        }
       },
     });
   </script>

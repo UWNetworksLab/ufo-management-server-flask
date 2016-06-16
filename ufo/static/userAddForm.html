@@ -11,36 +11,61 @@
     paper-listbox {
       background: #EEE;
     }
-    #spinner {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
+    .addTopMargin {
+      margin-top: 12px;
     }
   </style>
   <template>
     <div>
-      <template is="dom-if" if="{{isSpinnerOn}}">
-        <paper-spinner id="spinner" active$={{isSpinnerOn}}></paper-spinner>
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="spinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <template is="dom-if" if="{{showInputFields}}">
-        <form is="iron-form" id="{{addFlowTextObj.id}}" method="get" action="{{resources.addUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinner">
-          <template is="dom-if" if="[[!idMatches(addFlowTextObj.id, 'domainAdd')]]">
-            <paper-input label="{{addFlowTextObj.label1}}" type="textbox" name="{{addFlowTextObj.name1}}" auto-validate pattern="{{resources.regexes.keyLookupPattern}}" error-message="{{resources.regexes.keyLookupError}}"></paper-input>
+        <form is="iron-form" id="{{formId}}" method="get" action="{{resources.userAddUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinnerAndSetPrefixes">
+          <template is="dom-if" if="[[!idMatches(formId, 'domainAdd')]]">
+            <paper-input label="{{emailLabel}}" type="textbox" name="{{inputName}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="{{resources.regexes.keyLookupError}}"></paper-input>
             <br>
-            <p>{{addFlowTextObj.definition1}}</p>
+            <p>{{inputDefinition}}</p>
             <br>
           </template>
-          <template is="dom-if" if="[[idMatches(addFlowTextObj.id, 'domainAdd')]]">
+          <template is="dom-if" if="[[idMatches(formId, 'domainAdd')]]">
             <input type="hidden" name="get_all" value="true">
           </template>
-          <paper-button on-tap="submitGetForm" class="form-submit-button anchor-button" type="submit"><strong>{{addFlowTextObj.searchButton}}</strong></paper-button>
+          <paper-button on-tap="submitGetForm" class="form-submit-button anchor-button" type="submit"><strong>{{searchButton}}</strong></paper-button>
         </form>
       </template>
       <template is="dom-if" if="{{!showInputFields}}">
-        <paper-dialog-scrollable>
-          <form is="iron-form" id="addPostForm" method="post" action="{{resources.addUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
+        <template is="dom-if" if="{{shouldDisplayWithDialog}}">
+          <paper-dialog-scrollable>
+            <form is="iron-form" id="addPostForm" method="post" action="{{resources.userAddUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
+              <paper-listbox>
+              <template is="dom-if" if="[[!areAnyUsersFound()]]">
+                <paper-item id="noResultsItem" class="horizontal layout">
+                  <span class="flex"><strong>{{resources.addFlowNoResults}}</strong></span>
+                </paper-item>
+              </template>
+                <template is="dom-repeat" items="[[lastResponse.directory_users]]">
+                  <paper-item id="{{item.name}}" class="horizontal layout">
+                    <paper-checkbox name="checkboxes" value="{{item}}"></paper-checkbox>
+                    <span class="flex"><strong>{{item.name}}</strong></span>
+                    <span>{{item.email}}</span>
+                  </paper-item>
+                </template>
+              </paper-listbox>
+              <input type="hidden" id="hiddenUsers" name="users" value="{{usersJson}}">
+              <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+            </form>
+          </paper-dialog-scrollable>
+          <set-scrollable-dialog-to-modal></set-scrollable-dialog-to-modal>
+        </template>
+        <template is="dom-if" if="{{!shouldDisplayWithDialog}}">
+          <form is="iron-form" id="addPostForm" method="post" action="{{resources.userAddUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
             <paper-listbox>
+              <template is="dom-if" if="[[!areAnyUsersFound()]]">
+                <paper-item id="noResultsItem" class="horizontal layout">
+                  <span class="flex"><strong>{{resources.addFlowNoResults}}</strong></span>
+                </paper-item>
+              </template>
               <template is="dom-repeat" items="[[lastResponse.directory_users]]">
                 <paper-item id="{{item.name}}" class="horizontal layout">
                   <paper-checkbox name="checkboxes" value="{{item}}"></paper-checkbox>
@@ -49,29 +74,20 @@
                 </paper-item>
               </template>
             </paper-listbox>
+            <br>
             <input type="hidden" id="hiddenUsers" name="users" value="{{usersJson}}">
-            <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           </form>
-        </paper-dialog-scrollable>
-        <paper-button on-tap="resetForms" class="anchor-button"><strong>{{resources.lookAgainText}}</strong></paper-button>
-        <script>
-        var modal = document.getElementById('userModal');
-        if (modal) {
-          var scrollables = modal.getElementsByTagName(
-            'paper-dialog-scrollable');
-          for (var i in scrollables) {
-            scrollables[i].dialogElement = modal;
-          }
-        }
-        </script>
+        </template>
+        <paper-button on-tap="resetForms" class="anchor-button addTopMargin"><strong>{{resources.lookAgainText}}</strong></paper-button>
       </template>
     </div>
     <div class="buttons">
-      <paper-button class="anchor-button" dialog-dismiss>
+      <paper-button class="anchor-button" dialog-dismiss on-tap="resetForms">
       <strong>{{resources.dismissText}}</strong>
       </paper-button>
       <paper-button class="anchor-button" autofocus on-tap="submitPostForm">
-      <strong>{{addFlowTextObj.saveButton}}</strong>
+      <strong>{{saveButton}}</strong>
       </paper-button>
     </div>
   </template>
@@ -83,8 +99,35 @@
         resources: {
           type: Object,
         },
-        addFlowTextObj: {
-          type: Object,
+        formId: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+        saveButton: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+        searchButton: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+        emailLabel: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+        inputName: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+        inputDefinition: {
+          type: String,
+          notify: true,
+          value: '',
         },
         showInputFields: {
           type: Boolean,
@@ -104,7 +147,12 @@
           type: String,
           notify: true,
         },
-        isSpinnerOn: {
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        shouldDisplayWithDialog: {
           type: Boolean,
           value: false,
           notify: true,
@@ -113,57 +161,81 @@
       listeners: {
         'iron-form-error': 'handleFormError',
       },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      setJsonPrefixes: function() {
+        var addForm = document.getElementById(this.formId);
+        addForm.request.handleAs = "json";
+        addForm.request.jsonPrefix = this.resources.jsonPrefix;
+      },
       enableSpinner: function() {
-        this.set('isSpinnerOn', true);
+        this.set('loading', true);
+      },
+      enableSpinnerAndSetPrefixes: function() {
+        this.setJsonPrefixes();
+        this.enableSpinner();
       },
       submitGetForm: function() {
-        this.querySelector('#' + this.addFlowTextObj.id).submit();
+        this.querySelector('#' + this.formId).submit();
       },
       submitPostForm: function() {
+        this.querySelector('#addPostForm').request.handleAs = "json";
+        this.querySelector('#addPostForm').request.jsonPrefix = this.resources.jsonPrefix;
         this.setSelectedUsersFromCheckboxes();
         this.querySelector('#addPostForm').submit();
       },
-      parseGetResponse: function(e, details) {
+      parseGetResponse: function(e, detail) {
         this.set('lastResponse', e.target.request.lastResponse);
         this.set('showInputFields', false);
-        this.set('isSpinnerOn', false);
+        this.set('loading', false);
       },
       closeModal: function() {
-        this.set('isSpinnerOn', false);
-        var userModal = document.getElementById('userModal');
-        if (userModal) {
-          userModal.close();
+        this.set('loading', false);
+        var userAddTabs = document.getElementsByTagName('user-add-tabs');
+        if (userAddTabs && userAddTabs[0]) {
+          userAddTabs[0].closeModal();
         }
       },
-      parsePostResponse: function(e, details) {
-        this.sendUsersJsonToList(details.xhr.response);
-        this.resetForms();
+      parsePostResponse: function(e, detail) {
+        this.sendUsersJsonToList(e.target.request.lastResponse);
         this.closeModal();
       },
       handleFormError: function(event, detail) {
-        var errorDetail = {'detail': detail.request.xhr.response};
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
-        this.closeModal();
+        this.set('loading', false);
       },
-      resetForms: function() {
+      resetForms: function(e, detail) {
         this.set('showInputFields', true);
-        document.getElementById(this.addFlowTextObj.id).reset();
-        this.querySelector('#addPostForm').reset();
+        document.getElementById(this.formId).reset();
+        var addPostForm = this.querySelector('#addPostForm');
+        if (addPostForm) {
+          addPostForm.reset();
+        }
         this.set('selectedUsers', []);
         this.set('usersJson', '');
       },
       sendUsersJsonToList: function(updatedUsersJson) {
-        var listElem = document.getElementById(this.resources.listId);
+        var listElem = document.getElementById(this.resources.userListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
         }
       },
       idMatches: function(id, string1) {
         return id === string1;
-      },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
       },
       updateCheckedUsers: function(e) {
         var checkboxElem = event.path[0];
@@ -190,6 +262,9 @@
         var formElem = document.getElementById('addPostForm');
         var input = formElem.querySelector('#hiddenUsers');
         input.value = jsonUsers;
+      },
+      areAnyUsersFound: function() {
+        return this.lastResponse.directory_users.length > 0;
       },
     });
   </script>

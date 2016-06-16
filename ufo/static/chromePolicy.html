@@ -1,37 +1,44 @@
+<link rel="import" href="bower_components/iron-icon/iron-icon.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
-<link rel="import" href="bower_components/paper-item/paper-item.html" />
-<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
 
 <dom-module id="chrome-policy">
   <style is="custom-style">
     #chrome-policy {
-      margin-left: 25px;
+      margin-left: 40px;
       margin-right: 25px;
       margin-bottom: 25px;
     }
   </style>
   <template>
-    <paper-listbox id="chrome-policy">
-      <paper-item><p>
+    <div id="chrome-policy">
+      <p>
         {{resources.policyExplanationText}}
-      </p></paper-item>
-      <paper-item><p>
+      </p>
+      <p>
         {{resources.policyEditText}}
-      </p></paper-item>
-      <paper-item>
-      <a href="https://admin.google.com/AdminHome" class="anchor-no-button">{{resources.adminConsoleText}}</a>
-      </p></paper-item>
-      <paper-item><p>
+      </p>
+
+      <p><a href="https://admin.google.com/AdminHome" class="anchor-no-button" target="_blank">
+        <paper-button>
+          <iron-icon icon="open-in-new"></iron-icon> {{resources.adminConsoleText}}
+        </paper-button>
+      </a></p>
+      <p>
         {{resources.policyUploadText}}
-      </p></paper-item>
+      </p>
       <div class="buttons">
-        <paper-item>
-          <a href="{{resources.download_chrome_policy}}" download="{{resources.policy_filename}}" id="chromePolicyDownloadButton">
-            <paper-button class="anchor-button"><iron-icon icon="file-download"></iron-icon> {{resources.downloadText}}</paper-button>
-          </a>
-        </paper-item>
+        <form is="iron-form" id="chromePolicyForm" method="post" action="{{resources.download_chrome_policy}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseChromePolicyResponse">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+          <template is="dom-if" if="{{loading}}">
+            <paper-spinner id="chromePolicySpinner" active$={{loading}}></paper-spinner>
+          </template>
+          <paper-button class="anchor-button" id="chromePolicyDownloadButton" on-tap="submitChromePolicy" type="submit">
+            <strong><iron-icon icon="file-download"></iron-icon> {{resources.downloadText}}</strong>
+          </paper-button>
+          <a href="data:text/json,{{ajaxResponse}}" download="{{resources.policy_filename}}" hidden id="hiddenChromePolicyButton"></a>
+        </form>
       </div>
-    </paper-listbox>
+    </div>
   </template>
 
   <script>
@@ -41,6 +48,32 @@
         resources: {
           type: Object,
         },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        ajaxResponse: {
+          type: String,
+          notify: true,
+        },
+      },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      submitChromePolicy: function(e, detail) {
+        this.$.chromePolicyForm.submit();
+      },
+      parseChromePolicyResponse: function(e, detail) {
+        this.set('ajaxResponse', JSON.stringify(this.$.chromePolicyForm.request.lastResponse));
+        this.set('loading', false);
+        this.$.hiddenChromePolicyButton.click();
       },
     });
   </script>

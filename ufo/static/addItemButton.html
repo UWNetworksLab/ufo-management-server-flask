@@ -1,8 +1,21 @@
+<link rel="import" href="bower_components/iron-icon/iron-icon.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 
 <dom-module id="add-item-button">
+  <style is="custom-style">
+    strong {
+      vertical-align: bottom;
+      line-height: 19px;
+    }
+  </style>
   <template>
-    <paper-button class="anchor-button" on-tap="openModal" id="{{resources.addButtonId}}"><iron-icon src="{{resources.inverseAddIconUrl}}"></iron-icon> <strong>{{resources.addText}}</strong></paper-button>
+    <paper-button
+        class="anchor-button"
+        on-tap="openModal"
+        id="{{addButtonId}}">
+      <iron-icon src="{{inverseAddIconUrl}}"></iron-icon>
+      <strong>{{addText}}</strong>
+    </paper-button>
   </template>
 
   <script>
@@ -12,9 +25,30 @@
         resources: {
           type: Object,
         },
+        addType: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+      },
+      ready: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addButtonId = this.resources.proxyServerAddButtonId;
+            this.inverseAddIconUrl = this.resources.proxyServerInverseAddIconUrl;
+            this.addText = this.resources.proxyServerAddText;
+            this.modalId = this.resources.proxyServerModalId;
+            break;
+          default:
+            this.addButtonId = this.resources.userAddButtonId;
+            this.inverseAddIconUrl = this.resources.userInverseAddIconUrl;
+            this.addText = this.resources.userAddText;
+            this.modalId = this.resources.userModalId;
+            break;
+        }
       },
       openModal: function() {
-        document.getElementById(this.resources.modalId).open();
+        document.getElementById(this.modalId).open();
       },
     });
   </script>

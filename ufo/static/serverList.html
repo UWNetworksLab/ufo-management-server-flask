@@ -1,0 +1,191 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+
+<dom-module id="server-list">
+  <style is="custom-style">
+    .first-div {
+      width: 300px;
+    }
+    .second-div {
+      width: 350px;
+    }
+    .third-div {
+      width: 200px;
+    }
+    .topLineButton {
+      color: #25CFB9;
+      text-transform: none;
+      margin: 0;
+      padding: 0;
+    }
+    .leftTextAlign {
+      text-align: left;
+    }
+    .noDisplay {
+      opacity: 0.0;
+      cursor: default;
+    }
+    paper-item, paper-icon-item {
+      border-top: 1px solid #e5e5e5;
+    }
+    #columnHeader {
+      border-top: none;
+    }
+  </style>
+  <!-- TODO(eholder): Figure out how to make hover work with focused. -->
+  <template>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
+    </template>
+    <iron-ajax auto$="[[autoGet]]"
+      url="{{resources.proxyServerListUrl}}"
+      method="GET"
+      handle-as="json"
+      id="getItemsAjax"
+      loading="{{loading}}"
+      last-response="{{ajaxResponse}}"
+      json-prefix="{{resources.jsonPrefix}}">
+    </iron-ajax>
+    <paper-listbox>
+      <paper-icon-item id="columnHeader" class="horizontal layout">
+        <iron-icon src="{{resources.proxyServerIconUrl}}" class="noDisplay" item-icon></iron-icon>
+        <div class="first-div"><strong>{{resources.nameColumnHeader}}</strong></div>
+        <div class="second-div flex"><strong>{{resources.ipColumnHeader}}</strong></div>
+        <div class="third-div"><strong>{{resources.modfyColumnHeader}}</strong></div>
+        <paper-icon-button icon="expand-more" class="noDisplay"></paper-icon-button>
+      </paper-icon-item>
+      <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
+        <paper-icon-item id="{{item.name}}" class="horizontal layout" on-tap="openDetailsDialog">
+          <iron-icon src="{{resources.proxyServerIconUrl}}" item-icon></iron-icon>
+          <div class="first-div"><strong>{{item.name}}</strong></div>
+          <div class="second-div flex">{{item.ip_address}}</div>
+          <paper-button on-tap="openServerEdit" class="third-div topLineButton leftTextAlign" id="{{resources.editButtonId}}"><strong>{{resources.editText}}</strong></paper-button>
+          <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
+          <paper-icon-button icon="expand-more" title="{{resources.proxyServerDetailsExpandText}}" id="{{resources.proxyServerDetailsButtonId}}"></paper-icon-button>
+        </paper-icon-item>
+      </template>
+      <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
+        <paper-item id="showMore" class="horizontal layout start-justified">
+          <paper-button class="see-all-button" on-tap="_flipShowingAll">
+          {{resources.proxyServerSeeAllText}}
+          </paper-button>
+        </paper-item>
+      </template>
+    </paper-listbox>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'server-list',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        isShowingAll: {
+          value: false,
+          type: Boolean,
+        },
+        defaultLimit: {
+          value: 10,
+          type: Number,
+        },
+        ajaxResponse: {
+          type: Object,
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        characterLimit: {
+          type: Number,
+          value: 40,
+        },
+        autoGet: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+      },
+      _limitCharacters: function(text) {
+        if (text.length > this.characterLimit) {
+          return text.substring(0, this.characterLimit) + '...';
+        } else {
+          return text;
+        }
+      },
+      _limitResults: function(array, isShowingAll) {
+        var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
+        if (isShowingAll || !array || array.length <= limit) {
+          return array;
+        } else {
+          return array.slice(0, limit);
+        }
+      },
+      _hasMoreToShow: function(array, isShowingAll) {
+        var limit = this.resources.listLimit ? this.resources.listLimit : this.defaultLimit;
+        return array.length > limit && !isShowingAll;
+      },
+      _flipShowingAll: function() {
+        this.isShowingAll = !this.isShowingAll;
+      },
+      setAjaxResponse: function(response) {
+        this.set('ajaxResponse', response);
+      },
+      resendRequest: function() {
+        this.$.getItemsAjax.generateRequest();
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      _findAncestorMatchingTagnameFromTarget: function(target, tagName) {
+        var elem = target;
+        while (elem.tagName.toLowerCase() !== tagName) {
+          elem = elem.parentElement;
+          if (elem == document.body) {
+            break;
+          }
+        }
+        if (elem.tagName.toLowerCase() !== tagName) {
+          return null;
+        }
+        return elem;
+      },
+      submitRevokeForm: function(e, details) {
+        e.stopPropagation();
+        var name = 'form';
+        var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
+        if (elem) {
+          elem.request.handleAs = "json";
+          elem.request.jsonPrefix = this.resources.jsonPrefix;
+          elem.submit();
+        }
+      },
+      parseRevokeResponse: function(e, details) {
+        this.set('ajaxResponse', e.target.request.lastResponse);
+        this.set('loading', false);
+      },
+      openDetailsDialog: function(e, details) {
+        var name = 'paper-icon-item';
+        var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
+        if (elem) {
+          var dialogHolder = elem.querySelector('#detailsHolder');
+          dialogHolder.openDialog();
+        }
+      },
+      openServerEdit: function(e, details) {
+        var name = 'paper-icon-item';
+        var elem = this._findAncestorMatchingTagnameFromTarget(e.target, name);
+        if (elem) {
+          var dialogHolder = elem.querySelector('#detailsHolder');
+          dialogHolder.openServerEdit();
+        }
+      },
+    });
+  </script>
+</dom-module>

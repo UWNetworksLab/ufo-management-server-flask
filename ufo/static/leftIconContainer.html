@@ -34,10 +34,10 @@
       <div id="row">
         <div id="left">
           <div>
-            <img src="{{resources.addIconUrl}}">
+            <img src="{{addIconUrl}}">
           </div>
           <div id="description">
-            {{resources.addText}}
+            {{addText}}
           </div>
         </div>
         <div id="right">
@@ -53,6 +53,23 @@
         resources: {
           type: Object,
         },
+        addType: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+      },
+      ready: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addText = this.resources.proxyServerAddText;
+            this.addIconUrl = this.resources.proxyServerAddIconUrl;
+            break;
+          default:
+            this.addText = this.resources.userAddText;
+            this.addIconUrl = this.resources.userAddIconUrl;
+            break;
+        }
       },
     });
   </script>

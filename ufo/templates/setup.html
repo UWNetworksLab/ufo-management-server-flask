@@ -1,41 +1,40 @@
 {% extends "base.html" %}
 {% block title %}Setup{% endblock %}
 {% block body %}
-  <paper-display-template resources="{{user_resources}}" id="userDisplayTemplate">
-    <left-icon-container resources="{{user_resources}}">
-      <user-add-tabs resources="{{user_resources}}">
-      </user-add-tabs>
-    </left-icon-container>
-  </paper-display-template>
-
-  <paper-display-template resources="{{proxy_server_resources}}" id="proxyServerDisplayTemplate">
-    <left-icon-container resources="{{proxy_server_resources}}">
-      <server-add-form resources="{{proxy_server_resources}}">
-      </server-add-form>
-    </left-icon-container>
-  </paper-display-template>
-
-  <paper-display-template resources="{{oauth_resources}}" id="oauthDisplayTemplate">
-    <header-container resources="{{oauth_resources}}">
-      <oauth-configuration resources="{{oauth_resources}}" configuration="{{oauth_configuration_resources}}">
+  <paper-display-template id="oauthDisplayTemplate">
+    <header-container resources="{{resources}}" header-type="oauth">
+      <oauth-configuration resources="{{resources}}" configuration="{{oauth_configuration_resources}}">
       </oauth-configuration>
     </header-container>
   </paper-display-template>
 
-  <paper-display-template resources="{{policy_resources}}" id="chromePolicyDisplayTemplate">
-    <header-container resources="{{policy_resources}}">
-      <chrome-policy resources="{{policy_resources}}">
-      </chrome-policy>
-    </header-container>
+  <paper-display-template id="userDisplayTemplate">
+    <left-icon-container resources="{{resources}}" add-type="user">
+      <user-add-tabs resources="{{resources}}">
+      </user-add-tabs>
+    </left-icon-container>
   </paper-display-template>
 
-  <paper-display-template resources="{{settings_resources}}" id="settingsDisplayTemplate">
-    <header-container resources="{{settings_resources}}">
-      <settings-configuration resources="{{settings_resources}}">
+  <paper-display-template id="proxyServerDisplayTemplate">
+    <left-icon-container resources="{{resources}}" add-type="proxyServer">
+      <server-add-form resources="{{resources}}">
+      </server-add-form>
+    </left-icon-container>
+  </paper-display-template>
+
+  {% if session['domain'] %}
+    <paper-display-template id="chromePolicyDisplayTemplate">
+      <header-container resources="{{resources}}" header-type="chromePolicy">
+        <chrome-policy resources="{{resources}}">
+        </chrome-policy>
+      </header-container>
+    </paper-display-template>
+  {% endif %}
+
+  <paper-display-template id="settingsDisplayTemplate">
+    <header-container resources="{{resources}}" header-type="settings">
+      <settings-configuration resources="{{resources}}">
       </settings-configuration>
     </header-container>
   </paper-display-template>
-
-  <!-- Remove this when it's properly in the base.html or provided any other ways. -->
-  <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
 {% endblock %}

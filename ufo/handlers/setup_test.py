@@ -17,7 +17,7 @@ FAKE_OAUTH_URL = 'sftp://1800-oauth.com'
 FAKE_DOMAIN = 'yahoo.com'
 FAKE_OAUTH_CODE = 'foobar'
 FAKE_CREDENTIALS = 'I am some fake credentials.'
-FAKE_ADMIN_USERNAME = 'some fake username'
+FAKE_ADMIN_EMAIL = 'some_fake_email@admin.com'
 FAKE_ADMIN_PASSWORD = 'some fake password'
 MOCK_CREDENTIALS = MagicMock()
 MOCK_CREDENTIALS.authorize.return_value = None
@@ -162,7 +162,7 @@ class SetupTest(base_test.BaseTest):
     form_data = {}
     form_data['oauth_code'] = FAKE_OAUTH_CODE
     form_data['domain'] = FAKE_DOMAIN
-    form_data['admin_username'] = FAKE_ADMIN_USERNAME
+    form_data['admin_email'] = FAKE_ADMIN_EMAIL
     form_data['admin_password'] = FAKE_ADMIN_PASSWORD
 
     resp = self.client.post(flask.url_for('setup'), data=form_data,

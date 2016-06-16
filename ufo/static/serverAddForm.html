@@ -1,5 +1,6 @@
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 
@@ -10,44 +11,51 @@
       padding: 24px 24px;
       max-width: ;
     }
-    #serverSpinner {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      z-index: 100000000;
-    }
     .buttons {
       margin-bottom: 25px;
     }
   </style>
   <template>
-    <div>
-      <template is="dom-if" if="{{isSpinnerOn}}">
-        <paper-spinner id="serverSpinner" active$={{isSpinnerOn}}></paper-spinner>
+    <paper-dialog-scrollable class="biggerScrollable">
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="serverSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
-      <form is="iron-form" id="serverAddForm" method="post" action="{{resources.addUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-        <paper-input label="{{resources.ipLabel}}" type="text" id="ipInput" name="ip_address" required auto-validate pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}">{{resources.ip_address}}</paper-input>
-        <paper-input label="{{resources.nameLabel}}" type="text" id="nameInput" name="name" required>{{resources.name}}</paper-input>
+      <form is="iron-form" id="serverAddForm" method="post" action="{{resources.proxyServerAddUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
+        <paper-input label="{{resources.ipLabel}}" type="text" id="{{resources.ipInput}}" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" on-keypress="submitIfEnter">{{resources.ip_address}}</paper-input>
+        <paper-input label="{{resources.nameLabel}}" type="text" id="{{resources.nameInput}}" name="name" required on-keypress="submitIfEnter">{{resources.name}}</paper-input>
         <!-- TODO add the ability to upload files -->
-        <ufo-textarea label="{{resources.privateKeyLabel}}" id="privateKeyInput" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" auto-validate pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}">{{resources.private_key}}</ufo-textarea>
+        <ufo-textarea label="{{resources.sshPrivateKeyLabel}}"
+                      id="{{resources.sshPrivateKeyInput}}"
+                      name="ssh_private_key"
+                      required max-rows="{{resources.textAreaMaxRows}}"
+                      pattern="{{resources.regexes.privateKeyPattern}}"
+                      error-message="{{resources.regexes.privateKeyError}}"
+                      value="{{resources.ssh_private_key}}">
+        </ufo-textarea>
         <br>
-        <p>{{resources.privateKeyText}}</p>
-
-        <paper-input label="{{resources.publicKeyLabel}}" type="text" id="publicKeyInput" name="public_key" required auto-validate pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}">{{resources.public_key}}</paper-input>
+        <p>{{resources.sshPrivateKeyText}}</p>
+        <paper-input label="{{resources.hostPublicKeyLabel}}"
+                     type="text"
+                     id="{{resources.hostPublicKeyInput}}"
+                     name="host_public_key"
+                     required pattern="{{resources.regexes.publicKeyPattern}}"
+                     error-message="{{resources.regexes.publicKeyError}}"
+                     on-keypress="submitIfEnter">{{resources.host_public_key}}
+        </paper-input>
         <br>
-        <p>{{resources.publicKeyText}}</p>
+        <p>{{resources.hostPublicKeyText}}</p>
         <p>{{resources.rsaText}}</p>
-        <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+        <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       </form>
       <div class="buttons">
-        <paper-button class="anchor-button" dialog-dismiss>
+        <paper-button class="anchor-button" dialog-dismiss on-tap="resetForm">
         <strong>{{resources.dismissText}}</strong>
         </paper-button>
         <paper-button class="anchor-button" id="serverAddSubmitButton" autofocus on-tap="submitPostForm">
         <strong>{{resources.confirmText}}</strong>
         </paper-button>
       </div>
-    </div>
+    </paper-dialog-scrollable>
   </template>
 
   <script>
@@ -58,7 +66,7 @@
           type: Object,
           notify: true,
         },
-        isSpinnerOn: {
+        loading: {
           type: Boolean,
           value: false,
           notify: true,
@@ -67,39 +75,59 @@
       listeners: {
         'iron-form-error': 'handleFormError',
       },
+      ready: function() {
+        this.$.serverAddForm.request.handleAs = "json";
+        this.$.serverAddForm.request.jsonPrefix = this.resources.jsonPrefix;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
       enableSpinner: function() {
-        this.set('isSpinnerOn', true);
+        this.set('loading', true);
       },
       submitPostForm: function() {
         this.querySelector('#serverAddForm').submit();
       },
       closeModal: function() {
-        this.set('isSpinnerOn', false);
+        this.set('loading', false);
+        this.resetForm();
         serverModal = document.getElementById('serverModal');
         if (serverModal) {
           document.getElementById('serverModal').close();
-        } else {
-          document.getElementById('serverAddForm').reset();
         }
       },
       handleFormError: function(event, detail) {
-        var errorDetail = {'detail': detail.request.xhr.response};
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
-        this.closeModal();
+        this.set('loading', false);
       },
       parsePostResponse: function(e, detail) {
-        this.sendServersJsonToList(detail.xhr.response);
+        this.sendServersJsonToList(this.$.serverAddForm.request.lastResponse);
         this.closeModal();
       },
       sendServersJsonToList: function(updatedServersJson) {
-        var listElem = document.getElementById(this.resources.listId);
+        var listElem = document.getElementById(this.resources.proxyServerListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedServersJson);
         }
       },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
+      resetForm: function(e, details) {
+        document.getElementById('serverAddForm').reset();
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitPostForm();
+        }
       },
     });
   </script>

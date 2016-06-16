@@ -1,15 +1,14 @@
 """The module for distributing user keys to proxy servers."""
 
+from Crypto.PublicKey import RSA
+import pipes
 from rq import Queue
+import string
 
 import ufo
 from ufo.database import models
 from ufo.services import ssh_client
 import worker
-
-
-# This is the target which the key strings should be saved on the proxy server.
-KEY_FILENAME = '/tmp/change_me.txt'
 
 
 class KeyDistributor(object):
@@ -24,15 +23,21 @@ class KeyDistributor(object):
       key_string: A string of users with associated key.
     """
     # TODO: Improve this so that we only do this if there are relevant changes.
-    users = models.User.query.all()
+    users = models.User.get_unrevoked_users()
     key_string = ''
-    ssh_starting_portion = 'ssh-rsa'
+    ssh_starting_portion = 'command="/login.sh",permitopen="zork:9000",no-agent-forwarding,no-pty,no-user-rc,no-X11-forwarding'
     endline = '\n'
     for user in users:
-      if not user.is_key_revoked:
-        user_string = (ssh_starting_portion + ' ' + user.public_key + ' ' +
-                       user.email + endline)
-        key_string += user_string
+
+      public_key = RSA.importKey(user.public_key)
+      public_key_string = public_key.exportKey('OpenSSH')
+
+      # Do not include email at the end of the user_string as it's a security
+      # hole.  It's also just a comment without any specific use.
+      # If really necessary, encode special characters with something like json.
+      user_string = (ssh_starting_portion + ' ' + public_key_string + ' ' +
+                     endline)
+      key_string += user_string
 
     return key_string
 
@@ -48,7 +53,7 @@ class KeyDistributor(object):
 
     try:
       client.connect(proxy_server)
-    except (ssh_client.SSHConnectionException, 
+    except (ssh_client.SSHConnectionException,
             ssh_client.InvalidKeyTypeException):
       ufo.app.logger.error(
           'Unable to connect to proxy server %s to distribute keys.',
@@ -56,14 +61,24 @@ class KeyDistributor(object):
       # TODO: Notify admin in some way, that the keys distribution have error.
       return
 
-    # TODO: Change to the actual file when we know where and what it should be.
+    key_string = pipes.quote(key_string)  # Prevent shell injection.
     data = {
         'key_string': key_string,
-        'key_filename': KEY_FILENAME
+        'tmp_file_path': '/tmp/ufo-keys',
+        'authorized_keys_path': '/home/getter/.ssh/authorized_keys',
+        'container_name': 'uproxy-sshd',
+        'getter_user': 'getter',
+        'getter_group': 'getter',
     }
     # '>' will overwrite existing file, versus '>>' which will append
-    create_new_key_file = "echo '{key_string}' > {key_filename}".format(**data)
-    stdin, stdout, stderr = client.exec_command(create_new_key_file)
+
+    make_file = "echo {key_string} > {tmp_file_path}".format(**data)
+    copy_file = "docker cp {tmp_file_path} {container_name}:{authorized_keys_path}".format(**data)
+    mod_file = "docker exec {container_name} chmod 644 {authorized_keys_path}".format(**data)
+    own_file = "docker exec {container_name} chown {getter_user}:{getter_group} /home/getter/.ssh/authorized_keys".format(**data)
+    cleanup = "rm -f {tmp_file_path}".format(**data)
+    command = string.join([make_file, copy_file, mod_file, own_file, cleanup], ' && ')
+    stdin, stdout, stderr = client.exec_command(command)
 
     error = stderr.readlines()
     if error:

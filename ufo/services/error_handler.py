@@ -5,11 +5,13 @@ https://goo.gl/OWOa70
 
 One difference here is that we will aim to handle custom exceptions.
 """
+import json
 import logging
 
 import flask
 from werkzeug import exceptions
 
+import ufo
 from ufo.handlers import auth
 
 def handle_error(error):
@@ -27,8 +29,15 @@ def handle_error(error):
   if not isinstance(error, exceptions.HTTPException):
     error = exceptions.InternalServerError(error.message)
 
-  return flask.jsonify({'code': error.code,
-                        'message': error.description}), error.code
+  # Show the user an error page, instead of a json message.
+  if error.code == 404:
+    return flask.render_template('error.html', error=error)
+
+  error_dict = {'code': error.code, 'message': error.description}
+  resp = flask.Response(ufo.XSSI_PREFIX + json.dumps((error_dict)),
+                        headers=ufo.JSON_HEADERS)
+  resp.status_code = error.code
+  return resp
 
 def handle_not_logged_in(error):
   """A handler to gracefully handle the not logged in error.

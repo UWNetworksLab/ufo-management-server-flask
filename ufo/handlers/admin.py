@@ -21,7 +21,8 @@ def admin_list():
     A json object with 'items' set to the list of admins in the db.
   """
   items_dict = {'items': models.AdminUser.get_items_as_list_of_dict()}
-  return flask.Response(json.dumps((items_dict)), mimetype='application/json')
+  return flask.Response(ufo.XSSI_PREFIX + json.dumps((items_dict)),
+                        headers=ufo.JSON_HEADERS)
 
 @ufo.app.route('/admin/add', methods=['POST'])
 @ufo.setup_required
@@ -32,11 +33,11 @@ def add_admin():
   Returns:
     A redirect to the admin_list handler after inserting the specified admin.
   """
-  admin_username = flask.request.form.get('admin_username', None)
+  admin_email = flask.request.form.get('admin_email', None)
   admin_password = flask.request.form.get('admin_password', None)
 
-  if admin_username is not None or admin_password is not None:
-    admin_user = models.AdminUser(username=json.loads(admin_username))
+  if admin_email is not None or admin_password is not None:
+    admin_user = models.AdminUser(email=json.loads(admin_email))
     admin_user.set_password(json.loads(admin_password))
     try:
       admin_user.save()
@@ -60,6 +61,33 @@ def delete_admin():
   """
   admin_id = json.loads(flask.request.form.get('admin_id'))
   admin_user = models.AdminUser.query.get_or_404(admin_id)
-  admin_user.delete()
+  try:
+    admin_user.delete()
+  except custom_exceptions.AttemptToRemoveLastAdmin as e:
+    flask.abort(e.code, e.message)
+
+  return flask.redirect(flask.url_for('admin_list'))
+
+@ufo.app.route('/admin/changePassword', methods=['POST'])
+@ufo.setup_required
+@auth.login_required
+def change_admin_password():
+  """Changes the password for the admin specified.
+
+  Returns:
+    A redirect to the admin_list page after modifying the given admin.
+  """
+  admin_user = models.AdminUser.get_by_email(flask.session['email'])
+  old_password = json.loads(flask.request.form.get('old_password'))
+  new_password = json.loads(flask.request.form.get('new_password'))
+
+  if not admin_user.does_password_match(old_password):
+    e = custom_exceptions.IncorrectCredential()
+    flask.abort(e.code, e.message)
+  admin_user.set_password(new_password)
+  try:
+    admin_user.save()
+  except custom_exceptions.UnableToSaveToDB as e:
+    flask.abort(e.code, e.message)
 
   return flask.redirect(flask.url_for('admin_list'))

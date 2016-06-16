@@ -1,5 +1,6 @@
 """Test for models module functionality."""
 
+import datetime
 import os
 import unittest
 
@@ -41,6 +42,23 @@ class UserTest(base_test.BaseTest):
     self.assertNotEqual(original_public_key, user.public_key)
     self.assertNotEqual(original_private_key, user.private_key)
 
+  def testGetUnrevokedEntries(self):
+    """Test that getting unrevoked entries returns all unrevoked users."""
+    user_1 = models.User()
+    user_1.is_key_revoked = False
+    user_1.email = 'foo@bar.baz'
+    user_1.save()
+
+    user_2 = models.User()
+    user_2.is_key_revoked = True
+    user_1.email = 'alpha@beta.gamma'
+    user_2.save()
+
+    unrevoked_users = models.User.get_unrevoked_users()
+    self.assertEqual(1, len(unrevoked_users))
+    self.assertIn(user_1, unrevoked_users)
+    self.assertNotIn(user_2, unrevoked_users)
+
   def testUserToDict(self):
     """Whether the necessary fields match in a dictionary representation."""
     user = models.User()
@@ -78,8 +96,9 @@ class ProxyServerTest(base_test.BaseTest):
     self.assertEqual(server_dict['id'], server.id)
     self.assertEqual(server_dict['ip_address'], server.ip_address)
     self.assertEqual(server_dict['name'], server.name)
-    self.assertEqual(server_dict['public_key'], server.get_public_key_as_authorization_file_string())
-    self.assertIn('private_key', server_dict)
+    self.assertEqual(server_dict['host_public_key'],
+                     server.get_public_key_as_authorization_file_string())
+    self.assertIn('ssh_private_key', server_dict)
 
 
 class ConfigTest(base_test.BaseTest):
@@ -107,42 +126,107 @@ class ConfigTest(base_test.BaseTest):
                      config.network_jail_until_google_auth)
 
 
+class FailedLoginAttempt(base_test.BaseTest):
+  """Test for FailedLoginAttempt model class functionality."""
+
+  def testCreate(self):
+    """Test whether a new instance shows up in the DB."""
+    failed_login_attempts = models.FailedLoginAttempt.get_all()
+    self.assertEqual(0, len(failed_login_attempts))
+
+    now = datetime.datetime.now()
+    models.FailedLoginAttempt.create()
+
+    failed_login_attempts = models.FailedLoginAttempt.get_all()
+    self.assertEqual(1, len(failed_login_attempts))
+    self.assertTrue(now <= failed_login_attempts[0].occurred_datetime)
+
+  def testCountSinceDatetime(self):
+    """Test count since datetime properly counts entries."""
+    start = datetime.datetime.now()
+    failed_login_count = models.FailedLoginAttempt.count_since_datetime(start)
+    self.assertEqual(0, failed_login_count)
+
+    expected_count = 3
+    for x in range(expected_count):
+      models.FailedLoginAttempt.create()
+
+    failed_login_count = models.FailedLoginAttempt.count_since_datetime(start)
+    self.assertEqual(expected_count, failed_login_count)
+
+    middle = datetime.datetime.now()
+    failed_login_count = models.FailedLoginAttempt.count_since_datetime(middle)
+    self.assertEqual(0, failed_login_count)
+
+    for x in range(expected_count):
+      models.FailedLoginAttempt.create()
+
+    failed_login_count = models.FailedLoginAttempt.count_since_datetime(start)
+    self.assertEqual(2*expected_count, failed_login_count)
+
+  def testDeleteBeforeDatetime(self):
+    """Test count since datetime properly counts entries."""
+    start = datetime.datetime.now()
+
+    expected_count = 3
+    for x in range(expected_count):
+      models.FailedLoginAttempt.create()
+
+    models.FailedLoginAttempt.delete_before_datetime(start)
+    self.assertEqual(expected_count, len(models.FailedLoginAttempt.get_all()))
+
+    end = datetime.datetime.now()
+    models.FailedLoginAttempt.delete_before_datetime(end)
+    self.assertEqual(0, len(models.FailedLoginAttempt.get_all()))
+
+
 class AdminUserTest(base_test.BaseTest):
   """Test for admin user model class functionality."""
-  FAKE_ADMIN_USERNAME = 'fake admin username'
+  FAKE_ADMIN_EMAIL = 'fake_admin@email.com'
+  FAKE_ADMIN_EMAIL_2 = 'fake_admin_2@email.com'
   FAKE_ADMIN_PASSWORD = 'fake admin password'
 
   def testAdminUserToDict(self):
     """Whether the necessary fields match in a dictionary representation."""
     admin_user = models.AdminUser()
-    admin_user.username = self.FAKE_ADMIN_USERNAME
+    admin_user.email = self.FAKE_ADMIN_EMAIL
     admin_user.set_password(self.FAKE_ADMIN_PASSWORD)
     admin_user.save()
     admin_dict = admin_user.to_dict()
 
     self.assertEqual(admin_dict['id'], admin_user.id)
-    self.assertEqual(admin_dict['username'], admin_user.username)
+    self.assertEqual(admin_dict['email'], admin_user.email)
     self.assertNotIn('password', admin_dict)
 
   def testGetAdminByUsername(self):
-    """Test if getting by username works as intended."""
-    # The username should not exist initially.
-    self.assertIsNone(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME))
+    """Test if getting by email works as intended."""
+    # The email should not exist initially.
+    self.assertIsNone(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL))
 
     admin_user = models.AdminUser()
-    admin_user.username = self.FAKE_ADMIN_USERNAME
+    admin_user.email = self.FAKE_ADMIN_EMAIL
     admin_user.set_password(self.FAKE_ADMIN_PASSWORD)
     admin_user.save()
 
-    self.assertIsNotNone(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME))
-    self.assertEquals(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME), admin_user)
+    self.assertIsNotNone(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL))
+    self.assertEquals(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL), admin_user)
+
+    admin_user_2 = models.AdminUser()
+    admin_user_2.email = self.FAKE_ADMIN_EMAIL_2
+    admin_user_2.set_password(self.FAKE_ADMIN_PASSWORD)
+    admin_user_2.save()
+
+    self.assertIsNotNone(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL_2))
+    self.assertEquals(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL_2), admin_user_2)
 
     admin_user.delete()
-    self.assertIsNone(models.AdminUser.get_by_username(
-        self.FAKE_ADMIN_USERNAME))
+    self.assertIsNone(models.AdminUser.get_by_email(
+        self.FAKE_ADMIN_EMAIL))
 
   def testAdminPassword(self):
     """Test that setting password and comparing works."""
@@ -150,7 +234,7 @@ class AdminUserTest(base_test.BaseTest):
     self.assertNotEqual(other_password, self.FAKE_ADMIN_PASSWORD)
 
     admin_user = models.AdminUser()
-    admin_user.username = self.FAKE_ADMIN_USERNAME
+    admin_user.email = self.FAKE_ADMIN_EMAIL
     admin_user.set_password(self.FAKE_ADMIN_PASSWORD)
     admin_user.save()
 

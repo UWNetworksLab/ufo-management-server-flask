@@ -67,8 +67,7 @@
           <div id="right">
             <div id="errorDetail">
               <div id="errorTitle">
-                <!-- Extract this for i18n. -->
-                Something's Not Right
+                {{resources.errorTitleText}}
               </div>
               <br>
               <div id="errorMessage">
@@ -77,8 +76,10 @@
             </div>
           </div>
           <div>
-            <paper-button class="custom" on-transitionend="closeErrorNotification">
-              Close
+            <paper-button id="errorNotificationCloseButton"
+                          class="custom"
+                          on-transitionend="closeErrorNotification">
+              <strong>{{resources.closeText}}</strong>
             </paper-button>
           </div>
         </div>
@@ -91,6 +92,9 @@
       properties: {
         errorCode: Number,
         errorMessage: String,
+        resources: {
+          type: Object,
+        },
       },
       listeners: {
         'ApplicationError': 'showErrorNotification',

@@ -18,25 +18,22 @@ def _make_chrome_policy_json():
     A json string of current chrome policy.
   """
   proxy_servers = models.ProxyServer.query.all()
-  proxy_server_dicts = []
+  proxy_server_dict = {}
   for server in proxy_servers:
-    proxy_server_dict = {
-        'ip': server.ip_address,
-        'public_key': server.get_public_key_as_authorization_file_string(),
-    }
-    proxy_server_dicts.append(proxy_server_dict)
+    proxy_server_dict[server.ip_address] = (
+        server.get_public_key_as_authorization_file_string())
 
   config = ufo.get_user_config()
 
   policy_dictionary = {
-      "validProxyServers": proxy_server_dicts,
+      "validProxyServers": proxy_server_dict,
       "enforceProxyServerValidity": config.proxy_server_validity,
   }
 
   return json.dumps(policy_dictionary)
 
 
-@ufo.app.route('/chromepolicy/download/')
+@ufo.app.route('/chromepolicy/download/', methods=['POST'])
 @ufo.setup_required
 @auth.login_required
 def download_chrome_policy():
@@ -45,5 +42,4 @@ def download_chrome_policy():
   Returns:
     A json file of the current managed chrome policy.
   """
-  return flask.Response(_make_chrome_policy_json(),
-                        mimetype='application/json')
+  return flask.Response(_make_chrome_policy_json(), headers=ufo.JSON_HEADERS)

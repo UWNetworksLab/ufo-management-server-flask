@@ -3,17 +3,16 @@
 {% block body %}
 <!-- TODO(eholder): Verify this page will/will not be needed according
                     to John Cassidy and remove or keep as appropriate. -->
-  <paper-display-template resources="{{user_resources}}" id="userDisplayTemplate">
-    <header-container resources="{{user_resources}}">
-      <list-items resources="{{user_resources}}" id="userList" ajax-response="{{user_items}}">
-      </list-items>
+  <paper-display-template id="userDisplayTemplate">
+    <header-container resources="{{resources}}" header-type="user">
+      <user-list resources="{{resources}}" id="userList" ajax-response="{{user_items}}">
+      </user-list>
     </header-container>
   </paper-display-template>
-  <paper-display-template resources="{{proxy_server_resources}}" id="proxyServerDisplayTemplate">
-    <header-container resources="{{proxy_server_resources}}">
-      <list-items resources="{{proxy_server_resources}}" id="proxyList" ajax-response="{{proxy_server_items}}">
-      </list-items>
+  <paper-display-template id="proxyServerDisplayTemplate">
+    <header-container resources="{{resources}}" header-type="proxyServer">
+      <server-list resources="{{resources}}" id="proxyList" ajax-response="{{proxy_server_items}}">
+      </server-list>
     </header-container>
   </paper-display-template>
-  <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
 {% endblock %}

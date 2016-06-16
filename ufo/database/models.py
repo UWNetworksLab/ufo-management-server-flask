@@ -1,3 +1,5 @@
+
+import datetime
 import StringIO
 
 import bcrypt
@@ -5,6 +7,7 @@ from Crypto.PublicKey import RSA
 from paramiko import hostkeys
 from paramiko import pkey
 import sqlalchemy
+import streql
 
 import ufo
 from ufo.services import custom_exceptions
@@ -19,7 +22,7 @@ ENABLE_TEXT = 'Enable'
 # We can add support using enum34 and pypi if we ever choose, but this method
 # using a dictionary should be sufficient until that time.
 # TODO(eholder): Follow up on whether to convert to pypi for real enums. See
-# here for more info: http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
+# here for more info: http://stackoverflow.com/q/36932/2216222
 CRON_JOB_ACTIONS = {
   'nothing': 'nothing',
   'revoke': 'revoke',
@@ -33,6 +36,7 @@ class Model(ufo.db.Model):
   Most method implementations are taken from
   https://github.com/sloria/cookiecutter-flask"""
   __abstract__ = True
+  id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
   def update(self, commit=True, **kwargs):
     """Update the given entity by setting the given attributes and saving.
@@ -56,6 +60,11 @@ class Model(ufo.db.Model):
 
     Returns:
       The specified entity.
+
+    Raises:
+      custom_exceptions.UnableToSaveToDB: If there is an integrity error from
+                                          attempting to save an item which
+                                          duplicates a unique value.
     """
     ufo.db.session.add(self)
     if commit:
@@ -98,7 +107,7 @@ class Model(ufo.db.Model):
     Returns:
       A list of entities in dictionary form from the database.
     """
-    return cls.make_items_into_list_of_dict(cls.query.all())
+    return cls.make_items_into_list_of_dict(cls.get_all())
 
   @classmethod
   def search(cls, search_text):
@@ -130,6 +139,15 @@ class Model(ufo.db.Model):
       to_return.append(item.to_dict())
     return to_return
 
+  @classmethod
+  def get_all(cls):
+    """Retrieves a list of all the entities in the database of the given class.
+
+    Returns:
+      A list of the entities.
+    """
+    return cls.query.order_by(cls.id).all()
+
 
 class Config(Model):
   """Class for anything that needs to be stored as a singleton for the site
@@ -156,6 +174,9 @@ class Config(Model):
                                        default=CRON_JOB_ACTIONS['nothing'])
   user_undelete_action = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
                                        default=CRON_JOB_ACTIONS['nothing'])
+  should_show_recaptcha = ufo.db.Column(ufo.db.Boolean(), default=False)
+  recaptcha_start_datetime = ufo.db.Column(ufo.db.DateTime())
+  recaptcha_end_datetime = ufo.db.Column(ufo.db.DateTime())
 
   def to_dict(self):
     """Get the config as a dict.
@@ -170,6 +191,47 @@ class Config(Model):
       'proxy_server_validity': self.proxy_server_validity,
       'network_jail_until_google_auth': self.network_jail_until_google_auth,
     }
+
+
+class FailedLoginAttempt(Model):
+  """Simple class for data about failed login attempts."""
+  __tablename__ = 'failed_login_attempt'
+  __searchable__ = []
+
+  id = ufo.db.Column(ufo.db.Integer, primary_key=True)
+
+  occurred_datetime = ufo.db.Column(ufo.db.DateTime())
+
+  @staticmethod
+  def create():
+    """Create a new failed login attempt entry in the database."""
+    new_failed_login = FailedLoginAttempt()
+    new_failed_login.occurred_datetime = datetime.datetime.now()
+    new_failed_login.save()
+
+  @staticmethod
+  def count_since_datetime(previous_datetime):
+    """Retrieve how many failed logins happened after a specified time.
+
+    Args:
+      previous_datetime: The datetime to compare if the attempt was after.
+
+    Return:
+      An integer for how many failed logins were after the specified time.
+    """
+    return FailedLoginAttempt.query.filter(
+        FailedLoginAttempt.occurred_datetime >= previous_datetime).count()
+
+  @staticmethod
+  def delete_before_datetime(previous_datetime):
+    """Delete the entries in the db before the specified datetime.
+
+    Args:
+      previous_datetime: The datetime to compare if the attempt was before.
+    """
+    failed_login_attempts_before = FailedLoginAttempt.query.filter(
+        FailedLoginAttempt.occurred_datetime < previous_datetime).delete()
+    ufo.db.session.commit()
 
 
 class User(Model):
@@ -214,6 +276,11 @@ class User(Model):
     self.private_key = key_pair['private_key']
     self.public_key = key_pair['public_key']
 
+  @staticmethod
+  def get_unrevoked_users():
+    """Return all user entries from the database which are not revoked."""
+    return User.query.filter(User.is_key_revoked == False).all()
+
   def to_dict(self):
     """Get the user as a dictionary.
 
@@ -232,7 +299,16 @@ class User(Model):
 
 
 class ProxyServer(Model):
-  """Class for information about the proxy servers."""
+  """Class for information about the proxy servers.
+
+  The ssh_private_key is the private key that can access the proxy server
+  as root via ssh.  This is used by the ssh client to access
+  the proxy server to distribute user keys.
+
+  The host_public_key is the public key of the proxy server as can be found in
+  /etc/ssh/ssh_host_rsa_key.pub file.  This is used to authenticate
+  the proxy server.
+  """
   __tablename__ = "proxyserver"
   __searchable__ = ['ip_address', 'name']
 
@@ -303,34 +379,33 @@ class ProxyServer(Model):
       "id": self.id,
       "name": self.name,
       "ip_address": self.ip_address,
-      "public_key": self.get_public_key_as_authorization_file_string(),
-      "private_key": private_key_text,
+      "host_public_key": self.get_public_key_as_authorization_file_string(),
+      "ssh_private_key": private_key_text,
       }
 
 
 class AdminUser(Model):
   """People who have access to the management server, as in admins."""
   __tablename__ = "admin_user"
-  __searchable__ = ['username']
+  __searchable__ = ['email']
 
   id = ufo.db.Column(ufo.db.Integer, primary_key=True)
 
-  username = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH),
-                                         index=True, unique=True)
+  email = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH), index=True,
+                        unique=True)
   password = ufo.db.Column(ufo.db.String(LONG_STRING_LENGTH))
 
-  # TODO(eholder): Followup with unit tests for each of these.
   @classmethod
-  def get_by_username(cls, username):
-    """Lookup an admin user by username.
+  def get_by_email(cls, email):
+    """Lookup an admin user by email.
 
     Agrs:
-      username: The username to search for an admin user by.
+      email: The email to search for an admin user by.
 
     Returns:
       The specified admin user or None if not found.
     """
-    return cls.query.filter_by(username=username).one_or_none()
+    return cls.query.filter_by(email=email).one_or_none()
 
   def set_password(self, password):
     """Sets the password on a given admin user.
@@ -350,8 +425,30 @@ class AdminUser(Model):
       True if the password matches the admin user and False otherwise.
     """
     hashed = bcrypt.hashpw(password.encode('utf-8'), self.password.encode('utf-8'))
-    return hashed == self.password
+    # streql is a constant time string comparison tool to prevent timing-based
+    # attacks. See here for more info: https://github.com/PeterScott/streql
+    return streql.equals(hashed, self.password)
 
+  def delete(self, commit=True):
+    """Delete the given entity and save if specified.
+
+    The admin specific implementation here will raise an exception if this is
+    the last remaining admin that is being deleted.
+
+    Args:
+      commit: A boolean for whether or not to commit the result immediately.
+
+    Returns:
+      The result of committing the given entity if specified or False.
+
+    Raises:
+      custom_exceptions.AttemptToRemoveLastAdmin: If this is the only admin in
+                                                  the database.
+    """
+    if len(AdminUser.query.all()) == 1:
+      raise custom_exceptions.AttemptToRemoveLastAdmin
+
+    super(AdminUser, self).delete(commit)
 
   def to_dict(self):
     """Get the admin user as a dictionary.
@@ -361,6 +458,6 @@ class AdminUser(Model):
     """
     return {
       "id": self.id,
-      "username": self.username,
+      "email": self.email,
     }
 

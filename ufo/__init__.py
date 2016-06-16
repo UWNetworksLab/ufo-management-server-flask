@@ -1,6 +1,7 @@
 import flask
 from flask.ext import sqlalchemy
 from flask.ext import whooshalchemy
+from flask_recaptcha import ReCaptcha
 import functools
 import os
 import sys
@@ -21,6 +22,14 @@ if 'DATABASE_URL' in os.environ:
   app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
   app.config['WHOOSH_BASE'] = os.environ['DATABASE_URL']
 
+if 'RECAPTCHA_SITE_KEY' in os.environ and 'RECAPTCHA_SECRET_KEY' in os.environ:
+  app.config['RECAPTCHA_SITE_KEY'] = os.environ['RECAPTCHA_SITE_KEY']
+  app.config['RECAPTCHA_SECRET_KEY'] = os.environ['RECAPTCHA_SECRET_KEY']
+else:
+  app.logger.error('No recaptcha site or secret key found. Please configure ' +
+                   'RECAPTCHA_SITE_KEY and RECAPTCHA_SECRET_KEY in the ' +
+                   'environment variables.')
+
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
 
@@ -35,6 +44,17 @@ from ufo.database import models
 
 whooshalchemy.whoosh_index(app, models.User)
 whooshalchemy.whoosh_index(app, models.ProxyServer)
+
+# The headers and prefix listed below are to help guard against XSSI. The
+# prefix specifically causes us to escape out of any client that attempts to
+# execute the JSON as code. We don't use any callbacks or functions in our
+# returned JSON, but the prefix would catch it by causing execution to stop if
+# so. The prefix is supplied in the resource dictionaries so that it can be
+# stripped away on the client side when making AJAX calls.
+JSON_HEADERS = {'Content-Type': 'application/javascript; charset=utf-8'}
+XSSI_PREFIX = ")]}'\n"
+
+RECAPTCHA = ReCaptcha(app=app)
 
 @app.after_request
 def checkCredentialChange(response):

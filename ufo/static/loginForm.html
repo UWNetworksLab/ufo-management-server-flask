@@ -19,10 +19,18 @@
   </style>
   <template>
     <form id="loginForm" method="POST">
-      <paper-input label="{{resources.usernameLabel}}" id="username" name="username"></paper-input>
-      <paper-input type="password" label="{{resources.passwordLabel}}" id="password" name="password"></paper-input>
+      <paper-input label="{{resources.emailLabel}}" id="email" name="email" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
+      <paper-input type="password" label="{{resources.passwordLabel}}" id="password" name="password" required on-keypress="submitIfEnter"></paper-input>
 
-      <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+      <template is="dom-if" if="{{shouldShowRecaptcha}}">
+        <script src='//www.google.com/recaptcha/api.js'></script>
+        <div id="recaptchaDiv" class="g-recaptcha"
+          data-sitekey="{{resources.recaptchaKey}}" data-theme="light"
+          data-type="image" data-size="normal" data-tabindex="0">
+        </div>
+      </template>
+
+      <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
     </form>
     <div class="buttons">
       <paper-button on-tap="submitLoginForm" class="anchor-button" type="submit" id="signIn">
@@ -38,12 +46,33 @@
         resources: {
           type: Object,
         },
+        failures: {
+          type: Number,
+        },
+        shouldShowRecaptcha: {
+          type: Boolean,
+          value: false,
+        },
       },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      attached: function() {
+        if (this.shouldShowRecaptcha) {
+          this.querySelector('#recaptchaDiv')
+            .setAttribute('data-sitekey', this.resources.recaptchaKey);
+        }
       },
       submitLoginForm: function() {
         this.querySelector('#loginForm').submit();
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitLoginForm();
+        }
       },
     });
   </script>

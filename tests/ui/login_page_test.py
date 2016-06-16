@@ -2,7 +2,6 @@
 import unittest
 
 import flask
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -25,7 +24,7 @@ class LoginPageTest(BaseTest):
       flask.url_for('admin_list'), # GET
       # flask.url_for('add_admin'), # POST
       # flask.url_for('delete_admin'), # POST
-      flask.url_for('download_chrome_policy'), # GET
+      # flask.url_for('download_chrome_policy'), # POST
       flask.url_for('proxyserver_list'), # GET
       flask.url_for('proxyserver_add'), # GET or POST
       # flask.url_for('proxyserver_edit'), # POST
@@ -57,15 +56,22 @@ class LoginPageTest(BaseTest):
     self.driver.get(self.args.server_url + flask.url_for('login'))
 
     login_page = LoginPage(self.driver)
-    for element_by_id in LoginPage.BASE_PAGE_ELEMENTS:
+    for element_by_id in LoginPage.BASE_PAGE_ELEMENTS_FOR_LOGIN:
       base_page_element = login_page.GetElement(element_by_id)
       self.assertIsNotNone(base_page_element)
+      self.assertTrue(base_page_element.is_displayed())
+
+    for element_by_id in LoginPage.BASE_PAGE_ELEMENTS_AFTER_LOGIN:
+      base_page_search_element = login_page.GetElement(element_by_id)
+      self.assertIsNotNone(base_page_search_element)
+      self.assertFalse(base_page_search_element.is_displayed())
 
     self.assertLogoLinksToLandingPage()
 
     for element_by_id in LoginPage.LOGIN_PAGE_ELEMENTS:
       login_page_element = login_page.GetElement(element_by_id)
       self.assertIsNotNone(login_page_element)
+      self.assertTrue(login_page_element.is_displayed())
 
   def testNavigatingToRestrictedPageRedirectsToLogin(self):
     """Test that navigating to a restricted page redirects to login."""
@@ -74,7 +80,7 @@ class LoginPageTest(BaseTest):
   def testLoginThenLogoutCorrectlyResetsState(self):
     """Test restricted pages redirects to login after logout."""
     # Login first with a valid user.
-    LoginPage(self.driver).Login(self.args.server_url, self.args.username,
+    LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
     # Assert that the login worked.
@@ -95,7 +101,7 @@ class LoginPageTest(BaseTest):
     for handler in self.handlers:
       test_url = self.args.server_url + handler
       self.driver.get(test_url)
-      WebDriverWait(self.driver, BaseTest.DEFAULT_TIMEOUT).until(
+      WebDriverWait(self.driver, LoginPage.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((LoginPage.MAIN_TOOLBAR))))
       self.assertEquals(login_url, self.driver.current_url)
 

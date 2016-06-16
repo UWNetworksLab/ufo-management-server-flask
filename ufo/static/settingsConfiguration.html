@@ -5,32 +5,33 @@
 
 <dom-module id="settings-configuration">
   <style is="custom-style">
-    #policy-config-form {
+    #policyConfigForm {
       margin-left: 40px;
       margin-right: 25px;
       margin-bottom: 25px;
     }
   </style>
   <template>
-    <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="spinner" active$={{loading}}></paper-spinner>
-    </template>
     <iron-ajax auto
       url="{{resources.getSettingsUrl}}"
       method="GET"
       handle-as="json"
       id="getSettingsAjax"
       loading="{{loading}}"
-      last-response="{{ajaxResponse}}">
+      last-response="{{ajaxResponse}}"
+      json-prefix="{{resources.jsonPrefix}}">
     </iron-ajax>
-    <form is="iron-form" id="policy-config-form" method="post" action="{{resources.editUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseConfigResponse">
+    <form is="iron-form" id="policyConfigForm" method="post" action="{{resources.settingsEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseConfigResponse">
       <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="{{resources.proxyValidityText}}" checked$={{ajaxResponse.enforce_proxy_server_validity}}></ufo-toggle-input>
       <br>
       <ufo-toggle-input input-name="enforce_network_jail" button-text="{{resources.networkJailText}}" checked$={{ajaxResponse.enforce_network_jail}}></ufo-toggle-input>
       <br>
-      <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+      <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       <div class="buttons">
-        <paper-button class="anchor-button" onclick="submitByFormId('policy-config-form')" type="submit">
+        <template is="dom-if" if="{{loading}}">
+          <paper-spinner id="settingsSpinner" active$={{loading}}></paper-spinner>
+        </template>
+        <paper-button class="anchor-button" id="saveSettingsButton" on-tap="submitConfig" type="submit">
           <strong>{{resources.saveText}}</strong>
         </paper-button>
       </div>
@@ -53,14 +54,22 @@
           notify: true,
         },
       },
+      ready: function() {
+        this.$.policyConfigForm.request.handleAs = "json";
+        this.$.policyConfigForm.request.jsonPrefix = this.resources.jsonPrefix;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
       enableSpinner: function() {
         this.set('loading', true);
       },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
+      submitConfig: function(e, detail) {
+        this.$.policyConfigForm.submit();
       },
-      parseConfigResponse: function(e, details) {
-        this.set('ajaxResponse', details.xhr.response);
+      parseConfigResponse: function(e, detail) {
+        this.set('ajaxResponse', this.$.policyConfigForm.request.lastResponse);
         this.set('loading', false);
       },
     });

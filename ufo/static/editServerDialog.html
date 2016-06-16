@@ -4,8 +4,9 @@
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
-<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="textarea.html" />
 
 <dom-module id="edit-server-dialog">
   <style is="custom-style">
@@ -13,13 +14,10 @@
       min-width: 300px;
     }
     .second-div {
-      min-width: 250px;
+      min-width: 350px;
     }
     .third-div {
       min-width: 200px;
-    }
-    .fourth-div {
-      min-width: 100px;
     }
     .topLineButton {
       color: #25CFB9;
@@ -49,34 +47,55 @@
     }
   </style>
   <template>
-    <template is="dom-if" if="{{loading}}">
-      <paper-spinner id="serverDetailsSpinner" active$={{loading}}></paper-spinner>
-    </template>
-    <paper-dialog id="{{resources.detailsOverlayId}}" with-backdrop>
+    <paper-dialog id="{{resources.proxyServerDetailsOverlayId}}" with-backdrop>
       <paper-listbox>
         <paper-icon-item id="topBar" class="horizontal center-justified layout">
-          <iron-icon src="{{resources.itemIconUrl}}" item-icon></iron-icon>
+          <iron-icon src="{{resources.proxyServerIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.ip_address}}</div>
-          <div class="third-div"></div>
-          <paper-button on-tap="switchToServerEdit" class="fourth-div topLineButton"><strong>{{resources.editText}}</strong></paper-button>
-          <paper-icon-button icon="close" title="{{resources.detailsText}}" id="{{resources.detailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton" id="{{resources.editButtonId}}"><strong>{{resources.editText}}</strong></paper-button>
+          <paper-icon-button icon="close" title="{{resources.closeText}}" id="{{resources.proxyServerDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="serverDetailsSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
+      </template>
       <div id="rowHolder" class="vertical center-justified layout">
-        <form is="iron-form" id="serverEditForm" method="post" action="{{resources.editUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
-          <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required auto-validate pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]"></paper-input>
-          <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]"></paper-input>
+        <form is="iron-form" id="serverEditForm" method="post" action="{{resources.proxyServerEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
+          <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
+          <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter" id="{{resources.nameInput}}"></paper-input>
           <!-- TODO add the ability to upload files -->
-          <ufo-textarea class="editInputFields" disabled label="{{resources.privateKeyLabel}}" name="private_key" required max-rows="{{resources.textAreaMaxRows}}" auto-validate pattern="{{resources.regexes.privateKeyPattern}}" error-message="{{resources.regexes.privateKeyError}}" value="[[item.private_key]]"></ufo-textarea>
+          <paper-input class="editInputFields"
+                       disabled
+                       label="[[resources.sshPrivateKeyLabel]]"
+                       name="ssh_private_key"
+                       required
+                       max-rows="[[resources.textAreaMaxRows]]"
+                       pattern="[[resources.regexes.privateKeyPattern]]"
+                       error-message="[[resources.regexes.privateKeyError]]"
+                       value="[[item.ssh_private_key]]"
+                       on-keypress="doNothingOnEnter"
+                       on-keydown="doNothingOnEnter"
+                       id="{{resources.sshPrivateKeyInput}}">
+          </paper-input>
           <br>
-          <p class="editElements hideElement">{{resources.privateKeyText}}</p>
-
-          <paper-input class="editInputFields" disabled label="{{resources.publicKeyLabel}}" type="text" name="public_key" required auto-validate pattern="{{resources.regexes.publicKeyPattern}}" error-message="{{resources.regexes.publicKeyError}}" value="[[item.public_key]]"></paper-input>
+          <p class="editElements hideElement">{{resources.sshPrivateKeyText}}</p>
+          <paper-input class="editInputFields"
+                       disabled
+                       label="{{resources.hostPublicKeyLabel}}"
+                       type="text"
+                       name="host_public_key"
+                       required
+                       pattern="{{resources.regexes.publicKeyPattern}}"
+                       error-message="{{resources.regexes.publicKeyError}}"
+                       value="[[item.host_public_key]]"
+                       on-keypress="submitIfEnter"
+                       id="{{resources.hostPublicKeyInput}}">
+          </paper-input>
           <br>
-          <p class="editElements hideElement">{{resources.publicKeyText}}</p>
+          <p class="editElements hideElement">{{resources.hostPublicKeyText}}</p>
           <p class="editElements hideElement">{{resources.rsaText}}</p>
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <input type="hidden" name="server_id" value="{{item.id}}">
         </form>
       </div>
@@ -85,15 +104,15 @@
         <paper-button class="editElements hideElement anchor-button" on-tap="cancelServerEdit">
         <strong>{{resources.dismissText}}</strong>
         </paper-button>
-        <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm">
+        <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm" id="serverEditSubmitButton">
         <strong>{{resources.saveText}}</strong>
         </paper-button>
-        <form is="iron-form" method="post" action="{{resources.deleteUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
+        <form is="iron-form" id="serverDeleteForm" method="post" action="{{resources.proxyServerDeleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="server_id" value="{{item.id}}">
-          <input type="hidden" name="_xsrf_token" value="{{getXsrfToken()}}">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <paper-button on-tap="submitForm" class="delete-button" id="serverDeleteButton" type="submit">
             <iron-icon icon="delete"></iron-icon>
-            <strong>{{resources.deleteLabel}}</strong>
+            <strong>{{resources.proxyServerDeleteLabel}}</strong>
           </paper-button>
         </form>
       </div>
@@ -112,33 +131,33 @@
           type: Object,
           notify: true,
         },
-        ajaxResponse: {
-          type: Object,
-          notify: true,
-        },
         loading: {
           type: Boolean,
           value: false,
-          notify: true,
-        },
-        invitCodeJson: {
-          type: Object,
           notify: true,
         },
         oldItem: {
           type: Object,
         },
       },
-      setAjaxResponse: function(response) {
-        this.set('ajaxResponse', response);
+      listeners: {
+        'iron-form-error': 'handleFormError',
+        'iron-overlay-canceled': 'closeDialog',
+      },
+      ready: function() {
+        this.$.serverEditForm.request.handleAs = "json";
+        this.$.serverEditForm.request.jsonPrefix = this.resources.jsonPrefix;
+        this.$.serverDeleteForm.request.handleAs = "json";
+        this.$.serverDeleteForm.request.jsonPrefix = this.resources.jsonPrefix;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
       },
       enableSpinner: function() {
         this.set('loading', true);
       },
-      getXsrfToken: function() {
-        return document.getElementById('globalXsrf').value;
-      },
-      submitForm: function(e, details) {
+      submitForm: function(e, detail) {
         var elem = e.target;
         while (elem.tagName.toLowerCase() != 'form') {
           elem = elem.parentElement;
@@ -151,43 +170,58 @@
         }
         elem.submit();
       },
-      submitEditForm: function(e, details) {
+      submitEditForm: function(e, detail) {
         this.$.serverEditForm.submit();
       },
-      parseEditResponse: function(e, details) {
-        this.sendJsonToList(details.xhr.response);
+      handleFormError: function(event, detail) {
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
+        var errorEvent = new CustomEvent('ApplicationError', errorDetail);
+        document.getElementById('error-notification').dispatchEvent(errorEvent);
+        this.set('loading', false);
+      },
+      parseEditResponse: function(e, detail) {
+        this.sendJsonToList(this.$.serverEditForm.request.lastResponse);
         this.set('loading', false);
         this.set('oldItem', this.item);
         this.showHideEdit(true);
       },
-      parseDeleteResponse: function(e, details) {
-        this.sendJsonToList(details.xhr.response);
+      parseDeleteResponse: function(e, detail) {
+        this.sendJsonToList(this.$.serverDeleteForm.request.lastResponse);
         this.set('loading', false);
         this.closeDialog();
       },
       sendJsonToList: function(updatedJson) {
-        var listElem = document.getElementById(this.resources.listId);
+        var listElem = document.getElementById(this.resources.proxyServerListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedJson);
         }
       },
       openDialog: function() {
-        var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
+        var dialog = this.querySelector('#' + this.resources.proxyServerDetailsOverlayId);
         dialog.open();
       },
       closeDialog: function() {
-        var dialog = this.querySelector('#' + this.resources.detailsOverlayId);
+        this.cancelServerEdit();
+        var dialog = this.querySelector('#' + this.resources.proxyServerDetailsOverlayId);
         dialog.close();
       },
       openServerEdit: function() {
         this.openDialog();
         this.switchToServerEdit();
       },
-      switchToServerEdit: function(e, details) {
+      switchToServerEdit: function(e, detail) {
         this.set('oldItem', this.item);
         this.showHideEdit(false);
       },
-      cancelServerEdit: function(e, details) {
+      cancelServerEdit: function(e, detail) {
         this.resetInputs();
         this.showHideEdit(true);
       },
@@ -211,6 +245,17 @@
             editElements[i].className = editElements[i].className.replace(
               'hideElement', 'showElement');
           }
+        }
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitEditForm();
+        }
+      },
+      doNothingOnEnter: function(e) {
+        if (e.keyCode === 13) {
+          e.preventDefault();
+          e.stopPropagation();
         }
       },
     });
