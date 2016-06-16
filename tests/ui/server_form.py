@@ -7,8 +7,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from layout import UfOPageLayout
 
-import time
-
 class ServerForm(UfOPageLayout):
 
   """Add and edit server form methods."""
