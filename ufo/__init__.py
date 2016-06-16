@@ -22,11 +22,13 @@ if 'DATABASE_URL' in os.environ:
   app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
   app.config['WHOOSH_BASE'] = os.environ['DATABASE_URL']
 
-if 'RECAPTCHA_SECRET_KEY' in os.environ:
+if 'RECAPTCHA_SITE_KEY' in os.environ and 'RECAPTCHA_SECRET_KEY' in os.environ:
+  app.config['RECAPTCHA_SITE_KEY'] = os.environ['RECAPTCHA_SITE_KEY']
   app.config['RECAPTCHA_SECRET_KEY'] = os.environ['RECAPTCHA_SECRET_KEY']
 else:
-  app.logger.error('No recaptcha secret key found. Please configure ' +
-                   'RECAPTCHA_SECRET_KEY in the environment variables.')
+  app.logger.error('No recaptcha site or secret key found. Please configure ' +
+                   'RECAPTCHA_SITE_KEY and RECAPTCHA_SECRET_KEY in the ' +
+                   'environment variables.')
 
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
