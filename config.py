@@ -20,7 +20,6 @@ class BaseConfiguration(object):
   SHARED_OAUTH_CLIENT_ID = '84596478403-6uffc6hu8v5b6v3nh0ski5cbptl02dsd.apps.googleusercontent.com'
   SHARED_OAUTH_CLIENT_SECRET = 'R5H27t1C-9enMO9ZNfxym3Gw'
   WHOOSH_BASE = 'sqlite:///' + os.path.join(app.instance_path, 'search.db')
-  RECAPTCHA_SITE_KEY = '6LcGsiATAAAAAMzn-dtA9_73dPktkof7bDUIZxtK'
 
 class TestConfiguration(BaseConfiguration):
   """Configurations for testing the application in development."""

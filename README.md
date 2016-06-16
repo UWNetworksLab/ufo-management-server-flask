@@ -261,6 +261,7 @@ To deploy a test instance to Heroku, run the commands listed below. These can be
 1. `heroku create <your_instance_name>`
 1. `heroku buildpacks:add heroku/nodejs --app <your_instance_name>`
 1. `heroku buildpacks:add heroku/python --app <your_instance_name>`
+1. `heroku buildpacks:add https://github.com/uProxy/nginx-buildpack --app <your_instance_name>`
 1. `git push <your_heroku_remote_name> <your_dev_branch>:master (optional -f)`
 1. `heroku addons:create heroku-postgresql --app <your_instance_name>`
 1. `heroku addons:create redistogo --app <your_instance_name>`
@@ -345,6 +346,24 @@ To view the logs of an instance:
 When deployed on Heroku, the Management Server utilizes an [nginx buildpack](https://github.com/uProxy/nginx-buildpack) with [our own configuration](https://github.com/uProxy/nginx-buildpack/blob/master/config/nginx.conf.erb#L43) to provide a secure layer for HTTPS/HTTP + TLS. We redirect all traffic to the HTTPS version via a 301 Moved Permanently redirect and also provide the [HTTP Strict Transport Security (HSTS)](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security) header to prevent clients that have visited via HTTPS to get downgraded to HTTP without the browser recognizing the potential attack. This is automatically configured out of the box during deployment and works by using Heroku’s SSL cert. When using a custom domain name, an SSL cert for that domain must be provided, but from our perspective it will function identically.
 
 Outside of Heroku however, the nginx setup is entirely avoided since we do not anticipate users to deploy with gunicorn or a Procfile (as required by Heroku). We encourage anyone running the management server off of Heroku to use a similar system to nginx to provide their own HTTPS/HTTP + TLS security where available.
+
+### Configuring Recaptcha for Login Protecttion
+
+The Management Server utilizes [Recaptcha](https://www.google.com/recaptcha/intro/index.html) to prevent brute force login attacks. You can configure a recaptcha project by visiting the [admin setup site](https://www.google.com/recaptcha/admin#list) and registering a new site. You'll want to add your deployed app's domain, such as my-app-name.herokuapp.com. This will generate site and secret keys for your app.
+
+Next, you need to add those keys as environment variables in your app on Heroku. Here are the steps to do that:
+
+1. Visit the [heroku dashboard](https://dashboard.heroku.com/apps).
+1. Navigate to your app, such as my-app-name.
+1. Go to the Settings tab.
+1. Click 'Reveal Config Vars'
+1. Scroll to the bottom.
+1. Type in RECAPTCHA_SITE_KEY for the key and copy and paste in the value for the site key you received on the [admin setup site](https://www.google.com/recaptcha/admin#list) for your app.
+1. Click Add.
+1. Type in RECAPTCHA_SECRET_KEY for the key and copy and paste in the value for the secret key you received on the [admin setup site](https://www.google.com/recaptcha/admin#list) for your app.
+1. Click Add.
+
+That's it! Your app should now pick up the site and secret keys to use recaptcha after several failed logins attempts. If you run into an issue with these not being picked up, we suggest that you redeploy the server by pushing a blank update. For information on that, check the sections above for Update an Instance.
 
 ## Troubleshooting
 
