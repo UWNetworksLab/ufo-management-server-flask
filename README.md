@@ -347,7 +347,7 @@ When deployed on Heroku, the Management Server utilizes an [nginx buildpack](htt
 
 Outside of Heroku however, the nginx setup is entirely avoided since we do not anticipate users to deploy with gunicorn or a Procfile (as required by Heroku). We encourage anyone running the management server off of Heroku to use a similar system to nginx to provide their own HTTPS/HTTP + TLS security where available.
 
-### Configuring Recaptcha for Login Protecttion
+### Configuring Recaptcha for Login Protection
 
 The Management Server utilizes [Recaptcha](https://www.google.com/recaptcha/intro/index.html) to prevent brute force login attacks. You can configure a recaptcha project by visiting the [admin setup site](https://www.google.com/recaptcha/admin#list) and registering a new site. You'll want to add your deployed app's domain, such as my-app-name.herokuapp.com. This will generate site and secret keys for your app.
 
