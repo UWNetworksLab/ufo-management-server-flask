@@ -7,6 +7,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from layout import UfOPageLayout
 
+import time
+
 class ServerForm(UfOPageLayout):
 
   """Add and edit server form methods."""
@@ -112,6 +114,4 @@ class ServerForm(UfOPageLayout):
       is_add: A boolean value, true for add flow or false for edit flow.
     """
     if not is_add:
-      existing_input_text = input_element.get_attribute('value')
-      for x in range(len(existing_input_text)):
-        input_element.send_keys(Keys.BACKSPACE)
+      input_element.clear()
