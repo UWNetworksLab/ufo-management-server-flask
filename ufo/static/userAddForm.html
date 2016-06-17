@@ -5,6 +5,7 @@
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="user-add-form">
   <style is="custom-style">
@@ -41,7 +42,7 @@
               <paper-listbox>
               <template is="dom-if" if="[[!areAnyUsersFound()]]">
                 <paper-item id="noResultsItem" class="horizontal layout">
-                  <span class="flex"><strong>{{resources.addFlowNoResults}}</strong></span>
+                  <span class="flex"><strong>[[addFlowNoResults]]</strong></span>
                 </paper-item>
               </template>
                 <template is="dom-repeat" items="[[lastResponse.directory_users]]">
@@ -63,7 +64,7 @@
             <paper-listbox>
               <template is="dom-if" if="[[!areAnyUsersFound()]]">
                 <paper-item id="noResultsItem" class="horizontal layout">
-                  <span class="flex"><strong>{{resources.addFlowNoResults}}</strong></span>
+                  <span class="flex"><strong>[[addFlowNoResults]]</strong></span>
                 </paper-item>
               </template>
               <template is="dom-repeat" items="[[lastResponse.directory_users]]">
@@ -79,12 +80,12 @@
             <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           </form>
         </template>
-        <paper-button on-tap="resetForms" class="anchor-button addTopMargin"><strong>{{resources.lookAgainText}}</strong></paper-button>
+        <paper-button on-tap="resetForms" class="anchor-button addTopMargin"><strong>[[lookAgainText]]</strong></paper-button>
       </template>
     </div>
     <div class="buttons">
       <paper-button class="anchor-button" dialog-dismiss on-tap="resetForms">
-      <strong>{{resources.dismissText}}</strong>
+      <strong>[[dismissText]]</strong>
       </paper-button>
       <paper-button class="anchor-button" autofocus on-tap="submitPostForm">
       <strong>{{saveButton}}</strong>
@@ -166,6 +167,11 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        this.addFlowNoResults = __i18n__['addFlowNoResults'];
+        this.lookAgainText = __i18n__['lookAgainText'];
+        this.dismissText = __i18n__['dismissText'];
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.formId);

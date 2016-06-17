@@ -2,8 +2,9 @@
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
-<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="user-list">
   <style is="custom-style">
@@ -53,9 +54,9 @@
     <paper-listbox>
       <paper-icon-item id="columnHeader" class="horizontal layout">
         <iron-icon src="{{resources.userIconUrl}}" class="noDisplay" item-icon></iron-icon>
-        <div class="first-div"><strong>{{resources.nameColumnHeader}}</strong></div>
-        <div class="second-div flex"><strong>{{resources.emailColumnHeader}}</strong></div>
-        <div class="third-div"><strong>{{resources.accessColumnHeader}}</strong></div>
+        <div class="first-div"><strong>[[nameColumnHeader]]</strong></div>
+        <div class="second-div flex"><strong>[[emailColumnHeader]]</strong></div>
+        <div class="third-div"><strong>[[accessColumnHeader]]</strong></div>
         <paper-icon-button icon="expand-more" class="noDisplay"></paper-icon-button>
       </paper-icon-item>
       <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
@@ -69,13 +70,13 @@
             <paper-button on-tap="submitRevokeForm" class="topLineButton leftTextAlign" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
           </form>
           <user-details-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></user-details-dialog>
-          <paper-icon-button icon="expand-more" title="{{resources.userDetailsExpandText}}" id="{{resources.userDetailsButtonId}}"></paper-icon-button>
+          <paper-icon-button icon="expand-more" title="[[userDetailsExpandText]]" id="{{resources.userDetailsButtonId}}"></paper-icon-button>
         </paper-icon-item>
       </template>
       <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
         <paper-item id="showMore" class="horizontal layout start-justified">
           <paper-button class="see-all-button" on-tap="_flipShowingAll">
-          {{resources.userSeeAllText}}
+          [[userSeeAllText]]
           </paper-button>
         </paper-item>
       </template>
@@ -121,6 +122,13 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        this.nameColumnHeader = __i18n__['nameColumnHeader'];
+        this.emailColumnHeader = __i18n__['emailColumnHeader'];
+        this.accessColumnHeader = __i18n__['accessColumnHeader'];
+        this.userDetailsExpandText = __i18n__['userDetailsExpandText'];
+        this.userSeeAllText = __i18n__['userSeeAllText'];
       },
       _limitCharacters: function(text) {
         if (text.length > this.characterLimit) {

@@ -4,6 +4,7 @@
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 <link rel="import" href="bower_components/paper-tabs/paper-tabs.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="user-add-tabs">
   <style is="custom-style">
@@ -26,10 +27,10 @@
     <!--Portion for finding users via group, individual, domain, or manual
     specification. -->
     <paper-tabs id="tabs" selected="{{ selected }}">
-      <paper-tab id="{{resources.groupAddTabId}}">{{resources.groupAddTab}}</paper-tab>
-      <paper-tab id="{{resources.userAddTabId}}">{{resources.userAddTab}}</paper-tab>
-      <paper-tab id="{{resources.domainAddTabId}}">{{resources.domainAddTab}}</paper-tab>
-      <paper-tab id="{{resources.manualAddTabId}}">{{resources.manualAddTab}}</paper-tab>
+      <paper-tab id="{{resources.groupAddTabId}}">[[groupAddTab]]</paper-tab>
+      <paper-tab id="{{resources.userAddTabId}}">[[userAddTab]]</paper-tab>
+      <paper-tab id="{{resources.domainAddTabId}}">[[domainAddTab]]</paper-tab>
+      <paper-tab id="{{resources.manualAddTabId}}">[[manualAddTab]]</paper-tab>
     </paper-tabs>
 
     <div id="ironPagesHolder">
@@ -38,37 +39,37 @@
           resources="{{resources}}"
           should-display-with-dialog$="[[shouldDisplayWithDialog]]"
           form-id="{{resources.groupAddFormId}}"
-          save-button="{{resources.saveMultipleUsersButton}}"
-          search-button="{{resources.groupAddSearchButton}}"
-          email-label="{{resources.groupAddEmailAddressLabel}}"
+          save-button="[[saveMultipleUsersButton]]"
+          search-button="[[groupAddSearchButton]]"
+          email-label="[[groupAddEmailAddressLabel]]"
           input-name="{{resources.groupAddInputName}}"
-          input-definition="{{resources.groupAddEmailAddressDefinition}}">
+          input-definition="[[groupAddEmailAddressDefinition]]">
         </user-add-form>
         <user-add-form
           resources="{{resources}}"
           should-display-with-dialog$="[[shouldDisplayWithDialog]]"
           form-id="{{resources.userAddFormId}}"
-          save-button="{{resources.saveIndividualUserButton}}"
-          search-button="{{resources.userAddSearchButton}}"
-          email-label="{{resources.userAddEmailAddressLabel}}"
+          save-button="[[saveIndividualUserButton]]"
+          search-button="[[userAddSearchButton]]"
+          email-label="[[userAddEmailAddressLabel]]"
           input-name="{{resources.userAddInputName}}"
-          input-definition="{{resources.userAddEmailAddressDefinition}}">
+          input-definition="[[userAddEmailAddressDefinition]]">
         </user-add-form>
         <user-add-form
           resources="{{resources}}"
           should-display-with-dialog$="[[shouldDisplayWithDialog]]"
           form-id="{{resources.domainAddFormId}}"
-          save-button="{{resources.saveMultipleUsersButton}}"
-          search-button="{{resources.domainAddSearchButton}}">
+          save-button="[[saveMultipleUsersButton]]"
+          search-button="[[domainAddSearchButton]]">
         </user-add-form>
         <div>
           <template is="dom-if" if="{{loading}}">
             <paper-spinner id="manualAddSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
           </template>
           <form is="iron-form" id="{{resources.manualAddFormId}}" method="post" action="{{resources.userAddUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-            <paper-input label="{{resources.manualFullNameLabel}}" type="textbox" name="name" value="" id="manualUserName" required on-keypress="submitIfEnter">
+            <paper-input label="[[manualFullNameLabel]]" type="textbox" name="name" value="" id="manualUserName" required on-keypress="submitIfEnter">
             </paper-input>
-            <paper-input label="{{resources.manualEmailAddressLabel}}" type="email" name="email" value="" id="manualUserEmail" required
+            <paper-input label="[[manualEmailAddressLabel]]" type="email" name="email" value="" id="manualUserEmail" required
             pattern="{{resources.regexes.emailValidationPattern}}"
             error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter">
             </paper-input>
@@ -79,10 +80,10 @@
           </form>
           <div class="buttons">
             <paper-button class="anchor-button" dialog-dismiss>
-            <strong>{{resources.dismissText}}</strong>
+            <strong>[[dismissText]]</strong>
             </paper-button>
             <paper-button class="anchor-button" autofocus on-tap="submitPostForm" id="manualAddSubmitButton">
-            <strong>{{resources.saveIndividualUserButton}}</strong>
+            <strong>[[saveIndividualUserButton]]</strong>
             </paper-button>
           </div>
         </div>
@@ -120,6 +121,24 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        this.groupAddTab = __i18n__['groupAddTab'];
+        this.userAddTab = __i18n__['userAddTab'];
+        this.domainAddTab = __i18n__['domainAddTab'];
+        this.manualAddTab = __i18n__['manualAddTab'];
+        this.saveMultipleUsersButton = __i18n__['saveMultipleUsersButton'];
+        this.groupAddSearchButton = __i18n__['groupAddSearchButton'];
+        this.groupAddEmailAddressLabel = __i18n__['groupAddEmailAddressLabel'];
+        this.groupAddEmailAddressDefinition = __i18n__['groupAddEmailAddressDefinition'];
+        this.saveIndividualUserButton = __i18n__['saveIndividualUserButton'];
+        this.userAddSearchButton = __i18n__['userAddSearchButton'];
+        this.userAddEmailAddressLabel = __i18n__['userAddEmailAddressLabel'];
+        this.userAddEmailAddressDefinition = __i18n__['userAddEmailAddressDefinition'];
+        this.domainAddSearchButton = __i18n__['domainAddSearchButton'];
+        this.manualFullNameLabel = __i18n__['manualFullNameLabel'];
+        this.manualEmailAddressLabel = __i18n__['manualEmailAddressLabel'];
+        this.dismissText = __i18n__['dismissText'];
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.resources.manualAddFormId);

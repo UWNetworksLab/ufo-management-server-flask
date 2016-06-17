@@ -3,6 +3,7 @@
 <link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="server-add-form">
   <style is="custom-style">
@@ -21,38 +22,37 @@
         <paper-spinner id="serverSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <form is="iron-form" id="serverAddForm" method="post" action="{{resources.proxyServerAddUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-        <paper-input label="{{resources.ipLabel}}" type="text" id="{{resources.ipInput}}" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" on-keypress="submitIfEnter">{{resources.ip_address}}</paper-input>
-        <paper-input label="{{resources.nameLabel}}" type="text" id="{{resources.nameInput}}" name="name" required on-keypress="submitIfEnter">{{resources.name}}</paper-input>
+        <paper-input label="[[ipLabel]]" type="text" id="{{resources.ipInput}}" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="[[nameLabel]]" type="text" id="{{resources.nameInput}}" name="name" required on-keypress="submitIfEnter"></paper-input>
         <!-- TODO add the ability to upload files -->
-        <ufo-textarea label="{{resources.sshPrivateKeyLabel}}"
+        <ufo-textarea label="[[sshPrivateKeyLabel]]"
                       id="{{resources.sshPrivateKeyInput}}"
                       name="ssh_private_key"
                       required max-rows="{{resources.textAreaMaxRows}}"
                       pattern="{{resources.regexes.privateKeyPattern}}"
-                      error-message="{{resources.regexes.privateKeyError}}"
-                      value="{{resources.ssh_private_key}}">
+                      error-message="{{resources.regexes.privateKeyError}}">
         </ufo-textarea>
         <br>
-        <p>{{resources.sshPrivateKeyText}}</p>
-        <paper-input label="{{resources.hostPublicKeyLabel}}"
+        <p>[[sshPrivateKeyText]]</p>
+        <paper-input label="[[hostPublicKeyLabel]]"
                      type="text"
                      id="{{resources.hostPublicKeyInput}}"
                      name="host_public_key"
                      required pattern="{{resources.regexes.publicKeyPattern}}"
                      error-message="{{resources.regexes.publicKeyError}}"
-                     on-keypress="submitIfEnter">{{resources.host_public_key}}
+                     on-keypress="submitIfEnter">
         </paper-input>
         <br>
-        <p>{{resources.hostPublicKeyText}}</p>
-        <p>{{resources.rsaText}}</p>
+        <p>[[hostPublicKeyText]]</p>
+        <p>[[rsaText]]</p>
         <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       </form>
       <div class="buttons">
         <paper-button class="anchor-button" dialog-dismiss on-tap="resetForm">
-        <strong>{{resources.dismissText}}</strong>
+        <strong>[[dismissText]]</strong>
         </paper-button>
         <paper-button class="anchor-button" id="serverAddSubmitButton" autofocus on-tap="submitPostForm">
-        <strong>{{resources.confirmText}}</strong>
+        <strong>[[confirmText]]</strong>
         </paper-button>
       </div>
     </paper-dialog-scrollable>
@@ -82,6 +82,17 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        this.ipLabel = __i18n__['ipLabel'];
+        this.nameLabel = __i18n__['nameLabel'];
+        this.sshPrivateKeyLabel = __i18n__['sshPrivateKeyLabel'];
+        this.sshPrivateKeyText = __i18n__['sshPrivateKeyText'];
+        this.hostPublicKeyLabel = __i18n__['hostPublicKeyLabel'];
+        this.hostPublicKeyText = __i18n__['hostPublicKeyText'];
+        this.rsaText = __i18n__['rsaText'];
+        this.dismissText = __i18n__['dismissText'];
+        this.confirmText = __i18n__['confirmText'];
       },
       enableSpinner: function() {
         this.set('loading', true);

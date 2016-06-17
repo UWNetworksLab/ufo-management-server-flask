@@ -1,5 +1,6 @@
 <link rel="import" href="bower_components/iron-icon/iron-icon.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="chrome-policy">
   <style is="custom-style">
@@ -12,19 +13,19 @@
   <template>
     <div id="chrome-policy">
       <p>
-        {{resources.policyExplanationText}}
+        [[policyExplanationText]]
       </p>
       <p>
-        {{resources.policyEditText}}
+        [[policyEditText]]
       </p>
 
       <p><a href="https://admin.google.com/AdminHome" class="anchor-no-button" target="_blank">
         <paper-button>
-          <iron-icon icon="open-in-new"></iron-icon> {{resources.adminConsoleText}}
+          <iron-icon icon="open-in-new"></iron-icon> [[adminConsoleText]]
         </paper-button>
       </a></p>
       <p>
-        {{resources.policyUploadText}}
+        [[policyUploadText]]
       </p>
       <div class="buttons">
         <form is="iron-form" id="chromePolicyForm" method="post" action="{{resources.download_chrome_policy}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseChromePolicyResponse">
@@ -33,7 +34,7 @@
             <paper-spinner id="chromePolicySpinner" active$={{loading}}></paper-spinner>
           </template>
           <paper-button class="anchor-button" id="chromePolicyDownloadButton" on-tap="submitChromePolicy" type="submit">
-            <strong><iron-icon icon="file-download"></iron-icon> {{resources.downloadText}}</strong>
+            <strong><iron-icon icon="file-download"></iron-icon> [[downloadText]]</strong>
           </paper-button>
           <a href="data:text/json,{{ajaxResponse}}" download="{{resources.policy_filename}}" hidden id="hiddenChromePolicyButton"></a>
         </form>
@@ -63,6 +64,13 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        this.policyExplanationText = __i18n__['policyExplanationText'];
+        this.policyEditText = __i18n__['policyEditText'];
+        this.adminConsoleText = __i18n__['adminConsoleText'];
+        this.policyUploadText = __i18n__['policyUploadText'];
+        this.downloadText = __i18n__['downloadText'];
       },
       enableSpinner: function() {
         this.set('loading', true);
