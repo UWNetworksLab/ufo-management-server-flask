@@ -29,6 +29,7 @@
     "paper-tabs": "PolymerElements/paper-tabs#~1.6.0",
     "paper-toggle-button": "PolymerElements/paper-toggle-button#~1.1.2",
     "paper-toolbar": "PolymerElements/paper-toolbar#~1.1.4",
+    "quaintous-i18n": "https://gitlab.com/quaintous-polymer/quaintous-i18n.git",
     "web-animations-js": "web-animations/web-animations-js#~2.2.1",
     "webcomponentsjs": "Polymer/webcomponentsjs#~0.7.22"
   }

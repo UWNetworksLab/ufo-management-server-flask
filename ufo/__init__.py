@@ -1,4 +1,5 @@
 import flask
+from flask import request
 from flask.ext import sqlalchemy
 from flask.ext import whooshalchemy
 from flask_recaptcha import ReCaptcha
@@ -102,3 +103,44 @@ from ufo.services import resource_provider
 def set_jinja_before_request():
   """Set the global jinja environment vars."""
   resource_provider.set_jinja_globals()
+
+DEFAULT_LANGUAGE_PREFIX = 'en'
+ACCEPTABLE_LANGUAGE_PREFIXES = [
+  'en',
+  'es',
+  'fr',
+  'it',
+] # These aren't necessarily true, just something to test with.
+
+@app.before_request
+def determine_language_prefix():
+  """Determine the language prefix using the language header."""
+  # TODO(eholder): Figure out a more appropriate way to map the header into
+  # our set of prefixes. Since I don't know what those prefixes are yet, this
+  # is intentionally very generic. I also need to decide if this should just be
+  # done once as part of the login flow rather than checking every request.
+  # Checking every request makes this easier to test and change though in the
+  # meantime.
+  languages_string = request.headers.get('Accept-Language')
+
+  # If there is no header, use the default.
+  if languages_string is None:
+    flask.session['language_prefix'] = DEFAULT_LANGUAGE_PREFIX
+    return
+
+  languages = languages_string.split(',')
+  if languages[0] in ACCEPTABLE_LANGUAGE_PREFIXES:
+    flask.session['language_prefix'] = languages[0]
+    return
+
+  language_sections = languages[0].split(';')
+  if language_sections[0] in ACCEPTABLE_LANGUAGE_PREFIXES:
+    flask.session['language_prefix'] = language_sections[0]
+    return
+
+  language_subsections = language_sections[0].split('-')
+  if language_subsections[0] in ACCEPTABLE_LANGUAGE_PREFIXES:
+    flask.session['language_prefix'] = language_subsections[0]
+    return
+
+  flask.session['language_prefix'] = DEFAULT_LANGUAGE_PREFIX
