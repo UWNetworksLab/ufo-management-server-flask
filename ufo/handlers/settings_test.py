@@ -26,7 +26,8 @@ class SettingsTest(base_test.BaseTest):
     json_data = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
     self.assertNotIn('validProxyServers', json_data)
     self.assertIn('enforce_proxy_server_validity', json_data)
-    self.assertIn('enforce_network_jail', json_data)
+    # Uncomment when network jail is available.
+    #self.assertIn('enforce_network_jail', json_data)
 
   def testEditSettings(self):
     """Test posting with modified settings updates in the db."""
@@ -44,8 +45,9 @@ class SettingsTest(base_test.BaseTest):
     updated_config = ufo.get_user_config()
     self.assertEqual(not initial_proxy_server_config,
                      updated_config.proxy_server_validity)
-    self.assertEqual(not initial_network_jail_config,
-                     updated_config.network_jail_until_google_auth)
+    # Uncomment when network jail is available.
+    #self.assertEqual(not initial_network_jail_config,
+    #                 updated_config.network_jail_until_google_auth)
     self.assert_redirects(resp, flask.url_for('get_settings'))
 
 if __name__ == '__main__':
