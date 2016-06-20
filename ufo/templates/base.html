@@ -36,6 +36,7 @@
   }
 </style>
 <body class="fullbleed layout vertical">
+  <quaintous-i18n locales-path="/static/locales/{{session['language_prefix']}}/messages.json" loading="{{i18nLoading}}"></quaintous-i18n>
   <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
   <div>  <!-- Prevent the main-holder from pushing into the header. -->
     <paper-scroll-header-panel>
