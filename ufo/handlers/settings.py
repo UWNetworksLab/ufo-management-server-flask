@@ -55,11 +55,11 @@ def edit_settings():
   # Setup link. For now, I just want these settings to be edittable somewhere.
 
   config = ufo.get_user_config()
-
+  # Uncomment the network jail when it's available.
   proxy_server_string = flask.request.form.get('enforce_proxy_server_validity')
-  network_jail_string = flask.request.form.get('enforce_network_jail')
+  #network_jail_string = flask.request.form.get('enforce_network_jail')
   config.proxy_server_validity = json.loads(proxy_server_string)
-  config.network_jail_until_google_auth = json.loads(network_jail_string)
+  #config.network_jail_until_google_auth = json.loads(network_jail_string)
 
   config.save()
 
