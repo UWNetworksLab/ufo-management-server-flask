@@ -24,9 +24,9 @@ class LandingPageTest(BaseTest):
   def tearDown(self):
     """Teardown for test methods."""
     landing_page = LandingPage(self.driver)
-    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                                self.args.server_url,
-                                should_raise_exception=False)
+    landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                                  self.args.server_url,
+                                  should_raise_exception=False)
     landing_page.removeTestServer(BaseTest.TEST_SERVER_AS_DICT['name'],
                                   self.args.server_url,
                                   should_raise_exception=False)
@@ -76,8 +76,8 @@ class LandingPageTest(BaseTest):
 
     self.assertTestUserPresenceOnPage(True)
 
-    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                                self.args.server_url)
+    landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                                  self.args.server_url)
 
     self.assertTestUserPresenceOnPage(False)
 

@@ -25,9 +25,9 @@ class ErrorNotificationTest(BaseTest):
   def tearDown(self):
     """Teardown for test methods."""
     landing_page = LandingPage(self.driver)
-    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                                self.args.server_url,
-                                should_raise_exception=False)
+    landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                                  self.args.server_url,
+                                  should_raise_exception=False)
     LoginPage(self.driver).Logout(self.args.server_url)
     super(ErrorNotificationTest, self).tearDown()
 

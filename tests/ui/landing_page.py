@@ -40,7 +40,7 @@ class LandingPage(UfOPageLayout):
     add_user_form = AddUserForm(self.driver)
     add_user_form.add_test_user(name, email)
 
-  def removeTestUser(self, name, server_url, should_raise_exception=True):
+  def remove_test_user(self, name, server_url, should_raise_exception=True):
     """Manually remove a test user using the landing page (the only way).
 
     Args:
