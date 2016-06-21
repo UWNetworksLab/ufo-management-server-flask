@@ -89,7 +89,7 @@ class LandingPageTest(BaseTest):
                                self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
 
-    self.verifyUserCanBeDisabledAndThenEnabled(True, True)
+    self.assertUserCanBeDisabledAndThenEnabled(True, True)
 
   def testDisableAndEnableUserFromDetailsDialog(self):
     """Test that disabling and enabling a user works from the details page."""
@@ -99,7 +99,7 @@ class LandingPageTest(BaseTest):
                                self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
 
-    self.verifyUserCanBeDisabledAndThenEnabled(False, True)
+    self.assertUserCanBeDisabledAndThenEnabled(False, True)
 
   def testCreateNewInviteCode(self):
     """Test that creating a new invite code actually generates a new one."""
@@ -206,7 +206,7 @@ class LandingPageTest(BaseTest):
     self.driver.get(self.args.server_url + flask.url_for('landing'))
     self.assertChromePolicyDownloadLinkIsConnected()
 
-  def verifyUserCanBeDisabledAndThenEnabled(self, should_use_listbox,
+  def assertUserCanBeDisabledAndThenEnabled(self, should_use_listbox,
                                             should_refresh_page):
     """Helper method for testing disabling and enabling a user.
 
