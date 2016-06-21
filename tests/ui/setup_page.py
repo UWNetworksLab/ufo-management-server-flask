@@ -30,7 +30,7 @@ class SetupPage(UfOPageLayout):
     """
     # Navigate to add user and go to manual tab.
     self.driver.get(server_url + flask.url_for('setup'))
-    add_manually_tab = self.GetElement(UfOPageLayout.ADD_MANUALLY_TAB)
+    add_manually_tab = self.get_element(UfOPageLayout.ADD_MANUALLY_TAB)
     add_manually_tab.click()
 
     add_user_form = AddUserForm(self.driver)
@@ -49,7 +49,7 @@ class SetupPage(UfOPageLayout):
     """
     # Navigate to add server.
     self.driver.get(server_url + flask.url_for('setup'))
-    proxy_server_add_template = self.GetElement(
+    proxy_server_add_template = self.get_element(
         UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE)
 
     server_form = ServerForm(self.driver)

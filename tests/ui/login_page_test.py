@@ -16,7 +16,7 @@ class LoginPageTest(BaseTest):
   def setUp(self):
     """Search for test methods."""
     super(LoginPageTest, self).setUp()
-    super(LoginPageTest, self).setContext()
+    super(LoginPageTest, self).set_context()
     # Only test the ones that have getters since posts won't work without a
     # form and without the xsrf token.
     self.handlers = [
@@ -57,19 +57,19 @@ class LoginPageTest(BaseTest):
 
     login_page = LoginPage(self.driver)
     for element_by_id in LoginPage.BASE_PAGE_ELEMENTS_FOR_LOGIN:
-      base_page_element = login_page.GetElement(element_by_id)
+      base_page_element = login_page.get_element(element_by_id)
       self.assertIsNotNone(base_page_element)
       self.assertTrue(base_page_element.is_displayed())
 
     for element_by_id in LoginPage.BASE_PAGE_ELEMENTS_AFTER_LOGIN:
-      base_page_search_element = login_page.GetElement(element_by_id)
+      base_page_search_element = login_page.get_element(element_by_id)
       self.assertIsNotNone(base_page_search_element)
       self.assertFalse(base_page_search_element.is_displayed())
 
     self.assertLogoLinksToLandingPage()
 
     for element_by_id in LoginPage.LOGIN_PAGE_ELEMENTS:
-      login_page_element = login_page.GetElement(element_by_id)
+      login_page_element = login_page.get_element(element_by_id)
       self.assertIsNotNone(login_page_element)
       self.assertTrue(login_page_element.is_displayed())
 

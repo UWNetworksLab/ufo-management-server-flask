@@ -23,7 +23,7 @@ class AdminFlowTest(BaseTest):
   def setUp(self):
     """Setup for test methods."""
     super(AdminFlowTest, self).setUp()
-    super(AdminFlowTest, self).setContext()
+    super(AdminFlowTest, self).set_context()
 
   def tearDown(self):
     """Teardown for test methods."""

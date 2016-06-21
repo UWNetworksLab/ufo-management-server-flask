@@ -17,7 +17,7 @@ class LandingPageTest(BaseTest):
   def setUp(self):
     """Setup for test methods."""
     super(LandingPageTest, self).setUp()
-    super(LandingPageTest, self).setContext()
+    super(LandingPageTest, self).set_context()
     LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
@@ -45,14 +45,14 @@ class LandingPageTest(BaseTest):
 
     landing_page = LandingPage(self.driver)
     for element_by_id in LandingPage.BASE_PAGE_ELEMENTS:
-      base_page_element = landing_page.GetElement(element_by_id)
+      base_page_element = landing_page.get_element(element_by_id)
       self.assertIsNotNone(base_page_element)
       self.assertTrue(base_page_element.is_displayed())
 
     self.assertLogoLinksToLandingPage()
 
     for element_by_id in LandingPage.LANDING_PAGE_ELEMENTS:
-      landing_page_element = landing_page.GetElement(element_by_id)
+      landing_page_element = landing_page.get_element(element_by_id)
       self.assertIsNotNone(landing_page_element)
       self.assertTrue(landing_page_element.is_displayed())
 

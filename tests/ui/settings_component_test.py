@@ -26,7 +26,7 @@ class SettingsComponentTest(BaseTest):
   def setUp(self):
     """Setup for test methods."""
     super(SettingsComponentTest, self).setUp()
-    super(SettingsComponentTest, self).setContext()
+    super(SettingsComponentTest, self).set_context()
     LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
     settings_component = SettingsComponent(self.driver)

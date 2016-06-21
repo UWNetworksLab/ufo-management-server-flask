@@ -14,9 +14,9 @@ class LandingPage(UfOPageLayout):
   """Home page action methods and locators."""
 
   LANDING_PAGE_ELEMENTS = [
-    UfOPageLayout.USER_DISPLAY_TEMPLATE,
-    UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
-    UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
+      UfOPageLayout.USER_DISPLAY_TEMPLATE,
+      UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
+      UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
   ]
 
   def add_test_user(self, name, email, server_url):
@@ -29,11 +29,12 @@ class LandingPage(UfOPageLayout):
     """
     # Navigate to add user and go to manual tab.
     self.driver.get(server_url + flask.url_for('landing'))
-    add_user_button = self.GetElement(UfOPageLayout.ADD_USER_BUTTON)
+    add_user_button = self.get_element(UfOPageLayout.ADD_USER_BUTTON)
     add_user_button.click()
-    add_manually_tab = WebDriverWait(self.driver,
-                                     UfOPageLayout.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((UfOPageLayout.ADD_MANUALLY_TAB))))
+    add_manually_tab = WebDriverWait(
+        self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+            EC.visibility_of_element_located(((
+                UfOPageLayout.ADD_MANUALLY_TAB))))
     add_manually_tab.click()
 
     add_user_form = AddUserForm(self.driver)
@@ -82,7 +83,7 @@ class LandingPage(UfOPageLayout):
       The anchor element for visiting the given item's details page or None.
     """
     landing_page = LandingPage(self.driver)
-    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
+    user_list_item = landing_page.get_element(LandingPage.USER_LIST_ITEM)
     user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
     return self.findItemInListing(user_listbox, name)
 
@@ -99,7 +100,7 @@ class LandingPage(UfOPageLayout):
     """
     # Navigate to add server.
     self.driver.get(server_url + flask.url_for('landing'))
-    add_server_button = self.GetElement(UfOPageLayout.ADD_SERVER_BUTTON)
+    add_server_button = self.get_element(UfOPageLayout.ADD_SERVER_BUTTON)
     add_server_button.click()
     add_server_modal = WebDriverWait(self.driver,
                                      UfOPageLayout.DEFAULT_TIMEOUT).until(
@@ -121,7 +122,7 @@ class LandingPage(UfOPageLayout):
     # Find the server and navigate to its details page.
     self.driver.get(server_url + flask.url_for('landing'))
     landing_page = LandingPage(self.driver)
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
+    server_list = landing_page.get_element(LandingPage.SERVER_LIST_ITEM)
     server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
     server_item = landing_page.findItemInListing(server_listbox, name)
 
@@ -161,7 +162,7 @@ class LandingPage(UfOPageLayout):
     # Find the server and navigate to its details page.
     self.driver.get(server_url + flask.url_for('landing'))
     landing_page = LandingPage(self.driver)
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
+    server_list = landing_page.get_element(LandingPage.SERVER_LIST_ITEM)
     server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
     server_item = landing_page.findItemInListing(server_listbox, old_name)
 

@@ -76,7 +76,7 @@ class BaseTest(unittest.TestCase):
       self.driver = webdriver.Chrome(CHROME_DRIVER_LOCATION,
                                      chrome_options=custom_options)
 
-  def setContext(self):
+  def set_context(self):
     """Set context as test_request_context so we can use flask.url_for."""
     self.context = app.test_request_context()
     self.context.push()
@@ -85,9 +85,9 @@ class BaseTest(unittest.TestCase):
     # and settings tests need to run against multiple pages to ensure there is
     # a link present on each.
     self.handlers = [
-      flask.url_for('landing'),
-      flask.url_for('setup'),
-      flask.url_for('search_page', search_text='"foo"')
+        flask.url_for('landing'),
+        flask.url_for('setup'),
+        flask.url_for('search_page', search_text='"foo"')
     ]
 
   def tearDown(self):
@@ -130,7 +130,7 @@ class BaseTest(unittest.TestCase):
     if go_to_landing:
       self.driver.get(self.args.server_url + flask.url_for('landing'))
     landing_page = LandingPage(self.driver)
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
+    server_list = landing_page.get_element(LandingPage.SERVER_LIST_ITEM)
     server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
     test_server_item = landing_page.findItemInListing(server_listbox, name)
     if is_present:
@@ -142,7 +142,7 @@ class BaseTest(unittest.TestCase):
   def assertChromePolicyDownloadLinkIsConnected(self):
     """Helper to assert that chrome policy download links to download url."""
     generic_page = UfOPageLayout(self.driver)
-    download_button = generic_page.GetElement(
+    download_button = generic_page.get_element(
         UfOPageLayout.CHROME_POLICY_HIDDEN_BUTTON)
     prefix = 'data:text/json,'
     self.assertTrue(download_button.get_attribute('href').startswith(prefix))
@@ -150,6 +150,6 @@ class BaseTest(unittest.TestCase):
   def assertLogoLinksToLandingPage(self):
     """Helper to assert the UfO logo is an anchor to the landing page."""
     generic_page = UfOPageLayout(self.driver)
-    logo_anchor = generic_page.GetElement(UfOPageLayout.LANDING_ANCHOR)
+    logo_anchor = generic_page.get_element(UfOPageLayout.LANDING_ANCHOR)
     actual_landing_url = self.args.server_url + flask.url_for('landing')
     self.assertEquals(actual_landing_url, logo_anchor.get_attribute('href'))

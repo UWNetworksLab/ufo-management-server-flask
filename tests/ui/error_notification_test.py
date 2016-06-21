@@ -18,7 +18,7 @@ class ErrorNotificationTest(BaseTest):
   def setUp(self):
     """Setup for test methods."""
     super(ErrorNotificationTest, self).setUp()
-    super(ErrorNotificationTest, self).setContext()
+    super(ErrorNotificationTest, self).set_context()
     LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
