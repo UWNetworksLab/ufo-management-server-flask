@@ -61,18 +61,18 @@ class LandingPageTest(BaseTest):
     landing_page = LandingPage(self.driver)
     self.assertTestUserPresenceOnPage(False)
 
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
 
     self.assertTestUserPresenceOnPage(True)
 
   def testDeleteUser(self):
     """Test that deleting a user removes that user."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
 
     self.assertTestUserPresenceOnPage(True)
 
@@ -84,9 +84,9 @@ class LandingPageTest(BaseTest):
   def testDisableAndEnableUserFromListbox(self):
     """Test that disabling and enabling a user works from the listbox."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
 
     self.verifyUserCanBeDisabledAndThenEnabled(True, True)
@@ -94,9 +94,9 @@ class LandingPageTest(BaseTest):
   def testDisableAndEnableUserFromDetailsDialog(self):
     """Test that disabling and enabling a user works from the details page."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
 
     self.verifyUserCanBeDisabledAndThenEnabled(False, True)
@@ -105,9 +105,9 @@ class LandingPageTest(BaseTest):
     """Test that creating a new invite code actually generates a new one."""
     landing_page = LandingPage(self.driver)
     # Create test user and get it.
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
     test_user_item = landing_page.findTestUser(
         BaseTest.TEST_USER_AS_DICT['name'])

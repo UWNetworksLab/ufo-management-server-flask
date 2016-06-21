@@ -61,9 +61,9 @@ class SetupPageTest(BaseTest):
     setup_page = SetupPage(self.driver)
     self.assertTestUserPresenceOnPage(False)
 
-    setup_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                           BaseTest.TEST_USER_AS_DICT['email'],
-                           self.args.server_url)
+    setup_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                             BaseTest.TEST_USER_AS_DICT['email'],
+                             self.args.server_url)
 
     self.assertTestUserPresenceOnPage(True)
 

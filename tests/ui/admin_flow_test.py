@@ -56,7 +56,7 @@ class AdminFlowTest(BaseTest):
     # Find the add admin dialog.
     admin_flow = AdminFlow(self.driver)
     dropdown_menu = admin_flow.getDropdownMenu()
-    add_admin_dialog = admin_flow.getAddAdminDialog(dropdown_menu)
+    add_admin_dialog = admin_flow.get_add_admin_dialog(dropdown_menu)
 
     # Add the test admin.
     admin_flow.addTestAdmin(self.TEST_ADMIN_AS_DICT['email'],
@@ -136,7 +136,7 @@ class AdminFlowTest(BaseTest):
     # Find the add admin dialog.
     admin_flow = AdminFlow(self.driver)
     dropdown_menu = admin_flow.getDropdownMenu()
-    add_admin_dialog = admin_flow.getAddAdminDialog(dropdown_menu)
+    add_admin_dialog = admin_flow.get_add_admin_dialog(dropdown_menu)
     with self.assertRaises(NoSuchElementException):
       response_status = add_admin_dialog.find_element(
           *AdminFlow.ADD_ADMIN_RESPONSE_STATUS)
@@ -178,7 +178,7 @@ class AdminFlowTest(BaseTest):
     # Find the add admin dialog.
     admin_flow = AdminFlow(self.driver)
     dropdown_menu = admin_flow.getDropdownMenu()
-    add_admin_dialog = admin_flow.getAddAdminDialog(dropdown_menu)
+    add_admin_dialog = admin_flow.get_add_admin_dialog(dropdown_menu)
 
     # Add the test admin.
     admin_flow.addTestAdmin(self.TEST_ADMIN_AS_DICT['email'],

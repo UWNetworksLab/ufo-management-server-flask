@@ -45,12 +45,12 @@ class ErrorNotificationTest(BaseTest):
     self.assertTrue(error_notification.is_present())
     self.assertFalse(error_notification.is_displayed())
 
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
 
     # Trying to add the same user twice will cause the error notification
     # to be displayed.

@@ -12,12 +12,12 @@ class AdminFlow(UfOPageLayout):
   """Admin flow methods and locators."""
 
   LANDING_PAGE_ELEMENTS = [
-    UfOPageLayout.USER_DISPLAY_TEMPLATE,
-    UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
-    UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
+      UfOPageLayout.USER_DISPLAY_TEMPLATE,
+      UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
+      UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
   ]
 
-  def getAddAdminDialog(self, dropdown_menu):
+  def get_add_admin_dialog(self, dropdown_menu):
     """Navigates to the add admin dialog on a given page.
 
     Args:

@@ -19,7 +19,7 @@ class LandingPage(UfOPageLayout):
     UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
   ]
 
-  def addTestUser(self, name, email, server_url):
+  def add_test_user(self, name, email, server_url):
     """Manually add a test user using the landing page.
 
     Args:
@@ -37,7 +37,7 @@ class LandingPage(UfOPageLayout):
     add_manually_tab.click()
 
     add_user_form = AddUserForm(self.driver)
-    add_user_form.addTestUser(name, email)
+    add_user_form.add_test_user(name, email)
 
   def removeTestUser(self, name, server_url, should_raise_exception=True):
     """Manually remove a test user using the landing page (the only way).

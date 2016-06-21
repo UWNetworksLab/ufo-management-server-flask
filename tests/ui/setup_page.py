@@ -20,7 +20,7 @@ class SetupPage(UfOPageLayout):
     SettingsComponent.SETTINGS_DISPLAY_TEMPLATE
   ]
 
-  def addTestUser(self, name, email, server_url):
+  def add_test_user(self, name, email, server_url):
     """Manually add a test user using the setup page.
 
     Args:
@@ -34,7 +34,7 @@ class SetupPage(UfOPageLayout):
     add_manually_tab.click()
 
     add_user_form = AddUserForm(self.driver)
-    add_user_form.addTestUser(name, email)
+    add_user_form.add_test_user(name, email)
 
   def addTestServer(self, ip, name, ssh_private_key, host_public_key,
                     server_url):
