@@ -1,0 +1,158 @@
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="oauth-configuration">
+  <style is="custom-style">
+    p, #oauthConfigurationForm {
+      margin-left: 40px;
+    }
+    #oauthConfigurationForm {
+      margin-left: 50px;
+    }
+    p, #oauthConfigurationForm {
+      margin-right: 25px;
+      margin-bottom: 25px;
+    }
+    .buttons {
+      margin-top: 35px;
+    }
+    paper-input {
+      margin-left: -10px;
+    }
+  </style>
+  <template>
+    <!-- TODO: Make a clear way to say you do not want to use Google apps. -->
+      <template is="dom-if" if="{{!configuration.config.is_configured}}">
+        <p>
+          [[welcomeText]]
+        </p>
+        <p>
+          [[googleDomainPromptText]]
+        </p>
+      </template>
+
+      <template is="dom-if" if="{{configuration.config.is_configured}}">
+        <p>
+          [[successSetupText]]
+        </p>
+
+        <template is="dom-if" if="{{isDomainConfigured(configuration.config)}}">
+          <p>
+            [[domainConfiguredText]] <strong>{{configuration.config.domain}}</strong>
+          </p>
+        </template>
+
+        <template is="dom-if" if="{{!isDomainConfigured(configuration.config)}}">
+          <p>
+            [[noDomainConfiguredText]]
+          </p>
+        </template>
+      </template>
+
+        <p>
+          [[betaWarningText]]
+        </p>
+
+        <p>
+          <a class="anchor-no-button" href="{{configuration.oauth_url}}" target="_blank">
+            <paper-button>
+              <iron-icon icon="open-in-new"></iron-icon> [[connectYourDomainButtonText]]
+            </paper-button>
+          </a>
+        </p>
+
+         <p>
+           [[pasteTheCodeText]]
+         </p>
+
+      <!-- TODO make this form be more useful -->
+      <template is="dom-if" if="{{configuration.config.is_configured}}">
+        <form id="oauthConfigurationForm" method="post" action="{{resources.setup_url}}">
+          <paper-input label="Domain" name="domain" required on-keypress="submitIfEnter"></paper-input>
+          <paper-input label="OAuth Code" name="oauth_code" required on-keypress="submitIfEnter"></paper-input>
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
+          <div class="buttons">
+            <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
+              <strong>[[submitButtonText]]</strong>
+            </paper-button>
+          </div>
+        </form>
+      </template>
+      <template is="dom-if" if="{{!configuration.config.is_configured}}">
+        <form id="oauthConfigurationForm" method="post" action="{{resources.setup_url}}">
+          <paper-input label="Domain" name="domain" on-keypress="submitIfEnter"></paper-input>
+          <paper-input label="OAuth Code" name="oauth_code" on-keypress="submitIfEnter"></paper-input>
+          <paper-input label="[[adminEmailLabel]]" required name="admin_email"></paper-input>
+          <paper-input label="[[adminPasswordlabel]]" required name="admin_password" on-keypress="submitIfEnter"></paper-input>
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
+          <div class="buttons">
+            <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
+              <strong>[[submitButtonText]]</strong>
+            </paper-button>
+          </div>
+        </form>
+      </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'oauth-configuration',
+      properties: {
+        resources: {
+          type: Object,
+          notify: true,
+        },
+        configuration: {
+          type: Object,
+          notify: true,
+        },
+      },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      attached: function() {
+        this.welcomeText = __i18n__['welcomeText'];
+        this.googleDomainPromptText = __i18n__['googleDomainPromptText'];
+        this.successSetupText = __i18n__['successSetupText'];
+        this.domainConfiguredText = __i18n__['domainConfiguredText'];
+        this.noDomainConfiguredText = __i18n__['noDomainConfiguredText'];
+        this.betaWarningText = __i18n__['betaWarningText'];
+        this.connectYourDomainButtonText = __i18n__['connectYourDomainButtonText'];
+        this.pasteTheCodeText = __i18n__['pasteTheCodeText'];
+        this.submitButtonText = __i18n__['submitButtonText'];
+        this.adminEmailLabel = __i18n__['adminEmailLabel'];
+        this.adminPasswordlabel = __i18n__['adminPasswordlabel'];
+      },
+      isDomainConfigured: function(config) {
+        return config.domain && config.credentials;
+      },
+      submitOauth: function(e, detail) {
+        var form = this.querySelector('#oauthConfigurationForm');
+        var inputs = form.querySelectorAll('paper-input');
+        var shouldSubmit = true;
+        var i = 0;
+        for (; i < inputs.length; i++) {
+          // Separating this out so that all inputs are checked in case more
+          // than one is invalid. Otherwise, after one is invalid, no more will
+          // be checked or show invalid regardless of state.
+          isValid = inputs[i].validate();
+          shouldSubmit = shouldSubmit && isValid;
+        }
+        if (shouldSubmit) {
+          form.submit();
+        }
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitOauth();
+        }
+      },
+    });
+  </script>
+</dom-module>

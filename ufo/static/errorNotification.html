@@ -1,0 +1,117 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="error-notification">
+  <style is="custom-style">
+    #container {
+      display: table;
+      width: 100%;
+      padding-top: 50px;
+      padding-bottom: 50px;
+    }
+    #row {
+      display: table-row;
+    }
+    #left {
+      width: 250px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    #right {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-left: 25px;
+      padding-right: 25px;
+      vertical-align: middle;
+    }
+    #left, #right {
+      display: table-cell;
+    }
+    #errorTitle {
+      font-size: 24px;
+      font-weight: bold;
+      color: #575757;
+    }
+    #errorMessage {
+      font-size: 20px;
+      color: #575757;
+    }
+    paper-button.custom {
+      color: #009788;
+      --paper-button-ink-color: #009788;
+      --paper-button-flat-keyboard-focus: {
+          background-color: #C3E4E1;
+          color: white !important;
+      };
+      --paper-button-raised-keyboard-focus: {
+          background-color: #C3E4E1;
+          color: white !important;
+      };
+      font-size: 20px;
+      top: 190px;
+      right: 50px;
+    }
+    paper-button.custom:hover {
+      background-color: #C3E4E1;
+    }
+  </style>
+  <template>
+    <paper-dialog id='errorNotificationDialog' with-backdrop>
+      <div id="container">
+        <div id="row">
+          <div id="left">
+            <div>
+              <img src="/static/img/sad-face.png">
+            </div>
+          </div>
+          <div id="right">
+            <div id="errorDetail">
+              <div id="errorTitle">
+                [[errorTitleText]]
+              </div>
+              <br>
+              <div id="errorMessage">
+                [[errorMessage]]
+              </div>
+            </div>
+          </div>
+          <div>
+            <paper-button id="errorNotificationCloseButton"
+                          class="custom"
+                          on-transitionend="closeErrorNotification">
+              <strong>[[closeText]]</strong>
+            </paper-button>
+          </div>
+        </div>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'error-notification',
+      properties: {
+        errorCode: Number,
+        errorMessage: String,
+        resources: {
+          type: Object,
+        },
+      },
+      listeners: {
+        'ApplicationError': 'showErrorNotification',
+      },
+      attached: function() {
+        this.errorTitleText = __i18n__['errorTitleText'];
+        this.closeText = __i18n__['closeText'];
+      },
+      showErrorNotification: function(event, detail) {
+        this.errorCode = detail.code;
+        this.errorMessage = detail.message;
+        this.$.errorNotificationDialog.open();
+      },
+      closeErrorNotification: function() {
+        this.$.errorNotificationDialog.close();
+      },
+    });
+  </script>
+</dom-module>

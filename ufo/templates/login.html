@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block body %}
+  <style>
+  .toHideOnLoginPage {
+    display: none;
+  }
+  </style>
+  <paper-display-template>
+    <header-container resources="{{resources}}" header-type="login">
+      {% if session['should_show_recaptcha'] %}
+        <login-form resources="{{resources}}" failures="{{session['failures'] or 0}}" should-show-recaptcha></login-form>
+      {% else %}
+        <login-form resources="{{resources}}" failures="{{session['failures'] or 0}}"></login-form>
+      {% endif %}
+    </header-container>
+  </paper-display-template>
+{% endblock %}

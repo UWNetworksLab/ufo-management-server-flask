@@ -3,34 +3,64 @@
 
 <dom-module id="ufo-textarea">
   <template>
-    <paper-textarea id="input"
+    <!--
+    Currently, paper-textarea doesn't actually support auto validation.
+    However, I'm adding this in now so that it will be here once support is
+    added. This also lets us display our error message when the field is
+    touched, but nothing is input, because of the required check.
+    TODO(eholder): Follow up periodically to check when this will be working
+    and update our bower component when necessary.
+    -->
+    <paper-textarea id="input" max-rows="{{maxRows}}"
       value="{{value}}"
       label="[[label]]"
+      disabled$="[[disabled]]"
       name$="paper_[[name]]"
-      required$="[[required]]"></paper-textarea>
+      required$="[[required]]"
+      auto-validate$="[[autoValidate]]"
+      pattern$="[[pattern]]"
+      error-message$="[[errorMessage]]"></paper-textarea>
 
     <input type="hidden" name$="[[name]]" value="{{value}}" />
   </template>
-</dom-module>
 
-<script>
-  Polymer({
-    is: 'ufo-textarea',
-    properties: {
-      name: {
-        type: String
-      },
-      label: {
-        type: String
-      },
-      required: {
-        type: Boolean,
-        value: false
-      },
-      value: {
-        notify: true,
-        type: String
+  <script>
+    Polymer({
+      is: 'ufo-textarea',
+      properties: {
+        name: {
+          type: String
+        },
+        label: {
+          type: String
+        },
+        disabled: {
+          type: Boolean,
+          value: false
+        },
+        required: {
+          type: Boolean,
+          value: false
+        },
+        autoValidate: {
+          type: Boolean,
+          value: false
+        },
+        pattern: {
+          type: String
+        },
+        errorMessage: {
+          type: String
+        },
+        value: {
+          notify: true,
+          type: String
+        },
+        maxRows: {
+          type: Number,
+          value: 10,
+        },
       }
-    }
-  });
-</script>
+    });
+  </script>
+</dom-module>

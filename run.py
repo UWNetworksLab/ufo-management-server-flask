@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import ufo
 
 if __name__ == '__main__':

@@ -1,14 +1,24 @@
 """Test runner for functional testing."""
 import argparse
 import unittest
+import sys
 
+from admin_flow_test import AdminFlowTest
+from error_notification_test import ErrorNotificationTest
 from landing_page_test import LandingPageTest
-from sidebar_test import SidebarTest
-from user_page_test import UserPageTest
+from login_page_test import LoginPageTest
+from search_page_test import SearchPageTest
+from settings_component_test import SettingsComponentTest
+from setup_page_test import SetupPageTest
+from undefined_url_test import UndefinedURLTest
 
 
 def _ParseArgs():
-  """Parse the arguments from the commandline."""
+  """Parse the arguments from the commandline.
+
+    Returns:
+      The parsed arguments given from the command line as an args array.
+    """
   parser = argparse.ArgumentParser()
   parser.add_argument('--server_url', action='store',
                       dest='server_url', default=None,
@@ -19,10 +29,26 @@ def _ParseArgs():
   parser.add_argument('--password', action='store',
                       dest='password', default=None,
                       help='Password of the user to login.')
+  parser.add_argument('--sauce-username', action='store',
+                      dest='sauce_username', default=None,
+                      help='Sauce username for a remote session.')
+  parser.add_argument('--sauce-access-key', action='store',
+                      dest='sauce_access_key', default=None,
+                      help='Sauce access key for a remote session.')
+  parser.add_argument('--travis-job-number', action='store',
+                      dest='travis_job_number', default=None,
+                      help='Travis job number for multiple tunnels.')
   return parser.parse_args()
 
 def MakeSuite(testcase_class):
-  """Add the test cases into suites."""
+  """Add the test cases into suites.
+
+    Args:
+      testcase_class: The class of test case to make into a test suite.
+
+    Returns:
+      A test suite for the given case.
+    """
   testloader = unittest.TestLoader()
   test_cases = testloader.getTestCaseNames(testcase_class)
   test_suite = unittest.TestSuite()
@@ -31,8 +57,15 @@ def MakeSuite(testcase_class):
   return test_suite
 
 SUITE = unittest.TestSuite()
+SUITE.addTest(MakeSuite(AdminFlowTest))
+SUITE.addTest(MakeSuite(ErrorNotificationTest))
 SUITE.addTest(MakeSuite(LandingPageTest))
-SUITE.addTest(MakeSuite(UserPageTest))
-SUITE.addTest(MakeSuite(SidebarTest))
+SUITE.addTest(MakeSuite(LoginPageTest))
+SUITE.addTest(MakeSuite(SearchPageTest))
+SUITE.addTest(MakeSuite(SettingsComponentTest))
+SUITE.addTest(MakeSuite(SetupPageTest))
+SUITE.addTest(MakeSuite(UndefinedURLTest))
 
-unittest.TextTestRunner().run(SUITE)
+result = unittest.TextTestRunner().run(SUITE)
+if not result.wasSuccessful():
+  sys.exit(1)

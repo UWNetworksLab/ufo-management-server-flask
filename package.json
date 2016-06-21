@@ -1,9 +1,20 @@
 {
   "name": "ufo-management-server",
+  "description": "Internet without borders",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uproxy/ufo-management-server-flask"
+  },
+  "bugs": {
+    "url": "http://github.com/uproxy/ufo-management-server-flask/issues",
+    "email": "info@uproxy.org"
+  },
   "dependencies": {
-    "bower": "^1.7.1"
+    "bower": "^1.7.1",
+    "vulcanize": "1.14.8",
+    "crisper": "2.0.2"
   },
   "scripts": {
-    "postinstall": "bower install"
+    "postinstall": "bower install --allow-root --config.interactive=false && ./vulcanize.sh"
   }
 }

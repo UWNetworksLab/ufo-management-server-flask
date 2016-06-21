@@ -1,0 +1,145 @@
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="server-add-form">
+  <style is="custom-style">
+    #serverAddForm {
+      margin-bottom: 0px;
+      padding: 24px 24px;
+      max-width: ;
+    }
+    .buttons {
+      margin-bottom: 25px;
+    }
+  </style>
+  <template>
+    <paper-dialog-scrollable class="biggerScrollable">
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="serverSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
+      </template>
+      <form is="iron-form" id="serverAddForm" method="post" action="{{resources.proxyServerAddUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
+        <paper-input label="[[ipLabel]]" type="text" id="{{resources.ipInput}}" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="[[nameLabel]]" type="text" id="{{resources.nameInput}}" name="name" required on-keypress="submitIfEnter"></paper-input>
+        <!-- TODO add the ability to upload files -->
+        <ufo-textarea label="[[sshPrivateKeyLabel]]"
+                      id="{{resources.sshPrivateKeyInput}}"
+                      name="ssh_private_key"
+                      required max-rows="{{resources.textAreaMaxRows}}"
+                      pattern="{{resources.regexes.privateKeyPattern}}"
+                      error-message="{{resources.regexes.privateKeyError}}">
+        </ufo-textarea>
+        <br>
+        <p>[[sshPrivateKeyText]]</p>
+        <paper-input label="[[hostPublicKeyLabel]]"
+                     type="text"
+                     id="{{resources.hostPublicKeyInput}}"
+                     name="host_public_key"
+                     required pattern="{{resources.regexes.publicKeyPattern}}"
+                     error-message="{{resources.regexes.publicKeyError}}"
+                     on-keypress="submitIfEnter">
+        </paper-input>
+        <br>
+        <p>[[hostPublicKeyText]]</p>
+        <p>[[rsaText]]</p>
+        <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+      </form>
+      <div class="buttons">
+        <paper-button class="anchor-button" dialog-dismiss on-tap="resetForm">
+        <strong>[[dismissText]]</strong>
+        </paper-button>
+        <paper-button class="anchor-button" id="serverAddSubmitButton" autofocus on-tap="submitPostForm">
+        <strong>[[confirmText]]</strong>
+        </paper-button>
+      </div>
+    </paper-dialog-scrollable>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'server-add-form',
+      properties: {
+        resources: {
+          type: Object,
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+      },
+      listeners: {
+        'iron-form-error': 'handleFormError',
+      },
+      ready: function() {
+        this.$.serverAddForm.request.handleAs = "json";
+        this.$.serverAddForm.request.jsonPrefix = this.resources.jsonPrefix;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      attached: function() {
+        this.ipLabel = __i18n__['ipLabel'];
+        this.nameLabel = __i18n__['nameLabel'];
+        this.sshPrivateKeyLabel = __i18n__['sshPrivateKeyLabel'];
+        this.sshPrivateKeyText = __i18n__['sshPrivateKeyText'];
+        this.hostPublicKeyLabel = __i18n__['hostPublicKeyLabel'];
+        this.hostPublicKeyText = __i18n__['hostPublicKeyText'];
+        this.rsaText = __i18n__['rsaText'];
+        this.dismissText = __i18n__['dismissText'];
+        this.confirmText = __i18n__['confirmText'];
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      submitPostForm: function() {
+        this.querySelector('#serverAddForm').submit();
+      },
+      closeModal: function() {
+        this.set('loading', false);
+        this.resetForm();
+        serverModal = document.getElementById('serverModal');
+        if (serverModal) {
+          document.getElementById('serverModal').close();
+        }
+      },
+      handleFormError: function(event, detail) {
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
+        var errorEvent = new CustomEvent('ApplicationError', errorDetail);
+        document.getElementById('error-notification').dispatchEvent(errorEvent);
+        this.set('loading', false);
+      },
+      parsePostResponse: function(e, detail) {
+        this.sendServersJsonToList(this.$.serverAddForm.request.lastResponse);
+        this.closeModal();
+      },
+      sendServersJsonToList: function(updatedServersJson) {
+        var listElem = document.getElementById(this.resources.proxyServerListId);
+        if (listElem) {
+          listElem.setAjaxResponse(updatedServersJson);
+        }
+      },
+      resetForm: function(e, details) {
+        document.getElementById('serverAddForm').reset();
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitPostForm();
+        }
+      },
+    });
+  </script>
+</dom-module>

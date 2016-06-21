@@ -1,0 +1,64 @@
+<link rel="import" href="bower_components/iron-icon/iron-icon.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="add-item-button">
+  <style is="custom-style">
+    strong {
+      vertical-align: bottom;
+      line-height: 19px;
+    }
+  </style>
+  <template>
+    <paper-button
+        class="anchor-button"
+        on-tap="openModal"
+        id="{{addButtonId}}">
+      <iron-icon src="{{inverseAddIconUrl}}"></iron-icon>
+      <strong> [[addText]]</strong>
+    </paper-button>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'add-item-button',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        addType: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+      },
+      ready: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addButtonId = this.resources.proxyServerAddButtonId;
+            this.inverseAddIconUrl = this.resources.proxyServerInverseAddIconUrl;
+            this.modalId = this.resources.proxyServerModalId;
+            break;
+          default:
+            this.addButtonId = this.resources.userAddButtonId;
+            this.inverseAddIconUrl = this.resources.userInverseAddIconUrl;
+            this.modalId = this.resources.userModalId;
+            break;
+        }
+      },
+      attached: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addText = __i18n__['proxyServerAddText'];
+            break;
+          default:
+            this.addText = __i18n__['userAddText'];
+            break;
+        }
+      },
+      openModal: function() {
+        document.getElementById(this.modalId).open();
+      },
+    });
+  </script>
+</dom-module>

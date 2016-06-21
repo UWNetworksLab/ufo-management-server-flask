@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'self'; script-src 'self' www.google.com/recaptcha/api.js https://www.gstatic.com/recaptcha/api2/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; frame-src 'self' https://www.google.com/recaptcha/api2/">
+  <!-- Include web components script for Polymer to work on firefox. -->
+  <script src="{{ url_for('static', filename='bower_components/webcomponentsjs/webcomponents-lite.min.js') }}"></script>
+  <link rel="import" href="{{ url_for('static', filename='vulcanized.html') }}" />
+  <script src="{{ url_for('vulcanized') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon"/>
+  {% block head %}{% endblock %}
+</head>
+<style is="custom-style">
+  paper-dropdown-menu.custom-dropdown {
+    --paper-input-container-label: {
+      color: white;
+    };
+    --paper-dropdown-menu-icon: {
+      color: white;
+    };
+  }
+  paper-scroll-header-panel {
+    background-color: #009788!important;
+    height: 250px;
+  }
+  .dropdown-icon {
+    width: 20px;
+    --iron-icon-fill-color: #009788;
+  }
+  .verticalSpacer {
+    height: 20px;
+  }
+</style>
+<body class="fullbleed layout vertical">
+  <quaintous-i18n locales-path="/static/locales/{{session['language_prefix']}}/messages.json" loading="{{i18nLoading}}"></quaintous-i18n>
+  <input type="hidden" id="globalXsrf" value="{{xsrf_token()}}">
+  <div>  <!-- Prevent the main-holder from pushing into the header. -->
+    <paper-scroll-header-panel>
+      <paper-toolbar class="tall" id="main-toolbar">
+        <div class="middle horizontal layout center flex">
+          <div class="flex">
+            <a href="{{ url_for('landing') }}" id="logoLandingAnchor">
+              <img src="{{ url_for('static', filename='img/ufo-logo.svg') }}" alt="uProxy Logo" width="250">
+            </a>
+          </div>
+          <div class="flex"></div>
+          <div class="vertical layout flex-4">
+            <div class="verticalSpacer"><p></div>
+            <ufo-search-bar class="flex toHideOnLoginPage" resources="{{resources}}">
+            </ufo-search-bar>
+            <div class="verticalSpacer"></div>
+          </div>
+          <div class="flex"></div>
+          <ufo-dropdown-button username="{{session['email']}}" class="toHideOnLoginPage">
+          </ufo-dropdown-button>
+        </div>
+      </paper-toolbar>
+    </paper-scroll-header-panel>
+  </div>
+  <ufo-dropdown-menu resources="{{resources}}" id="ufoDropdownMenu">
+  </ufo-dropdown-menu>
+  <div class="layout vertical" id="main-holder">
+    {% block body %}{% endblock %}
+    <br>
+    <p></p>
+  </div>
+  <error-notification resources="{{resources}}" id='error-notification'></error-notification>
+
+  <script src="{{ url_for('static', filename='globalHelperFunctions.js') }}"></script>
+  <input id="hiddenCopyInput" type="hidden" value=""/>
+</body>
+</html>

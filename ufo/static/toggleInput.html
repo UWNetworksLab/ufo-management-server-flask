@@ -1,0 +1,12 @@
+<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html" />
+
+<dom-module id="ufo-toggle-input">
+    <template>
+        <paper-toggle-button checked$={{checked}}>
+          {{buttonText}}
+        </paper-toggle-button>
+        <input type="hidden" id="hiddenToggle" name="{{inputName}}" value="{{checked}}">
+    </template>
+
+    <script src="toggleInput.js"></script>
+</dom-module>

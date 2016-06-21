@@ -1,0 +1,83 @@
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="login-form">
+  <style is="custom-style">
+    #loginForm {
+      margin-left: 50px;
+      margin-right: 25px;
+      margin-bottom: 25px;
+    }
+    .buttons {
+      margin-top: 35px;
+      margin-right: 25px;
+      margin-bottom: 25px;
+    }
+    paper-input {
+      margin-left: -10px;
+    }
+  </style>
+  <template>
+    <form id="loginForm" method="POST">
+      <paper-input label="[[emailLabel]]" id="email" name="email" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
+      <paper-input type="password" label="[[passwordLabel]]" id="password" name="password" required on-keypress="submitIfEnter"></paper-input>
+
+      <template is="dom-if" if="{{shouldShowRecaptcha}}">
+        <script src='//www.google.com/recaptcha/api.js'></script>
+        <div id="recaptchaDiv" class="g-recaptcha"
+          data-sitekey="{{resources.recaptchaKey}}" data-theme="light"
+          data-type="image" data-size="normal" data-tabindex="0">
+        </div>
+      </template>
+
+      <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+    </form>
+    <div class="buttons">
+      <paper-button on-tap="submitLoginForm" class="anchor-button" type="submit" id="signIn">
+        <strong>[[loginText]]</strong>
+      </paper-button>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'login-form',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        failures: {
+          type: Number,
+        },
+        shouldShowRecaptcha: {
+          type: Boolean,
+          value: false,
+        },
+      },
+      ready: function() {
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      attached: function() {
+        if (this.shouldShowRecaptcha) {
+          this.querySelector('#recaptchaDiv')
+            .setAttribute('data-sitekey', this.resources.recaptchaKey);
+        }
+        this.emailLabel = __i18n__['emailLabel'];
+        this.passwordLabel = __i18n__['passwordLabel'];
+        this.loginText = __i18n__['loginText'];
+      },
+      submitLoginForm: function() {
+        this.querySelector('#loginForm').submit();
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitLoginForm();
+        }
+      },
+    });
+  </script>
+</dom-module>

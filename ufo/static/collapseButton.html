@@ -1,0 +1,14 @@
+<link rel="import" href="bower_components/iron-collapse/iron-collapse.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+
+<dom-module id="ufo-collapse-button">
+    <template>
+        <paper-button on-tap="toggleCollapse">{{buttonText}}</paper-button>
+        <iron-collapse class="collapse">
+          <h3>{{label}}</h3>
+          <pre style="width:600px; overflow: auto; word-wrap: break-word;">{{collapseText}}</pre>
+        </iron-collapse>
+    </template>
+
+    <script src="collapseButton.js"></script>
+</dom-module>

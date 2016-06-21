@@ -1,0 +1,85 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="left-icon-container">
+  <style is="custom-style">
+    #container {
+      display: table;
+      width: 100%
+    }
+    #row {
+      display: table-row;
+    }
+    #left {
+      width: 300px;
+      text-align: center;
+      vertical-align: middle;
+      border-right: 1px solid #e5e5e5;
+    }
+    #right {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-left: 25px;
+      padding-right: 25px;
+    }
+    #left, #right {
+      display: table-cell;
+    }
+    #description {
+      font-size: 15px;
+      font-weight: bold;
+    }
+  </style>
+  <template>
+    <div id="container">
+      <div id="row">
+        <div id="left">
+          <div>
+            <img src="{{addIconUrl}}">
+          </div>
+          <div id="description">
+            {{addText}}
+          </div>
+        </div>
+        <div id="right">
+          <content></content>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'left-icon-container',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        addType: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+      },
+      ready: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addIconUrl = this.resources.proxyServerAddIconUrl;
+            break;
+          default:
+            this.addIconUrl = this.resources.userAddIconUrl;
+            break;
+        }
+      },
+      attached: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addText = __i18n__['proxyServerAddText'];
+            break;
+          default:
+            this.addText = __i18n__['userAddText'];
+            break;
+        }
+      },
+    });
+  </script>
+</dom-module>

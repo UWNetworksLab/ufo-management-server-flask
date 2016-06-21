@@ -1,0 +1,78 @@
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="add-modal">
+  <style is="custom-style">
+    h2.title {
+      background-color: white;
+    }
+    #contentHolder {
+      margin-bottom: 0px;
+      padding: 0px;
+    }
+  </style>
+  <template>
+    <paper-dialog id="{{modalId}}" with-backdrop>
+      <h2 class="title">[[addText]]</h2>
+      <div id="contentHolder">
+        <template is="dom-if" if="{{isUser}}">
+          <user-add-tabs resources="{{resources}}" should-display-with-dialog></user-add-tabs>
+        </template>
+        <template is="dom-if" if="{{isProxyServer}}">
+          <server-add-form resources="{{resources}}"></server-add-form>
+        </template>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'add-modal',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        addType: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+      },
+      listeners: {
+        'iron-overlay-canceled': 'handleCancelled',
+      },
+      ready: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.modalId = this.resources.proxyServerModalId;
+            this.isProxyServer = true;
+            break;
+          default:
+            this.modalId = this.resources.userModalId;
+            this.isUser= true;
+            break;
+        }
+      },
+      attached: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addText = __i18n__['proxyServerAddText'];
+            break;
+          default:
+            this.addText = __i18n__['userAddText'];
+            break;
+        }
+      },
+      handleCancelled: function(event, detail) {
+        var serverAdd = this.querySelector('server-add-form');
+        var userAdd = this.querySelector('user-add-tabs');
+        if (this.isProxyServer && serverAdd) {
+          serverAdd.closeModal();
+        }
+        if (this.isUser && userAdd) {
+          userAdd.closeModal();
+        }
+      },
+    });
+  </script>
+</dom-module>

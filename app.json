@@ -16,7 +16,8 @@
     }
   },
   "addons": [
-    "heroku-postgresql"
+    "heroku-postgresql",
+    "redistogo"
   ],
   "buildpacks": [
     {
@@ -24,6 +25,9 @@
     },
     {
       "url": "https://github.com/heroku/heroku-buildpack-python"
+    },
+    {
+      "url": "https://github.com/uProxy/nginx-buildpack"
     }
   ]
 }

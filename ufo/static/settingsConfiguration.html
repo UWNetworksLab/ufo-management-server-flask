@@ -1,0 +1,85 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="settings-configuration">
+  <style is="custom-style">
+    #policyConfigForm {
+      margin-left: 40px;
+      margin-right: 25px;
+      margin-bottom: 25px;
+    }
+  </style>
+  <template>
+    <iron-ajax auto
+      url="{{resources.getSettingsUrl}}"
+      method="GET"
+      handle-as="json"
+      id="getSettingsAjax"
+      loading="{{loading}}"
+      last-response="{{ajaxResponse}}"
+      json-prefix="{{resources.jsonPrefix}}">
+    </iron-ajax>
+    <form is="iron-form" id="policyConfigForm" method="post" action="{{resources.settingsEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseConfigResponse">
+      <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="[[proxyValidityText]]" checked$={{ajaxResponse.enforce_proxy_server_validity}}></ufo-toggle-input>
+      <br>
+      <!-- TODO: Surface this when the network jail functionality is available.
+      <ufo-toggle-input input-name="enforce_network_jail" button-text="[[networkJailText]]" checked$={{ajaxResponse.enforce_network_jail}}></ufo-toggle-input>
+      <br>
+      -->
+      <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+      <div class="buttons">
+        <template is="dom-if" if="{{loading}}">
+          <paper-spinner id="settingsSpinner" active$={{loading}}></paper-spinner>
+        </template>
+        <paper-button class="anchor-button" id="saveSettingsButton" on-tap="submitConfig" type="submit">
+          <strong>[[saveText]]</strong>
+        </paper-button>
+      </div>
+    </form>
+  </template>
+  <script>
+    Polymer({
+      is: 'settings-configuration',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        ajaxResponse: {
+          type: Object,
+          notify: true,
+        },
+      },
+      ready: function() {
+        this.$.policyConfigForm.request.handleAs = "json";
+        this.$.policyConfigForm.request.jsonPrefix = this.resources.jsonPrefix;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      attached: function() {
+        this.proxyValidityText = __i18n__['proxyValidityText'];
+        this.networkJailText = __i18n__['networkJailText'];
+        this.saveText = __i18n__['saveText'];
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      submitConfig: function(e, detail) {
+        this.$.policyConfigForm.submit();
+      },
+      parseConfigResponse: function(e, detail) {
+        this.set('ajaxResponse', this.$.policyConfigForm.request.lastResponse);
+        this.set('loading', false);
+      },
+    });
+  </script>
+</dom-module>

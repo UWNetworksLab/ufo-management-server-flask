@@ -1,9 +1,24 @@
-{% extends "layout.html" %}
-{% block title %}UfO Management Server{% endblock %}
-{% block head %}
-  <meta name="google-site-verification" content="{{ site_verification_content }}" />
-{% endblock %}
+{% extends "base.html" %}
+{% block title %}Landing{% endblock %}
 {% block body %}
-  <h2>Uproxy for Organizations Management Server</h2>
-  <h4>Click one of the links on the side to login and administer the server.</h4>
+  <paper-display-template id="userDisplayTemplate">
+    <header-container resources="{{resources}}" has-add-flow="true" header-type="user">
+      <user-list resources="{{resources}}" id="userList" auto-get=true>
+      </user-list>
+    </header-container>
+  </paper-display-template>
+  <paper-display-template id="proxyServerDisplayTemplate">
+    <header-container resources="{{resources}}" has-add-flow="true" header-type="proxyServer">
+      <server-list resources="{{resources}}" id="proxyList" auto-get=true>
+      </server-list>
+    </header-container>
+  </paper-display-template>
+  {% if session['domain'] %}
+    <paper-display-template id="chromePolicyDisplayTemplate">
+      <header-container resources="{{resources}}" header-type="chromePolicy">
+        <chrome-policy resources="{{resources}}">
+        </chrome-policy>
+      </header-container>
+    </paper-display-template>
+  {% endif %}
 {% endblock %}

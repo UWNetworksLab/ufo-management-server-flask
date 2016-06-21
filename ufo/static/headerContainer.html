@@ -1,0 +1,74 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/paper-material/paper-material.html" />
+<link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="header-container">
+  <style is="custom-style">
+    .title {
+      margin-left: 25px;
+    }
+  </style>
+  <template>
+    <div class="heading">
+      <paper-toolbar class="medium-tall">
+        <div class="middle flex">
+          <div class="horizontal center-justified layout">
+            <div class="title">{{titleText}}</div>
+            <template is="dom-if" if="{{hasAddFlow}}">
+              <add-item-button resources="{{resources}}" add-type="{{headerType}}"></add-item-button>
+            </template>
+          </div>
+        </div>
+      </paper-toolbar>
+    </div>
+    <div>
+      <content></content>
+    </div>
+    <template is="dom-if" if="{{hasAddFlow}}">
+      <add-modal resources="{{resources}}" add-type="{{headerType}}"></add-modal>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'header-container',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        hasAddFlow: {
+          type: Boolean,
+          notify: true,
+        },
+        headerType: {
+          type: String,
+          notify: true,
+          value: '',
+        },
+      },
+      attached: function() {
+        switch (this.headerType) {
+          case 'chromePolicy':
+            this.titleText = __i18n__['chromePolicyTitleText'];
+            break;
+          case 'login':
+            this.titleText = __i18n__['loginTitleText'];
+            break;
+          case 'oauth':
+            this.titleText = __i18n__['oauthTitleText'];
+            break;
+          case 'proxyServer':
+            this.titleText = __i18n__['proxyServerTitleText'];
+            break;
+          case 'settings':
+            this.titleText = __i18n__['settingsTitleText'];
+            break;
+          default:
+            this.titleText = __i18n__['userTitleText'];
+            break;
+        }
+      },
+    });
+  </script>
+</dom-module>

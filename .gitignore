@@ -1,8 +1,14 @@
 instance/*
+postgresql:/*
+tests/ui/postgresql:/*
+sqlite:/*
+tests/ui/sqlite:/*
 venv/*
 .project
 .pydevproject
 *.pyc
 ufo/static/bower_components/*
+ufo/static/vulcanized.html
+ufo/static/vulcanized.js
 node_modules/*
 chrome_driver/*

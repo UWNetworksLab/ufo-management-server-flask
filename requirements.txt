@@ -1,6 +1,11 @@
+APScheduler==3.0.5
+bcrypt==1.1.0
 Flask==0.10.1
-Flask-SQLAlchemy==2.1
+Flask-Migrate==1.8.0
+flask-recaptcha==0.4.2
+Flask-SQLAlchemy==1.0
 Flask-Testing==0.4.2
+flask-whooshalchemy==0.56
 google-api-python-client==1.4.2
 gunicorn==19.4.3
 httplib2==0.9.2
@@ -13,11 +18,14 @@ paramiko==1.16.0
 pyasn1==0.1.9
 pyasn1-modules==0.0.8
 pycrypto==2.6.1
+redis==2.10.5
+rq==0.5.6
 rsa==3.2.3
 selenium==2.49.2
 simplejson==3.8.1
 six==1.10.0
 SQLAlchemy==1.0.11
+streql==3.0.2
 uritemplate==0.6
 Werkzeug==0.11.3
 wheel==0.24.0

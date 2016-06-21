@@ -1,0 +1,278 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+<link rel="import" href="textarea.html" />
+
+<dom-module id="edit-server-dialog">
+  <style is="custom-style">
+    .first-div {
+      min-width: 300px;
+    }
+    .second-div {
+      min-width: 350px;
+    }
+    .third-div {
+      min-width: 200px;
+    }
+    .topLineButton {
+      color: #25CFB9;
+    }
+    paper-icon-item {
+      border-bottom: 1px solid #e5e5e5;
+    }
+    paper-icon-item:focus:before {
+      opacity: 0!important;
+    }
+    paper-listbox {
+      padding: 0px;
+    }
+    paper-input {
+      --paper-input-container-underline-disabled: {
+        border-bottom: 2px solid #25CFB9;
+      }
+    }
+    .spacer {
+      width: 20px;
+    }
+    .hideElement {
+      display: none;
+    }
+    .showElement {
+      display: inline-block;
+    }
+  </style>
+  <template>
+    <paper-dialog id="{{resources.proxyServerDetailsOverlayId}}" with-backdrop>
+      <paper-listbox>
+        <paper-icon-item id="topBar" class="horizontal center-justified layout">
+          <iron-icon src="{{resources.proxyServerIconUrl}}" item-icon></iron-icon>
+          <div class="first-div"><strong>{{item.name}}</strong></div>
+          <div class="second-div">{{item.ip_address}}</div>
+          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton" id="{{resources.editButtonId}}"><strong>[[editText]]</strong></paper-button>
+          <paper-icon-button icon="close" title="[[closeText]]" id="{{resources.proxyServerDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+        </paper-icon-item>
+      </paper-listbox>
+      <template is="dom-if" if="{{loading}}">
+        <paper-spinner id="serverDetailsSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
+      </template>
+      <div id="rowHolder" class="vertical center-justified layout">
+        <form is="iron-form" id="serverEditForm" method="post" action="{{resources.proxyServerEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
+          <paper-input class="editInputFields" disabled label="[[ipLabel]]" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
+          <paper-input class="editInputFields" disabled label="[[nameLabel]]" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter" id="{{resources.nameInput}}"></paper-input>
+          <!-- TODO add the ability to upload files -->
+          <paper-input class="editInputFields"
+                       disabled
+                       label="[[sshPrivateKeyLabel]]"
+                       name="ssh_private_key"
+                       required
+                       max-rows="[[resources.textAreaMaxRows]]"
+                       pattern="[[resources.regexes.privateKeyPattern]]"
+                       error-message="[[resources.regexes.privateKeyError]]"
+                       value="[[item.ssh_private_key]]"
+                       on-keypress="doNothingOnEnter"
+                       on-keydown="doNothingOnEnter"
+                       id="{{resources.sshPrivateKeyInput}}">
+          </paper-input>
+          <br>
+          <p class="editElements hideElement">[[sshPrivateKeyText]]</p>
+          <paper-input class="editInputFields"
+                       disabled
+                       label="[[hostPublicKeyLabel]]"
+                       type="text"
+                       name="host_public_key"
+                       required
+                       pattern="{{resources.regexes.publicKeyPattern}}"
+                       error-message="{{resources.regexes.publicKeyError}}"
+                       value="[[item.host_public_key]]"
+                       on-keypress="submitIfEnter"
+                       id="{{resources.hostPublicKeyInput}}">
+          </paper-input>
+          <br>
+          <p class="editElements hideElement">[[hostPublicKeyText]]</p>
+          <p class="editElements hideElement">[[rsaText]]</p>
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+          <input type="hidden" name="server_id" value="{{item.id}}">
+        </form>
+      </div>
+      <br>
+      <div class="buttons">
+        <paper-button class="editElements hideElement anchor-button" on-tap="cancelServerEdit">
+        <strong>[[dismissText]]</strong>
+        </paper-button>
+        <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm" id="serverEditSubmitButton">
+        <strong>[[saveText]]</strong>
+        </paper-button>
+        <form is="iron-form" id="serverDeleteForm" method="post" action="{{resources.proxyServerDeleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
+          <input type="hidden" name="server_id" value="{{item.id}}">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+          <paper-button on-tap="submitForm" class="delete-button" id="serverDeleteButton" type="submit">
+            <iron-icon icon="delete"></iron-icon>
+            <strong>[[proxyServerDeleteLabel]]</strong>
+          </paper-button>
+        </form>
+      </div>
+      <br>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'edit-server-dialog',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        item: {
+          type: Object,
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        oldItem: {
+          type: Object,
+        },
+      },
+      listeners: {
+        'iron-form-error': 'handleFormError',
+        'iron-overlay-canceled': 'closeDialog',
+      },
+      ready: function() {
+        this.$.serverEditForm.request.handleAs = "json";
+        this.$.serverEditForm.request.jsonPrefix = this.resources.jsonPrefix;
+        this.$.serverDeleteForm.request.handleAs = "json";
+        this.$.serverDeleteForm.request.jsonPrefix = this.resources.jsonPrefix;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      attached: function() {
+        this.editText = __i18n__['editText'];
+        this.closeText = __i18n__['closeText'];
+        this.ipLabel = __i18n__['ipLabel'];
+        this.nameLabel = __i18n__['nameLabel'];
+        this.sshPrivateKeyLabel = __i18n__['sshPrivateKeyLabel'];
+        this.sshPrivateKeyText = __i18n__['sshPrivateKeyText'];
+        this.hostPublicKeyLabel = __i18n__['hostPublicKeyLabel'];
+        this.hostPublicKeyText = __i18n__['hostPublicKeyText'];
+        this.rsaText = __i18n__['rsaText'];
+        this.dismissText = __i18n__['dismissText'];
+        this.saveText = __i18n__['saveText'];
+        this.proxyServerDeleteLabel = __i18n__['proxyServerDeleteLabel'];
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      submitForm: function(e, detail) {
+        var elem = e.target;
+        while (elem.tagName.toLowerCase() != 'form') {
+          elem = elem.parentElement;
+          if (elem == document.body) {
+            break;
+          }
+        }
+        if (elem.tagName.toLowerCase() != 'form') {
+          return;
+        }
+        elem.submit();
+      },
+      submitEditForm: function(e, detail) {
+        this.$.serverEditForm.submit();
+      },
+      handleFormError: function(event, detail) {
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
+        var errorEvent = new CustomEvent('ApplicationError', errorDetail);
+        document.getElementById('error-notification').dispatchEvent(errorEvent);
+        this.set('loading', false);
+      },
+      parseEditResponse: function(e, detail) {
+        this.sendJsonToList(this.$.serverEditForm.request.lastResponse);
+        this.set('loading', false);
+        this.set('oldItem', this.item);
+        this.showHideEdit(true);
+      },
+      parseDeleteResponse: function(e, detail) {
+        this.sendJsonToList(this.$.serverDeleteForm.request.lastResponse);
+        this.set('loading', false);
+        this.closeDialog();
+      },
+      sendJsonToList: function(updatedJson) {
+        var listElem = document.getElementById(this.resources.proxyServerListId);
+        if (listElem) {
+          listElem.setAjaxResponse(updatedJson);
+        }
+      },
+      openDialog: function() {
+        var dialog = this.querySelector('#' + this.resources.proxyServerDetailsOverlayId);
+        dialog.open();
+      },
+      closeDialog: function() {
+        this.cancelServerEdit();
+        var dialog = this.querySelector('#' + this.resources.proxyServerDetailsOverlayId);
+        dialog.close();
+      },
+      openServerEdit: function() {
+        this.openDialog();
+        this.switchToServerEdit();
+      },
+      switchToServerEdit: function(e, detail) {
+        this.set('oldItem', this.item);
+        this.showHideEdit(false);
+      },
+      cancelServerEdit: function(e, detail) {
+        this.resetInputs();
+        this.showHideEdit(true);
+      },
+      resetInputs: function() {
+        var editInputs = this.getElementsByClassName('editInputFields');
+        for (var i in editInputs) {
+          editInputs[i].value = this.oldItem[editInputs[i].name];
+        }
+      },
+      showHideEdit: function(disabled) {
+        var editInputs = this.getElementsByClassName('editInputFields');
+        for (var i in editInputs) {
+          editInputs[i].disabled = disabled;
+        }
+        var editElements = this.getElementsByClassName('editElements');
+        for (var i = 0; i < editElements.length; ++i) {
+          if (disabled) {
+            editElements[i].className = editElements[i].className.replace(
+              'showElement', 'hideElement');
+          } else {
+            editElements[i].className = editElements[i].className.replace(
+              'hideElement', 'showElement');
+          }
+        }
+      },
+      submitIfEnter: function(e) {
+        if (e.keyCode === 13) {
+          this.submitEditForm();
+        }
+      },
+      doNothingOnEnter: function(e) {
+        if (e.keyCode === 13) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
+    });
+  </script>
+</dom-module>

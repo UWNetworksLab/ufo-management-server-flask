@@ -1,0 +1,220 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="bower_components/paper-input/paper-input.html" />
+<link rel="import" href="bower_components/paper-item/paper-item.html" />
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
+
+<dom-module id="user-details-dialog">
+  <style is="custom-style">
+    .first-div {
+      min-width: 300px;
+    }
+    .second-div {
+      min-width: 350px;
+    }
+    .third-div {
+      min-width: 200px;
+    }
+    .topLineButton {
+      color: #25CFB9;
+    }
+    paper-icon-item {
+      border-bottom: 1px solid #e5e5e5;
+    }
+    paper-icon-item:focus:before {
+      opacity: 0!important;
+    }
+    paper-listbox {
+      padding: 0px;
+    }
+    paper-input {
+      --paper-input-container-underline-disabled: {
+        border-bottom: 2px solid #25CFB9;
+      }
+    }
+    .spacer {
+      width: 20px;
+    }
+    .buttons paper-button {
+      height: 40px;
+    }
+  </style>
+  <!-- TODO(eholder): Figure out how to make hover work with focused. -->
+  <template>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner id="userDetailsSpinner" class="fixedPositionSpinner" active$={{loading}}></paper-spinner>
+    </template>
+    <form is="iron-form" method="GET" action="{{resources.inviteCodeUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseInviteCodeResponse" hidden id="getInviteCodeAjax" on-iron-form-error="inviteCodeErrorResponse">
+      <input type="hidden" name="user_id" value="{{item.id}}">
+    </form>
+    <paper-dialog id="{{resources.userDetailsOverlayId}}" with-backdrop>
+      <paper-listbox>
+        <paper-icon-item id="topBar" class="horizontal center-justified layout">
+          <iron-icon src="{{resources.userIconUrl}}" item-icon></iron-icon>
+          <div class="first-div"><strong>{{item.name}}</strong></div>
+          <div class="second-div">{{item.email}}</div>
+          <form is="iron-form" id="userDisableEnableForm" method="post" action="{{resources.revokeToggleUrl}}" class="third-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
+            <input type="hidden" name="user_id" value="{{item.id}}">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+            <paper-button on-tap="submitForm" class="topLineButton" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
+          </form>
+          <paper-icon-button icon="close" title="[[closeText]]" id="{{resources.userDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+        </paper-icon-item>
+      </paper-listbox>
+      <div id="rowHolder" class="vertical center-justified layout">
+        <strong>[[inviteCodeLabel]]</strong>
+        <template is="dom-if" if="[[!inviteCodeJson.invite_code]]">
+          <p>[[inviteCodeNeedServerText]]</p>
+        </template>
+        <template is="dom-if" if="[[inviteCodeJson.invite_code]]">
+          <paper-input readonly type="text" id="lastInviteCode" value="{{inviteCodeJson.invite_code}}"></paper-input>
+        </template>
+      </div>
+      <br>
+      <div class="buttons">
+        <template is="dom-if" if="[[inviteCodeJson.invite_code]]">
+          <paper-button on-tap="copyInviteCode" class="anchor-button" id="copyInviteCodeButton" type="submit">
+            <iron-icon icon="content-copy"></iron-icon> <strong>[[copyLabel]]</strong>
+          </paper-button>
+          <form is="iron-form" id="rotateKeysForm" method="post" action="{{resources.rotateKeysUrl}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="setRotateKeysAndEnable">
+            <input type="hidden" name="user_id" value="{{item.id}}">
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+            <paper-button on-tap="submitForm" class="anchor-button" id="rotateKeysButton" type="submit">
+              <iron-icon icon="refresh"></iron-icon> <strong>[[rotateKeysLabel]]</strong>
+            </paper-button>
+          </form>
+        </template>
+        <form is="iron-form" id="userDeleteForm" method="post" action="{{resources.userDeleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
+          <input type="hidden" name="user_id" value="{{item.id}}">
+          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+          <paper-button on-tap="submitForm" class="delete-button" id="userDeleteButton" type="submit">
+            <iron-icon icon="delete"></iron-icon>
+            <strong>[[userDeleteLabel]]</strong>
+          </paper-button>
+        </form>
+      </div>
+      <br>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'user-details-dialog',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        item: {
+          type: Object,
+          notify: true,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+        inviteCodeJson: {
+          type: Object,
+          value: false,
+          notify: true,
+        },
+      },
+      ready: function() {
+        this.$.getInviteCodeAjax.request.handleAs = "json";
+        this.$.getInviteCodeAjax.request.jsonPrefix = this.resources
+          .jsonPrefix;
+        this.$.userDisableEnableForm.request.handleAs = "json";
+        this.$.userDisableEnableForm.request.jsonPrefix = this.resources
+          .jsonPrefix;
+        this.$.userDeleteForm.request.handleAs = "json";
+        this.$.userDeleteForm.request.jsonPrefix = this.resources.jsonPrefix;
+        var xsrfElement = document.getElementById('globalXsrf');
+        if (xsrfElement) {
+          this.xsrfToken = xsrfElement.value;
+        }
+      },
+      attached: function() {
+        this.closeText = __i18n__['closeText'];
+        this.inviteCodeLabel = __i18n__['inviteCodeLabel'];
+        this.inviteCodeNeedServerText = __i18n__['inviteCodeNeedServerText'];
+        this.copyLabel = __i18n__['copyLabel'];
+        this.rotateKeysLabel = __i18n__['rotateKeysLabel'];
+        this.userDeleteLabel = __i18n__['userDeleteLabel'];
+      },
+      setRotateKeysAndEnable: function() {
+        this.setRotateKeysJsonPrefix();
+        this.enableSpinner();
+      },
+      setRotateKeysJsonPrefix: function() {
+        this.querySelector('#rotateKeysForm').request.handleAs = "json";
+        this.querySelector('#rotateKeysForm').request.jsonPrefix = this.resources.jsonPrefix;
+      },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
+      inviteCodeErrorResponse: function() {
+        this.set('loading', false);
+      },
+      submitForm: function(e, detail) {
+        var elem = e.target;
+        while (elem.tagName.toLowerCase() != 'form') {
+          elem = elem.parentElement;
+          if (elem == document.body) {
+            break;
+          }
+        }
+        if (elem.tagName.toLowerCase() != 'form') {
+          return;
+        }
+        elem.submit();
+      },
+      parseRevokeResponse: function(e, detail) {
+        this.sendUsersJsonToList(this.$.userDisableEnableForm.request.lastResponse);
+      },
+      parseRotateResponse: function(e, detail) {
+        this.sendUsersJsonToList(e.target.request.lastResponse);
+        this.getUpdatedInviteCode();
+      },
+      parseDeleteResponse: function(e, detail) {
+        this.sendUsersJsonToList(this.$.userDeleteForm.request.lastResponse);
+        this.closeDialog();
+      },
+      parseInviteCodeResponse: function(e, detail) {
+        this.set('inviteCodeJson', this.$.getInviteCodeAjax.request.lastResponse);
+        this.set('loading', false);
+      },
+      sendUsersJsonToList: function(updatedUsersJson) {
+        var listElem = document.getElementById(this.resources.userListId);
+        if (listElem) {
+          listElem.setAjaxResponse(updatedUsersJson);
+        }
+        this.set('loading', false);
+      },
+      openDialog: function() {
+        var dialog = this.querySelector('#' + this.resources.userDetailsOverlayId);
+        dialog.open();
+        if (!this.inviteCodeJson.invite_code) {
+          this.getUpdatedInviteCode();
+        }
+      },
+      closeDialog: function() {
+        var dialog = this.querySelector('#' + this.resources.userDetailsOverlayId);
+        dialog.close();
+      },
+      copyInviteCode: function(e) {
+        var elem = this.querySelector('#lastInviteCode');
+        var input = document.getElementById('hiddenCopyInput');
+        input.setAttribute('value', elem.value);
+        input.select();
+        document.execCommand('copy');
+      },
+      getUpdatedInviteCode: function() {
+        this.$.getInviteCodeAjax.submit();
+      },
+    });
+  </script>
+</dom-module>
