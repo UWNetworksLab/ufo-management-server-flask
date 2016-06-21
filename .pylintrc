@@ -3,6 +3,9 @@
 # Could turn errors only on if necessary, leave off for now.
 # errors-only=yes
 
+# Ignore migrations directory
+ignore=migrations
+
 [FORMAT]
 
 # String used as indentation unit. This is usually " " (4 spaces) or "\t" (1
