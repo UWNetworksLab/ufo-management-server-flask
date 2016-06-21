@@ -31,9 +31,6 @@
   .verticalSpacer {
     height: 20px;
   }
-  #dialogMenuHolder {
-    position: absolute;
-  }
 </style>
 <body class="fullbleed layout vertical">
   <quaintous-i18n locales-path="/static/locales/{{session['language_prefix']}}/messages.json" loading="{{i18nLoading}}"></quaintous-i18n>
@@ -61,12 +58,8 @@
       </paper-toolbar>
     </paper-scroll-header-panel>
   </div>
-  <div class="layout vertical">
-    <div class="horizontal center-justified layout" id="dialogMenuHolder">
-      <ufo-dropdown-menu resources="{{resources}}">
-      </ufo-dropdown-menu>
-    </div>
-  </div>
+  <ufo-dropdown-menu resources="{{resources}}" id="ufoDropdownMenu">
+  </ufo-dropdown-menu>
   <div class="layout vertical" id="main-holder">
     {% block body %}{% endblock %}
     <br>
