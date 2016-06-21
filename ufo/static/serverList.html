@@ -2,8 +2,9 @@
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
-<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="server-list">
   <style is="custom-style">
@@ -53,9 +54,9 @@
     <paper-listbox>
       <paper-icon-item id="columnHeader" class="horizontal layout">
         <iron-icon src="{{resources.proxyServerIconUrl}}" class="noDisplay" item-icon></iron-icon>
-        <div class="first-div"><strong>{{resources.nameColumnHeader}}</strong></div>
-        <div class="second-div flex"><strong>{{resources.ipColumnHeader}}</strong></div>
-        <div class="third-div"><strong>{{resources.modfyColumnHeader}}</strong></div>
+        <div class="first-div"><strong>[[nameColumnHeader]]</strong></div>
+        <div class="second-div flex"><strong>[[ipColumnHeader]]</strong></div>
+        <div class="third-div"><strong>[[modifyColumnHeader]]</strong></div>
         <paper-icon-button icon="expand-more" class="noDisplay"></paper-icon-button>
       </paper-icon-item>
       <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
@@ -63,15 +64,15 @@
           <iron-icon src="{{resources.proxyServerIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div flex">{{item.ip_address}}</div>
-          <paper-button on-tap="openServerEdit" class="third-div topLineButton leftTextAlign" id="{{resources.editButtonId}}"><strong>{{resources.editText}}</strong></paper-button>
+          <paper-button on-tap="openServerEdit" class="third-div topLineButton leftTextAlign" id="{{resources.editButtonId}}"><strong>[[editText]]</strong></paper-button>
           <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
-          <paper-icon-button icon="expand-more" title="{{resources.proxyServerDetailsExpandText}}" id="{{resources.proxyServerDetailsButtonId}}"></paper-icon-button>
+          <paper-icon-button icon="expand-more" title="[[proxyServerDetailsExpandText]]" id="{{resources.proxyServerDetailsButtonId}}"></paper-icon-button>
         </paper-icon-item>
       </template>
       <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
         <paper-item id="showMore" class="horizontal layout start-justified">
           <paper-button class="see-all-button" on-tap="_flipShowingAll">
-          {{resources.proxyServerSeeAllText}}
+          [[proxyServerSeeAllText]]
           </paper-button>
         </paper-item>
       </template>
@@ -111,6 +112,14 @@
           value: false,
           notify: true,
         },
+      },
+      attached: function() {
+        this.nameColumnHeader = __i18n__['nameColumnHeader'];
+        this.ipColumnHeader = __i18n__['ipColumnHeader'];
+        this.modifyColumnHeader = __i18n__['modifyColumnHeader'];
+        this.editText = __i18n__['editText'];
+        this.proxyServerDetailsExpandText = __i18n__['proxyServerDetailsExpandText'];
+        this.proxyServerSeeAllText = __i18n__['proxyServerSeeAllText'];
       },
       _limitCharacters: function(text) {
         if (text.length > this.characterLimit) {

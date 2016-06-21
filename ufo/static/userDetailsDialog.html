@@ -4,8 +4,9 @@
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
-<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="user-details-dialog">
   <style is="custom-style">
@@ -61,13 +62,13 @@
             <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
             <paper-button on-tap="submitForm" class="topLineButton" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
           </form>
-          <paper-icon-button icon="close" title="{{resources.closeText}}" id="{{resources.userDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+          <paper-icon-button icon="close" title="[[closeText]]" id="{{resources.userDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
       <div id="rowHolder" class="vertical center-justified layout">
-        <strong>{{resources.inviteCodeLabel}}</strong>
+        <strong>[[inviteCodeLabel]]</strong>
         <template is="dom-if" if="[[!inviteCodeJson.invite_code]]">
-          <p>{{resources.inviteCodeNeedServerText}}</p>
+          <p>[[inviteCodeNeedServerText]]</p>
         </template>
         <template is="dom-if" if="[[inviteCodeJson.invite_code]]">
           <paper-input readonly type="text" id="lastInviteCode" value="{{inviteCodeJson.invite_code}}"></paper-input>
@@ -77,13 +78,13 @@
       <div class="buttons">
         <template is="dom-if" if="[[inviteCodeJson.invite_code]]">
           <paper-button on-tap="copyInviteCode" class="anchor-button" id="copyInviteCodeButton" type="submit">
-            <iron-icon icon="content-copy"></iron-icon> <strong>{{resources.copyLabel}}</strong>
+            <iron-icon icon="content-copy"></iron-icon> <strong>[[copyLabel]]</strong>
           </paper-button>
           <form is="iron-form" id="rotateKeysForm" method="post" action="{{resources.rotateKeysUrl}}" on-iron-form-response="parseRotateResponse" on-iron-form-presubmit="setRotateKeysAndEnable">
             <input type="hidden" name="user_id" value="{{item.id}}">
             <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
             <paper-button on-tap="submitForm" class="anchor-button" id="rotateKeysButton" type="submit">
-              <iron-icon icon="refresh"></iron-icon> <strong>{{resources.rotateKeysLabel}}</strong>
+              <iron-icon icon="refresh"></iron-icon> <strong>[[rotateKeysLabel]]</strong>
             </paper-button>
           </form>
         </template>
@@ -92,7 +93,7 @@
           <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <paper-button on-tap="submitForm" class="delete-button" id="userDeleteButton" type="submit">
             <iron-icon icon="delete"></iron-icon>
-            <strong>{{resources.userDeleteLabel}}</strong>
+            <strong>[[userDeleteLabel]]</strong>
           </paper-button>
         </form>
       </div>
@@ -135,6 +136,14 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        this.closeText = __i18n__['closeText'];
+        this.inviteCodeLabel = __i18n__['inviteCodeLabel'];
+        this.inviteCodeNeedServerText = __i18n__['inviteCodeNeedServerText'];
+        this.copyLabel = __i18n__['copyLabel'];
+        this.rotateKeysLabel = __i18n__['rotateKeysLabel'];
+        this.userDeleteLabel = __i18n__['userDeleteLabel'];
       },
       setRotateKeysAndEnable: function() {
         this.setRotateKeysJsonPrefix();

@@ -10,6 +10,7 @@
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-menu/paper-menu.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="ufo-dropdown-menu">
   <style is="custom-style">
@@ -56,20 +57,20 @@
       <paper-listbox>
         <paper-icon-item class="dropdown-button" id="addAdminButton" on-tap="flipToAddAdminFlow">
           <iron-icon class="dropdown-icon" src="{{resources.userAddIconUrl}}" item-icon></iron-icon>
-          <strong>{{resources.addAdminText}}</strong>
+          <strong>[[addAdminText]]</strong>
         </paper-icon-item>
         <paper-icon-item class="dropdown-button" id="changeAdminPasswordButton" on-tap="flipToChangeAdminPasswordFlow">
           <iron-icon class="dropdown-icon" icon="editor:mode-edit" item-icon></iron-icon>
-          <strong>{{resources.changeAdminPasswordText}}</strong>
+          <strong>[[changeAdminPasswordText]]</strong>
         </paper-icon-item>
         <paper-icon-item class="dropdown-button" id="removeAdminButton" on-tap="flipToRemoveAdminFlow">
           <iron-icon class="dropdown-icon" icon="remove-circle-outline" item-icon></iron-icon>
-          <strong>{{resources.removeAdminText}}</strong>
+          <strong>[[removeAdminText]]</strong>
         </paper-icon-item>
         <a href="{{resources.settingsUrl}}" id="settingsAnchor">
           <paper-icon-item class="dropdown-button">
             <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
-            <strong>{{resources.settingsText}}</strong>
+            <strong>[[settingsText]]</strong>
           </paper-icon-item>
         </a>
         <paper-icon-item class="dropdown-button">
@@ -77,7 +78,7 @@
           <form id="logoutForm" method="post" action="{{resources.logoutUrl}}">
             <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
             <paper-button type="submit" on-tap="submitLogoutForm" id="logoutButton">
-              <strong>{{resources.logoutText}}</strong>
+              <strong>[[logoutText]]</strong>
             </paper-button>
           </form>
         </paper-icon-item>
@@ -95,13 +96,13 @@
         <p id="addAdminResponseStatus">{{responseStatus}}</p>
       </template>
       <form is="iron-form" id="addAdminForm" method="post" action="{{resources.addAdminUrl}}" on-iron-form-response="parseAddAdminResponse" on-iron-form-presubmit="enableSpinner">
-        <paper-input label="{{resources.adminEmailLabel}}" id="paperAdminEmail" name="paperEmail" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
-        <paper-input label="{{resources.adminPasswordlabel}}" id="paperAdminPassword" name="paperPassword" required on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="[[adminEmailLabel]]" id="paperAdminEmail" name="paperEmail" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="[[adminPasswordLabel]]" id="paperAdminPassword" name="paperPassword" required on-keypress="submitIfEnter"></paper-input>
         <input type="hidden" name="admin_email" id="jsonEmail" value="" />
         <input type="hidden" name="admin_password" id="jsonPassword" value="" />
         <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
         <paper-button on-tap="submitAddAdminForm" class="floatToTheRight anchor-button" id="adminFormSubmitButton" type="submit">
-          <strong>{{resources.addAdminSubmitText}}</strong>
+          <strong>[[addAdminSubmitText]]</strong>
         </paper-button>
       </form>
       <p></p>
@@ -113,19 +114,19 @@
       <paper-button on-tap="flipToDropdownFlowFromChangeAdminPassword" class="header">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
-      {{resources.changeAdminPasswordInstructions}}
+      [[changeAdminPasswordInstructions]]
       <paper-button class="floatToTheRight" on-tap="exitAll">
         <iron-icon icon="close" item-icon></iron-icon>
       </paper-button>
       <form is="iron-form" id="changeAdminPasswordForm" method="post" action="{{resources.changeAdminPasswordUrl}}" on-iron-form-response="parseChangeAdminPasswordResponse" on-iron-form-presubmit="enableSpinner">
-        <paper-input label="{{resources.changeAdminPasswordOldLabel}}" id="paperAdminOldPassword" name="paperAdminOldPassword" required on-keypress="submitIfEnter"></paper-input>
-        <paper-input label="{{resources.changeAdminPasswordNewLabel}}" id="paperAdminNewPassword" name="paperAdminNewPassword" required on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="[[changeAdminPasswordOldLabel]]" id="paperAdminOldPassword" name="paperAdminOldPassword" required on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="[[changeAdminPasswordNewLabel]]" id="paperAdminNewPassword" name="paperAdminNewPassword" required on-keypress="submitIfEnter"></paper-input>
         <input type="hidden" name="old_password" id="jsonOldPassword" value="" />
         <input type="hidden" name="new_password" id="jsonNewPassword" value="" />
         <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       </form>
       <div class="buttons">
-        <paper-button on-tap="submitChangeAdminPasswordForm" class="anchor-button" id="changeAdminPasswordSubmitButton" type="submit"><strong>{{resources.changeAdminPasswordSubmitText}}</strong></paper-button>
+        <paper-button on-tap="submitChangeAdminPasswordForm" class="anchor-button" id="changeAdminPasswordSubmitButton" type="submit"><strong>[[changeAdminPasswordSubmitText]]</strong></paper-button>
       </div>
     </paper-dialog>
 
@@ -133,7 +134,7 @@
       <paper-button on-tap="flipToDropdownFlowFromRemoveAdmin" class="header">
         <iron-icon icon="arrow-back" item-icon></iron-icon>
       </paper-button>
-      {{resources.removeAdminInstructions}}
+      [[removeAdminInstructions]]
       <paper-button class="floatToTheRight" on-tap="exitAll">
         <iron-icon icon="close" item-icon></iron-icon>
       </paper-button>
@@ -160,7 +161,7 @@
         </form>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button on-tap="submitRemoveAdminForm" class="anchor-button" id="removeAdminSubmitButton" type="submit"><strong>{{resources.removeAdminSubmitText}}</strong></paper-button>
+        <paper-button on-tap="submitRemoveAdminForm" class="anchor-button" id="removeAdminSubmitButton" type="submit"><strong>[[removeAdminSubmitText]]</strong></paper-button>
       </div>
     </paper-dialog>
   </template>
@@ -209,6 +210,22 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        this.addAdminText = __i18n__['addAdminText'];
+        this.changeAdminPasswordText = __i18n__['changeAdminPasswordText'];
+        this.removeAdminText = __i18n__['removeAdminText'];
+        this.settingsText = __i18n__['settingsText'];
+        this.logoutText = __i18n__['logoutText'];
+        this.adminEmailLabel = __i18n__['adminEmailLabel'];
+        this.adminPasswordLabel = __i18n__['adminPasswordLabel'];
+        this.addAdminSubmitText = __i18n__['addAdminSubmitText'];
+        this.changeAdminPasswordInstructions = __i18n__['changeAdminPasswordInstructions'];
+        this.changeAdminPasswordOldLabel = __i18n__['changeAdminPasswordOldLabel'];
+        this.changeAdminPasswordNewLabel = __i18n__['changeAdminPasswordNewLabel'];
+        this.changeAdminPasswordSubmitText = __i18n__['changeAdminPasswordSubmitText'];
+        this.removeAdminInstructions = __i18n__['removeAdminInstructions'];
+        this.removeAdminSubmitText = __i18n__['removeAdminSubmitText'];
       },
       openMenu: function() {
         this.$.ufoDropdownMenu.open();
@@ -340,16 +357,16 @@
           var found = this._findEmailInAdminList(admins, email);
           if (found) {
             this.set('showResponseStatus', true);
-            this.set('responseStatus', this.resources.adminAddSuccessText);
+            this.set('responseStatus', __i18n__['adminAddSuccessText']);
             this.set('ajaxResponse', this.$.addAdminForm.request.lastResponse);
             this.resetAddAdminForm();
           } else {
             this.set('showResponseStatus', true);
-            this.set('responseStatus', this.resources.adminAddFailureText);
+            this.set('responseStatus', __i18n__['adminAddFailureText']);
           }
         } else {
           this.set('showResponseStatus', true);
-          this.set('responseStatus', this.resources.adminListGetError);
+          this.set('responseStatus', __i18n__['adminListGetError']);
         }
         this.set('loading', false);
       },

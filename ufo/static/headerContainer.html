@@ -1,6 +1,7 @@
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
 <link rel="import" href="bower_components/paper-material/paper-material.html" />
 <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="header-container">
   <style is="custom-style">
@@ -46,25 +47,25 @@
           value: '',
         },
       },
-      ready: function() {
+      attached: function() {
         switch (this.headerType) {
           case 'chromePolicy':
-            this.titleText = this.resources.chromePolicyTitleText;
+            this.titleText = __i18n__['chromePolicyTitleText'];
             break;
           case 'login':
-            this.titleText = this.resources.loginTitleText;
+            this.titleText = __i18n__['loginTitleText'];
             break;
           case 'oauth':
-            this.titleText = this.resources.oauthTitleText;
+            this.titleText = __i18n__['oauthTitleText'];
             break;
           case 'proxyServer':
-            this.titleText = this.resources.proxyServerTitleText;
+            this.titleText = __i18n__['proxyServerTitleText'];
             break;
           case 'settings':
-            this.titleText = this.resources.settingsTitleText;
+            this.titleText = __i18n__['settingsTitleText'];
             break;
           default:
-            this.titleText = this.resources.userTitleText;
+            this.titleText = __i18n__['userTitleText'];
             break;
         }
       },

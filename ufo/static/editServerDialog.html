@@ -6,6 +6,7 @@
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 <link rel="import" href="textarea.html" />
 
 <dom-module id="edit-server-dialog">
@@ -53,8 +54,8 @@
           <iron-icon src="{{resources.proxyServerIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.ip_address}}</div>
-          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton" id="{{resources.editButtonId}}"><strong>{{resources.editText}}</strong></paper-button>
-          <paper-icon-button icon="close" title="{{resources.closeText}}" id="{{resources.proxyServerDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton" id="{{resources.editButtonId}}"><strong>[[editText]]</strong></paper-button>
+          <paper-icon-button icon="close" title="[[closeText]]" id="{{resources.proxyServerDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
       <template is="dom-if" if="{{loading}}">
@@ -62,12 +63,12 @@
       </template>
       <div id="rowHolder" class="vertical center-justified layout">
         <form is="iron-form" id="serverEditForm" method="post" action="{{resources.proxyServerEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
-          <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
-          <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter" id="{{resources.nameInput}}"></paper-input>
+          <paper-input class="editInputFields" disabled label="[[ipLabel]]" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
+          <paper-input class="editInputFields" disabled label="[[nameLabel]]" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter" id="{{resources.nameInput}}"></paper-input>
           <!-- TODO add the ability to upload files -->
           <paper-input class="editInputFields"
                        disabled
-                       label="[[resources.sshPrivateKeyLabel]]"
+                       label="[[sshPrivateKeyLabel]]"
                        name="ssh_private_key"
                        required
                        max-rows="[[resources.textAreaMaxRows]]"
@@ -79,10 +80,10 @@
                        id="{{resources.sshPrivateKeyInput}}">
           </paper-input>
           <br>
-          <p class="editElements hideElement">{{resources.sshPrivateKeyText}}</p>
+          <p class="editElements hideElement">[[sshPrivateKeyText]]</p>
           <paper-input class="editInputFields"
                        disabled
-                       label="{{resources.hostPublicKeyLabel}}"
+                       label="[[hostPublicKeyLabel]]"
                        type="text"
                        name="host_public_key"
                        required
@@ -93,8 +94,8 @@
                        id="{{resources.hostPublicKeyInput}}">
           </paper-input>
           <br>
-          <p class="editElements hideElement">{{resources.hostPublicKeyText}}</p>
-          <p class="editElements hideElement">{{resources.rsaText}}</p>
+          <p class="editElements hideElement">[[hostPublicKeyText]]</p>
+          <p class="editElements hideElement">[[rsaText]]</p>
           <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <input type="hidden" name="server_id" value="{{item.id}}">
         </form>
@@ -102,17 +103,17 @@
       <br>
       <div class="buttons">
         <paper-button class="editElements hideElement anchor-button" on-tap="cancelServerEdit">
-        <strong>{{resources.dismissText}}</strong>
+        <strong>[[dismissText]]</strong>
         </paper-button>
         <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm" id="serverEditSubmitButton">
-        <strong>{{resources.saveText}}</strong>
+        <strong>[[saveText]]</strong>
         </paper-button>
         <form is="iron-form" id="serverDeleteForm" method="post" action="{{resources.proxyServerDeleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="server_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <paper-button on-tap="submitForm" class="delete-button" id="serverDeleteButton" type="submit">
             <iron-icon icon="delete"></iron-icon>
-            <strong>{{resources.proxyServerDeleteLabel}}</strong>
+            <strong>[[proxyServerDeleteLabel]]</strong>
           </paper-button>
         </form>
       </div>
@@ -153,6 +154,20 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        this.editText = __i18n__['editText'];
+        this.closeText = __i18n__['closeText'];
+        this.ipLabel = __i18n__['ipLabel'];
+        this.nameLabel = __i18n__['nameLabel'];
+        this.sshPrivateKeyLabel = __i18n__['sshPrivateKeyLabel'];
+        this.sshPrivateKeyText = __i18n__['sshPrivateKeyText'];
+        this.hostPublicKeyLabel = __i18n__['hostPublicKeyLabel'];
+        this.hostPublicKeyText = __i18n__['hostPublicKeyText'];
+        this.rsaText = __i18n__['rsaText'];
+        this.dismissText = __i18n__['dismissText'];
+        this.saveText = __i18n__['saveText'];
+        this.proxyServerDeleteLabel = __i18n__['proxyServerDeleteLabel'];
       },
       enableSpinner: function() {
         this.set('loading', true);
