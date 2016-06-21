@@ -25,8 +25,10 @@
     <form is="iron-form" id="policyConfigForm" method="post" action="{{resources.settingsEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseConfigResponse">
       <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="[[proxyValidityText]]" checked$={{ajaxResponse.enforce_proxy_server_validity}}></ufo-toggle-input>
       <br>
+      <!-- TODO: Surface this when the network jail functionality is available.
       <ufo-toggle-input input-name="enforce_network_jail" button-text="[[networkJailText]]" checked$={{ajaxResponse.enforce_network_jail}}></ufo-toggle-input>
       <br>
+      -->
       <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       <div class="buttons">
         <template is="dom-if" if="{{loading}}">
