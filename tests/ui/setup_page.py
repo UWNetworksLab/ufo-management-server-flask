@@ -20,7 +20,7 @@ class SetupPage(UfOPageLayout):
     SettingsComponent.SETTINGS_DISPLAY_TEMPLATE
   ]
 
-  def addTestUser(self, name, email, server_url):
+  def add_test_user(self, name, email, server_url):
     """Manually add a test user using the setup page.
 
     Args:
@@ -30,11 +30,11 @@ class SetupPage(UfOPageLayout):
     """
     # Navigate to add user and go to manual tab.
     self.driver.get(server_url + flask.url_for('setup'))
-    add_manually_tab = self.GetElement(UfOPageLayout.ADD_MANUALLY_TAB)
+    add_manually_tab = self.get_element(UfOPageLayout.ADD_MANUALLY_TAB)
     add_manually_tab.click()
 
     add_user_form = AddUserForm(self.driver)
-    add_user_form.addTestUser(name, email)
+    add_user_form.add_test_user(name, email)
 
   def addTestServer(self, ip, name, ssh_private_key, host_public_key,
                     server_url):
@@ -49,7 +49,7 @@ class SetupPage(UfOPageLayout):
     """
     # Navigate to add server.
     self.driver.get(server_url + flask.url_for('setup'))
-    proxy_server_add_template = self.GetElement(
+    proxy_server_add_template = self.get_element(
         UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE)
 
     server_form = ServerForm(self.driver)

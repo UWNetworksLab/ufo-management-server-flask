@@ -1,12 +1,12 @@
 """Base driver module to inherit from."""
 
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 
 class BaseDriver(object):
 
   """Base driver that will be called from all pages and elements."""
+
+  # pylint: disable=too-few-public-methods
 
   GENERIC_DIV = (By.TAG_NAME, 'div')
   DEFAULT_TIMEOUT = 30
@@ -19,20 +19,7 @@ class BaseDriver(object):
     """
     self.driver = driver
 
-
-  def GetLink(self, link_locator):
-    """Get an element in the page based on the link locator given.
-
-    Args:
-      link_locator: A tuple of By.SomeProperty and a matching property.
-
-    Returns:
-      A link element if found.
-    """
-    return WebDriverWait(self.driver, self.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((link_locator))))
-
-  def GetElement(self, element_locator):
+  def get_element(self, element_locator):
     """Get an element in the page based on the element locator given.
 
     Args:

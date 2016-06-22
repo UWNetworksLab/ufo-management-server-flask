@@ -17,16 +17,16 @@ class SetupPageTest(BaseTest):
   def setUp(self):
     """Setup for test methods."""
     super(SetupPageTest, self).setUp()
-    super(SetupPageTest, self).setContext()
+    super(SetupPageTest, self).set_context()
     LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
   def tearDown(self):
     """Teardown for test methods."""
     landing_page = LandingPage(self.driver)
-    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                                self.args.server_url,
-                                should_raise_exception=False)
+    landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                                  self.args.server_url,
+                                  should_raise_exception=False)
     landing_page.removeTestServer(BaseTest.TEST_SERVER_AS_DICT['name'],
                                   self.args.server_url,
                                   should_raise_exception=False)
@@ -45,14 +45,14 @@ class SetupPageTest(BaseTest):
 
     setup_page = SetupPage(self.driver)
     for element_by_id in SetupPage.BASE_PAGE_ELEMENTS:
-      base_page_element = setup_page.GetElement(element_by_id)
+      base_page_element = setup_page.get_element(element_by_id)
       self.assertIsNotNone(base_page_element)
       self.assertTrue(base_page_element.is_displayed())
 
     self.assertLogoLinksToLandingPage()
 
     for element_by_id in SetupPage.SETUP_PAGE_ELEMENTS:
-      setup_page_element = setup_page.GetElement(element_by_id)
+      setup_page_element = setup_page.get_element(element_by_id)
       self.assertIsNotNone(setup_page_element)
       self.assertTrue(setup_page_element.is_displayed())
 
@@ -61,9 +61,9 @@ class SetupPageTest(BaseTest):
     setup_page = SetupPage(self.driver)
     self.assertTestUserPresenceOnPage(False)
 
-    setup_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                           BaseTest.TEST_USER_AS_DICT['email'],
-                           self.args.server_url)
+    setup_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                             BaseTest.TEST_USER_AS_DICT['email'],
+                             self.args.server_url)
 
     self.assertTestUserPresenceOnPage(True)
 

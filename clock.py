@@ -18,14 +18,14 @@ logging.basicConfig()
 SCHEDULER = BlockingScheduler()
 
 @SCHEDULER.scheduled_job('interval', minutes=15)
-def distribute_user_keys_to_proxy_servers():
+def schedule_user_key_distribution():
   """Schedule the user key distribution to proxy servers."""
   ufo.app.logger.info('Scheduling key distribution to proxy server.')
   key_distributor_service = key_distributor.KeyDistributor()
   key_distributor_service.enqueue_key_distribution_jobs()
 
 @SCHEDULER.scheduled_job('interval', minutes=15)
-def sync_users():
+def schedule_user_sync():
   """Schedule the user sync job."""
   ufo.app.logger.info('Scheduling user sync.')
   user_sync_service = user_synchronizer.UserSynchronizer()

@@ -12,12 +12,12 @@ class AdminFlow(UfOPageLayout):
   """Admin flow methods and locators."""
 
   LANDING_PAGE_ELEMENTS = [
-    UfOPageLayout.USER_DISPLAY_TEMPLATE,
-    UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
-    UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
+      UfOPageLayout.USER_DISPLAY_TEMPLATE,
+      UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
+      UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
   ]
 
-  def getAddAdminDialog(self, dropdown_menu):
+  def get_add_admin_dialog(self, dropdown_menu):
     """Navigates to the add admin dialog on a given page.
 
     Args:
@@ -30,13 +30,13 @@ class AdminFlow(UfOPageLayout):
         *UfOPageLayout.ADD_ADMIN_BUTTON)
     add_admin_button.click()
 
-    add_admin_dialog = WebDriverWait(self.driver,
-                                     UfOPageLayout.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((
-            UfOPageLayout.ADD_ADMIN_DIALOG))))
+    add_admin_dialog = WebDriverWait(
+        self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+            EC.visibility_of_element_located(((
+                UfOPageLayout.ADD_ADMIN_DIALOG))))
     return add_admin_dialog
 
-  def getChangeAdminPasswordDialog(self, dropdown_menu):
+  def get_change_password_dialog(self, dropdown_menu):
     """Navigates to the change admin password dialog on a given page.
 
     Args:
@@ -55,7 +55,7 @@ class AdminFlow(UfOPageLayout):
                 UfOPageLayout.CHANGE_ADMIN_PASSWORD_DIALOG))))
     return change_admin_password_dialog
 
-  def getRemoveAdminDialog(self, dropdown_menu):
+  def get_remove_admin_dialog(self, dropdown_menu):
     """Navigates to the remove admin dialog on a given page.
 
     Args:
@@ -68,13 +68,13 @@ class AdminFlow(UfOPageLayout):
         *UfOPageLayout.REMOVE_ADMIN_BUTTON)
     remove_admin_button.click()
 
-    remove_admin_dialog = WebDriverWait(self.driver,
-                                        UfOPageLayout.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((
-            UfOPageLayout.REMOVE_ADMIN_DIALOG))))
+    remove_admin_dialog = WebDriverWait(
+        self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+            EC.visibility_of_element_located(((
+                UfOPageLayout.REMOVE_ADMIN_DIALOG))))
     return remove_admin_dialog
 
-  def findTestAdminOnRemoveForm(self, email, remove_admin_form):
+  def find_test_admin_on_remove_form(self, email, remove_admin_form):
     """Find and return the test admin element on the remove admin form.
 
     Args:
@@ -88,7 +88,7 @@ class AdminFlow(UfOPageLayout):
     return self.findItemInListing(menu, email,
                                   should_find_by_icon_item=False)
 
-  def addTestAdmin(self, email, password, add_admin_dialog):
+  def add_test_admin(self, email, password, add_admin_dialog):
     """Add a test admin account using the add admin form.
 
     Args:
@@ -116,8 +116,8 @@ class AdminFlow(UfOPageLayout):
         EC.invisibility_of_element_located(((
             UfOPageLayout.DROPDOWN_MENU_SPINNER))))
 
-  def changeAdminPassword(self, old_password, new_password,
-                          change_admin_password_dialog):
+  def change_admin_password(self, old_password, new_password,
+                            change_admin_password_dialog):
     """Change the password for an admin account using the dialog passed in.
 
     Args:
@@ -146,7 +146,7 @@ class AdminFlow(UfOPageLayout):
         EC.invisibility_of_element_located(((
             UfOPageLayout.DROPDOWN_MENU_SPINNER))))
 
-  def removeTestAdmin(self, email, server_url, should_raise_exception=True):
+  def remove_test_admin(self, email, server_url, should_raise_exception=True):
     """Remove a test admin account using a form post (the only way currently).
 
     Args:
@@ -158,10 +158,10 @@ class AdminFlow(UfOPageLayout):
     # Find the user and navigate to their details page.
     self.driver.get(server_url + flask.url_for('landing'))
     dropdown_menu = self.getDropdownMenu()
-    remove_admin_dialog = self.getRemoveAdminDialog(dropdown_menu)
+    remove_admin_dialog = self.get_remove_admin_dialog(dropdown_menu)
     remove_admin_form = remove_admin_dialog.find_element(
         *UfOPageLayout.REMOVE_ADMIN_FORM)
-    admin_item = self.findTestAdminOnRemoveForm(email, remove_admin_form)
+    admin_item = self.find_test_admin_on_remove_form(email, remove_admin_form)
 
     if admin_item is None:
       if should_raise_exception:

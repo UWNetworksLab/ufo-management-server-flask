@@ -17,16 +17,16 @@ class SearchPageTest(BaseTest):
   def setUp(self):
     """Search for test methods."""
     super(SearchPageTest, self).setUp()
-    super(SearchPageTest, self).setContext()
+    super(SearchPageTest, self).set_context()
     LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
   def tearDown(self):
     """Teardown for test methods."""
     landing_page = LandingPage(self.driver)
-    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                                self.args.server_url,
-                                should_raise_exception=False)
+    landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                                  self.args.server_url,
+                                  should_raise_exception=False)
     landing_page.removeTestServer(BaseTest.TEST_SERVER_AS_DICT['name'],
                                   self.args.server_url,
                                   should_raise_exception=False)
@@ -45,14 +45,14 @@ class SearchPageTest(BaseTest):
     search_page.searchForTestItem('foo')
 
     for element_by_id in SearchPage.BASE_PAGE_ELEMENTS:
-      base_page_element = search_page.GetElement(element_by_id)
+      base_page_element = search_page.get_element(element_by_id)
       self.assertIsNotNone(base_page_element)
       self.assertTrue(base_page_element.is_displayed())
 
     self.assertLogoLinksToLandingPage()
 
     for element_by_id in SearchPage.SEARCH_PAGE_ELEMENTS:
-      search_page_element = search_page.GetElement(element_by_id)
+      search_page_element = search_page.get_element(element_by_id)
       self.assertIsNotNone(search_page_element)
       self.assertTrue(search_page_element.is_displayed())
 
