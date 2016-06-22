@@ -25,7 +25,7 @@ def schedule_user_key_distribution():
   key_distributor_service.enqueue_key_distribution_jobs()
 
 @SCHEDULER.scheduled_job('interval', minutes=15)
-def sync_users():
+def schedule_user_sync():
   """Schedule the user sync job."""
   ufo.app.logger.info('Scheduling user sync.')
   user_sync_service = user_synchronizer.UserSynchronizer()
