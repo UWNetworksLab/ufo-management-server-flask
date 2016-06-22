@@ -43,8 +43,12 @@ error_handler.init_error_handlers(app)
 # DB needs to be defined before this point
 from ufo.database import models
 
-whooshalchemy.whoosh_index(app, models.User)
-whooshalchemy.whoosh_index(app, models.ProxyServer)
+try:
+  whooshalchemy.whoosh_index(app, models.User)
+  whooshalchemy.whoosh_index(app, models.ProxyServer)
+except:
+  app.logger.error('Whoosh indexing failed. Search may be broken as result. '
+                   'Please redeploy to correct this.')
 
 # The headers and prefix listed below are to help guard against XSSI. The
 # prefix specifically causes us to escape out of any client that attempts to
