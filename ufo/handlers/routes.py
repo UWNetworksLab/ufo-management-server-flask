@@ -15,8 +15,12 @@ from ufo.handlers import user
 def landing():
   return flask.render_template('landing.html')
 
-@ufo.app.route('/vulcanized')
-def vulcanized():
+@ufo.app.route('/vulcanized_html')
+def vulcanized_html():
+  return flask.send_file('static/vulcanized.html', cache_timeout=1)
+
+@ufo.app.route('/vulcanized_js')
+def vulcanized_js():
   return flask.send_file('static/vulcanized.js', cache_timeout=1)
 
 
