@@ -65,7 +65,11 @@
           <iron-icon src="{{resources.proxyServerIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div flex">{{item.ip_address}}</div>
-          <paper-button on-tap="openServerEdit" class="third-div topLineButton thirdDiv" id="{{resources.editButtonId}}"><strong>[[editText]]</strong></paper-button>
+          <paper-button on-tap="openServerEdit"
+                        class="third-div topLineButton thirdDiv"
+                        id="{{resources.editButtonId}}">
+            <strong>[[editText]]</strong>
+          </paper-button>
           <edit-server-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></edit-server-dialog>
           <paper-icon-button icon="expand-more" title="[[proxyServerDetailsExpandText]]" id="{{resources.proxyServerDetailsButtonId}}"></paper-icon-button>
         </paper-icon-item>
