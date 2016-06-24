@@ -15,8 +15,17 @@ from ufo.handlers import user
 def landing():
   return flask.render_template('landing.html')
 
-@ufo.app.route('/vulcanized')
-def vulcanized():
+# There's an issue in the web driver tests with our vulcanized JS and HTML
+# files getting cached and executing the i18n calls early, such as before the
+# messages.json file is loaded. Making the files not cached fixes this for now.
+# TODO(eholder): Investigate other solutions instead of not caching the
+# vulcanized files.
+@ufo.app.route('/vulcanized_html')
+def vulcanized_html():
+  return flask.send_file('static/vulcanized.html', cache_timeout=1)
+
+@ufo.app.route('/vulcanized_js')
+def vulcanized_js():
   return flask.send_file('static/vulcanized.js', cache_timeout=1)
 
 

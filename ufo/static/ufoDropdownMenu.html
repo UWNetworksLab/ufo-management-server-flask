@@ -298,20 +298,20 @@
         this.closeAdminDialog();
       },
       flipToDropdownFlowFromAddAdmin: function(e, details) {
-        this.closeAdminDialog();
         this.openMenu();
+        this.closeAdminDialog();
         this.resetAddAdminForm();
         this.set('showResponseStatus', false);
         this.set('responseStatus', '');
       },
       flipToDropdownFlowFromChangeAdminPassword: function(e, details) {
-        this.closeAdminDialog();
         this.openMenu();
+        this.closeAdminDialog();
         this.resetChangeAdminPasswordForm();
       },
       flipToDropdownFlowFromRemoveAdmin: function(e, details) {
-        this.closeAdminDialog();
         this.openMenu();
+        this.closeAdminDialog();
         this.resetRemoveAdminForm();
       },
       enableSpinner: function() {
