@@ -30,8 +30,8 @@
     paper-item, paper-icon-item {
       border-top: 1px solid #e5e5e5;
     }
-    paper-button.thirdDiv {
-      /* Left align the paper-button text in the third div. */
+    /* Left align the paper-button text in the third div. */
+    paper-button.alignLeftText {
       display: inline;
     }
     #columnHeader {
@@ -66,7 +66,7 @@
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div flex">{{item.ip_address}}</div>
           <paper-button on-tap="openServerEdit"
-                        class="third-div topLineButton thirdDiv"
+                        class="third-div topLineButton alignLeftText"
                         id="{{resources.editButtonId}}">
             <strong>[[editText]]</strong>
           </paper-button>

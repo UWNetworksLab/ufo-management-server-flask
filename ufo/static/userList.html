@@ -30,8 +30,8 @@
     paper-item, paper-icon-item {
       border-top: 1px solid #e5e5e5;
     }
-    paper-button.thirdDiv {
-      /* Left align the paper-button text in the third div. */
+    /* Left align the paper-button text in the third div. */
+    paper-button.alignLeftText {
       display: inline;
     }
     #columnHeader {
@@ -69,7 +69,7 @@
             <input type="hidden" name="user_id" value="{{item.id}}">
             <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
             <paper-button on-tap="submitRevokeForm"
-                class="topLineButton thirdDiv"
+                class="topLineButton alignLeftText"
                 id="userDisableEnableButton"
                 type="submit">
               <strong>{{item.accessChange}}</strong>
