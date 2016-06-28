@@ -1,0 +1,49 @@
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+
+<dom-module id="version-display">
+  <style is="custom-style">
+    .versionHolder {
+      position: absolute;
+      bottom: -350px;
+      right: 50px;
+      opacity: 0.5;
+    }
+  </style>
+  <template>
+    <iron-ajax
+      auto
+      url="{{versionJsonUrl}}"
+      method="GET"
+      handle-as="json"
+      last-response="{{versionObj}}"
+      loading="{{loading}}"
+      json-prefix="{{resources.jsonPrefix}}"></iron-ajax>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
+    </template>
+    <div class="versionHolder">{{versionText}}: {{versionObj.version}}</div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'version-display',
+      properties: {
+        resources: {
+          type: Object,
+        },
+        versionJsonUrl: {
+          type: String,
+        },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
+      },
+      attached: function() {
+        this.versionText = __i18n__['versionText'];
+      },
+    });
+  </script>
+</dom-module>
