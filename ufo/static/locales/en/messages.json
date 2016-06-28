@@ -94,5 +94,6 @@
   "manualFullNameLabel": "Full Name",
   "manualEmailAddressLabel": "Email Address",
   "saveMultipleUsersButton": "Add Users",
-  "saveIndividualUserButton": "Add User"
+  "saveIndividualUserButton": "Add User",
+  "versionText": "Version"
 }
