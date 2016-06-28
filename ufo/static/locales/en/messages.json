@@ -95,5 +95,6 @@
   "manualEmailAddressLabel": "Email Address",
   "saveMultipleUsersButton": "Add Users",
   "saveIndividualUserButton": "Add User",
-  "versionText": "Version"
+  "versionText": "Version: ",
+  "versionUpdateText": "A newer version is available on Github: "
 }
