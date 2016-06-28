@@ -1,6 +1,6 @@
 {
   "background_color": "#009788",
-  "description": "A web application for controling usage of uProxy and securing access for users in your domain to distributed proxy servers.",
+  "description": "A web application for controlling usage of uProxy and securing access for users in your domain to distributed proxy servers.",
   "dir": "ltr",
   "display": "standalone",
   "icons": [{
