@@ -87,11 +87,11 @@
       },
       _makeVersionStringIntoNumberArray: function(version) {
         var parts = version.split('.');
-        var numbs = new Array(parts.length);
+        var numbers = new Array(parts.length);
         for (var i = 0; i < parts.length; i++) {
-          numbs[i] = Number(parts[i]);
+          numbers[i] = Number(parts[i]);
         }
-        return numbs;
+        return numbers;
       },
     });
   </script>
