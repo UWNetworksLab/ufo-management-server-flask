@@ -5,9 +5,14 @@
   <style is="custom-style">
     .versionHolder {
       position: absolute;
-      bottom: -350px;
       right: 50px;
       opacity: 0.5;
+    }
+    #currentVersion {
+      bottom: -350px;
+    }
+    #githubVersion {
+      bottom: -370px;
     }
   </style>
   <template>
@@ -16,13 +21,26 @@
       url="{{versionJsonUrl}}"
       method="GET"
       handle-as="json"
-      last-response="{{versionObj}}"
+      last-response="{{currentVersionObj}}"
       loading="{{loading}}"
-      json-prefix="{{resources.jsonPrefix}}"></iron-ajax>
+      json-prefix="{{resources.jsonPrefix}}"
+      on-response="handleResponse"></iron-ajax>
+    <iron-ajax
+      auto
+      url="https://raw.githubusercontent.com/uProxy/ufo-management-server-flask/master/ufo/static/version.json"
+      method="GET"
+      handle-as="json"
+      last-response="{{githubVersionObj}}"
+      loading="{{loading}}"
+      json-prefix="{{resources.jsonPrefix}}"
+      on-response="handleResponse"></iron-ajax>
     <template is="dom-if" if="{{loading}}">
       <paper-spinner class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
     </template>
-    <div class="versionHolder">{{versionText}}: {{versionObj.version}}</div>
+    <div class="versionHolder" id="currentVersion">{{versionText}}{{currentVersionObj.version}}</div>
+    <template is="dom-if" if="[[shouldShowUpdate]]">
+      <div class="versionHolder" id="githubVersion">{{versionUpdateText}}{{githubVersionObj.version}}</div>
+    </template>
   </template>
 
   <script>
@@ -40,9 +58,40 @@
           value: false,
           notify: true,
         },
+        shouldShowUpdate: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
       },
       attached: function() {
         this.versionText = __i18n__['versionText'];
+        this.versionUpdateText = __i18n__['versionUpdateText'];
+      },
+      handleResponse: function(response) {
+        this.set('shouldShowUpdate', this._isGithubVersionNewer());
+      },
+      _isGithubVersionNewer: function() {
+        if (!this.currentVersionObj || !this.currentVersionObj.version || !this.githubVersionObj || !this.githubVersionObj.version) {
+          return false;
+        }
+        var currentVersionArray = this._makeVersionStringIntoNumberArray(this.currentVersionObj.version);
+        var githubVersionArray = this._makeVersionStringIntoNumberArray(this.githubVersionObj.version);
+        var minLength = Math.min(currentVersionArray.length, githubVersionArray.length);
+        for (var i = 0; i < minLength; i++) {
+          if (currentVersionArray[i] < githubVersionArray[i]) {
+            return true;
+          }
+        }
+        return githubVersionArray.length > currentVersionArray.length;
+      },
+      _makeVersionStringIntoNumberArray: function(version) {
+        var parts = version.split('.');
+        var numbs = new Array(parts.length);
+        for (var i = 0; i < parts.length; i++) {
+          numbs[i] = Number(parts[i]);
+        }
+        return numbs;
       },
     });
   </script>
