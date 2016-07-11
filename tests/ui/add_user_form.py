@@ -19,10 +19,10 @@ class AddUserForm(UfOPageLayout):
       name: A string for the name of a test user.
       email: A string for the email of a test user.
     """
-    add_manually_form = WebDriverWait(
-        self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
-            EC.visibility_of_element_located(((
-                UfOPageLayout.ADD_MANUALLY_FORM))))
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+        EC.visibility_of_element_located(((UfOPageLayout.ADD_MANUALLY_FORM))))
+    add_manually_form = self.driver.find_element(
+        *UfOPageLayout.ADD_MANUALLY_FORM)
     name_paper_input = add_manually_form.find_element(
         *UfOPageLayout.ADD_MANUALLY_INPUT_NAME)
     name_input = name_paper_input.find_element(By.ID, 'input')

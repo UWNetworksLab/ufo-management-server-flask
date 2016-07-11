@@ -72,11 +72,11 @@ class SetupPageTest(BaseTest):
     setup_page = SetupPage(self.driver)
     self.assertTestServerPresenceOnPage(False)
 
-    setup_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                             BaseTest.TEST_SERVER_AS_DICT['name'],
-                             BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                             BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
-                             self.args.server_url)
+    setup_page.add_test_server(BaseTest.TEST_SERVER_AS_DICT['ip'],
+                               BaseTest.TEST_SERVER_AS_DICT['name'],
+                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+                               self.args.server_url)
 
     self.assertTestServerPresenceOnPage(True)
 

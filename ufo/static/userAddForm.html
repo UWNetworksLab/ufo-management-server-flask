@@ -159,6 +159,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-form-error': 'handleFormError',
       },
@@ -169,9 +170,9 @@
         }
       },
       attached: function() {
-        this.addFlowNoResults = __i18n__['addFlowNoResults'];
-        this.lookAgainText = __i18n__['lookAgainText'];
-        this.dismissText = __i18n__['dismissText'];
+        this.addFlowNoResults = I18N.__('addFlowNoResults');
+        this.lookAgainText = I18N.__('lookAgainText');
+        this.dismissText = I18N.__('dismissText');
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.formId);

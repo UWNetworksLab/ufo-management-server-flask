@@ -27,6 +27,7 @@ class LoginPage(UfOPageLayout):
   ]
 
   LOGOUT_FORM = (By.ID, 'logoutForm')
+  LOGOUT_BUTTON = (By.ID, 'logoutButton')
   GENERIC_PAPER_BUTTON = (By.TAG_NAME, 'paper-button')
 
   # If we ever need to use the Google sign-in flow, see here for an example of
@@ -85,13 +86,11 @@ class LoginPage(UfOPageLayout):
     dropdown_button = self.driver.find_element(*LoginPage.OPEN_MENU_BUTTON)
     dropdown_button.click()
 
-    logout_form = WebDriverWait(self.driver,
-                                UfOPageLayout.DEFAULT_TIMEOUT).until(
-        EC.visibility_of_element_located(((self.LOGOUT_FORM))))
-    logout_button = logout_form.find_element(*self.GENERIC_PAPER_BUTTON)
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
+        EC.visibility_of_element_located(((self.LOGOUT_BUTTON))))
+    logout_button = self.driver.find_element(*self.LOGOUT_BUTTON)
     logout_button.click()
 
     # Wait for redirect back to login
-    login_form = WebDriverWait(self.driver,
-                               UfOPageLayout.DEFAULT_TIMEOUT).until(
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((self.LOGIN_FORM))))

@@ -55,6 +55,7 @@
           value: false,
         },
       },
+      behaviors: [I18N],
       ready: function() {
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
@@ -66,9 +67,9 @@
           this.querySelector('#recaptchaDiv')
             .setAttribute('data-sitekey', this.resources.recaptchaKey);
         }
-        this.emailLabel = __i18n__['emailLabel'];
-        this.passwordLabel = __i18n__['passwordLabel'];
-        this.loginText = __i18n__['loginText'];
+        this.emailLabel = I18N.__('emailLabel');
+        this.passwordLabel = I18N.__('passwordLabel');
+        this.loginText = I18N.__('loginText');
       },
       submitLoginForm: function() {
         this.querySelector('#loginForm').submit();

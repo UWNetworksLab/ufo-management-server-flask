@@ -113,6 +113,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-form-error': 'handleFormError',
       },
@@ -123,22 +124,22 @@
         }
       },
       attached: function() {
-        this.groupAddTab = __i18n__['groupAddTab'];
-        this.userAddTab = __i18n__['userAddTab'];
-        this.domainAddTab = __i18n__['domainAddTab'];
-        this.manualAddTab = __i18n__['manualAddTab'];
-        this.saveMultipleUsersButton = __i18n__['saveMultipleUsersButton'];
-        this.groupAddSearchButton = __i18n__['groupAddSearchButton'];
-        this.groupAddEmailAddressLabel = __i18n__['groupAddEmailAddressLabel'];
-        this.groupAddEmailAddressDefinition = __i18n__['groupAddEmailAddressDefinition'];
-        this.saveIndividualUserButton = __i18n__['saveIndividualUserButton'];
-        this.userAddSearchButton = __i18n__['userAddSearchButton'];
-        this.userAddEmailAddressLabel = __i18n__['userAddEmailAddressLabel'];
-        this.userAddEmailAddressDefinition = __i18n__['userAddEmailAddressDefinition'];
-        this.domainAddSearchButton = __i18n__['domainAddSearchButton'];
-        this.manualFullNameLabel = __i18n__['manualFullNameLabel'];
-        this.manualEmailAddressLabel = __i18n__['manualEmailAddressLabel'];
-        this.dismissText = __i18n__['dismissText'];
+        this.groupAddTab = I18N.__('groupAddTab');
+        this.userAddTab = I18N.__('userAddTab');
+        this.domainAddTab = I18N.__('domainAddTab');
+        this.manualAddTab = I18N.__('manualAddTab');
+        this.saveMultipleUsersButton = I18N.__('saveMultipleUsersButton');
+        this.groupAddSearchButton = I18N.__('groupAddSearchButton');
+        this.groupAddEmailAddressLabel = I18N.__('groupAddEmailAddressLabel');
+        this.groupAddEmailAddressDefinition = I18N.__('groupAddEmailAddressDefinition');
+        this.saveIndividualUserButton = I18N.__('saveIndividualUserButton');
+        this.userAddSearchButton = I18N.__('userAddSearchButton');
+        this.userAddEmailAddressLabel = I18N.__('userAddEmailAddressLabel');
+        this.userAddEmailAddressDefinition = I18N.__('userAddEmailAddressDefinition');
+        this.domainAddSearchButton = I18N.__('domainAddSearchButton');
+        this.manualFullNameLabel = I18N.__('manualFullNameLabel');
+        this.manualEmailAddressLabel = I18N.__('manualEmailAddressLabel');
+        this.dismissText = I18N.__('dismissText');
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.resources.manualAddFormId);

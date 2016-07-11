@@ -60,6 +60,7 @@
           value: '',
         },
       },
+      behaviors: [I18N],
       ready: function() {
         switch (this.addType) {
           case 'proxyServer':
@@ -73,10 +74,10 @@
       attached: function() {
         switch (this.addType) {
           case 'proxyServer':
-            this.addText = __i18n__['proxyServerAddText'];
+            this.addText = I18N.__('proxyServerAddText');
             break;
           default:
-            this.addText = __i18n__['userAddText'];
+            this.addText = I18N.__('userAddText');
             break;
         }
       },

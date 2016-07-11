@@ -141,6 +141,7 @@
           type: Object,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-form-error': 'handleFormError',
         'iron-overlay-canceled': 'closeDialog',
@@ -156,18 +157,18 @@
         }
       },
       attached: function() {
-        this.editText = __i18n__['editText'];
-        this.closeText = __i18n__['closeText'];
-        this.ipLabel = __i18n__['ipLabel'];
-        this.nameLabel = __i18n__['nameLabel'];
-        this.sshPrivateKeyLabel = __i18n__['sshPrivateKeyLabel'];
-        this.sshPrivateKeyText = __i18n__['sshPrivateKeyText'];
-        this.hostPublicKeyLabel = __i18n__['hostPublicKeyLabel'];
-        this.hostPublicKeyText = __i18n__['hostPublicKeyText'];
-        this.rsaText = __i18n__['rsaText'];
-        this.dismissText = __i18n__['dismissText'];
-        this.saveText = __i18n__['saveText'];
-        this.proxyServerDeleteLabel = __i18n__['proxyServerDeleteLabel'];
+        this.editText = I18N.__('editText');
+        this.closeText = I18N.__('closeText');
+        this.ipLabel = I18N.__('ipLabel');
+        this.nameLabel = I18N.__('nameLabel');
+        this.sshPrivateKeyLabel = I18N.__('sshPrivateKeyLabel');
+        this.sshPrivateKeyText = I18N.__('sshPrivateKeyText');
+        this.hostPublicKeyLabel = I18N.__('hostPublicKeyLabel');
+        this.hostPublicKeyText = I18N.__('hostPublicKeyText');
+        this.rsaText = I18N.__('rsaText');
+        this.dismissText = I18N.__('dismissText');
+        this.saveText = I18N.__('saveText');
+        this.proxyServerDeleteLabel = I18N.__('proxyServerDeleteLabel');
       },
       enableSpinner: function() {
         this.set('loading', true);

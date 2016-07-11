@@ -47,7 +47,7 @@ class AdminFlowTest(BaseTest):
       LoginPage(self.driver).Logout(self.args.server_url)
 
   def testChangingAdminPasswordWorks(self):
-    """Test that removing an admin works."""
+    """Test that changing an admin's password works."""
     LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
     test_url = self.args.server_url + flask.url_for('landing')
