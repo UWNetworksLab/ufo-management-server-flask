@@ -22,12 +22,14 @@ def _make_chrome_policy_json():
   for server in proxy_servers:
     proxy_server_dict[server.ip_address] = (
         server.get_public_key_as_authorization_file_string())
+  proxy_server_value_dict = { "Value" : proxy_server_dict }
 
   config = ufo.get_user_config()
+  config_value_dict = { "Value" : config.proxy_server_validity }
 
   policy_dictionary = {
-      "validProxyServers": proxy_server_dict,
-      "enforceProxyServerValidity": config.proxy_server_validity,
+      "validProxyServers": proxy_server_value_dict,
+      "enforceProxyServerValidity": config_value_dict,
   }
 
   return json.dumps(policy_dictionary)
