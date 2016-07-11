@@ -14,6 +14,11 @@ def _make_chrome_policy_json():
 
   This policy string has the following form:
 
+  {
+    "validProxyServers": {"Value": map_of_proxy_server_ips_to_public_key},
+    "enforceProxyServerValidity": {"Value": boolean}
+  }
+
   Returns:
     A json string of current chrome policy.
   """
@@ -22,10 +27,10 @@ def _make_chrome_policy_json():
   for server in proxy_servers:
     proxy_server_dict[server.ip_address] = (
         server.get_public_key_as_authorization_file_string())
-  proxy_server_value_dict = { "Value" : proxy_server_dict }
+  proxy_server_value_dict = {"Value" : proxy_server_dict}
 
   config = ufo.get_user_config()
-  config_value_dict = { "Value" : config.proxy_server_validity }
+  config_value_dict = {"Value" : config.proxy_server_validity}
 
   policy_dictionary = {
       "validProxyServers": proxy_server_value_dict,
