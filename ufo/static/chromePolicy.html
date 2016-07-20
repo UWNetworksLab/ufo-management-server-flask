@@ -59,6 +59,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       ready: function() {
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
@@ -66,11 +67,11 @@
         }
       },
       attached: function() {
-        this.policyExplanationText = __i18n__['policyExplanationText'];
-        this.policyEditText = __i18n__['policyEditText'];
-        this.adminConsoleText = __i18n__['adminConsoleText'];
-        this.policyUploadText = __i18n__['policyUploadText'];
-        this.downloadText = __i18n__['downloadText'];
+        this.policyExplanationText = I18N.__('policyExplanationText');
+        this.policyEditText = I18N.__('policyEditText');
+        this.adminConsoleText = I18N.__('adminConsoleText');
+        this.policyUploadText = I18N.__('policyUploadText');
+        this.downloadText = I18N.__('downloadText');
       },
       enableSpinner: function() {
         this.set('loading', true);

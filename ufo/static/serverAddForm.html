@@ -72,6 +72,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-form-error': 'handleFormError',
       },
@@ -84,15 +85,15 @@
         }
       },
       attached: function() {
-        this.ipLabel = __i18n__['ipLabel'];
-        this.nameLabel = __i18n__['nameLabel'];
-        this.sshPrivateKeyLabel = __i18n__['sshPrivateKeyLabel'];
-        this.sshPrivateKeyText = __i18n__['sshPrivateKeyText'];
-        this.hostPublicKeyLabel = __i18n__['hostPublicKeyLabel'];
-        this.hostPublicKeyText = __i18n__['hostPublicKeyText'];
-        this.rsaText = __i18n__['rsaText'];
-        this.dismissText = __i18n__['dismissText'];
-        this.confirmText = __i18n__['confirmText'];
+        this.ipLabel = I18N.__('ipLabel');
+        this.nameLabel = I18N.__('nameLabel');
+        this.sshPrivateKeyLabel = I18N.__('sshPrivateKeyLabel');
+        this.sshPrivateKeyText = I18N.__('sshPrivateKeyText');
+        this.hostPublicKeyLabel = I18N.__('hostPublicKeyLabel');
+        this.hostPublicKeyText = I18N.__('hostPublicKeyText');
+        this.rsaText = I18N.__('rsaText');
+        this.dismissText = I18N.__('dismissText');
+        this.confirmText = I18N.__('confirmText');
       },
       enableSpinner: function() {
         this.set('loading', true);

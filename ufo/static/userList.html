@@ -123,6 +123,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       ready: function() {
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
@@ -130,11 +131,11 @@
         }
       },
       attached: function() {
-        this.nameColumnHeader = __i18n__['nameColumnHeader'];
-        this.emailColumnHeader = __i18n__['emailColumnHeader'];
-        this.accessColumnHeader = __i18n__['accessColumnHeader'];
-        this.userDetailsExpandText = __i18n__['userDetailsExpandText'];
-        this.userSeeAllText = __i18n__['userSeeAllText'];
+        this.nameColumnHeader = I18N.__('nameColumnHeader');
+        this.emailColumnHeader = I18N.__('emailColumnHeader');
+        this.accessColumnHeader = I18N.__('accessColumnHeader');
+        this.userDetailsExpandText = I18N.__('userDetailsExpandText');
+        this.userSeeAllText = I18N.__('userSeeAllText');
       },
       _limitCharacters: function(text) {
         if (text.length > this.characterLimit) {

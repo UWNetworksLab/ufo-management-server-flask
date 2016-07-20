@@ -118,13 +118,14 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       attached: function() {
-        this.nameColumnHeader = __i18n__['nameColumnHeader'];
-        this.ipColumnHeader = __i18n__['ipColumnHeader'];
-        this.modifyColumnHeader = __i18n__['modifyColumnHeader'];
-        this.editText = __i18n__['editText'];
-        this.proxyServerDetailsExpandText = __i18n__['proxyServerDetailsExpandText'];
-        this.proxyServerSeeAllText = __i18n__['proxyServerSeeAllText'];
+        this.nameColumnHeader = I18N.__('nameColumnHeader');
+        this.ipColumnHeader = I18N.__('ipColumnHeader');
+        this.modifyColumnHeader = I18N.__('modifyColumnHeader');
+        this.editText = I18N.__('editText');
+        this.proxyServerDetailsExpandText = I18N.__('proxyServerDetailsExpandText');
+        this.proxyServerSeeAllText = I18N.__('proxyServerSeeAllText');
       },
       _limitCharacters: function(text) {
         if (text.length > this.characterLimit) {

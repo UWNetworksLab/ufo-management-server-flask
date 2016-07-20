@@ -59,9 +59,9 @@ class SearchPageTest(BaseTest):
   def testSearchUserFromLandingPage(self):
     """Test that search displays user results within the landing page."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
 
     landing_page.searchForTestItem(BaseTest.TEST_USER_AS_DICT['name'])
@@ -73,11 +73,12 @@ class SearchPageTest(BaseTest):
   def testSearchServerFromLandingPage(self):
     """Test that search displays server results within the landing page."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                               BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
-                               self.args.server_url)
+    landing_page.add_test_server(
+        BaseTest.TEST_SERVER_AS_DICT['ip'],
+        BaseTest.TEST_SERVER_AS_DICT['name'],
+        BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+        BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+        self.args.server_url)
     self.assertTestServerPresenceOnPage(True)
 
     landing_page.searchForTestItem(BaseTest.TEST_SERVER_AS_DICT['name'])
@@ -92,14 +93,15 @@ class SearchPageTest(BaseTest):
 
     # Add user and server.
     landing_page = LandingPage(self.driver)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
-    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                               BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
                                self.args.server_url)
+    landing_page.add_test_server(
+        BaseTest.TEST_SERVER_AS_DICT['ip'],
+        BaseTest.TEST_SERVER_AS_DICT['name'],
+        BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+        BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+        self.args.server_url)
 
     # Verify they both show up.
     self.assertTestUserPresenceOnPage(True)
@@ -128,9 +130,9 @@ class SearchPageTest(BaseTest):
   def testSearchUserFromSetupPage(self):
     """Test that search displays user results on a new page."""
     setup_page = SetupPage(self.driver)
-    setup_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                           BaseTest.TEST_USER_AS_DICT['email'],
-                           self.args.server_url)
+    setup_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                             BaseTest.TEST_USER_AS_DICT['email'],
+                             self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
     self.driver.get(self.args.server_url + flask.url_for('setup'))
 
@@ -143,11 +145,11 @@ class SearchPageTest(BaseTest):
   def testSearchServerFromSetupPage(self):
     """Test that search displays server results on a new page."""
     setup_page = SetupPage(self.driver)
-    setup_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                             BaseTest.TEST_SERVER_AS_DICT['name'],
-                             BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                             BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
-                             self.args.server_url)
+    setup_page.add_test_server(BaseTest.TEST_SERVER_AS_DICT['ip'],
+                               BaseTest.TEST_SERVER_AS_DICT['name'],
+                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+                               self.args.server_url)
     self.assertTestServerPresenceOnPage(True)
     self.driver.get(self.args.server_url + flask.url_for('setup'))
 
@@ -163,14 +165,14 @@ class SearchPageTest(BaseTest):
 
     # Add user and server.
     setup_page = SetupPage(self.driver)
-    setup_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                           BaseTest.TEST_USER_AS_DICT['email'],
-                           self.args.server_url)
-    setup_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                             BaseTest.TEST_SERVER_AS_DICT['name'],
-                             BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                             BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+    setup_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                             BaseTest.TEST_USER_AS_DICT['email'],
                              self.args.server_url)
+    setup_page.add_test_server(BaseTest.TEST_SERVER_AS_DICT['ip'],
+                               BaseTest.TEST_SERVER_AS_DICT['name'],
+                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+                               self.args.server_url)
 
     # Verify they both show up.
     self.assertTestUserPresenceOnPage(True)

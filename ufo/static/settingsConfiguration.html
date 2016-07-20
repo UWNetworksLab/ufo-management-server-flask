@@ -57,6 +57,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       ready: function() {
         this.$.policyConfigForm.request.handleAs = "json";
         this.$.policyConfigForm.request.jsonPrefix = this.resources.jsonPrefix;
@@ -66,9 +67,9 @@
         }
       },
       attached: function() {
-        this.proxyValidityText = __i18n__['proxyValidityText'];
-        this.networkJailText = __i18n__['networkJailText'];
-        this.saveText = __i18n__['saveText'];
+        this.proxyValidityText = I18N.__('proxyValidityText');
+        this.networkJailText = I18N.__('networkJailText');
+        this.saveText = I18N.__('saveText');
       },
       enableSpinner: function() {
         this.set('loading', true);

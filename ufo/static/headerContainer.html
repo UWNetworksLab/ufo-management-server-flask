@@ -47,25 +47,26 @@
           value: '',
         },
       },
+      behaviors: [I18N],
       attached: function() {
         switch (this.headerType) {
           case 'chromePolicy':
-            this.titleText = __i18n__['chromePolicyTitleText'];
+            this.titleText = I18N.__('chromePolicyTitleText');
             break;
           case 'login':
-            this.titleText = __i18n__['loginTitleText'];
+            this.titleText = I18N.__('loginTitleText');
             break;
           case 'oauth':
-            this.titleText = __i18n__['oauthTitleText'];
+            this.titleText = I18N.__('oauthTitleText');
             break;
           case 'proxyServer':
-            this.titleText = __i18n__['proxyServerTitleText'];
+            this.titleText = I18N.__('proxyServerTitleText');
             break;
           case 'settings':
-            this.titleText = __i18n__['settingsTitleText'];
+            this.titleText = I18N.__('settingsTitleText');
             break;
           default:
-            this.titleText = __i18n__['userTitleText'];
+            this.titleText = I18N.__('userTitleText');
             break;
         }
       },

@@ -27,11 +27,6 @@
     #removeAdminDialog {
       font-size: 16px;
     }
-    #logoutButton {
-      min-width: 0px;
-      margin: 0px;
-      padding: 0px;
-    }
     .adminDialog {
       min-width: 350px;
     }
@@ -73,17 +68,16 @@
             <strong>[[settingsText]]</strong>
           </paper-icon-item>
         </a>
-        <paper-icon-item class="dropdown-button">
+        <paper-icon-item class="dropdown-button" on-tap="submitLogoutForm" id="logoutButton">
           <iron-icon class="dropdown-icon" icon="subdirectory-arrow-right" item-icon></iron-icon>
-          <form id="logoutForm" method="post" action="{{resources.logoutUrl}}">
-            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
-            <paper-button type="submit" on-tap="submitLogoutForm" id="logoutButton">
-              <strong>[[logoutText]]</strong>
-            </paper-button>
-          </form>
+          <strong>[[logoutText]]</strong>
         </paper-icon-item>
       </paper-listbox>
     </paper-dialog>
+
+    <form id="logoutForm" method="post" action="{{resources.logoutUrl}}">
+      <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
+    </form>
 
     <paper-dialog id="addAdminDialog" with-backdrop class="adminDialog" no-overlap horizontal-align="auto" vertical-align="top">
       <paper-button on-tap="flipToDropdownFlowFromAddAdmin">
@@ -196,6 +190,7 @@
           type: Number,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-form-error': 'handleFormError',
       },
@@ -212,20 +207,20 @@
         }
       },
       attached: function() {
-        this.addAdminText = __i18n__['addAdminText'];
-        this.changeAdminPasswordText = __i18n__['changeAdminPasswordText'];
-        this.removeAdminText = __i18n__['removeAdminText'];
-        this.settingsText = __i18n__['settingsText'];
-        this.logoutText = __i18n__['logoutText'];
-        this.adminEmailLabel = __i18n__['adminEmailLabel'];
-        this.adminPasswordLabel = __i18n__['adminPasswordLabel'];
-        this.addAdminSubmitText = __i18n__['addAdminSubmitText'];
-        this.changeAdminPasswordInstructions = __i18n__['changeAdminPasswordInstructions'];
-        this.changeAdminPasswordOldLabel = __i18n__['changeAdminPasswordOldLabel'];
-        this.changeAdminPasswordNewLabel = __i18n__['changeAdminPasswordNewLabel'];
-        this.changeAdminPasswordSubmitText = __i18n__['changeAdminPasswordSubmitText'];
-        this.removeAdminInstructions = __i18n__['removeAdminInstructions'];
-        this.removeAdminSubmitText = __i18n__['removeAdminSubmitText'];
+        this.addAdminText = I18N.__('addAdminText');
+        this.changeAdminPasswordText = I18N.__('changeAdminPasswordText');
+        this.removeAdminText = I18N.__('removeAdminText');
+        this.settingsText = I18N.__('settingsText');
+        this.logoutText = I18N.__('logoutText');
+        this.adminEmailLabel = I18N.__('adminEmailLabel');
+        this.adminPasswordLabel = I18N.__('adminPasswordLabel');
+        this.addAdminSubmitText = I18N.__('addAdminSubmitText');
+        this.changeAdminPasswordInstructions = I18N.__('changeAdminPasswordInstructions');
+        this.changeAdminPasswordOldLabel = I18N.__('changeAdminPasswordOldLabel');
+        this.changeAdminPasswordNewLabel = I18N.__('changeAdminPasswordNewLabel');
+        this.changeAdminPasswordSubmitText = I18N.__('changeAdminPasswordSubmitText');
+        this.removeAdminInstructions = I18N.__('removeAdminInstructions');
+        this.removeAdminSubmitText = I18N.__('removeAdminSubmitText');
       },
       openMenu: function() {
         var button = document.getElementById('openMenuButton');
@@ -365,16 +360,16 @@
           var found = this._findEmailInAdminList(admins, email);
           if (found) {
             this.set('showResponseStatus', true);
-            this.set('responseStatus', __i18n__['adminAddSuccessText']);
+            this.set('responseStatus', I18N.__('adminAddSuccessText'));
             this.set('ajaxResponse', this.$.addAdminForm.request.lastResponse);
             this.resetAddAdminForm();
           } else {
             this.set('showResponseStatus', true);
-            this.set('responseStatus', __i18n__['adminAddFailureText']);
+            this.set('responseStatus', I18N.__('adminAddFailureText'));
           }
         } else {
           this.set('showResponseStatus', true);
-          this.set('responseStatus', __i18n__['adminListGetError']);
+          this.set('responseStatus', I18N.__('adminListGetError'));
         }
         this.set('loading', false);
       },

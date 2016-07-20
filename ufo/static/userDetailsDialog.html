@@ -123,6 +123,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       ready: function() {
         this.$.getInviteCodeAjax.request.handleAs = "json";
         this.$.getInviteCodeAjax.request.jsonPrefix = this.resources
@@ -138,12 +139,12 @@
         }
       },
       attached: function() {
-        this.closeText = __i18n__['closeText'];
-        this.inviteCodeLabel = __i18n__['inviteCodeLabel'];
-        this.inviteCodeNeedServerText = __i18n__['inviteCodeNeedServerText'];
-        this.copyLabel = __i18n__['copyLabel'];
-        this.rotateKeysLabel = __i18n__['rotateKeysLabel'];
-        this.userDeleteLabel = __i18n__['userDeleteLabel'];
+        this.closeText = I18N.__('closeText');
+        this.inviteCodeLabel = I18N.__('inviteCodeLabel');
+        this.inviteCodeNeedServerText = I18N.__('inviteCodeNeedServerText');
+        this.copyLabel = I18N.__('copyLabel');
+        this.rotateKeysLabel = I18N.__('rotateKeysLabel');
+        this.userDeleteLabel = I18N.__('userDeleteLabel');
       },
       setRotateKeysAndEnable: function() {
         this.setRotateKeysJsonPrefix();

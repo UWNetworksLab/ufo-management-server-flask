@@ -110,6 +110,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       ready: function() {
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
@@ -117,17 +118,17 @@
         }
       },
       attached: function() {
-        this.welcomeText = __i18n__['welcomeText'];
-        this.googleDomainPromptText = __i18n__['googleDomainPromptText'];
-        this.successSetupText = __i18n__['successSetupText'];
-        this.domainConfiguredText = __i18n__['domainConfiguredText'];
-        this.noDomainConfiguredText = __i18n__['noDomainConfiguredText'];
-        this.betaWarningText = __i18n__['betaWarningText'];
-        this.connectYourDomainButtonText = __i18n__['connectYourDomainButtonText'];
-        this.pasteTheCodeText = __i18n__['pasteTheCodeText'];
-        this.submitButtonText = __i18n__['submitButtonText'];
-        this.adminEmailLabel = __i18n__['adminEmailLabel'];
-        this.adminPasswordlabel = __i18n__['adminPasswordlabel'];
+        this.welcomeText = I18N.__('welcomeText');
+        this.googleDomainPromptText = I18N.__('googleDomainPromptText');
+        this.successSetupText = I18N.__('successSetupText');
+        this.domainConfiguredText = I18N.__('domainConfiguredText');
+        this.noDomainConfiguredText = I18N.__('noDomainConfiguredText');
+        this.betaWarningText = I18N.__('betaWarningText');
+        this.connectYourDomainButtonText = I18N.__('connectYourDomainButtonText');
+        this.pasteTheCodeText = I18N.__('pasteTheCodeText');
+        this.submitButtonText = I18N.__('submitButtonText');
+        this.adminEmailLabel = I18N.__('adminEmailLabel');
+        this.adminPasswordlabel = I18N.__('adminPasswordlabel');
       },
       isDomainConfigured: function(config) {
         return config.domain && config.credentials;

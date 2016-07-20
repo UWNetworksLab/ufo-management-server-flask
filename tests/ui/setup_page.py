@@ -36,8 +36,8 @@ class SetupPage(UfOPageLayout):
     add_user_form = AddUserForm(self.driver)
     add_user_form.add_test_user(name, email)
 
-  def addTestServer(self, ip, name, ssh_private_key, host_public_key,
-                    server_url):
+  def add_test_server(self, ip, name, ssh_private_key, host_public_key,
+                      server_url):
     """Add a test server using the setup page.
 
     Args:

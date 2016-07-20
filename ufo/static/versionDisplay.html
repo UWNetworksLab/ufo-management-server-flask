@@ -64,9 +64,10 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       attached: function() {
-        this.versionText = __i18n__['versionText'];
-        this.versionUpdateText = __i18n__['versionUpdateText'];
+        this.versionText = I18N.__('versionText');
+        this.versionUpdateText = I18N.__('versionUpdateText');
       },
       handleResponse: function(response) {
         this.set('shouldShowUpdate', this._isGithubVersionNewer());

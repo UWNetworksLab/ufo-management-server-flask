@@ -97,12 +97,13 @@
           type: Object,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'ApplicationError': 'showErrorNotification',
       },
       attached: function() {
-        this.errorTitleText = __i18n__['errorTitleText'];
-        this.closeText = __i18n__['closeText'];
+        this.errorTitleText = I18N.__('errorTitleText');
+        this.closeText = I18N.__('closeText');
       },
       showErrorNotification: function(event, detail) {
         this.errorCode = detail.code;

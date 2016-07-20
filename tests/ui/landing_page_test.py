@@ -149,22 +149,24 @@ class LandingPageTest(BaseTest):
     landing_page = LandingPage(self.driver)
     self.assertTestServerPresenceOnPage(False)
 
-    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                               BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
-                               self.args.server_url)
+    landing_page.add_test_server(
+        BaseTest.TEST_SERVER_AS_DICT['ip'],
+        BaseTest.TEST_SERVER_AS_DICT['name'],
+        BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+        BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+        self.args.server_url)
 
     self.assertTestServerPresenceOnPage(True)
 
   def testDeleteServer(self):
     """Test that deleting a server removes that server."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                               BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
-                               self.args.server_url)
+    landing_page.add_test_server(
+        BaseTest.TEST_SERVER_AS_DICT['ip'],
+        BaseTest.TEST_SERVER_AS_DICT['name'],
+        BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+        BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+        self.args.server_url)
 
     self.assertTestServerPresenceOnPage(True)
 
@@ -177,11 +179,12 @@ class LandingPageTest(BaseTest):
   def testEditServer(self):
     """Test that editing a server displays the modified server."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                               BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
-                               self.args.server_url)
+    landing_page.add_test_server(
+        BaseTest.TEST_SERVER_AS_DICT['ip'],
+        BaseTest.TEST_SERVER_AS_DICT['name'],
+        BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+        BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+        self.args.server_url)
 
     self.assertTestServerPresenceOnPage(True)
 
