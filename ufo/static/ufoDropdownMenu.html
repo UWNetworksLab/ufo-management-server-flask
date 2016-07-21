@@ -1,6 +1,7 @@
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/iron-icons/iron-icons.html" />
+<link rel="import" href="bower_components/iron-pages/iron-pages.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
 <link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
@@ -46,119 +47,123 @@
     </iron-ajax>
 
     <paper-dialog class="dropdown-content adminDialog" id="actualDropdownMenu" with-backdrop no-overlap horizontal-align="auto" vertical-align="top">
-      <paper-button class="floatToTheRight" on-tap="exitAll">
-        <iron-icon icon="close" item-icon></iron-icon>
-      </paper-button>
-      <paper-listbox>
-        <paper-icon-item class="dropdown-button" id="addAdminButton" on-tap="flipToAddAdminFlow">
-          <iron-icon class="dropdown-icon" src="{{resources.userAddIconUrl}}" item-icon></iron-icon>
-          <strong>[[addAdminText]]</strong>
-        </paper-icon-item>
-        <paper-icon-item class="dropdown-button" id="changeAdminPasswordButton" on-tap="flipToChangeAdminPasswordFlow">
-          <iron-icon class="dropdown-icon" icon="editor:mode-edit" item-icon></iron-icon>
-          <strong>[[changeAdminPasswordText]]</strong>
-        </paper-icon-item>
-        <paper-icon-item class="dropdown-button" id="removeAdminButton" on-tap="flipToRemoveAdminFlow">
-          <iron-icon class="dropdown-icon" icon="remove-circle-outline" item-icon></iron-icon>
-          <strong>[[removeAdminText]]</strong>
-        </paper-icon-item>
-        <a href="{{resources.settingsUrl}}" id="settingsAnchor">
-          <paper-icon-item class="dropdown-button">
-            <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
-            <strong>[[settingsText]]</strong>
-          </paper-icon-item>
-        </a>
-        <paper-icon-item class="dropdown-button" on-tap="submitLogoutForm" id="logoutButton">
-          <iron-icon class="dropdown-icon" icon="subdirectory-arrow-right" item-icon></iron-icon>
-          <strong>[[logoutText]]</strong>
-        </paper-icon-item>
-        <version-display version-json-url="{{versionJsonUrl}}" resources="{{resources}}"></version-display>
-      </paper-listbox>
+      <iron-pages selected="{{selectedPage}}">
+        <div>
+          <paper-button class="floatToTheRight" on-tap="exitAll">
+            <iron-icon icon="close" item-icon></iron-icon>
+          </paper-button>
+          <paper-listbox>
+            <paper-icon-item class="dropdown-button" id="addAdminButton" on-tap="flipToAddAdminFlow">
+              <iron-icon class="dropdown-icon" src="{{resources.userAddIconUrl}}" item-icon></iron-icon>
+              <strong>[[addAdminText]]</strong>
+            </paper-icon-item>
+            <paper-icon-item class="dropdown-button" id="changeAdminPasswordButton" on-tap="flipToChangeAdminPasswordFlow">
+              <iron-icon class="dropdown-icon" icon="editor:mode-edit" item-icon></iron-icon>
+              <strong>[[changeAdminPasswordText]]</strong>
+            </paper-icon-item>
+            <paper-icon-item class="dropdown-button" id="removeAdminButton" on-tap="flipToRemoveAdminFlow">
+              <iron-icon class="dropdown-icon" icon="remove-circle-outline" item-icon></iron-icon>
+              <strong>[[removeAdminText]]</strong>
+            </paper-icon-item>
+            <a href="{{resources.settingsUrl}}" id="settingsAnchor">
+              <paper-icon-item class="dropdown-button">
+                <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
+                <strong>[[settingsText]]</strong>
+              </paper-icon-item>
+            </a>
+            <paper-icon-item class="dropdown-button" on-tap="submitLogoutForm" id="logoutButton">
+              <iron-icon class="dropdown-icon" icon="subdirectory-arrow-right" item-icon></iron-icon>
+              <strong>[[logoutText]]</strong>
+            </paper-icon-item>
+            <version-display version-json-url="{{versionJsonUrl}}" resources="{{resources}}"></version-display>
+          </paper-listbox>
+        </div>
+
+        <div id="addAdminDialog" class="adminDialog">
+          <paper-button on-tap="flipToDropdownFlowFromAddAdmin">
+            <iron-icon icon="arrow-back" item-icon></iron-icon>
+          </paper-button>
+          <paper-button class="floatToTheRight" on-tap="exitAll">
+            <iron-icon icon="close" item-icon></iron-icon>
+          </paper-button>
+          <template is="dom-if" if="{{showResponseStatus}}">
+            <p id="addAdminResponseStatus">{{responseStatus}}</p>
+          </template>
+          <form is="iron-form" id="addAdminForm" method="post" action="{{resources.addAdminUrl}}" on-iron-form-response="parseAddAdminResponse" on-iron-form-presubmit="enableSpinner">
+            <paper-input label="[[adminEmailLabel]]" id="paperAdminEmail" name="paperEmail" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
+            <paper-input label="[[adminPasswordLabel]]" id="paperAdminPassword" name="paperPassword" required on-keypress="submitIfEnter"></paper-input>
+            <input type="hidden" name="admin_email" id="jsonEmail" value="" />
+            <input type="hidden" name="admin_password" id="jsonPassword" value="" />
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
+            <paper-button on-tap="submitAddAdminForm" class="floatToTheRight anchor-button" id="adminFormSubmitButton" type="submit">
+              <strong>[[addAdminSubmitText]]</strong>
+            </paper-button>
+          </form>
+          <p></p>
+          <br>
+          <p></p>
+        </div>
+
+        <div id="changeAdminPasswordDialog" class="adminDialog">
+          <paper-button on-tap="flipToDropdownFlowFromChangeAdminPassword" class="header">
+            <iron-icon icon="arrow-back" item-icon></iron-icon>
+          </paper-button>
+          [[changeAdminPasswordInstructions]]
+          <paper-button class="floatToTheRight" on-tap="exitAll">
+            <iron-icon icon="close" item-icon></iron-icon>
+          </paper-button>
+          <form is="iron-form" id="changeAdminPasswordForm" method="post" action="{{resources.changeAdminPasswordUrl}}" on-iron-form-response="parseChangeAdminPasswordResponse" on-iron-form-presubmit="enableSpinner">
+            <paper-input label="[[changeAdminPasswordOldLabel]]" id="paperAdminOldPassword" name="paperAdminOldPassword" required on-keypress="submitIfEnter"></paper-input>
+            <paper-input label="[[changeAdminPasswordNewLabel]]" id="paperAdminNewPassword" name="paperAdminNewPassword" required on-keypress="submitIfEnter"></paper-input>
+            <input type="hidden" name="old_password" id="jsonOldPassword" value="" />
+            <input type="hidden" name="new_password" id="jsonNewPassword" value="" />
+            <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+          </form>
+          <div class="buttons">
+            <paper-button on-tap="submitChangeAdminPasswordForm" class="anchor-button" id="changeAdminPasswordSubmitButton" type="submit"><strong>[[changeAdminPasswordSubmitText]]</strong></paper-button>
+          </div>
+        </div>
+
+        <div id="removeAdminDialog" class="adminDialog">
+          <paper-button on-tap="flipToDropdownFlowFromRemoveAdmin" class="header">
+            <iron-icon icon="arrow-back" item-icon></iron-icon>
+          </paper-button>
+          [[removeAdminInstructions]]
+          <paper-button class="floatToTheRight" on-tap="exitAll">
+            <iron-icon icon="close" item-icon></iron-icon>
+          </paper-button>
+          <paper-dialog-scrollable>
+            <form is="iron-form" id="removeAdminForm" method="post" action="{{resources.removeAdminUrl}}" on-iron-form-response="parseRemoveAdminResponse" on-iron-form-presubmit="enableSpinner">
+              <paper-menu selected="{{selected}}" id="menuOfAdmins">
+                <template is="dom-if" if="[[!hasMoreThanOne(ajaxResponse.items)]]">
+                  <template is="dom-repeat" items="[[ajaxResponse.items]]">
+                    <paper-item id="{{item.id}}" class="horizontal layout" disabled>
+                      <strong>{{item.email}}</strong>
+                    </paper-item>
+                  </template>
+                </template>
+                <template is="dom-if" if="[[hasMoreThanOne(ajaxResponse.items)]]">
+                  <template is="dom-repeat" items="[[ajaxResponse.items]]">
+                    <paper-item id="{{item.id}}" class="horizontal layout">
+                      <strong>{{item.email}}</strong>
+                    </paper-item>
+                  </template>
+                </template>
+              </paper-menu>
+              <input type="hidden" id="hiddenAdminId" name="admin_id" value="">
+              <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
+            </form>
+          </paper-dialog-scrollable>
+          <div class="buttons">
+            <paper-button on-tap="submitRemoveAdminForm" class="anchor-button" id="removeAdminSubmitButton" type="submit"><strong>[[removeAdminSubmitText]]</strong></paper-button>
+          </div>
+        </div>
+      </iron-pages>
     </paper-dialog>
 
     <form id="logoutForm" method="post" action="{{resources.logoutUrl}}">
       <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
     </form>
-
-    <paper-dialog id="addAdminDialog" with-backdrop class="adminDialog" no-overlap horizontal-align="auto" vertical-align="top">
-      <paper-button on-tap="flipToDropdownFlowFromAddAdmin">
-        <iron-icon icon="arrow-back" item-icon></iron-icon>
-      </paper-button>
-      <paper-button class="floatToTheRight" on-tap="exitAll">
-        <iron-icon icon="close" item-icon></iron-icon>
-      </paper-button>
-      <template is="dom-if" if="{{showResponseStatus}}">
-        <p id="addAdminResponseStatus">{{responseStatus}}</p>
-      </template>
-      <form is="iron-form" id="addAdminForm" method="post" action="{{resources.addAdminUrl}}" on-iron-form-response="parseAddAdminResponse" on-iron-form-presubmit="enableSpinner">
-        <paper-input label="[[adminEmailLabel]]" id="paperAdminEmail" name="paperEmail" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
-        <paper-input label="[[adminPasswordLabel]]" id="paperAdminPassword" name="paperPassword" required on-keypress="submitIfEnter"></paper-input>
-        <input type="hidden" name="admin_email" id="jsonEmail" value="" />
-        <input type="hidden" name="admin_password" id="jsonPassword" value="" />
-        <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
-        <paper-button on-tap="submitAddAdminForm" class="floatToTheRight anchor-button" id="adminFormSubmitButton" type="submit">
-          <strong>[[addAdminSubmitText]]</strong>
-        </paper-button>
-      </form>
-      <p></p>
-      <br>
-      <p></p>
-    </paper-dialog>
-
-    <paper-dialog id="changeAdminPasswordDialog" with-backdrop class="adminDialog" no-overlap horizontal-align="auto" vertical-align="top">
-      <paper-button on-tap="flipToDropdownFlowFromChangeAdminPassword" class="header">
-        <iron-icon icon="arrow-back" item-icon></iron-icon>
-      </paper-button>
-      [[changeAdminPasswordInstructions]]
-      <paper-button class="floatToTheRight" on-tap="exitAll">
-        <iron-icon icon="close" item-icon></iron-icon>
-      </paper-button>
-      <form is="iron-form" id="changeAdminPasswordForm" method="post" action="{{resources.changeAdminPasswordUrl}}" on-iron-form-response="parseChangeAdminPasswordResponse" on-iron-form-presubmit="enableSpinner">
-        <paper-input label="[[changeAdminPasswordOldLabel]]" id="paperAdminOldPassword" name="paperAdminOldPassword" required on-keypress="submitIfEnter"></paper-input>
-        <paper-input label="[[changeAdminPasswordNewLabel]]" id="paperAdminNewPassword" name="paperAdminNewPassword" required on-keypress="submitIfEnter"></paper-input>
-        <input type="hidden" name="old_password" id="jsonOldPassword" value="" />
-        <input type="hidden" name="new_password" id="jsonNewPassword" value="" />
-        <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
-      </form>
-      <div class="buttons">
-        <paper-button on-tap="submitChangeAdminPasswordForm" class="anchor-button" id="changeAdminPasswordSubmitButton" type="submit"><strong>[[changeAdminPasswordSubmitText]]</strong></paper-button>
-      </div>
-    </paper-dialog>
-
-    <paper-dialog id="removeAdminDialog" with-backdrop class="adminDialog" no-overlap horizontal-align="auto" vertical-align="top">
-      <paper-button on-tap="flipToDropdownFlowFromRemoveAdmin" class="header">
-        <iron-icon icon="arrow-back" item-icon></iron-icon>
-      </paper-button>
-      [[removeAdminInstructions]]
-      <paper-button class="floatToTheRight" on-tap="exitAll">
-        <iron-icon icon="close" item-icon></iron-icon>
-      </paper-button>
-      <paper-dialog-scrollable>
-        <form is="iron-form" id="removeAdminForm" method="post" action="{{resources.removeAdminUrl}}" on-iron-form-response="parseRemoveAdminResponse" on-iron-form-presubmit="enableSpinner">
-          <paper-menu selected="{{selected}}" id="menuOfAdmins">
-            <template is="dom-if" if="[[!hasMoreThanOne(ajaxResponse.items)]]">
-              <template is="dom-repeat" items="[[ajaxResponse.items]]">
-                <paper-item id="{{item.id}}" class="horizontal layout" disabled>
-                  <strong>{{item.email}}</strong>
-                </paper-item>
-              </template>
-            </template>
-            <template is="dom-if" if="[[hasMoreThanOne(ajaxResponse.items)]]">
-              <template is="dom-repeat" items="[[ajaxResponse.items]]">
-                <paper-item id="{{item.id}}" class="horizontal layout">
-                  <strong>{{item.email}}</strong>
-                </paper-item>
-              </template>
-            </template>
-          </paper-menu>
-          <input type="hidden" id="hiddenAdminId" name="admin_id" value="">
-          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
-        </form>
-      </paper-dialog-scrollable>
-      <div class="buttons">
-        <paper-button on-tap="submitRemoveAdminForm" class="anchor-button" id="removeAdminSubmitButton" type="submit"><strong>[[removeAdminSubmitText]]</strong></paper-button>
-      </div>
-    </paper-dialog>
   </template>
 
   <script>
@@ -189,6 +194,10 @@
         },
         selected: {
           type: Number,
+        },
+        selectedPage: {
+          type: Number,
+          value: 0,
         },
         versionJsonUrl: {
           type: String,
@@ -227,6 +236,7 @@
         this.removeAdminSubmitText = I18N.__('removeAdminSubmitText');
       },
       openMenu: function() {
+        this.set('selectedPage', 0);
         var button = document.getElementById('openMenuButton');
         this.$.actualDropdownMenu.positionTarget = button;
         this.$.actualDropdownMenu.open();
@@ -235,52 +245,25 @@
         this.$.actualDropdownMenu.close();
       },
       flipToAddAdminFlow: function(e, details) {
-        this.closeMenu();
         this.openAddAdminDialog();
       },
       flipToChangeAdminPasswordFlow: function(e, details) {
-        this.closeMenu();
         this.openChangeAdminPasswordDialog();
       },
       flipToRemoveAdminFlow: function(e, details) {
-        this.closeMenu();
         this.openRemoveAdminDialog();
       },
       submitLogoutForm: function(e, details) {
         this.querySelector('#logoutForm').submit();
       },
       openAddAdminDialog: function() {
-        var button = document.getElementById('openMenuButton');
-        this.$.addAdminDialog.positionTarget = button;
-        this.$.addAdminDialog.open();
+        this.set('selectedPage', 1);
       },
       openChangeAdminPasswordDialog: function() {
-        var button = document.getElementById('openMenuButton');
-        this.$.changeAdminPasswordDialog.positionTarget = button;
-        this.$.changeAdminPasswordDialog.open();
+        this.set('selectedPage', 2);
       },
       openRemoveAdminDialog: function() {
-        var button = document.getElementById('openMenuButton');
-        this.$.removeAdminDialog.positionTarget = button;
-        this.$.removeAdminDialog.open();
-      },
-      closeAdminDialog: function() {
-        this.set('loading', false);  // Disables the spinner.
-
-        var addAdminDialog = document.getElementById('addAdminDialog');
-        if (addAdminDialog) {
-          this.$.addAdminDialog.close();
-        }
-
-        var changeAdminPasswordDialog = document.getElementById('changeAdminPasswordDialog');
-        if (changeAdminPasswordDialog) {
-          this.$.changeAdminPasswordDialog.close();
-        }
-
-        var removeAdminDialog = document.getElementById('removeAdminDialog');
-        if (removeAdminDialog) {
-          this.$.removeAdminDialog.close();
-        }
+        this.set('selectedPage', 3);
       },
       handleFormError: function(event, detail) {
         event.stopPropagation();
@@ -294,23 +277,20 @@
         var errorDetail = {'detail': jsonObj};
         var errorEvent = new CustomEvent('ApplicationError', errorDetail);
         document.getElementById('error-notification').dispatchEvent(errorEvent);
-        this.closeAdminDialog();
+        this.closeMenu();
       },
       flipToDropdownFlowFromAddAdmin: function(e, details) {
-        this.openMenu();
-        this.closeAdminDialog();
+        this.set('selectedPage', 0);
         this.resetAddAdminForm();
         this.set('showResponseStatus', false);
         this.set('responseStatus', '');
       },
       flipToDropdownFlowFromChangeAdminPassword: function(e, details) {
-        this.openMenu();
-        this.closeAdminDialog();
+        this.set('selectedPage', 0);
         this.resetChangeAdminPasswordForm();
       },
       flipToDropdownFlowFromRemoveAdmin: function(e, details) {
-        this.openMenu();
-        this.closeAdminDialog();
+        this.set('selectedPage', 0);
         this.resetRemoveAdminForm();
       },
       enableSpinner: function() {
@@ -404,7 +384,6 @@
       },
       exitAll: function(e, details) {
         this.closeMenu();
-        this.closeAdminDialog();
       },
       _findEmailInAdminList: function(admins, email) {
         var found = false;
