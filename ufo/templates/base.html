@@ -59,7 +59,7 @@
       </paper-toolbar>
     </paper-scroll-header-panel>
   </div>
-  <ufo-dropdown-menu resources="{{resources}}" id="ufoDropdownMenu">
+  <ufo-dropdown-menu resources="{{resources}}" id="ufoDropdownMenu" version-json-url="{{ url_for('static', filename='version.json') }}">
   </ufo-dropdown-menu>
   <div class="layout vertical" id="main-holder">
     {% block body %}{% endblock %}
@@ -70,6 +70,5 @@
 
   <script src="{{ url_for('static', filename='globalHelperFunctions.js') }}"></script>
   <input id="hiddenCopyInput" type="hidden" value=""/>
-  <version-display version-json-url="{{ url_for('static', filename='version.json') }}" resources="{{resources}}"></version-display>
 </body>
 </html>

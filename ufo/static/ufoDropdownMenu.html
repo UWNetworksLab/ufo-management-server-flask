@@ -72,6 +72,7 @@
           <iron-icon class="dropdown-icon" icon="subdirectory-arrow-right" item-icon></iron-icon>
           <strong>[[logoutText]]</strong>
         </paper-icon-item>
+        <version-display version-json-url="{{versionJsonUrl}}" resources="{{resources}}"></version-display>
       </paper-listbox>
     </paper-dialog>
 
@@ -188,6 +189,9 @@
         },
         selected: {
           type: Number,
+        },
+        versionJsonUrl: {
+          type: String,
         },
       },
       behaviors: [I18N],
