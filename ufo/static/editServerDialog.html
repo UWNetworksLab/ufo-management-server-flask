@@ -242,6 +242,9 @@
         this.showHideEdit(true);
       },
       resetInputs: function() {
+        if (this.oldItem == undefined) {
+          return;
+        }
         var editInputs = this.getElementsByClassName('editInputFields');
         for (var i in editInputs) {
           editInputs[i].value = this.oldItem[editInputs[i].name];
