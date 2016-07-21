@@ -5,7 +5,7 @@
   "settingsText": "Settings",
   "logoutText": "Log Out",
   "adminEmailLabel": "Admin Email",
-  "adminPasswordlabel": "Admin Password",
+  "adminPasswordLabel": "Admin Password",
   "addAdminSubmitText": "Add Admin",
   "adminListGetError": "Error: Getting the list of admins failed. Try again later.",
   "adminExistsError": "Error: An admin with the specified email already exists.",
