@@ -44,7 +44,7 @@
       display: none;
     }
     .showElement {
-      display: inline-block;
+      display: inline-flex;
     }
   </style>
   <template>
@@ -102,11 +102,14 @@
       </div>
       <br>
       <div class="buttons">
-        <paper-button class="editElements hideElement anchor-button" on-tap="cancelServerEdit">
-        <strong>[[dismissText]]</strong>
+        <paper-button class="editElements hideElement anchor-button"
+                      on-tap="cancelServerEdit">
+          <strong>[[dismissText]]</strong>
         </paper-button>
-        <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm" id="serverEditSubmitButton">
-        <strong>[[saveText]]</strong>
+        <paper-button class="editElements hideElement anchor-button"
+                      on-tap="submitEditForm"
+                      id="serverEditSubmitButton">
+          <strong>[[saveText]]</strong>
         </paper-button>
         <form is="iron-form" id="serverDeleteForm" method="post" action="{{resources.proxyServerDeleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="server_id" value="{{item.id}}">
