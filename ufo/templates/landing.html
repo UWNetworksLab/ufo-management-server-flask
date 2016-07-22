@@ -7,12 +7,14 @@
       </user-list>
     </header-container>
   </paper-display-template>
+
   <paper-display-template id="proxyServerDisplayTemplate">
     <header-container resources="{{resources}}" has-add-flow="true" header-type="proxyServer">
       <server-list resources="{{resources}}" id="proxyList" auto-get=true>
       </server-list>
     </header-container>
   </paper-display-template>
+
   {% if session['domain'] %}
     <paper-display-template id="chromePolicyDisplayTemplate">
       <header-container resources="{{resources}}" header-type="chromePolicy">
@@ -21,4 +23,11 @@
       </header-container>
     </paper-display-template>
   {% endif %}
+
+  <paper-display-template id="settingsDisplayTemplate">
+    <header-container resources="{{resources}}" header-type="settings">
+      <settings-configuration resources="{{resources}}">
+      </settings-configuration>
+    </header-container>
+  </paper-display-template>
 {% endblock %}

@@ -80,8 +80,8 @@ class SettingsComponentTest(BaseTest):
     dropdown_menu = settings_component.getDropdownMenu()
     settings_link = dropdown_menu.find_element(
         *SettingsComponent.SETTINGS_ANCHOR)
-    full_url = self.args.server_url + settings_component.setting_url
-    self.assertEquals(full_url, settings_link.get_attribute('href'))
+    self.assertEquals(settings_component.setting_url,
+                      settings_link.get_attribute('href'))
 
 
 if __name__ == '__main__':

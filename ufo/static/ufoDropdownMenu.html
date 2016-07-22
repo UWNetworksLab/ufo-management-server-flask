@@ -68,7 +68,7 @@
               <iron-icon class="dropdown-icon" icon="remove-circle-outline" item-icon></iron-icon>
               <strong>[[removeAdminText]]</strong>
             </paper-icon-item>
-            <a href="{{resources.settingsUrl}}" id="settingsAnchor">
+            <a href="[[settingsHref]]" id="settingsAnchor" on-tap="exitAll">
               <paper-icon-item class="dropdown-button">
                 <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
                 <strong>[[settingsText]]</strong>
@@ -200,6 +200,10 @@
         },
         versionJsonUrl: {
           type: String,
+        },
+        settingsHref: {
+          type: String,
+          value: "#settingsDisplayTemplate",
         },
       },
       behaviors: [I18N],
