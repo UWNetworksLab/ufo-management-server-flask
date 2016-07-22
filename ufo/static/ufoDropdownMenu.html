@@ -75,6 +75,9 @@
               <iron-icon class="dropdown-icon" icon="subdirectory-arrow-right" item-icon></iron-icon>
               <strong>[[logoutText]]</strong>
             </paper-icon-item>
+            <paper-item class="dropdown-button">
+              <version-display version-json-url="{{versionJsonUrl}}" resources="{{resources}}"></version-display>
+            </paper-item>
           </paper-listbox>
         </div>
 
@@ -197,6 +200,9 @@
         selectedPage: {
           type: Number,
           value: 0,
+        },
+        versionJsonUrl: {
+          type: String,
         },
       },
       behaviors: [I18N],
