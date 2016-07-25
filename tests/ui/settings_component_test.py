@@ -30,21 +30,16 @@ class SettingsComponentTest(BaseTest):
     LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
     settings_component = SettingsComponent(self.driver)
-    self.driver.get(self.args.server_url + settings_component.setting_url)
+    self.driver.get(self.args.server_url)
     self.initial_settings = settings_component.getCurrentSettings()
 
   def tearDown(self):
     """Teardown for test methods."""
     settings_component = SettingsComponent(self.driver)
-    self.driver.get(self.args.server_url + settings_component.setting_url)
+    self.driver.get(self.args.server_url)
     settings_component.resetSettings(self.initial_settings)
     LoginPage(self.driver).Logout(self.args.server_url)
     super(SettingsComponentTest, self).tearDown()
-
-  def testAllPagesHaveLinkToSettings(self):
-    """Test that each page has a link in the dropdown to navigate to settings."""
-    for handler in self.handlers:
-      self._assertLinkToSettingsIsPresent(self.args.server_url + handler)
 
   def testSavingChangedSettings(self):
     """Test that changing a setting and saving it will actually retain it.
@@ -53,13 +48,13 @@ class SettingsComponentTest(BaseTest):
     """
     proxy_server_key = 'enforce_proxy_server_validity'
     settings_component = SettingsComponent(self.driver)
-    self.driver.get(self.args.server_url + settings_component.setting_url)
+    self.driver.get(self.args.server_url)
     settings_component.changeSetting(
         proxy_server_key, not self.initial_settings[proxy_server_key])
 
     # We specifically reload the page here to ensure that changes propagate to
     # the backend and are not solely in the UI.
-    self.driver.get(self.args.server_url + settings_component.setting_url)
+    self.driver.get(self.args.server_url)
     changed_settings = settings_component.getCurrentSettings()
 
     for key, value in self.initial_settings.iteritems():
@@ -68,21 +63,6 @@ class SettingsComponentTest(BaseTest):
         self.assertNotEquals(self.initial_settings[key], changed_settings[key])
       else :
         self.assertEquals(self.initial_settings[key], changed_settings[key])
-
-  def _assertLinkToSettingsIsPresent(self, test_url):
-    """Assert that the link to the settings page is present on the given url.
-
-    Args:
-      test_url: The url to navigate to and assert based upon.
-    """
-    self.driver.get(test_url)
-    settings_component = SettingsComponent(self.driver)
-    dropdown_menu = settings_component.getDropdownMenu()
-    settings_link = dropdown_menu.find_element(
-        *SettingsComponent.SETTINGS_ANCHOR)
-    full_url = self.args.server_url + settings_component.setting_url
-    self.assertEquals(full_url, settings_link.get_attribute('href'))
-
 
 if __name__ == '__main__':
   unittest.main()

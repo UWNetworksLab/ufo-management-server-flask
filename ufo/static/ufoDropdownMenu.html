@@ -68,12 +68,6 @@
               <iron-icon class="dropdown-icon" icon="remove-circle-outline" item-icon></iron-icon>
               <strong>[[removeAdminText]]</strong>
             </paper-icon-item>
-            <a href="{{resources.settingsUrl}}" id="settingsAnchor">
-              <paper-icon-item class="dropdown-button">
-                <iron-icon class="dropdown-icon" icon="settings" item-icon></iron-icon>
-                <strong>[[settingsText]]</strong>
-              </paper-icon-item>
-            </a>
             <paper-icon-item class="dropdown-button" on-tap="submitLogoutForm" id="logoutButton">
               <iron-icon class="dropdown-icon" icon="subdirectory-arrow-right" item-icon></iron-icon>
               <strong>[[logoutText]]</strong>
@@ -222,7 +216,6 @@
         this.addAdminText = I18N.__('addAdminText');
         this.changeAdminPasswordText = I18N.__('changeAdminPasswordText');
         this.removeAdminText = I18N.__('removeAdminText');
-        this.settingsText = I18N.__('settingsText');
         this.logoutText = I18N.__('logoutText');
         this.adminEmailLabel = I18N.__('adminEmailLabel');
         this.adminPasswordLabel = I18N.__('adminPasswordLabel');

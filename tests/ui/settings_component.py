@@ -23,8 +23,6 @@ class SettingsComponent(UfOPageLayout):
       driver: A webdriver instance that can be used to query the dom.
     """
     super(UfOPageLayout, self).__init__(driver)
-    self.setting_url = (flask.url_for('setup') + '#' +
-                        self.SETTINGS_DISPLAY_TEMPLATE_ID)
 
   def getCurrentSettings(self):
     """Find the current settings on the page and return them.
