@@ -119,7 +119,7 @@ To view the logs of an instance:
 1. Know which user the ssh-client will be using to access the proxy server.  Currently, this is hard-coded to root.
 1. Either have an existing key-pair or generate it.
 1. Copy the public key to the user who the ssh-client will be accessing the proxy server.
-  * `ssh-copy-id <root_or_other_user>@<proxy_server_ip_address>`
+  * `sudo ssh-copy-id -i <full_path_to_public_key> <root_or_other_user>@<proxy_server_ip_address>`
   * [More details here](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-14-04) especially if you want to setup other non-root user.
 1. Save the corresponding private key to the management server for this proxy server.
 
