@@ -2,7 +2,14 @@
 
 Management Server component of uProxy for Orgs (UfO)
 
-## Tools
+
+## Development
+
+Development of UfO centers around one core git repository for the Management Server. Its purpose is to facilitate adding and removing users to and from the various proxy servers that a customer sets up. The Management Server is based on the Flask framework and so makes heavy use of Flask’s built in tools and utilities. A previous version was built on AppEngine, but is no longer supported (see [here](https://github.com/uProxy/ufo-management-server) for more info on that repository). The following sections provide best practice information for setting up, developing, testing, and maintaining the Management Server (as well as future components, such as the Deployment Server).
+
+For a high level technical overview of UfO, see the [UfO Design Doc](https://docs.google.com/document/d/1M6gL67V2m5xk1pr42-CLh7jJteg74OpHof-14GgLa3U/edit).
+
+### Tools
 
 UfO is built using the following tools:
  - [Python](https://www.python.org/) as the primary language we code in.
@@ -15,13 +22,6 @@ To manage dependencies we use:
  - [Pip](http://pip.readthedocs.org/en/stable/) to install various python packages and libraries (specified in `requirements.txt`).
  - [NPM](https://www.npmjs.org/) to install node modules that we use for our build process (specified in `package.json`).
  - [Bower](http://bower.io) to install libraries that we use in the UI (specified in `bower.json`) including Polymer.
-
-
-## Development
-
-Development of UfO centers around one core git repository for the Management Server. Its purpose is to facilitate adding and removing users to and from the various proxy servers that a customer sets up. The Management Server is based on the Flask framework and so makes heavy use of Flask’s built in tools and utilities. A previous version was built on AppEngine, but is no longer supported (see [here](https://github.com/uProxy/ufo-management-server) for more info on that repository). The following sections provide best practice information for setting up, developing, testing, and maintaining the Management Server (as well as future components, such as the Deployment Server).
-
-For a high level technical overview of UfO, see the [UfO Design Doc](https://docs.google.com/document/d/1M6gL67V2m5xk1pr42-CLh7jJteg74OpHof-14GgLa3U/edit).
 
 ### Setup
 

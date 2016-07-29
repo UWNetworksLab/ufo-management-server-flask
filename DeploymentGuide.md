@@ -12,8 +12,9 @@ The Management Server can be deployed locally or to the cloud. We have setup a o
 
 The click to deploy method creates a new app based on a template from github. Heroku will read the configurations already created there and generate a new app for you, with almost no interaction required. Simply follow these steps:
 
-1. Visit the Click-to-Deploy [link](https://dashboard.heroku.com/new?template=https://github.com/uProxy/ufo-management-server-flask/tree/production).
-  * TODO(eholder): Create the button on the website.
+1. Visit the Click-to-Deploy [link](https://dashboard.heroku.com/new?template=https://github.com/uProxy/ufo-management-server-flask/tree/master).
+  * TODO(eholder): Switch this to production version after beta testing. We want testers to use master in the meantime for quick fixes.
+  * TODO(eholder): Create the Heroku button on the website.
 1. Login if necessary.
 1. Fill in the app name if desired.
 1. Click the “Deploy” button.
@@ -116,7 +117,7 @@ To view the logs of an instance:
 ### Setup SSH Keys to Access Proxy Server
 
 1. Know which user the ssh-client will be using to access the proxy server.  Currently, this is hard-coded to root.
-1. Either have an existing a key-pair or generate it.
+1. Either have an existing key-pair or generate it.
 1. Copy the public key to the user who the ssh-client will be accessing the proxy server.
   * `ssh-copy-id <root_or_other_user>@<proxy_server_ip_address>`
   * [More details here](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-14-04) especially if you want to setup other non-root user.
