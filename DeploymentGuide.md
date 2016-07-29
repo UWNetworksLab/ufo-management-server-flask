@@ -28,6 +28,7 @@ The click to deploy method creates a new app based on a template from github. He
 1. Once upgraded to a higher level, click the pencil icon next to each dyno to edit it.
 1. Enable each dyno and confirm the change.
   * TODO(eholder): It would be nice to automatically start Heroku at the Hobby level at least with the dynos already running, thus eliminating steps 6-10.
+1. If you have not done this previously, you need to [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
 1. Once complete, you can then navigate directly to the app via clicking the menu button in the top and selecting “Open app” or by visiting the following address:
   * `http://<your_instance_name>.herokuapp.com/setup/`
 
