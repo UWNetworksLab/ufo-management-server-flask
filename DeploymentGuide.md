@@ -174,3 +174,8 @@ The free nano instance of redis is prone to run out of memory upon repeated exce
   * `redis-cli -h catfish.redistogo.com -p 10290 -a fa537e8f6dfa5c327ff2825759d71b91 info`
 * You can also wipe redis clean and start over.
   * `redis-cli -h catfish.redistogo.com -p 10290 -a fa537e8f6dfa5c327ff2825759d71b91 flushall'
+
+### Check That User Keys Are Distributed
+
+* Login to the proxy server machine (as root).
+* `docker exec uproxy-sshd cat /home/getter/.ssh/authorized_keys`
