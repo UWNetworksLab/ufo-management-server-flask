@@ -20,7 +20,7 @@
   </style>
   <template>
     <form id="loginForm" method="POST">
-      <paper-input label="[[emailLabel]]" id="email" name="email" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
+      <paper-input label="[[emailLabel]]" id="email" name="email" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="[[emailValidationError]]" on-keypress="submitIfEnter"></paper-input>
       <paper-input type="password" label="[[passwordLabel]]" id="password" name="password" required on-keypress="submitIfEnter"></paper-input>
 
       <template is="dom-if" if="{{shouldShowRecaptcha}}">
@@ -70,6 +70,7 @@
         this.emailLabel = I18N.__('emailLabel');
         this.passwordLabel = I18N.__('passwordLabel');
         this.loginText = I18N.__('loginText');
+        this.emailValidationError = I18N.__('emailValidationError');
       },
       submitLoginForm: function() {
         this.querySelector('#loginForm').submit();

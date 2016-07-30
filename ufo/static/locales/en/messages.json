@@ -96,5 +96,10 @@
   "saveMultipleUsersButton": "Add Users",
   "saveIndividualUserButton": "Add User",
   "versionText": "Version: ",
-  "versionUpdateText": "A newer version is available on Github: "
+  "versionUpdateText": "A newer version is available on Github: ",
+  "emailValidationError": "Please supply a valid email address.",
+  "keyLookupError": "Please supply a valid email address or unique id.",
+  "publicKeyError": "Please supply a valid public key in a format such as 'ssh-rsa AAAA...' (no email address afterwards).",
+  "privateKeyError": "Please supply a valid private key in a format such as '-----BEGIN RSA PRIVATE KEY----- ... -----END RSA PRIVATE KEY-----'.",
+  "ipAddressError": "Please supply a valid ip address in v4 or v6 format (with groups of 0s included)."
 }
