@@ -96,5 +96,7 @@
   "saveMultipleUsersButton": "Add Users",
   "saveIndividualUserButton": "Add User",
   "versionText": "Version: ",
-  "versionUpdateText": "A newer version is available on Github: "
+  "versionUpdateText": "A newer version is available on Github: ",
+  "publicKeyReadError": "Error reading the public key. Proxy server add aborted.",
+  "privateKeyReadError": "Error reading the private key. Proxy server add aborted."
 }
