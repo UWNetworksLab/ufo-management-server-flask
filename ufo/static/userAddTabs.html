@@ -71,7 +71,7 @@
             </paper-input>
             <paper-input label="[[manualEmailAddressLabel]]" type="email" name="email" value="" id="manualUserEmail" required
             pattern="{{resources.regexes.emailValidationPattern}}"
-            error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter">
+            error-message="[[emailValidationError]]" on-keypress="submitIfEnter">
             </paper-input>
             <input type="hidden" name="users" id="manualUserInput" value="">
             <input type="hidden" name="manual" value="true">
@@ -140,6 +140,7 @@
         this.manualFullNameLabel = I18N.__('manualFullNameLabel');
         this.manualEmailAddressLabel = I18N.__('manualEmailAddressLabel');
         this.dismissText = I18N.__('dismissText');
+        this.emailValidationError = I18N.__('emailValidationError');
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.resources.manualAddFormId);

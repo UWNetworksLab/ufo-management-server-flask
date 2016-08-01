@@ -63,7 +63,7 @@
       </template>
       <div id="rowHolder" class="vertical center-justified layout">
         <form is="iron-form" id="serverEditForm" method="post" action="{{resources.proxyServerEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
-          <paper-input class="editInputFields" disabled label="[[ipLabel]]" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
+          <paper-input class="editInputFields" disabled label="[[ipLabel]]" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="[[ipAddressError]]" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
           <paper-input class="editInputFields" disabled label="[[nameLabel]]" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter" id="{{resources.nameInput}}"></paper-input>
           <!-- TODO add the ability to upload files -->
           <paper-input class="editInputFields"
@@ -73,7 +73,7 @@
                        required
                        max-rows="[[resources.textAreaMaxRows]]"
                        pattern="[[resources.regexes.privateKeyPattern]]"
-                       error-message="[[resources.regexes.privateKeyError]]"
+                       error-message="[[privateKeyError]]"
                        value="[[item.ssh_private_key]]"
                        on-keypress="doNothingOnEnter"
                        on-keydown="doNothingOnEnter"
@@ -88,7 +88,7 @@
                        name="host_public_key"
                        required
                        pattern="{{resources.regexes.publicKeyPattern}}"
-                       error-message="{{resources.regexes.publicKeyError}}"
+                       error-message="[[publicKeyError]]"
                        value="[[item.host_public_key]]"
                        on-keypress="submitIfEnter"
                        id="{{resources.hostPublicKeyInput}}">
@@ -172,6 +172,9 @@
         this.dismissText = I18N.__('dismissText');
         this.saveText = I18N.__('saveText');
         this.proxyServerDeleteLabel = I18N.__('proxyServerDeleteLabel');
+        this.publicKeyError = I18N.__('publicKeyError');
+        this.privateKeyError = I18N.__('privateKeyError');
+        this.ipAddressError = I18N.__('ipAddressError');
       },
       enableSpinner: function() {
         this.set('loading', true);

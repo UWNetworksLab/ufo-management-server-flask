@@ -98,5 +98,10 @@
   "versionText": "Version: ",
   "versionUpdateText": "A newer version is available on Github: ",
   "publicKeyReadError": "Error reading the public key. Proxy server add aborted.",
-  "privateKeyReadError": "Error reading the private key. Proxy server add aborted."
+  "privateKeyReadError": "Error reading the private key. Proxy server add aborted.",
+  "emailValidationError": "Please supply a valid email address.",
+  "keyLookupError": "Please supply a valid email address or unique id.",
+  "publicKeyError": "Please supply a valid public key in a format such as 'ssh-rsa AAAA...' (no email address or comments afterwards).",
+  "privateKeyError": "Please supply a valid private key in a format such as '-----BEGIN RSA PRIVATE KEY----- ... -----END RSA PRIVATE KEY-----'.",
+  "ipAddressError": "Please supply a valid ip address in v4 or v6 format (with groups of 0s included)."
 }

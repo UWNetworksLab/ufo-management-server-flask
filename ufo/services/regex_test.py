@@ -21,15 +21,10 @@ class RegexTest(unittest.TestCase):
     """Test the list user handler gets users from the database."""
     self.assertIn('emailValidationPattern',
                   regex.REGEXES_AND_ERRORS_DICTIONARY)
-    self.assertIn('emailValidationError', regex.REGEXES_AND_ERRORS_DICTIONARY)
     self.assertIn('keyLookupPattern', regex.REGEXES_AND_ERRORS_DICTIONARY)
-    self.assertIn('keyLookupError', regex.REGEXES_AND_ERRORS_DICTIONARY)
     self.assertIn('publicKeyPattern', regex.REGEXES_AND_ERRORS_DICTIONARY)
-    self.assertIn('publicKeyError', regex.REGEXES_AND_ERRORS_DICTIONARY)
     self.assertIn('privateKeyPattern', regex.REGEXES_AND_ERRORS_DICTIONARY)
-    self.assertIn('privateKeyError', regex.REGEXES_AND_ERRORS_DICTIONARY)
     self.assertIn('ipAddressPattern', regex.REGEXES_AND_ERRORS_DICTIONARY)
-    self.assertIn('ipAddressError', regex.REGEXES_AND_ERRORS_DICTIONARY)
 
   def testEmailPatternMatchesValidEmailAddresses(self):
     """Test the email regex pattern matches valid email addresses."""
