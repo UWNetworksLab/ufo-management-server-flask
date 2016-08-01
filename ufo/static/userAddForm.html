@@ -24,7 +24,7 @@
       <template is="dom-if" if="{{showInputFields}}">
         <form is="iron-form" id="{{formId}}" method="get" action="{{resources.userAddUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinnerAndSetPrefixes">
           <template is="dom-if" if="[[!idMatches(formId, 'domainAdd')]]">
-            <paper-input label="{{emailLabel}}" type="textbox" name="{{inputName}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="{{resources.regexes.keyLookupError}}"></paper-input>
+            <paper-input label="{{emailLabel}}" type="textbox" name="{{inputName}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="[[keyLookupError]]"></paper-input>
             <br>
             <p>{{inputDefinition}}</p>
             <br>
@@ -173,6 +173,7 @@
         this.addFlowNoResults = I18N.__('addFlowNoResults');
         this.lookAgainText = I18N.__('lookAgainText');
         this.dismissText = I18N.__('dismissText');
+        this.keyLookupError = I18N.__('keyLookupError');
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.formId);

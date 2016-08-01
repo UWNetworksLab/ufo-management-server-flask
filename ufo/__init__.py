@@ -1,3 +1,5 @@
+import json
+
 import flask
 from flask import request
 from flask.ext import sqlalchemy
@@ -96,6 +98,25 @@ def setup_required(func):
       raise SetupNeeded
     return func(*args, **kwargs)
   return decorated_function
+
+def get_json_message(message_key):
+  """Get an i18n-ed message from the appropriate json file for the given key.
+
+  Args:
+    message_key: The message to get.
+
+  Returns:
+    A string the for the i18n-ed message or the key itself if an error occurs.
+  """
+  file_path = (os.getcwd() + '/ufo/static/locales/' +
+               flask.session['language_prefix'] + '/messages.json')
+  try:
+    with open(file_path) as json_file:
+      messages = json.load(json_file)
+      return messages[message_key]
+  except:
+    return message_key
+
 
 from ufo.services import key_distributor
 from ufo.handlers import routes

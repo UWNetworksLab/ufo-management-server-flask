@@ -22,7 +22,7 @@
         <paper-spinner id="serverSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <form is="iron-form" id="serverAddForm" method="post" action="{{resources.proxyServerAddUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-        <paper-input label="[[ipLabel]]" type="text" id="{{resources.ipInput}}" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="[[ipLabel]]" type="text" id="{{resources.ipInput}}" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="[[ipAddressError]]" on-keypress="submitIfEnter"></paper-input>
         <paper-input label="[[nameLabel]]" type="text" id="{{resources.nameInput}}" name="name" required on-keypress="submitIfEnter"></paper-input>
         <!-- TODO add the ability to upload files -->
         <ufo-textarea label="[[sshPrivateKeyLabel]]"
@@ -30,7 +30,7 @@
                       name="ssh_private_key"
                       required max-rows="{{resources.textAreaMaxRows}}"
                       pattern="{{resources.regexes.privateKeyPattern}}"
-                      error-message="{{resources.regexes.privateKeyError}}">
+                      error-message="[[privateKeyError]]">
         </ufo-textarea>
         <br>
         <p>[[sshPrivateKeyText]]</p>
@@ -39,7 +39,7 @@
                      id="{{resources.hostPublicKeyInput}}"
                      name="host_public_key"
                      required pattern="{{resources.regexes.publicKeyPattern}}"
-                     error-message="{{resources.regexes.publicKeyError}}"
+                     error-message="[[publicKeyError]]"
                      on-keypress="submitIfEnter">
         </paper-input>
         <br>
@@ -94,6 +94,9 @@
         this.rsaText = I18N.__('rsaText');
         this.dismissText = I18N.__('dismissText');
         this.confirmText = I18N.__('confirmText');
+        this.publicKeyError = I18N.__('publicKeyError');
+        this.privateKeyError = I18N.__('privateKeyError');
+        this.ipAddressError = I18N.__('ipAddressError');
       },
       enableSpinner: function() {
         this.set('loading', true);

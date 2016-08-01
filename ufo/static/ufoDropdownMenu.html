@@ -87,7 +87,7 @@
           </paper-button>
           <p id="addAdminResponseStatus">{{responseStatus}}</p>
           <form is="iron-form" id="addAdminForm" method="post" action="{{resources.addAdminUrl}}" on-iron-form-response="parseAddAdminResponse" on-iron-form-presubmit="enableSpinner">
-            <paper-input label="[[adminEmailLabel]]" id="paperAdminEmail" name="paperEmail" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter"></paper-input>
+            <paper-input label="[[adminEmailLabel]]" id="paperAdminEmail" name="paperEmail" required pattern="{{resources.regexes.emailValidationPattern}}" error-message="[[emailValidationError]]" on-keypress="submitIfEnter"></paper-input>
             <paper-input label="[[adminPasswordLabel]]" id="paperAdminPassword" name="paperPassword" required on-keypress="submitIfEnter"></paper-input>
             <input type="hidden" name="admin_email" id="jsonEmail" value="" />
             <input type="hidden" name="admin_password" id="jsonPassword" value="" />
@@ -226,6 +226,7 @@
         this.changeAdminPasswordSubmitText = I18N.__('changeAdminPasswordSubmitText');
         this.removeAdminInstructions = I18N.__('removeAdminInstructions');
         this.removeAdminSubmitText = I18N.__('removeAdminSubmitText');
+        this.emailValidationError = I18N.__('emailValidationError');
       },
       openMenu: function() {
         this.set('selectedPage', 0);
