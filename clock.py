@@ -17,7 +17,9 @@ logging.basicConfig()
 
 SCHEDULER = BlockingScheduler()
 
-@SCHEDULER.scheduled_job('interval', minutes=15)
+# TODO: Change the interval back to something that's more acceptable for
+# production when TT is done.
+@SCHEDULER.scheduled_job('interval', minutes=2)
 def schedule_user_key_distribution():
   """Schedule the user key distribution to proxy servers."""
   ufo.app.logger.info('Scheduling key distribution to proxy server.')
