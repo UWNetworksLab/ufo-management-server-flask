@@ -26,8 +26,8 @@ The click to deploy method creates a new app based on a template from github. He
 
 1. Upgrade Your App to Hobby Level
 
-* UfO as currently implemented uses three distinct processes (called dynos by heroku): a web process for handling requests, a clock process to wake up and schedule extra jobs based on cron, and a worker process that completes the scheduled jobs from clock and web. Heroku allows up to two processes on their free level, but having more than two processes requires upgrading to a hobby level application at least. At time of writing this costs $7 per process per month, or $21 per month total. If you have not previously setup billing on Heroku, it will prompt you to do so. The steps below explain how to do this.
-  * TODO(eholder): Investigate combining clock and worker for a more simple deployment for those without the need for distinct processes.
+  * UfO as currently implemented uses three distinct processes (called dynos by heroku): a web process for handling requests, a clock process to wake up and schedule extra jobs based on cron, and a worker process that completes the scheduled jobs from clock and web. Heroku allows up to two processes on their free level, but having more than two processes requires upgrading to a hobby level application at least. At time of writing this costs $7 per process per month, or $21 per month total. If you have not previously setup billing on Heroku, it will prompt you to do so. The steps below explain how to do this.
+    * TODO(eholder): Investigate combining clock and worker for a more simple deployment for those without the need for distinct processes.
 
   1. Once Heroku has finished deploying your app, click the “Manage App” button to navigate to Heroku’s management dashboard.
   1. On the management dashboard, under the Resources tab, select “Upgrade to Hobby” to bring up the upgrade prompt.
