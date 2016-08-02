@@ -2,11 +2,11 @@
 
 Management Server component of uProxy for Orgs (UfO)
 
-## Deployment
+## Deployment Guide
 
 ### Deploy an Instance
 
-The Management Server can be deployed locally or to the cloud. We have setup a one-click to deploy instance on Heroku to facilitate easy updating. That is the preferred method for creating a new instance as it is what customers will use. There is also a means to do this via command line. Both approaches are described here.
+The Management Server can be deployed locally or to the cloud. We have setup a one-click to deploy instance on Heroku to facilitate easy updating. That is the preferred method for creating a new instance as it is what customers will use. There is also a means to do this via command line. Both approaches are described here. For reference, app and instance are used interchangeably throughout.
 
 #### Deploy App via Click-to-Deploy
 
@@ -43,7 +43,7 @@ The click to deploy method creates a new app based on a template from github. He
     * `http://<your_instance_name>.herokuapp.com/setup/`
     * The process there will walk you through creating your admin account within the app and configuring oauth, if desired.
 
-#### Deploy via Command Line
+#### Deploy App via Command Line
 
 Before deploying a test instance to Heroku, first follow their [steps to install](https://devcenter.heroku.com/articles/getting-started-with-python#introduction) the toolbelt and setup the local environment.
 On ubuntu, heroku is installed under `/usr/local/heroku/bin` directory.
