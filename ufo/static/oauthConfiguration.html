@@ -86,7 +86,7 @@
           <paper-input label="Domain" name="domain" on-keypress="submitIfEnter"></paper-input>
           <paper-input label="OAuth Code" name="oauth_code" on-keypress="submitIfEnter"></paper-input>
           <paper-input label="[[adminEmailLabel]]" required name="admin_email"></paper-input>
-          <paper-input label="[[adminPasswordlabel]]" required name="admin_password" on-keypress="submitIfEnter"></paper-input>
+          <paper-input label="[[adminPasswordLabel]]" required name="admin_password" on-keypress="submitIfEnter"></paper-input>
           <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
           <div class="buttons">
             <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
@@ -128,7 +128,7 @@
         this.pasteTheCodeText = I18N.__('pasteTheCodeText');
         this.submitButtonText = I18N.__('submitButtonText');
         this.adminEmailLabel = I18N.__('adminEmailLabel');
-        this.adminPasswordlabel = I18N.__('adminPasswordlabel');
+        this.adminPasswordLabel = I18N.__('adminPasswordLabel');
       },
       isDomainConfigured: function(config) {
         return config.domain && config.credentials;
