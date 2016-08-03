@@ -101,6 +101,28 @@ class AuthTest(base_test.BaseTest):
         minutes=auth.INITIAL_RECAPTCHA_TIMEFRAME_MINUTES)
     self.assertEquals(default_delta, new_delta)
 
+  def testRecaptchaStaysOffIfNotConfigured(self):
+    """Test recaptcha does not turn on if not configured."""
+    # Add enough failed attempts to the DB after start datetime to hit max.
+    for x in range(ufo.MAX_FAILED_LOGINS_BEFORE_RECAPTCHA):
+      models.FailedLoginAttempt.create()
+
+    # Set the config to show recaptcha with an end datetime of now.
+    config = ufo.get_user_config()
+    config.should_show_recaptcha = False
+    config.save()
+    ufo.RECAPTCHA_ENABLED_FOR_APP = False
+    test_datetime = datetime.datetime.now()
+
+    should_show_recaptcha, failed_attempts_count = auth.determine_if_recaptcha_should_be_turned_on_or_off()
+    self.assertFalse(should_show_recaptcha)
+    self.assertEquals(ufo.MAX_FAILED_LOGINS_BEFORE_RECAPTCHA,
+                      failed_attempts_count)
+    self.assertEquals(ufo.MAX_FAILED_LOGINS_BEFORE_RECAPTCHA,
+                      len(models.FailedLoginAttempt.get_all()))
+    config = ufo.get_user_config()
+    self.assertFalse(config.should_show_recaptcha)
+
 
 
 if __name__ == '__main__':
