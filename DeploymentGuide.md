@@ -20,6 +20,7 @@ The click to deploy method creates a new app based on a template from github. He
   1. Login if you have an account.
     * If not, create an account, verify your email addres, and come back to click the deployment link again so it takes you to the correct page.
   1. Fill in the app name if desired. Leave all other settings unchanged.
+  1. Fill in the RECAPTCHA_SITE_KEY and RECAPTCHA_SECRET_KEY in the Config Variables section. For information on how to create these keys, see [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
   1. Click the “Deploy” button.
   1. Wait for Heroku to create the app...
     * If you encounter an error here with your credit card info after just creating a new account, it is an issue with Heroku. Simply try clicking deploy again.
@@ -38,7 +39,7 @@ The click to deploy method creates a new app based on a template from github. He
 
 1. Configuring Your App's Settings
 
-  1. If you have not done this previously, you need to [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
+  1. If you have not done this previously, you should [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
   1. Once complete, you can then navigate directly to the app via clicking the menu button in the top of Heroku and selecting “Open app” or by visiting the following address:
     * `http://<your_instance_name>.herokuapp.com/setup/`
     * The process there will walk you through creating your admin account within the app and configuring oauth, if desired.
@@ -146,7 +147,11 @@ Outside of Heroku however, the nginx setup is entirely avoided since we do not a
 
 The Management Server utilizes [Recaptcha](https://www.google.com/recaptcha/intro/index.html) to prevent brute force login attacks. You can configure a recaptcha project by visiting the [admin setup site](https://www.google.com/recaptcha/admin#list) and registering a new site. You'll want to add your deployed app's domain, such as my-app-name.herokuapp.com. This will generate site and secret keys for your app.
 
-Next, you need to add those keys as environment variables in your app on Heroku. Here are the steps to do that:
+Afterwards, you'll need to inform your deployed app of the site and secret keys that Recaptcha produces. You can do this during deployment or afterwards, but it is recommended during deployment. If doing this during deployment, simply fill in the RECAPTCHA_SITE_KEY and RECAPTCHA_SECRET_KEY in the Config Variables section when deploying your instance on Heroku. The section below shows how to add these after deployment.
+
+#### Adding Recaptcha Keys to a Deployed Instance
+
+Here are the steps to add Recaptcha's site and secret keys as environment variables in your app on Heroku:
 
 1. Visit the [heroku dashboard](https://dashboard.heroku.com/apps).
 1. Navigate to your app, such as my-app-name.
