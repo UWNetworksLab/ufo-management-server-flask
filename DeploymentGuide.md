@@ -2,37 +2,48 @@
 
 Management Server component of uProxy for Orgs (UfO)
 
-## Deployment
+## Deployment Guide
 
-### Create an Instance
+### Deploy an Instance
 
-The Management Server can be deployed locally or to the cloud. We have setup a one-click to deploy instance on Heroku to facilitate easy updating. That is the preferred method for creating a new instance as it is what customers will use. There is also a means to do this via command line. Both approaches are described here.
+The Management Server can be deployed locally or to the cloud. We have setup a one-click to deploy instance on Heroku to facilitate easy updating. That is the preferred method for creating a new instance as it is what customers will use. There is also a means to do this via command line. Both approaches are described here. For reference, app and instance are used interchangeably throughout.
 
-#### Create an Instance via Click-to-Deploy
+#### Deploy App via Click-to-Deploy
 
 The click to deploy method creates a new app based on a template from github. Heroku will read the configurations already created there and generate a new app for you, with almost no interaction required. Simply follow these steps:
 
-1. Visit the Click-to-Deploy [link](https://dashboard.heroku.com/new?template=https://github.com/uProxy/ufo-management-server-flask/tree/master).
-  * TODO(eholder): Switch this to production version after beta testing. We want testers to use master in the meantime for quick fixes.
-  * TODO(eholder): Create the Heroku button on the website.
-1. Login if necessary.
-1. Fill in the app name if desired.
-1. Click the “Deploy” button.
-1. Wait for Heroku to create the app...
-1. Once Heroku has finished, click the “Manage App” button to navigate to Heroku’s management dashboard.
-1. On the management dashboard, under the Resources tab, select “Upgrade to Hobby” to bring up the upgrade prompt.
-1. From here, select one of the levels higher than Free and click Save.
-  * This is required in order to scale your dynos up to use worker and clock processes.
-  * The hobby level is the least expensive level that allows for more than 2 dynos (only 2 are available under the free level) and is what we recommend.
-  * If you have not previously setup billing on Heroku, it will prompt you to do so, as running the 3 dynos (web, worker, and clock) will each cost $7/month or $21/month total.
-1. Once upgraded to a higher level, click the pencil icon next to each dyno to edit it.
-1. Enable each dyno and confirm the change.
-  * TODO(eholder): It would be nice to automatically start Heroku at the Hobby level at least with the dynos already running, thus eliminating steps 6-10.
-1. If you have not done this previously, you need to [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
-1. Once complete, you can then navigate directly to the app via clicking the menu button in the top and selecting “Open app” or by visiting the following address:
-  * `http://<your_instance_name>.herokuapp.com/setup/`
+1. Create Your Instance
 
-#### Create an Instance via Command Line
+  1. Visit the Click-to-Deploy [link](https://dashboard.heroku.com/new?template=https://github.com/uProxy/ufo-management-server-flask/tree/master).
+    * TODO(eholder): Switch this to production version after beta testing. We want testers to use master in the meantime for quick fixes.
+    * TODO(eholder): Create the Heroku button on the website.
+  1. Login if you have an account.
+    * If not, create an account, verify your email addres, and come back to click the deployment link again so it takes you to the correct page.
+  1. Fill in the app name if desired. Leave all other settings unchanged.
+  1. Click the “Deploy” button.
+  1. Wait for Heroku to create the app...
+    * If you encounter an error here with your credit card info after just creating a new account, it is an issue with Heroku. Simply try clicking deploy again.
+
+1. Upgrade Your App to Hobby Level
+
+  * UfO as currently implemented uses three distinct processes (called dynos by heroku): a web process for handling requests, a clock process to wake up and schedule extra jobs based on cron, and a worker process that completes the scheduled jobs from clock and web. Heroku allows up to two processes on their free level, but having more than two processes requires upgrading to a hobby level application at least. At time of writing this costs $7 per process per month, or $21 per month total. If you have not previously setup billing on Heroku, it will prompt you to do so. The steps below explain how to do this.
+    * TODO(eholder): Investigate combining clock and worker for a more simple deployment for those without the need for distinct processes.
+
+  1. Once Heroku has finished deploying your app, click the “Manage App” button to navigate to Heroku’s management dashboard.
+  1. On the management dashboard, under the Resources tab, select “Upgrade to Hobby” to bring up the upgrade prompt.
+  1. From here, select one of the levels higher than Free (Hobby for example) and click Save.
+  1. Once upgraded to a higher level, click the pencil icon next to each dyno to edit it.
+  1. Enable each dyno and confirm the change.
+    * TODO(eholder): It would be nice to automatically start Heroku at the Hobby level at least with the dynos already running, thus eliminating these extra steps.
+
+1. Configuring Your App's Settings
+
+  1. If you have not done this previously, you need to [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
+  1. Once complete, you can then navigate directly to the app via clicking the menu button in the top of Heroku and selecting “Open app” or by visiting the following address:
+    * `http://<your_instance_name>.herokuapp.com/setup/`
+    * The process there will walk you through creating your admin account within the app and configuring oauth, if desired.
+
+#### Deploy App via Command Line
 
 Before deploying a test instance to Heroku, first follow their [steps to install](https://devcenter.heroku.com/articles/getting-started-with-python#introduction) the toolbelt and setup the local environment.
 On ubuntu, heroku is installed under `/usr/local/heroku/bin` directory.
