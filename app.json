@@ -15,10 +15,12 @@
       "generator": "secret"
     },
     "RECAPTCHA_SITE_KEY": {
-      "description": "Site key for recaptcha login protection. Once configured, can be found here: https://www.google.com/recaptcha/admin#list"
+      "description": "Site key for recaptcha login protection. Once configured, can be found here: https://www.google.com/recaptcha/admin#list",
+      "required": "false"
     },
     "RECAPTCHA_SECRET_KEY": {
-      "description": "Secret key for recaptcha login protection. Once configured, can be found here: https://www.google.com/recaptcha/admin#list"
+      "description": "Secret key for recaptcha login protection. Once configured, can be found here: https://www.google.com/recaptcha/admin#list",
+      "required": "false"
     }
   },
   "addons": [
