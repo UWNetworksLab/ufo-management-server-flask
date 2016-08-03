@@ -28,7 +28,7 @@ You can also give feedback in the uProxy app itself by navigating to the "Submit
 
 ### Quick Start Guide
 
-If this is your first time using the UfO Management Server or you are unsure exactly what you need, this quick start guide is probably what you want. Simply follow the steps under [Create an Instance via Click-to-Deploy](DeploymentGuide.md#create-an-instance-via-click-to-deploy) and then skip to the section [Configuring Recaptcha for Login Protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
+If this is your first time using the UfO Management Server or you are unsure exactly what you need, this quick start guide is probably what you want. Simply follow the steps under [Deploy App via Click-to-Deploy](DeploymentGuide.md#deploy-app-via-click-to-deploy) and make sure to [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
 
 ## Questions About Developing
 
