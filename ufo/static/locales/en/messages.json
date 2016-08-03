@@ -103,5 +103,6 @@
   "keyLookupError": "Please supply a valid email address or unique id.",
   "publicKeyError": "Please supply a valid public key in a format such as 'ssh-rsa AAAA...' (no email address or comments afterwards).",
   "privateKeyError": "Please supply a valid private key in a format such as '-----BEGIN RSA PRIVATE KEY----- ... -----END RSA PRIVATE KEY-----'.",
-  "ipAddressError": "Please supply a valid ip address in v4 or v6 format (with groups of 0s included)."
+  "ipAddressError": "Please supply a valid ip address in v4 or v6 format (with groups of 0s included).",
+  "tooManyFailuresText": "The amount of recent failed login attempts has exceeded the limit. If recaptcha was configured, it would have been triggered for all admins."
 }
