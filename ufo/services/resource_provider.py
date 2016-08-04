@@ -86,6 +86,7 @@ def _get_resources():
     'manualAddFormId': 'manualAdd',
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
     'jsonPrefix': ufo.XSSI_PREFIX,
+    'maxFailedLoginsBeforeRecaptcha': ufo.MAX_FAILED_LOGINS_BEFORE_RECAPTCHA,
   }
 
 def set_jinja_globals():

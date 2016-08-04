@@ -17,6 +17,9 @@
     paper-input {
       margin-left: -10px;
     }
+    #failureTextHolder {
+      margin-left: 50px;
+    }
   </style>
   <template>
     <form id="loginForm" method="POST">
@@ -33,6 +36,9 @@
 
       <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
     </form>
+    <template is="dom-if" if="{{shouldShowTooManyFailuresMessage}}">
+      <p id="failureTextHolder">[[tooManyFailuresText]]</p>
+    </template>
     <div class="buttons">
       <paper-button on-tap="submitLoginForm" class="anchor-button" type="submit" id="signIn">
         <strong>[[loginText]]</strong>
@@ -61,6 +67,7 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+        this.shouldShowTooManyFailuresMessage = !this.shouldShowRecaptcha && this.failures > this.resources.maxFailedLoginsBeforeRecaptcha;
       },
       attached: function() {
         if (this.shouldShowRecaptcha) {
@@ -71,6 +78,7 @@
         this.passwordLabel = I18N.__('passwordLabel');
         this.loginText = I18N.__('loginText');
         this.emailValidationError = I18N.__('emailValidationError');
+        this.tooManyFailuresText = I18N.__('tooManyFailuresText');
       },
       submitLoginForm: function() {
         this.querySelector('#loginForm').submit();
@@ -79,6 +87,9 @@
         if (e.keyCode === 13) {
           this.submitLoginForm();
         }
+      },
+      shouldShowTooManyFailuresMessage: function() {
+        return !this.shouldShowRecaptcha && this.failures > this.resources.maxFailedLoginsBeforeRecaptcha;
       },
     });
   </script>
