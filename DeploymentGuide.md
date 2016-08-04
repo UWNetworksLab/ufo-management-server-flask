@@ -15,12 +15,14 @@ The click to deploy method creates a new app based on a template from github. He
 1. Create Your Instance
 
   1. Visit the Click-to-Deploy [link](https://dashboard.heroku.com/new?template=https://github.com/uProxy/ufo-management-server-flask/tree/master).
+    * It is easier to open this in a new window/tab so you can view the instructions and Heroku at the same time.
     * TODO(eholder): Switch this to production version after beta testing. We want testers to use master in the meantime for quick fixes.
     * TODO(eholder): Create the Heroku button on the website.
   1. Login if you have an account.
     * If not, create an account, verify your email addres, and come back to click the deployment link again so it takes you to the correct page.
   1. Fill in the app name if desired. Leave all other settings unchanged.
   1. Fill in the RECAPTCHA_SITE_KEY and RECAPTCHA_SECRET_KEY in the Config Variables section. For information on how to create these keys, see [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
+  * Note, when copying the keys from Recaptcha's site, it can sometimes include some of the html form below the key. Please do not paste the extra html into your key on Heroku.
   1. Click the “Deploy” button.
   1. Wait for Heroku to create the app...
     * If you encounter an error here with your credit card info after just creating a new account, it is an issue with Heroku. Simply try clicking deploy again.
@@ -159,8 +161,10 @@ Here are the steps to add Recaptcha's site and secret keys as environment variab
 1. Click 'Reveal Config Vars'
 1. Scroll to the bottom.
 1. Type in RECAPTCHA_SITE_KEY for the key and copy and paste in the value for the site key you received on the [admin setup site](https://www.google.com/recaptcha/admin#list) for your app.
+  * Note, when copying this from Recaptcha's site, it can sometimes include some of the html form below the key. Please do not paste the extra html into your key on Heroku.
 1. Click Add.
 1. Type in RECAPTCHA_SECRET_KEY for the key and copy and paste in the value for the secret key you received on the [admin setup site](https://www.google.com/recaptcha/admin#list) for your app.
+  * Note, when copying this from Recaptcha's site, it can sometimes include some of the html form below the key. Please do not paste the extra html into your key on Heroku.
 1. Click Add.
 
 That's it! Your app should now pick up the site and secret keys to use recaptcha after several failed logins attempts. If you run into an issue with these not being picked up, we suggest that you redeploy the server by pushing a blank update. For information on that, check the sections above for Update an Instance.
