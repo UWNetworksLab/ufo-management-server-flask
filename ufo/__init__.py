@@ -35,7 +35,7 @@ else:
   app.logger.error('No recaptcha site or secret key found. Please configure ' +
                    'RECAPTCHA_SITE_KEY and RECAPTCHA_SECRET_KEY in the ' +
                    'environment variables.')
-  RECAPTCHA_ENABLED_FOR_APP = False
+  # RECAPTCHA_ENABLED_FOR_APP stays false
 
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
