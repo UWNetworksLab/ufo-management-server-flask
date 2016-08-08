@@ -1,5 +1,7 @@
 """This module schedules all the periodic batch processes on heroku.
+
 https://devcenter.heroku.com/articles/clock-processes-python
+
 We will not enqueue background jobs in order to save the extra configuration
 and cost to upgrade to Hobby level of service on Heroku.
 """
