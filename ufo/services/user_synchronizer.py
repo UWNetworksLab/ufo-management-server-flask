@@ -13,6 +13,7 @@ class UserSynchronizer(object):
 
   def sync_db_users_against_directory_service(self):
     """Checks whether the users currently in the DB are still valid.
+
     This gets all users in the DB, finds those that match the current domain,
     and compares them to those found in the domain in Google Directory Service.
     If a user in the DB is not the domain, then it is presumed to be deleted
@@ -67,6 +68,7 @@ class UserSynchronizer(object):
 
   def perform_configured_action_on_user(self, action, user):
     """Perform the database configured action given on the specified user.
+
     Args:
       action: A string representing the action from the database.
       user: A user entity from the database to perform the configured action
