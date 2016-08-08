@@ -49,6 +49,14 @@
       },
       behaviors: [I18N],
       attached: function() {
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.titleText == 'chromePolicyTitleText' || this.titleText == 'loginTitleText' || this.titleText == 'oauthTitleText' || this.titleText == 'proxyServerTitleText' || this.titleText == 'settingsTitleText' || this.titleText == 'userTitleText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         switch (this.headerType) {
           case 'chromePolicy':
             this.titleText = I18N.__('chromePolicyTitleText');

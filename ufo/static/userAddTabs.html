@@ -124,6 +124,14 @@
         }
       },
       attached: function() {
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.emailValidationError == 'emailValidationError') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.groupAddTab = I18N.__('groupAddTab');
         this.userAddTab = I18N.__('userAddTab');
         this.domainAddTab = I18N.__('domainAddTab');

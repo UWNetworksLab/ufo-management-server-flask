@@ -58,6 +58,14 @@
       },
       behaviors: [I18N],
       attached: function() {
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.versionUpdateText == 'versionUpdateText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.versionText = I18N.__('versionText');
         this.versionUpdateText = I18N.__('versionUpdateText');
       },

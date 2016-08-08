@@ -139,6 +139,14 @@
         }
       },
       attached: function() {
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.userDeleteLabel == 'userDeleteLabel') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.closeText = I18N.__('closeText');
         this.inviteCodeLabel = I18N.__('inviteCodeLabel');
         this.inviteCodeNeedServerText = I18N.__('inviteCodeNeedServerText');

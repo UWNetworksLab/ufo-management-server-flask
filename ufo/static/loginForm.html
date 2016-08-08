@@ -74,6 +74,15 @@
           this.querySelector('#recaptchaDiv')
             .setAttribute('data-sitekey', this.resources.recaptchaKey);
         }
+
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.tooManyFailuresText == 'tooManyFailuresText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.emailLabel = I18N.__('emailLabel');
         this.passwordLabel = I18N.__('passwordLabel');
         this.loginText = I18N.__('loginText');

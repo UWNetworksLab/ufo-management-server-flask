@@ -170,6 +170,14 @@
         }
       },
       attached: function() {
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.keyLookupError == 'keyLookupError') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.addFlowNoResults = I18N.__('addFlowNoResults');
         this.lookAgainText = I18N.__('lookAgainText');
         this.dismissText = I18N.__('dismissText');

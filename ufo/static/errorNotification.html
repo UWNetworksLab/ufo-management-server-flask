@@ -102,6 +102,14 @@
         'ApplicationError': 'showErrorNotification',
       },
       attached: function() {
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.closeText == 'closeText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.errorTitleText = I18N.__('errorTitleText');
         this.closeText = I18N.__('closeText');
       },
