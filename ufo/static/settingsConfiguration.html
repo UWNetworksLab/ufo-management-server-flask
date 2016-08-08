@@ -67,6 +67,16 @@
         }
       },
       attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.saveText == 'saveText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.proxyValidityText = I18N.__('proxyValidityText');
         this.networkJailText = I18N.__('networkJailText');
         this.saveText = I18N.__('saveText');

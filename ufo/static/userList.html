@@ -131,6 +131,16 @@
         }
       },
       attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.userSeeAllText == 'userSeeAllText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.nameColumnHeader = I18N.__('nameColumnHeader');
         this.emailColumnHeader = I18N.__('emailColumnHeader');
         this.accessColumnHeader = I18N.__('accessColumnHeader');

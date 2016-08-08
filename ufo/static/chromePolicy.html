@@ -67,6 +67,16 @@
         }
       },
       attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.downloadText == 'downloadText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.policyExplanationText = I18N.__('policyExplanationText');
         this.policyEditText = I18N.__('policyEditText');
         this.adminConsoleText = I18N.__('adminConsoleText');

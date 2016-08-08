@@ -200,3 +200,15 @@ The `00 02 * * *` part is the syntax for cron which denotes that the job will ru
 This is already configured to run on a test machine. No developer should need to do this, but it is documented here for informational purposes and in case of errors for debugging.
 
 Once the pull request has been created and the tests have executed, all that remains is a final approval on the PR and the actual merge. Travis CI will maintain the results of the tests in case there is a failure, in which case a developer should reject the PR, and create a fix for whatever is broken. If all tests pass and there are no further concerns, a thumbs up can be given and the merge performed.
+
+## Assorted Notes
+
+### Retry for i18n After 1 Second
+
+In the Polymer UI code, we currently use quaintous-i18n along with a messages.json file to produce internationalized text strings. The quaintous-i18n element works by loading your messages.json file that you specify (according to the user's current language) and then sets up a behavior which other elements can then use. In the other elements, they add this behavior as part of their definition and are able to call I18N like so:
+
+`I18N.__(messageKeyGoesHere)`
+
+to get the i18n-ed message for the corresponding key. However, there is a race condition between when these elements call quaintous-i18n and when quaintous-i18n actually loads the messages.json file (via an AJAX request). If quaintous-i18n does not have the messages file yet, it simply returns the key given to it instead of a translated string. While this doesn't happen often and can be easily fixed most times by reloading the page, it's overall a poor user experience.
+
+Thus, to mitigate this issue, we have created a retry around setting these messages. Essentially, everywhere that a message is set in the attached handler of an element (which gets fired when the element is rendered fully in the DOM), we set a timeout to fire 1 second later. In the timeout if the last message to be set was set to its key rather than an i18n-ed value, we retry setting all the messages in that element (assuming them all to have failed). Currently, the timeout is set to 1 second arbitrarily. If this comes to be an issue, we will adjust as necessary. There is no subsequent retry after the first, and thus no possibility of infinitely retrying if the message keeps failing (could be a programmer error or the message just may not have a translation yet).
