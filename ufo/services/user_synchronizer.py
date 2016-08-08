@@ -6,26 +6,19 @@ import ufo
 from ufo.database import models
 from ufo.services import google_directory_service
 from ufo.services import oauth
-import worker
 
 
 class UserSynchronizer(object):
   """Syncs users in the db's status with Google directory service."""
 
-  def enqueue_user_sync(self):
-    """Check users currently in the DB are still valid in directory service."""
-    ufo.app.logger.info('Enqueuing cron user sync job.')
-    queue = Queue(connection=worker.CONN)
-    queue.enqueue(self.sync_db_users_against_directory_service)
-
   def sync_db_users_against_directory_service(self):
     """Checks whether the users currently in the DB are still valid.
-
     This gets all users in the DB, finds those that match the current domain,
     and compares them to those found in the domain in Google Directory Service.
     If a user in the DB is not the domain, then it is presumed to be deleted
     and will thus be removed from our DB.
     """
+    ufo.app.logger.info('Starting user sync.')
     db_users = models.User.query.all()
     directory_users = {}
     config = ufo.get_user_config()
@@ -74,7 +67,6 @@ class UserSynchronizer(object):
 
   def perform_configured_action_on_user(self, action, user):
     """Perform the database configured action given on the specified user.
-
     Args:
       action: A string representing the action from the database.
       user: A user entity from the database to perform the configured action
