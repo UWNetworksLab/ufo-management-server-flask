@@ -2,7 +2,6 @@
 
 from Crypto.PublicKey import RSA
 import pipes
-from rq import Queue
 import string
 
 import ufo

@@ -27,6 +27,15 @@ The click to deploy method creates a new app based on a template from github. He
   1. Wait for Heroku to create the app...
     * If you encounter an error here with your credit card info after just creating a new account, it is an issue with Heroku. Simply try clicking deploy again.
 
+1. Enable Clock Process
+ 
+  * UfO as currently implemented uses two distinct processes (called dynos by heroku): a web process for handling requests, and a clock process to wake up and perform extra jobs based on a schedule.  The steps below explain how to do this.
+    * TODO(eholder): Investigate how to enable the clock process automatically.
+ 
+  1. Once Heroku has finished deploying your app, click the “Manage App” button to navigate to Heroku’s management dashboard.
+  1. On the management dashboard, under the Resources tab, click the pencil icon next to the clock dyno to edit it.
+  1. Enable the clock dyno and confirm the change.
+
 1. Configuring Your App's Settings
 
   1. If you have not done this previously, you should [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
@@ -49,9 +58,8 @@ To deploy a test instance to Heroku, run the commands listed below. These can be
 1. `heroku buildpacks:add https://github.com/uProxy/nginx-buildpack --app <your_instance_name>`
 1. `git push <your_heroku_remote_name> <your_dev_branch>:master (optional -f)`
 1. `heroku addons:create heroku-postgresql --app <your_instance_name>`
-1. `heroku addons:create redistogo --app <your_instance_name>`
 1. `heroku run python setup_database.py --app <your_instance_name>`
-1. `heroku ps:scale web=1 worker=1 clock=1 --app <your_instance_name>`
+1. `heroku ps:scale web=1 clock=1 --app <your_instance_name>`
 1. `heroku ps --app <your_instance_name> (optional)`
 1. `heroku logs --tail --app <your_instance_name> (optional)`
 
@@ -173,16 +181,6 @@ Furthermore, if you need to reset your entire environment, you can with the foll
 1. Reset the database: `rm -fr instance/app.db` and `python setup_database.py`
 1. Start the server (if it isn't already): `python run.py`
 1. Go through the setup flow. `http://your-app-instance/setup`
-
-### Debugging Enqueued Jobs
-
-The free nano instance of redis is prone to run out of memory upon repeated exceptions. Here are some general tips on debugging / flushing enqueued job on redis.
-
-* Heroku has an integrated dashboard of redis info. You can also find the redis host, port, and access parameters here.
-* You can login via CLI to get more info.
-  * `redis-cli -h catfish.redistogo.com -p 10290 -a fa537e8f6dfa5c327ff2825759d71b91 info`
-* You can also wipe redis clean and start over.
-  * `redis-cli -h catfish.redistogo.com -p 10290 -a fa537e8f6dfa5c327ff2825759d71b91 flushall'
 
 ### Check That User Keys Are Distributed
 

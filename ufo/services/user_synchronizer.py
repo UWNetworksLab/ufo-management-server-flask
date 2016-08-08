@@ -1,7 +1,5 @@
 """The module for syncing user periodically from google directory service."""
 
-from rq import Queue
-
 import ufo
 from ufo.database import models
 from ufo.services import google_directory_service
