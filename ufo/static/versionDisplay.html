@@ -58,6 +58,8 @@
       },
       behaviors: [I18N],
       attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
         this.setI18nText();
         setTimeout(function() {
           if (this.versionUpdateText == 'versionUpdateText') {
