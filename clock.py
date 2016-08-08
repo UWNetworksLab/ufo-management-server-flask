@@ -20,7 +20,7 @@ logging.basicConfig()
 
 SCHEDULER = BlockingScheduler()
 
-# TODO: Change the interval back to something that's more acceptable for    
+# TODO: Change the interval back to something that's more acceptable for
 # production when TT is done.
 @SCHEDULER.scheduled_job('interval', minutes=2)
 def schedule_user_key_distribution():
