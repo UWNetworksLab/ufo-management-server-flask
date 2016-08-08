@@ -213,6 +213,16 @@
         }
       },
       attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.emailValidationError == 'emailValidationError') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.addAdminText = I18N.__('addAdminText');
         this.changeAdminPasswordText = I18N.__('changeAdminPasswordText');
         this.removeAdminText = I18N.__('removeAdminText');

@@ -120,6 +120,16 @@
       },
       behaviors: [I18N],
       attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.proxyServerSeeAllText == 'proxyServerSeeAllText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         this.nameColumnHeader = I18N.__('nameColumnHeader');
         this.ipColumnHeader = I18N.__('ipColumnHeader');
         this.modifyColumnHeader = I18N.__('modifyColumnHeader');
