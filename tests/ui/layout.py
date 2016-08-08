@@ -80,6 +80,7 @@ class UfOPageLayout(BaseDriver):
   USER_COPY_INVITE_BUTTON = (By.ID, 'copyInviteCodeButton')
   USER_ROTATE_KEYS_BUTTON = (By.ID, 'rotateKeysButton')
   USER_DETAILS_SPINNER = (By.ID, 'userDetailsSpinner')
+  USER_DETAILS_BUTTON = (By.ID, 'userDetailsButton')
 
   ADD_SERVER_BUTTON = (By.ID, 'addServerButton')
   SERVER_LIST_ITEM = (By.ID, 'proxyList')

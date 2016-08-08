@@ -101,6 +101,8 @@ class LandingPageTest(BaseTest):
 
     self.assertUserCanBeDisabledAndThenEnabled(False, True)
 
+    landing_page.tryToCloseDetailsDialogAndRefreshIfFail(self.args.server_url)
+
   def testCreateNewInviteCode(self):
     """Test that creating a new invite code actually generates a new one."""
     landing_page = LandingPage(self.driver)
@@ -143,6 +145,8 @@ class LandingPageTest(BaseTest):
     final_invite_code = details_dialog.find_element(
         *LandingPage.USER_INVITE_CODE_TEXT).get_attribute('value')
     self.assertNotEquals(initial_invite_code, final_invite_code)
+
+    landing_page.tryToCloseDetailsDialogAndRefreshIfFail(self.args.server_url)
 
   def testAddServerFromLandingPage(self):
     """Test that adding a server shows up on the server listing."""
