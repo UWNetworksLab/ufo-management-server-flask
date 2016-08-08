@@ -249,3 +249,15 @@ class LandingPage(UfOPageLayout):
     landing_url = server_url + flask.url_for('landing')
     if landing_url != self.driver.current_url:
       self.driver.get(landing_url)
+
+  def tryToCloseDetailsDialogAndRefreshIfFail(self, server_url):
+    """Try to click the close button on a details dialog and refresh on except.
+
+    Args:
+      server_url: The base url portion of the landing page.
+    """
+    user_details_button = self.get_element(LandingPage.USER_DETAILS_BUTTON)
+    try:
+      user_details_button.click()
+    except:
+      self.driver.get(server_url + flask.url_for('landing'))

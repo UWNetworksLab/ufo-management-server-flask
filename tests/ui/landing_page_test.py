@@ -24,12 +24,6 @@ class LandingPageTest(BaseTest):
   def tearDown(self):
     """Teardown for test methods."""
     landing_page = LandingPage(self.driver)
-    try:
-      user_details_button = landing_page.get_element(
-          LandingPage.USER_DETAILS_BUTTON)
-      user_details_button.click()
-    except:
-      self.driver.get(self.args.server_url + flask.url_for('landing'))
     landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
                                   self.args.server_url,
                                   should_raise_exception=False)
@@ -107,6 +101,8 @@ class LandingPageTest(BaseTest):
 
     self.assertUserCanBeDisabledAndThenEnabled(False, True)
 
+    landing_page.tryToCloseDetailsDialogAndRefreshIfFail(self.args.server_url)
+
   def testCreateNewInviteCode(self):
     """Test that creating a new invite code actually generates a new one."""
     landing_page = LandingPage(self.driver)
@@ -149,6 +145,8 @@ class LandingPageTest(BaseTest):
     final_invite_code = details_dialog.find_element(
         *LandingPage.USER_INVITE_CODE_TEXT).get_attribute('value')
     self.assertNotEquals(initial_invite_code, final_invite_code)
+
+    landing_page.tryToCloseDetailsDialogAndRefreshIfFail(self.args.server_url)
 
   def testAddServerFromLandingPage(self):
     """Test that adding a server shows up on the server listing."""
