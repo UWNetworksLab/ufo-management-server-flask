@@ -2,13 +2,11 @@
 
 from Crypto.PublicKey import RSA
 import pipes
-from rq import Queue
 import string
 
 import ufo
 from ufo.database import models
 from ufo.services import ssh_client
-import worker
 
 
 class KeyDistributor(object):
@@ -91,11 +89,10 @@ class KeyDistributor(object):
 
     client.close()
 
-  def enqueue_key_distribution_jobs(self):
-    """Distribute user keys to proxy servers to authenticate invite code."""
-    ufo.app.logger.info('Enqueuing key distribution jobs.')
+  def start_key_distribution(self):
+    """Start distributing user keys to all proxy servers."""
+    ufo.app.logger.info('Start key distribution.')
     key_string = self.make_key_string()
     proxy_servers = models.ProxyServer.query.all()
-    queue = Queue(connection=worker.CONN)
     for proxy_server in proxy_servers:
-      queue.enqueue(self._distribute_key, proxy_server, key_string)
+      self._distribute_key(proxy_server, key_string)

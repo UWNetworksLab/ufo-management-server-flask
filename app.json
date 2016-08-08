@@ -24,8 +24,7 @@
     }
   },
   "addons": [
-    "heroku-postgresql",
-    "redistogo"
+    "heroku-postgresql"
   ],
   "buildpacks": [
     {
