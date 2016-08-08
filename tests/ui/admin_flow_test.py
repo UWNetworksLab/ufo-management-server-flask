@@ -137,10 +137,9 @@ class AdminFlowTest(BaseTest):
     admin_flow = AdminFlow(self.driver)
     dropdown_menu = admin_flow.getDropdownMenu()
     add_admin_dialog = admin_flow.get_add_admin_dialog(dropdown_menu)
-    with self.assertRaises(NoSuchElementException):
-      response_status = add_admin_dialog.find_element(
-          *AdminFlow.ADD_ADMIN_RESPONSE_STATUS)
-      self.assertIsNone(response_status)
+    response_status = add_admin_dialog.find_element(
+        *AdminFlow.ADD_ADMIN_RESPONSE_STATUS)
+    self.assertEquals('', response_status.text)
 
     # Add the new admin.
     admin_flow.add_test_admin(self.TEST_ADMIN_AS_DICT['email'],
@@ -150,7 +149,7 @@ class AdminFlowTest(BaseTest):
     # Assert that it worked.
     response_status = add_admin_dialog.find_element(
         *AdminFlow.ADD_ADMIN_RESPONSE_STATUS)
-    self.assertIsNotNone(response_status)
+    self.assertNotEqual('', response_status.text)
 
     # Logout of the existing admin account.
     LoginPage(self.driver).Logout(self.args.server_url)
