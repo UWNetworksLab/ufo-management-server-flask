@@ -24,6 +24,8 @@ class ErrorNotificationTest(BaseTest):
 
   def tearDown(self):
     """Teardown for test methods."""
+    # Refresh the page to remove any opened notifications easily.
+    self.driver.get(self.args.server_url + flask.url_for('landing'))
     landing_page = LandingPage(self.driver)
     landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
                                   self.args.server_url,
