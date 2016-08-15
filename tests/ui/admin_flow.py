@@ -146,7 +146,8 @@ class AdminFlow(UfOPageLayout):
         EC.invisibility_of_element_located(((
             UfOPageLayout.DROPDOWN_MENU_SPINNER))))
 
-  def remove_test_admin(self, email, server_url, should_raise_exception=True):
+  def remove_test_admin(self, email, server_url, should_raise_exception=True,
+                        should_navigate_to_landing=True):
     """Remove a test admin account using a form post (the only way currently).
 
     Args:
@@ -154,9 +155,12 @@ class AdminFlow(UfOPageLayout):
       server_url: The base url portion of the landing page.
       should_raise_exception: True to raise an exception if the admin is not
                               found.
+      should_navigate_to_landing: True remove the admin using the landing page,
+                                  False to use the current page.
     """
-    # Find the user and navigate to their details page.
-    self.driver.get(server_url + flask.url_for('landing'))
+    # Find the admin on the dropdown dialog.
+    if should_navigate_to_landing:
+      self.driver.get(server_url + flask.url_for('landing'))
     dropdown_menu = self.getDropdownMenu()
     remove_admin_dialog = self.get_remove_admin_dialog(dropdown_menu)
     remove_admin_form = remove_admin_dialog.find_element(

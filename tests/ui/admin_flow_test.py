@@ -187,7 +187,8 @@ class AdminFlowTest(BaseTest):
     # Remove the test admin.
     admin_flow.remove_test_admin(self.TEST_ADMIN_AS_DICT['email'],
                                  self.args.server_url,
-                                 should_raise_exception=True)
+                                 should_raise_exception=True,
+                                 should_navigate_to_landing=False)
 
     # See if the admin exists.
     self.driver.get(test_url)
