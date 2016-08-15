@@ -155,8 +155,8 @@ class AdminFlow(UfOPageLayout):
       server_url: The base url portion of the landing page.
       should_raise_exception: True to raise an exception if the admin is not
                               found.
-      should_navigate_to_landing: True remove the admin using the landing page,
-                                  False to use the current page.
+      should_navigate_to_landing: Boolean for whether to go to the landing page
+                                  to remove the admin or not.
     """
     # Find the admin on the dropdown dialog.
     if should_navigate_to_landing:
