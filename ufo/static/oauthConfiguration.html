@@ -1,3 +1,4 @@
+<link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
@@ -24,73 +25,77 @@
     }
   </style>
   <template>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner id="spinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
+    </template>
+
     <!-- TODO: Make a clear way to say you do not want to use Google apps. -->
-      <template is="dom-if" if="{{!configuration.config.is_configured}}">
+    <template is="dom-if" if="{{!configuration.config.is_configured}}">
+      <p>
+        [[welcomeText]]
+      </p>
+      <p>
+        [[googleDomainPromptText]]
+      </p>
+    </template>
+
+    <template is="dom-if" if="{{configuration.config.is_configured}}">
+      <p>
+        [[successSetupText]]
+      </p>
+
+      <template is="dom-if" if="{{isDomainConfigured(configuration.config)}}">
         <p>
-          [[welcomeText]]
-        </p>
-        <p>
-          [[googleDomainPromptText]]
+          [[domainConfiguredText]] <strong>{{configuration.config.domain}}</strong>
         </p>
       </template>
 
-      <template is="dom-if" if="{{configuration.config.is_configured}}">
+      <template is="dom-if" if="{{!isDomainConfigured(configuration.config)}}">
         <p>
-          [[successSetupText]]
+          [[noDomainConfiguredText]]
         </p>
-
-        <template is="dom-if" if="{{isDomainConfigured(configuration.config)}}">
-          <p>
-            [[domainConfiguredText]] <strong>{{configuration.config.domain}}</strong>
-          </p>
-        </template>
-
-        <template is="dom-if" if="{{!isDomainConfigured(configuration.config)}}">
-          <p>
-            [[noDomainConfiguredText]]
-          </p>
-        </template>
       </template>
+    </template>
 
-        <p>
-          <a class="anchor-no-button" href="{{configuration.oauth_url}}" target="_blank">
-            <paper-button>
-              <iron-icon icon="open-in-new"></iron-icon> [[connectYourDomainButtonText]]
-            </paper-button>
-          </a>
-        </p>
+    <p>
+      <a class="anchor-no-button" href="{{configuration.oauth_url}}" target="_blank">
+        <paper-button>
+          <iron-icon icon="open-in-new"></iron-icon> [[connectYourDomainButtonText]]
+        </paper-button>
+      </a>
+    </p>
 
-         <p>
-           [[pasteTheCodeText]]
-         </p>
+     <p>
+       [[pasteTheCodeText]]
+     </p>
 
-      <!-- TODO make this form be more useful -->
-      <template is="dom-if" if="{{configuration.config.is_configured}}">
-        <form id="oauthConfigurationForm" method="post" action="{{resources.setup_url}}">
-          <paper-input label="Domain" name="domain" required on-keypress="submitIfEnter"></paper-input>
-          <paper-input label="OAuth Code" name="oauth_code" required on-keypress="submitIfEnter"></paper-input>
-          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
-          <div class="buttons">
-            <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
-              <strong>[[submitButtonText]]</strong>
-            </paper-button>
-          </div>
-        </form>
-      </template>
-      <template is="dom-if" if="{{!configuration.config.is_configured}}">
-        <form id="oauthConfigurationForm" method="post" action="{{resources.setup_url}}">
-          <paper-input label="Domain" name="domain" on-keypress="submitIfEnter"></paper-input>
-          <paper-input label="OAuth Code" name="oauth_code" on-keypress="submitIfEnter"></paper-input>
-          <paper-input label="[[adminEmailLabel]]" required name="admin_email"></paper-input>
-          <paper-input type="password" label="[[adminPasswordLabel]]" required name="admin_password" on-keypress="submitIfEnter"></paper-input>
-          <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
-          <div class="buttons">
-            <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
-              <strong>[[submitButtonText]]</strong>
-            </paper-button>
-          </div>
-        </form>
-      </template>
+    <!-- TODO make this form be more useful -->
+    <template is="dom-if" if="{{configuration.config.is_configured}}">
+      <form is="iron-form" id="oauthConfigurationForm" method="post" action="{{resources.setup_url}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
+        <paper-input label="Domain" name="domain" required on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="OAuth Code" name="oauth_code" required on-keypress="submitIfEnter"></paper-input>
+        <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
+        <div class="buttons">
+          <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
+            <strong>[[submitButtonText]]</strong>
+          </paper-button>
+        </div>
+      </form>
+    </template>
+    <template is="dom-if" if="{{!configuration.config.is_configured}}">
+      <form is="iron-form" id="oauthConfigurationForm" method="post" action="{{resources.setup_url}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
+        <paper-input label="Domain" name="domain" on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="OAuth Code" name="oauth_code" on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="[[adminEmailLabel]]" required name="admin_email"></paper-input>
+        <paper-input type="password" label="[[adminPasswordLabel]]" required name="admin_password" on-keypress="submitIfEnter"></paper-input>
+        <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
+        <div class="buttons">
+          <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
+            <strong>[[submitButtonText]]</strong>
+          </paper-button>
+        </div>
+      </form>
+    </template>
   </template>
 
   <script>
@@ -105,8 +110,16 @@
           type: Object,
           notify: true,
         },
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true,
+        },
       },
       behaviors: [I18N],
+      listeners: {
+        'iron-form-error': 'handleFormError',
+      },
       ready: function() {
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
@@ -135,29 +148,41 @@
         this.adminEmailLabel = I18N.__('adminEmailLabel');
         this.adminPasswordLabel = I18N.__('adminPasswordLabel');
       },
+      enableSpinner: function() {
+        this.set('loading', true);
+      },
       isDomainConfigured: function(config) {
         return config.domain && config.credentials;
       },
       submitOauth: function(e, detail) {
-        var form = this.querySelector('#oauthConfigurationForm');
-        var inputs = form.querySelectorAll('paper-input');
-        var shouldSubmit = true;
-        var i = 0;
-        for (; i < inputs.length; i++) {
-          // Separating this out so that all inputs are checked in case more
-          // than one is invalid. Otherwise, after one is invalid, no more will
-          // be checked or show invalid regardless of state.
-          isValid = inputs[i].validate();
-          shouldSubmit = shouldSubmit && isValid;
-        }
-        if (shouldSubmit) {
-          form.submit();
-        }
+        this.querySelector('#oauthConfigurationForm').request.handleAs = "json";
+        this.querySelector('#oauthConfigurationForm').request.jsonPrefix = this.resources.jsonPrefix;
+        this.querySelector('#oauthConfigurationForm').submit();
       },
       submitIfEnter: function(e) {
         if (e.keyCode === 13) {
           this.submitOauth();
         }
+      },
+      parsePostResponse: function(e, detail) {
+        this.set('loading', false);
+        if (e.target.request.lastResponse.shouldRedirect) {
+          window.location = this.resources.loginUrl;
+        }
+      },
+      handleFormError: function(event, detail) {
+        event.stopPropagation();
+        var fixedJsonText = detail.request.xhr.response;
+        var prefixIndex = fixedJsonText.indexOf(this.resources.jsonPrefix);
+        if (prefixIndex >= 0) {
+          var position = prefixIndex + this.resources.jsonPrefix.length;
+          fixedJsonText = fixedJsonText.substring(position);
+        }
+        var jsonObj = JSON.parse(fixedJsonText);
+        var errorDetail = {'detail': jsonObj};
+        var errorEvent = new CustomEvent('ApplicationError', errorDetail);
+        document.getElementById('error-notification').dispatchEvent(errorEvent);
+        this.set('loading', false);
       },
     });
   </script>
