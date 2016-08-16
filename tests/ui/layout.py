@@ -36,6 +36,7 @@ class UfOPageLayout(BaseDriver):
 
   DROPDOWN_MENU = (By.ID, 'ufoDropdownMenu')
   DROPDOWN_MENU_SPINNER = (By.ID, 'dropdownMenuSpinner')
+  DROPDOWN_MENU_CLOSE_BUTTON = (By.CLASS_NAME, 'closeDropdownMenuButton')
   ADD_ADMIN_BUTTON = (By.ID, 'addAdminButton')
   ADD_ADMIN_DIALOG = (By.ID, 'addAdminDialog')
   ADD_ADMIN_FORM = (By.ID, 'addAdminForm')

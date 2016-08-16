@@ -52,7 +52,7 @@
     <paper-dialog class="dropdown-content adminDialog" id="actualDropdownMenu" with-backdrop no-overlap horizontal-align="auto" vertical-align="top">
       <iron-pages selected="{{selectedPage}}">
         <div>
-          <paper-button class="floatToTheRight" on-tap="exitAll">
+          <paper-button class="floatToTheRight closeDropdownMenuButton" on-tap="exitAll">
             <iron-icon icon="close" item-icon></iron-icon>
           </paper-button>
           <paper-listbox>
@@ -82,7 +82,7 @@
           <paper-button on-tap="flipToDropdownFlowFromAddAdmin">
             <iron-icon icon="arrow-back" item-icon></iron-icon>
           </paper-button>
-          <paper-button class="floatToTheRight" on-tap="exitAll">
+          <paper-button class="floatToTheRight closeDropdownMenuButton" on-tap="exitAll">
             <iron-icon icon="close" item-icon></iron-icon>
           </paper-button>
           <p id="addAdminResponseStatus">{{responseStatus}}</p>
@@ -106,7 +106,7 @@
             <iron-icon icon="arrow-back" item-icon></iron-icon>
           </paper-button>
           [[changeAdminPasswordInstructions]]
-          <paper-button class="floatToTheRight" on-tap="exitAll">
+          <paper-button class="floatToTheRight closeDropdownMenuButton" on-tap="exitAll">
             <iron-icon icon="close" item-icon></iron-icon>
           </paper-button>
           <form is="iron-form" id="changeAdminPasswordForm" method="post" action="{{resources.changeAdminPasswordUrl}}" on-iron-form-response="parseChangeAdminPasswordResponse" on-iron-form-presubmit="enableSpinner">
@@ -126,7 +126,7 @@
             <iron-icon icon="arrow-back" item-icon></iron-icon>
           </paper-button>
           [[removeAdminInstructions]]
-          <paper-button class="floatToTheRight" on-tap="exitAll">
+          <paper-button class="floatToTheRight closeDropdownMenuButton" on-tap="exitAll">
             <iron-icon icon="close" item-icon></iron-icon>
           </paper-button>
           <paper-dialog-scrollable>

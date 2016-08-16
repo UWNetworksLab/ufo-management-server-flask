@@ -62,6 +62,7 @@ class AdminFlowTest(BaseTest):
     admin_flow.add_test_admin(self.TEST_ADMIN_AS_DICT['email'],
                               self.TEST_ADMIN_AS_DICT['password'],
                               add_admin_dialog)
+    admin_flow.close_dropdown_menu_from_dialog(add_admin_dialog)
 
     # Logout of the existing admin account.
     LoginPage(self.driver).Logout(self.args.server_url)
@@ -150,6 +151,7 @@ class AdminFlowTest(BaseTest):
     response_status = add_admin_dialog.find_element(
         *AdminFlow.ADD_ADMIN_RESPONSE_STATUS)
     self.assertNotEqual('', response_status.text)
+    admin_flow.close_dropdown_menu_from_dialog(add_admin_dialog)
 
     # Logout of the existing admin account.
     LoginPage(self.driver).Logout(self.args.server_url)
@@ -185,6 +187,7 @@ class AdminFlowTest(BaseTest):
                               add_admin_dialog)
 
     # Remove the test admin.
+    admin_flow.close_dropdown_menu_from_dialog(add_admin_dialog)
     admin_flow.remove_test_admin(self.TEST_ADMIN_AS_DICT['email'],
                                  self.args.server_url,
                                  should_raise_exception=True,
