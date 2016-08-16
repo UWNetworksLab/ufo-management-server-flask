@@ -74,19 +74,15 @@ class AdminFlow(UfOPageLayout):
                 UfOPageLayout.REMOVE_ADMIN_DIALOG))))
     return remove_admin_dialog
 
-  def close_dropdown_menu(self, dialog_menu):
-    """Clicks the close dropdown menu button.
+  def close_dropdown_menu_from_dialog(self, dialog_page):
+    """Clicks the close dropdown menu button from a dialog page.
 
     Args:
-      dialog_menu: The page within the dropdown menu that is currently open.
+      dialog_page: The page within the dropdown menu that is currently open.
     """
-    close_button = dialog_menu.find_element(
+    close_button = dialog_page.find_element(
         *UfOPageLayout.DROPDOWN_MENU_CLOSE_BUTTON)
     close_button.click()
-
-    # WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
-    #     EC.invisibility_of_element_located(((
-    #         UfOPageLayout.DROPDOWN_MENU))))
     return
 
   def find_test_admin_on_remove_form(self, email, remove_admin_form):
