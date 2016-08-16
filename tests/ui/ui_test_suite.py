@@ -58,13 +58,13 @@ def MakeSuite(testcase_class):
 
 SUITE = unittest.TestSuite()
 SUITE.addTest(MakeSuite(AdminFlowTest))
-SUITE.addTest(MakeSuite(ErrorNotificationTest))
-SUITE.addTest(MakeSuite(LandingPageTest))
-SUITE.addTest(MakeSuite(LoginPageTest))
-SUITE.addTest(MakeSuite(SearchPageTest))
-SUITE.addTest(MakeSuite(SettingsComponentTest))
-SUITE.addTest(MakeSuite(SetupPageTest))
-SUITE.addTest(MakeSuite(UndefinedURLTest))
+# SUITE.addTest(MakeSuite(ErrorNotificationTest))
+# SUITE.addTest(MakeSuite(LandingPageTest))
+# SUITE.addTest(MakeSuite(LoginPageTest))
+# SUITE.addTest(MakeSuite(SearchPageTest))
+# SUITE.addTest(MakeSuite(SettingsComponentTest))
+# SUITE.addTest(MakeSuite(SetupPageTest))
+# SUITE.addTest(MakeSuite(UndefinedURLTest))
 
 result = unittest.TextTestRunner().run(SUITE)
 if not result.wasSuccessful():
