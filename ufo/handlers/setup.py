@@ -61,11 +61,12 @@ def setup():
 
   credentials = None
   domain = flask.request.form.get('domain', None)
+  should_send_redirect = False
   if flask.request.form.get('oauth_code', None):
     try:
       credentials = flow.step2_exchange(flask.request.form['oauth_code'])
     except oauth2client.client.FlowExchangeError as e:
-      flask.abort(403) # TODO better error
+      flask.abort(403, e.message)
 
     apiClient = credentials.authorize(httplib2.Http())
     plusApi = discovery.build(serviceName='plus',
@@ -75,38 +76,38 @@ def setup():
                                version='directory_v1',
                                http = apiClient)
 
+    profileResult = None
     try:
       profileResult = plusApi.people().get(userId='me').execute()
-
-      if domain is None or domain != profileResult.get('domain', None):
-        return flask.render_template(
-            'setup.html', error=DOMAIN_INVALID_TEXT,
-            oauth_configuration_resources=json.dumps(oauth_resources_dict))
-
-      user_id = profileResult['id']
-      userResult = adminApi.users().get(userKey=user_id).execute()
-      if not userResult.get('isAdmin', False):
-        return flask.render_template(
-            'setup.html', error=NON_ADMIN_TEXT,
-            oauth_configuration_resources=json.dumps(oauth_resources_dict))
     except Exception as e:
       ufo.app.logger.error(e, exc_info=True)
-      return flask.render_template(
-          'setup.html', error=str(e),
-          oauth_configuration_resources=json.dumps(oauth_resources_dict))
+      flask.abort(403, DOMAIN_INVALID_TEXT)
+
+    if domain is None or domain != profileResult.get('domain', None):
+      flask.abort(403, DOMAIN_INVALID_TEXT)
+
+    user_id = profileResult['id']
+    userResult = None
+    try:
+      userResult = adminApi.users().get(userKey=user_id).execute()
+    except Exception as e:
+      ufo.app.logger.error(e, exc_info=True)
+      flask.abort(403, NON_ADMIN_TEXT)
+
+    if not userResult.get('isAdmin', False):
+      flask.abort(403, NON_ADMIN_TEXT)
 
   if not config.isConfigured:
     admin_email = flask.request.form.get('admin_email', None)
     admin_password = flask.request.form.get('admin_password', None)
 
     if admin_email is None or admin_password is None:
-      return flask.render_template(
-          'setup.html', error=NO_ADMINISTRATOR,
-          oauth_configuration_resources=json.dumps(oauth_resources_dict))
+      flask.abort(403, NO_ADMINISTRATOR)
 
     admin_user = models.AdminUser(email=admin_email)
     admin_user.set_password(admin_password)
     admin_user.save()
+    should_send_redirect = True
 
   # if credentials were set above, moved down here to give us a chance to error
   # out of admin user and password, could be moved inline with proper form
@@ -121,4 +122,7 @@ def setup():
   config.should_show_recaptcha = False
   config.save()
 
-  return flask.redirect(flask.url_for('setup'))
+  redirect_dict = {'shouldRedirect': should_send_redirect}
+  response_json = json.dumps((redirect_dict))
+  return flask.Response(ufo.XSSI_PREFIX + response_json,
+                        headers=ufo.JSON_HEADERS)

@@ -1,5 +1,5 @@
 """Test setup module functionality."""
-
+import json
 import unittest
 
 import flask
@@ -7,6 +7,7 @@ from googleapiclient import discovery
 from mock import MagicMock
 from mock import patch
 
+import ufo
 from ufo import base_test
 from ufo.database import models
 from ufo.handlers import setup
@@ -46,11 +47,8 @@ class SetupTest(base_test.BaseTest):
 
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')
-  @patch('flask.render_template')
-  def testPostSetupIncorrectDomain(self, mock_render_template, mock_oauth_flow,
-                                   mock_build):
+  def testPostSetupIncorrectDomain(self, mock_oauth_flow, mock_build):
     """Test posting to setup with an incorrect domain generates an error."""
-    mock_render_template.return_value = ''
     domain_that_doesnt_match = 'google.com'
     # This weird looking structure is to mock out a call buried behind several
     # objects which requires going through the method's return_value for each
@@ -69,18 +67,14 @@ class SetupTest(base_test.BaseTest):
 
     resp = self.client.post(flask.url_for('setup'), data=form_data)
 
-    args, kwargs = mock_render_template.call_args
-    self.assertEquals('setup.html', args[0])
-    self.assertEquals(setup.DOMAIN_INVALID_TEXT, kwargs['error'])
-    self.assertIsNotNone(kwargs['oauth_configuration_resources'])
+    json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
+    self.assertEquals(403, json_response['code'])
+    self.assertEquals(setup.DOMAIN_INVALID_TEXT, json_response['message'])
 
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')
-  @patch('flask.render_template')
-  def testPostSetupNonDomainAdmin(self, mock_render_template, mock_oauth_flow,
-                                  mock_build):
+  def testPostSetupNonDomainAdmin(self, mock_oauth_flow, mock_build):
     """Test posting to setup as a non-admin domain user generates an error."""
-    mock_render_template.return_value = ''
     fake_id = 'user@foocompany.com'
     # This weird looking structure is to mock out a call buried behind several
     # objects which requires going through the method's return_value for each
@@ -101,18 +95,14 @@ class SetupTest(base_test.BaseTest):
 
     resp = self.client.post(flask.url_for('setup'), data=form_data)
 
-    args, kwargs = mock_render_template.call_args
-    self.assertEquals('setup.html', args[0])
-    self.assertEquals(setup.NON_ADMIN_TEXT, kwargs['error'])
-    self.assertIsNotNone(kwargs['oauth_configuration_resources'])
+    json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
+    self.assertEquals(403, json_response['code'])
+    self.assertEquals(setup.NON_ADMIN_TEXT, json_response['message'])
 
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')
-  @patch('flask.render_template')
-  def testPostSetupNonAdmin(self, mock_render_template, mock_oauth_flow,
-                            mock_build):
+  def testPostSetupNonAdmin(self, mock_oauth_flow, mock_build):
     """Test posting to setup without specifying an admin generates an error."""
-    mock_render_template.return_value = ''
     fake_id = 'user@foocompany.com'
     # This weird looking structure is to mock out a call buried behind several
     # objects which requires going through the method's return_value for each
@@ -133,10 +123,9 @@ class SetupTest(base_test.BaseTest):
 
     resp = self.client.post(flask.url_for('setup'), data=form_data)
 
-    args, kwargs = mock_render_template.call_args
-    self.assertEquals('setup.html', args[0])
-    self.assertEquals(setup.NO_ADMINISTRATOR, kwargs['error'])
-    self.assertIsNotNone(kwargs['oauth_configuration_resources'])
+    json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
+    self.assertEquals(403, json_response['code'])
+    self.assertEquals(setup.NO_ADMINISTRATOR, json_response['message'])
 
   @patch.object(oauth, 'getOauthFlow')
   @patch.object(discovery, 'build')
@@ -173,7 +162,9 @@ class SetupTest(base_test.BaseTest):
     self.assertTrue(config.isConfigured)
     self.assertEquals(config.credentials, FAKE_CREDENTIALS)
     self.assertEquals(config.domain, FAKE_DOMAIN)
-    self.assert_redirects(resp, flask.url_for('setup'))
+
+    json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
+    self.assertEquals(True, json_response['shouldRedirect'])
 
 if __name__ == '__main__':
   unittest.main()
