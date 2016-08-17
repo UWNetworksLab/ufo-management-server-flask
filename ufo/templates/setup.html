@@ -1,9 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Setup{% endblock %}
 {% block body %}
+  {% if not session['isConfigured'] %}
+    <paper-display-template id="initialAdminDisplayTemplate">
+      <header-container resources="{{resources}}" header-type="admin">
+        <initial-admin-setup resources="{{resources}}">
+        </initial-admin-setup>
+      </header-container>
+    </paper-display-template>
+  {% endif %}
+
   <paper-display-template id="oauthDisplayTemplate">
     <header-container resources="{{resources}}" header-type="oauth">
-      <oauth-configuration resources="{{resources}}" configuration="{{oauth_configuration_resources}}">
+      <oauth-configuration resources="{{resources}}" configuration="{{configuration_resources}}">
       </oauth-configuration>
     </header-container>
   </paper-display-template>

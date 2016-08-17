@@ -6,8 +6,8 @@ from werkzeug import exceptions
 
 import ufo
 from ufo import base_test
+from ufo.services import custom_exceptions
 from ufo.services import error_handler
-from ufo.services.custom_exceptions import SetupNeeded
 
 
 class ErrorHandlerTest(base_test.BaseTest):
@@ -30,11 +30,11 @@ class ErrorHandlerTest(base_test.BaseTest):
     setup_config() is not called, thus SetupNeeded error should be thrown.
     """
     setup_needed_error = exceptions.InternalServerError(
-        SetupNeeded.message)
+        custom_exceptions.SetupNeeded.message)
     resp = self.client.get(flask.url_for('proxyserver_list'))
 
     self.assertTrue(str(setup_needed_error.code) in resp.data)
-    self.assertTrue(SetupNeeded.message in resp.data)
+    self.assertTrue(custom_exceptions.SetupNeeded.message in resp.data)
 
   def testErrorHandlerCanProcessInternalServerError(self):
     """Test error handler can process HTTP error."""
@@ -47,9 +47,9 @@ class ErrorHandlerTest(base_test.BaseTest):
 
   def ErrorHandlerCanProcessCustomError(self):
     """Test error handler can process custom error."""
-    setup_needed_error = SetupNeeded()
+    setup_needed_error = custom_exceptions.SetupNeeded()
     werkzeug_error = exceptions.InternalServerError(
-        SetupNeeded.message)
+        custom_exceptions.SetupNeeded.message)
 
     resp = error_handler.handle_error(setup_needed_error)
 
