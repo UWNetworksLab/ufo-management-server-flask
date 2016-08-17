@@ -33,7 +33,7 @@ def _get_resources():
     'changeAdminPasswordUrl': flask.url_for('change_admin_password'),
     'removeAdminUrl': flask.url_for('delete_admin'),
     'loginUrl': flask.url_for('login'),
-    'recaptchaKey': ufo.app.config['RECAPTCHA_SITE_KEY'],
+    'recaptchaKey': ufo.app.config.get('RECAPTCHA_SITE_KEY', ''),
     'setupUrl': flask.url_for('setup'),
     'setupAdminUrl': flask.url_for('setup_admin'),
     'setupOauthUrl': flask.url_for('setup_oauth'),
