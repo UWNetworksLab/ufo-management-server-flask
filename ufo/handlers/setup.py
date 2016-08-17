@@ -11,16 +11,6 @@ from ufo.handlers import auth
 from ufo.services import oauth
 
 
-# TODO(eholder): Make these errors actually show up in the UI or do
-# something else that is useful with them.
-DOMAIN_INVALID_TEXT = 'Credentials for another domain.'
-NON_ADMIN_TEXT = 'Credentials do not have admin access.'
-NO_ADMINISTRATOR = 'Please enter an administrator email and password.'
-CANT_SET_ADMIN_AFTER_INITIAL_SETUP = (
-    'An initial admin has already been configured. Please add further admins' +
-    ' via the dropdown.')
-NO_OAUTH_CODE = 'No OAuth code was found in the request.'
-
 
 def _get_oauth_configration_resources_dict(config, oauth_url):
   """Get the resources for the oauth configuration component.
@@ -69,13 +59,14 @@ def setup_admin():
   """
   config = ufo.get_user_config()
   if config.isConfigured:
-    flask.abort(403, CANT_SET_ADMIN_AFTER_INITIAL_SETUP)
+    flask.abort(403,
+                ufo.get_json_message('cantSetAdminAfterInitialSetupError'))
 
   admin_email = flask.request.form.get('admin_email', None)
   admin_password = flask.request.form.get('admin_password', None)
 
   if admin_email is None or admin_password is None:
-    flask.abort(403, NO_ADMINISTRATOR)
+    flask.abort(403, ufo.get_json_message('noAdministratorError'))
 
   admin_user = models.AdminUser(email=admin_email)
   admin_user.set_password(admin_password)
@@ -101,7 +92,7 @@ def setup_oauth():
   """
   oauth_code = flask.request.form.get('oauth_code', None)
   if oauth_code is None:
-    flask.abort(403, NO_OAUTH_CODE)
+    flask.abort(403, ufo.get_json_message('noOauthCodeError'))
 
   config = ufo.get_user_config()
   flow = oauth.getOauthFlow()
@@ -123,10 +114,10 @@ def setup_oauth():
     profileResult = plusApi.people().get(userId='me').execute()
   except Exception as e:
     ufo.app.logger.error(e, exc_info=True)
-    flask.abort(403, DOMAIN_INVALID_TEXT)
+    flask.abort(403, ufo.get_json_message('domainInvalidError'))
 
   if domain is None or domain != profileResult.get('domain', None):
-    flask.abort(403, DOMAIN_INVALID_TEXT)
+    flask.abort(403, ufo.get_json_message('domainInvalidError'))
 
   user_id = profileResult['id']
   userResult = None
@@ -134,10 +125,10 @@ def setup_oauth():
     userResult = adminApi.users().get(userKey=user_id).execute()
   except Exception as e:
     ufo.app.logger.error(e, exc_info=True)
-    flask.abort(403, NON_ADMIN_TEXT)
+    flask.abort(403, ufo.get_json_message('nonAdminAccessError'))
 
   if not userResult.get('isAdmin', False):
-    flask.abort(403, NON_ADMIN_TEXT)
+    flask.abort(403, ufo.get_json_message('nonAdminAccessError'))
 
   config.credentials = credentials.to_json()
   config.domain = domain

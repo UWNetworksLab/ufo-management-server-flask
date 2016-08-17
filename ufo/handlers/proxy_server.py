@@ -36,11 +36,11 @@ def proxyserver_add():
   #TODO more robust validation here and in proxyserver_edit
   host_public_key_contents = flask.request.form.get('host_public_key')
   if host_public_key_contents is None:
-    flask.abort(400)
+    flask.abort(400, ufo.get_json_message('publicKeyNotFoundError'))
 
   ssh_private_key_contents = flask.request.form.get('ssh_private_key')
   if ssh_private_key_contents is None:
-    flask.abort(400)
+    flask.abort(400, ufo.get_json_message('privateKeyNotFoundError'))
 
   try:
     server.read_public_key_from_file_contents(host_public_key_contents)

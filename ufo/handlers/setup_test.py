@@ -32,7 +32,8 @@ class SetupTest(base_test.BaseTest):
   def setUp(self):
     """Setup test app on which to call handlers and db to query."""
     super(SetupTest, self).setUp()
-    super(SetupTest, self).setup_auth();
+    super(SetupTest, self).setup_auth()
+    flask.session['language_prefix'] = 'en'
 
   @patch('flask.render_template')
   def testGetSetupHandler(self, mock_render_template):
@@ -45,6 +46,18 @@ class SetupTest(base_test.BaseTest):
     self.assertEquals('setup.html', args[0])
     self.assertIsNotNone(kwargs['configuration_resources'])
     self.assertIsNotNone(kwargs['oauth_url'])
+
+  def testPostOauthSetupNoOauthCode(self):
+    """Test posting to setup without an oauth code generates an error."""
+    form_data = {}
+    form_data['domain'] = FAKE_DOMAIN
+
+    resp = self.client.post(flask.url_for('setup_oauth'), data=form_data)
+
+    json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
+    self.assertEquals(403, json_response['code'])
+    self.assertEquals(ufo.get_json_message('noOauthCodeError'),
+                      json_response['message'])
 
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')
@@ -70,7 +83,8 @@ class SetupTest(base_test.BaseTest):
 
     json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
     self.assertEquals(403, json_response['code'])
-    self.assertEquals(setup.DOMAIN_INVALID_TEXT, json_response['message'])
+    self.assertEquals(ufo.get_json_message('domainInvalidError'),
+                      json_response['message'])
 
   @patch.object(discovery, 'build')
   @patch.object(oauth, 'getOauthFlow')
@@ -98,7 +112,8 @@ class SetupTest(base_test.BaseTest):
 
     json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
     self.assertEquals(403, json_response['code'])
-    self.assertEquals(setup.NON_ADMIN_TEXT, json_response['message'])
+    self.assertEquals(ufo.get_json_message('nonAdminAccessError'),
+                      json_response['message'])
 
   @patch.object(oauth, 'getOauthFlow')
   @patch.object(discovery, 'build')
@@ -144,7 +159,8 @@ class SetupTest(base_test.BaseTest):
 
     json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
     self.assertEquals(403, json_response['code'])
-    self.assertEquals(setup.NO_ADMINISTRATOR, json_response['message'])
+    self.assertEquals(ufo.get_json_message('noAdministratorError'),
+                      json_response['message'])
 
     form_data = {}
     form_data['admin_email'] = FAKE_ADMIN_EMAIL
@@ -153,7 +169,8 @@ class SetupTest(base_test.BaseTest):
 
     json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
     self.assertEquals(403, json_response['code'])
-    self.assertEquals(setup.NO_ADMINISTRATOR, json_response['message'])
+    self.assertEquals(ufo.get_json_message('noAdministratorError'),
+                      json_response['message'])
 
     form_data = {}
     form_data['admin_password'] = FAKE_ADMIN_PASSWORD
@@ -162,7 +179,8 @@ class SetupTest(base_test.BaseTest):
 
     json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
     self.assertEquals(403, json_response['code'])
-    self.assertEquals(setup.NO_ADMINISTRATOR, json_response['message'])
+    self.assertEquals(ufo.get_json_message('noAdministratorError'),
+                      json_response['message'])
 
   def testPostAdminSetupAlreadySet(self):
     """Test posting to admin setup after initial setup throws an error."""
@@ -176,8 +194,9 @@ class SetupTest(base_test.BaseTest):
 
     json_response = json.loads(resp.data[len(ufo.XSSI_PREFIX):])
     self.assertEquals(403, json_response['code'])
-    self.assertEquals(setup.CANT_SET_ADMIN_AFTER_INITIAL_SETUP,
-                      json_response['message'])
+    self.assertEquals(
+        ufo.get_json_message('cantSetAdminAfterInitialSetupError'),
+        json_response['message'])
 
   def testPostAdminSetupGoesThrough(self):
     """Test posting to admin setup creates initial admin for configuration."""
