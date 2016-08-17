@@ -53,7 +53,7 @@
         // Notes and Retry for i18n After 1 Second.
         this.setI18nText();
         setTimeout(function() {
-          if (this.titleText == 'chromePolicyTitleText' || this.titleText == 'loginTitleText' || this.titleText == 'oauthTitleText' || this.titleText == 'proxyServerTitleText' || this.titleText == 'settingsTitleText' || this.titleText == 'userTitleText') {
+          if (this.titleText == 'chromePolicyTitleText' || this.titleText == 'loginTitleText' || this.titleText == 'oauthTitleText' || this.titleText == 'adminTitleText' || this.titleText == 'proxyServerTitleText' || this.titleText == 'settingsTitleText' || this.titleText == 'userTitleText') {
             this.setI18nText();
           }
         }, 1000);
@@ -65,6 +65,9 @@
             break;
           case 'login':
             this.titleText = I18N.__('loginTitleText');
+            break;
+          case 'admin':
+            this.titleText = I18N.__('adminTitleText');
             break;
           case 'oauth':
             this.titleText = I18N.__('oauthTitleText');
