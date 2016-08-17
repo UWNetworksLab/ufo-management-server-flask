@@ -127,6 +127,7 @@ def login():
 
   flask.session['email'] = user.email
   flask.session['domain'] = config.domain
+  flask.session['isConfigured'] = config.isConfigured
 
   return flask.redirect(flask.url_for('landing'))
 

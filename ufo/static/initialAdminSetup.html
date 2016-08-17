@@ -4,15 +4,15 @@
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 <link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
-<dom-module id="oauth-configuration">
+<dom-module id="initial-admin-setup">
   <style is="custom-style">
-    p, #oauthConfigurationForm {
+    p, #initialAdminConfigurationForm {
       margin-left: 40px;
     }
-    #oauthConfigurationForm {
+    #initialAdminConfigurationForm {
       margin-left: 50px;
     }
-    p, #oauthConfigurationForm {
+    p, #initialAdminConfigurationForm {
       margin-right: 25px;
       margin-bottom: 25px;
     }
@@ -28,42 +28,15 @@
       <paper-spinner id="spinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
     </template>
 
-    <template is="dom-if" if="{{!isDomainConfigured(configuration.config)}}">
-      <p>
-        [[googleDomainPromptText]]
-      </p>
-    </template>
+    <p>[[welcomeText]]</p>
+    <p>[[firstSteps]]</p>
 
-    <template is="dom-if" if="{{isDomainConfigured(configuration.config)}}">
-      <p>
-        [[domainConfiguredText]] <strong>{{configuration.config.domain}}</strong>
-      </p>
-    </template>
-
-    <template is="dom-if" if="{{!isDomainConfigured(configuration.config)}}">
-      <p>
-        [[noDomainConfiguredText]]
-      </p>
-    </template>
-
-    <p>
-      <a class="anchor-no-button" href="{{configuration.oauth_url}}" target="_blank">
-        <paper-button>
-          <iron-icon icon="open-in-new"></iron-icon> [[connectYourDomainButtonText]]
-        </paper-button>
-      </a>
-    </p>
-
-    <p>
-      [[pasteTheCodeText]]
-    </p>
-
-    <form is="iron-form" id="oauthConfigurationForm" method="post" action="{{resources.setupOauthUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
-      <paper-input label="[[domainLabel]]" name="domain" required on-keypress="submitIfEnter"></paper-input>
-      <paper-input label="[[oauthCodeLabel]]" name="oauth_code" required on-keypress="submitIfEnter"></paper-input>
+    <form is="iron-form" id="initialAdminConfigurationForm" method="post" action="{{resources.setupAdminUrl}}" on-iron-form-response="parsePostResponse" on-iron-form-presubmit="enableSpinner">
+      <paper-input label="[[adminEmailLabel]]" required name="admin_email"></paper-input>
+      <paper-input type="password" label="[[adminPasswordLabel]]" required name="admin_password" on-keypress="submitIfEnter"></paper-input>
       <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}" />
       <div class="buttons">
-        <paper-button on-tap="submitOauth" class="form-submit-button anchor-button" type="submit">
+        <paper-button on-tap="submitInitialAdmin" class="form-submit-button anchor-button" type="submit">
           <strong>[[submitButtonText]]</strong>
         </paper-button>
       </div>
@@ -72,13 +45,9 @@
 
   <script>
     Polymer({
-      is: 'oauth-configuration',
+      is: 'initial-admin-setup',
       properties: {
         resources: {
-          type: Object,
-          notify: true,
-        },
-        configuration: {
           type: Object,
           notify: true,
         },
@@ -103,46 +72,36 @@
         // Notes and Retry for i18n After 1 Second.
         this.setI18nText();
         setTimeout(function() {
-          if (this.oauthCodeLabel == 'oauthCodeLabel') {
+          if (this.adminPasswordLabel == 'adminPasswordLabel') {
             this.setI18nText();
           }
         }, 1000);
       },
       setI18nText: function() {
         this.welcomeText = I18N.__('welcomeText');
-        this.googleDomainPromptText = I18N.__('googleDomainPromptText');
-        this.successSetupText = I18N.__('successSetupText');
-        this.domainConfiguredText = I18N.__('domainConfiguredText');
-        this.noDomainConfiguredText = I18N.__('noDomainConfiguredText');
-        this.connectYourDomainButtonText = I18N.__('connectYourDomainButtonText');
-        this.pasteTheCodeText = I18N.__('pasteTheCodeText');
+        this.firstSteps = I18N.__('firstSteps');
         this.submitButtonText = I18N.__('submitButtonText');
-        this.domainLabel = I18N.__('domainLabel');
-        this.oauthCodeLabel = I18N.__('oauthCodeLabel');
+        this.adminEmailLabel = I18N.__('adminEmailLabel');
+        this.adminPasswordLabel = I18N.__('adminPasswordLabel');
       },
       enableSpinner: function() {
         this.set('loading', true);
       },
-      isDomainConfigured: function(config) {
-        return config.domain && config.credentials;
-      },
-      submitOauth: function(e, detail) {
-        this.querySelector('#oauthConfigurationForm').request.handleAs = "json";
-        this.querySelector('#oauthConfigurationForm').request.jsonPrefix = this.resources.jsonPrefix;
-        this.querySelector('#oauthConfigurationForm').submit();
+      submitInitialAdmin: function(e, detail) {
+        this.querySelector('#initialAdminConfigurationForm').request.handleAs = "json";
+        this.querySelector('#initialAdminConfigurationForm').request.jsonPrefix = this.resources.jsonPrefix;
+        this.querySelector('#initialAdminConfigurationForm').submit();
       },
       submitIfEnter: function(e) {
         if (e.keyCode === 13) {
-          this.submitOauth();
+          this.submitInitialAdmin();
         }
       },
       parsePostResponse: function(e, detail) {
         this.set('loading', false);
-        var response = e.target.request.lastResponse;
-        var currentConfig = this.configuration;
-        currentConfig.config.domain = response.domain;
-        currentConfig.config.credentials = response.credentials;
-        this.set('configuration', currentConfig);
+        if (e.target.request.lastResponse.shouldRedirect) {
+          window.location = this.resources.loginUrl;
+        }
       },
       handleFormError: function(event, detail) {
         event.stopPropagation();
