@@ -15,6 +15,13 @@
     </header-container>
   </paper-display-template>
 
+  <paper-display-template id="oauthDisplayTemplate">
+    <header-container resources="{{resources}}" header-type="oauth">
+      <oauth-configuration resources="{{resources}}" configuration="{{configuration_resources}}">
+      </oauth-configuration>
+    </header-container>
+  </paper-display-template>
+
   {% if session['domain'] %}
     <paper-display-template id="chromePolicyDisplayTemplate">
       <header-container resources="{{resources}}" header-type="chromePolicy">

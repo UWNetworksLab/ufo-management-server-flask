@@ -45,7 +45,6 @@ class SetupTest(base_test.BaseTest):
     args, kwargs = mock_render_template.call_args
     self.assertEquals('setup.html', args[0])
     self.assertIsNotNone(kwargs['configuration_resources'])
-    self.assertIsNotNone(kwargs['oauth_url'])
 
   def testPostOauthSetupNoOauthCode(self):
     """Test posting to setup without an oauth code generates an error."""

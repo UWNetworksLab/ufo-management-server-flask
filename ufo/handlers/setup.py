@@ -12,22 +12,6 @@ from ufo.services import oauth
 
 
 
-def _get_oauth_configration_resources_dict(config, oauth_url):
-  """Get the resources for the oauth configuration component.
-
-    Args:
-      config: A database object representing the config data.
-      oauth_url: A string of the URL to get the oauth code.
-
-    Returns:
-      A dict of the resources for the oauth configuration component.
-  """
-  return {
-    'config': config.to_dict(),
-    'oauth_url': oauth_url,
-  }
-
-
 @ufo.app.route('/setup/', methods=['GET'])
 @auth.login_required_if_setup
 def setup():
@@ -36,16 +20,10 @@ def setup():
   Returns:
     A rendered setup page template with appropriate resources passed in.
   """
-
-  config = ufo.get_user_config()
-  flow = oauth.getOauthFlow()
-  oauth_url = flow.step1_get_authorize_url()
-  oauth_resources_dict = _get_oauth_configration_resources_dict(config,
-                                                                oauth_url)
+  oauth_resources_dict = ufo.make_oauth_configration_resources_dict()
 
   return flask.render_template(
       'setup.html',
-      oauth_url=oauth_url,
       configuration_resources=json.dumps(oauth_resources_dict))
 
 
