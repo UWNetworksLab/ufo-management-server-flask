@@ -115,10 +115,5 @@
   "noAdministratorError": "Please enter an administrator email and password.",
   "noOauthCodeError": "No OAuth code was found in the request.",
   "domainInvalidError": "Credentials do not match given domain.",
-  "nonAdminAccessError": "Credentials do not have admin access.",
-  "tooManyFailuresText": "sssssssssss",
-  "tooManyFailuresText": "sssssssssss",
-  "tooManyFailuresText": "sssssssssss",
-  "tooManyFailuresText": "sssssssssss",
-  "tooManyFailuresText": "sssssssssss"
+  "nonAdminAccessError": "Credentials do not have admin access."
 }

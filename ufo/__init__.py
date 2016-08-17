@@ -9,7 +9,7 @@ import functools
 import os
 import sys
 
-from ufo.services.custom_exceptions import SetupNeeded
+from ufo.services import custom_exceptions
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
@@ -99,7 +99,7 @@ def setup_required(func):
   def decorated_function(*args, **kwargs):
     config = get_user_config()
     if not config.isConfigured:
-      raise SetupNeeded
+      raise custom_exceptions.SetupNeeded
     return func(*args, **kwargs)
   return decorated_function
 
