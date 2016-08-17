@@ -107,6 +107,18 @@
   "keyLookupError": "Please supply a valid email address or unique id.",
   "publicKeyError": "Please supply a valid public key in a format such as 'ssh-rsa AAAA...' (no email address or comments afterwards).",
   "privateKeyError": "Please supply a valid private key in a format such as '-----BEGIN RSA PRIVATE KEY----- ... -----END RSA PRIVATE KEY-----'.",
+  "publicKeyNotFoundError": "No host public key found in the request.",
+  "privateKeyNotFoundError": "No ssh private key found in the request.",
   "ipAddressError": "Please supply a valid ip address in v4 or v6 format (with groups of 0s included).",
-  "tooManyFailuresText": "The amount of recent failed login attempts has exceeded the limit. If recaptcha was configured, it would have been triggered for all admins."
+  "tooManyFailuresText": "The amount of recent failed login attempts has exceeded the limit. If recaptcha was configured, it would have been triggered for all admins.",
+  "cantSetAdminAfterInitialSetupError": "An initial admin has already been configured. Please add further admins via the dropdown.",
+  "noAdministratorError": "Please enter an administrator email and password.",
+  "noOauthCodeError": "No OAuth code was found in the request.",
+  "domainInvalidError": "Credentials do not match given domain.",
+  "nonAdminAccessError": "Credentials do not have admin access.",
+  "tooManyFailuresText": "sssssssssss",
+  "tooManyFailuresText": "sssssssssss",
+  "tooManyFailuresText": "sssssssssss",
+  "tooManyFailuresText": "sssssssssss",
+  "tooManyFailuresText": "sssssssssss"
 }
