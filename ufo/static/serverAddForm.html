@@ -145,9 +145,21 @@
         if (listElem) {
           listElem.setAjaxResponse(updatedServersJson);
         }
+        var flipperId = this.resources.proxyServerAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedServersJson);
+        }
       },
       resetForm: function(e, details) {
-        document.getElementById('serverAddForm').reset();
+        var formElem = this.querySelector('#serverAddForm');
+        if (formElem) {
+          formElem.querySelector('#' + this.resources.ipInput).value = "";
+          formElem.querySelector('#' + this.resources.nameInput).value = "";
+          formElem.querySelector('#' + this.resources.sshPrivateKeyInput).value = "";
+          formElem.querySelector('#' + this.resources.hostPublicKeyInput).value = "";
+          formElem.reset();
+        }
       },
       submitIfEnter: function(e) {
         if (e.keyCode === 13) {

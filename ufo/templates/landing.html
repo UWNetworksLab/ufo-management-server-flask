@@ -2,17 +2,29 @@
 {% block title %}Landing{% endblock %}
 {% block body %}
   <paper-display-template id="userDisplayTemplate">
-    <header-container resources="{{resources}}" has-add-flow="true" header-type="user">
-      <user-list resources="{{resources}}" id="userList" auto-get=true>
-      </user-list>
-    </header-container>
+    <add-list-flipper resources="{{resources}}" id="userAddListFlipper" add-type="user">
+      <header-container resources="{{resources}}" has-add-flow="true" header-type="user">
+        <user-list resources="{{resources}}" id="userList" auto-get=true>
+        </user-list>
+      </header-container>
+      <left-icon-container resources="{{resources}}" add-type="user">
+        <user-add-tabs resources="{{resources}}" id="userAddTabs">
+        </user-add-tabs>
+      </left-icon-container>
+    </add-list-flipper>
   </paper-display-template>
 
   <paper-display-template id="proxyServerDisplayTemplate">
-    <header-container resources="{{resources}}" has-add-flow="true" header-type="proxyServer">
-      <server-list resources="{{resources}}" id="proxyList" auto-get=true>
-      </server-list>
-    </header-container>
+    <add-list-flipper resources="{{resources}}" id="proxyServerAddListFlipper" add-type="proxyServer">
+      <header-container resources="{{resources}}" has-add-flow="true" header-type="proxyServer">
+        <server-list resources="{{resources}}" id="proxyList" auto-get=true>
+        </server-list>
+      </header-container>
+      <left-icon-container resources="{{resources}}" add-type="proxyServer">
+        <server-add-form resources="{{resources}}" id="serverAddFormHolder">
+        </server-add-form>
+      </left-icon-container>
+    </add-list-flipper>
   </paper-display-template>
 
   <paper-display-template id="oauthDisplayTemplate">

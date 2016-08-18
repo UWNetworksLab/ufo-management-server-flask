@@ -27,6 +27,7 @@
             <paper-input label="{{emailLabel}}" type="textbox" name="{{inputName}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="[[keyLookupError]]"></paper-input>
             <br>
             <p>{{inputDefinition}}</p>
+            <p>[[oauthFeature]]</p>
             <br>
           </template>
           <template is="dom-if" if="[[idMatches(formId, 'domainAdd')]]">
@@ -184,6 +185,7 @@
         this.lookAgainText = I18N.__('lookAgainText');
         this.dismissText = I18N.__('dismissText');
         this.keyLookupError = I18N.__('keyLookupError');
+        this.oauthFeature = I18N.__('oauthFeature');
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.formId);
@@ -198,6 +200,8 @@
         this.enableSpinner();
       },
       submitGetForm: function() {
+        this.querySelector('#' + this.formId).request.handleAs = "json";
+        this.querySelector('#' + this.formId).request.jsonPrefix = this.resources.jsonPrefix;
         this.querySelector('#' + this.formId).submit();
       },
       submitPostForm: function() {
@@ -250,6 +254,11 @@
         var listElem = document.getElementById(this.resources.userListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
+        }
+        var flipperId = this.resources.userAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedUsersJson);
         }
       },
       idMatches: function(id, string1) {

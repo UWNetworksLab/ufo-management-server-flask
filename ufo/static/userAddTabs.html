@@ -175,17 +175,25 @@
         this.querySelector('#manualAdd').submit();
       },
       closeModal: function() {
+        this.resetAllForms();
+        this.set('loading', false);
+        var userModal = document.getElementById('userModal');
+        if (userModal) {
+          userModal.close();
+        }
+      },
+      resetAllForms: function() {
         this.resetForm();
         var subForms = this.querySelectorAll('user-add-form');
         var i;
         for (i = 0; i < subForms.length; i++) {
           subForms[i].resetForms();
         }
+      },
+      reopenFromFlipper: function() {
+        this.resetAllForms();
         this.set('loading', false);
-        var userModal = document.getElementById('userModal');
-        if (userModal) {
-          userModal.close();
-        }
+        this.set('selected', 0);
       },
       parsePostResponse: function(e, detail) {
         this.sendUsersJsonToList(e.target.request.lastResponse);
@@ -215,6 +223,11 @@
         var listElem = document.getElementById(this.resources.userListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
+        }
+        var flipperId = this.resources.userAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedUsersJson);
         }
       },
       submitIfEnter: function(e) {

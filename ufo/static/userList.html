@@ -50,6 +50,7 @@
       id="getItemsAjax"
       loading="{{loading}}"
       last-response="{{ajaxResponse}}"
+      on-response="parseListResponse"
       json-prefix="{{resources.jsonPrefix}}">
     </iron-ajax>
     <paper-listbox>
@@ -219,6 +220,14 @@
         if (elem) {
           var dialogHolder = elem.querySelector('#detailsHolder');
           dialogHolder.openServerEdit();
+        }
+      },
+      parseListResponse: function() {
+        var updatedUserResponse = this.ajaxResponse;
+        var flipperId = this.resources.userAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedUserResponse);
         }
       },
     });
