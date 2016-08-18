@@ -89,6 +89,10 @@ def _get_resources():
     'regexes': regex.REGEXES_AND_ERRORS_DICTIONARY,
     'jsonPrefix': ufo.XSSI_PREFIX,
     'maxFailedLoginsBeforeRecaptcha': ufo.MAX_FAILED_LOGINS_BEFORE_RECAPTCHA,
+    'userAddListFlipperId': 'userAddListFlipper',
+    'proxyServerAddListFlipperId': 'proxyServerAddListFlipper',
+    'userAddTabsId': 'userAddTabs',
+    'proxyServerAddFormId': 'serverAddFormHolder',
   }
 
 def set_jinja_globals():

@@ -203,6 +203,11 @@
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
         }
+        var flipperId = this.resources.userAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedUsersJson);
+        }
         this.set('loading', false);
       },
       openDialog: function() {

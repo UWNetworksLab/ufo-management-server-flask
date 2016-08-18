@@ -198,6 +198,8 @@
         this.enableSpinner();
       },
       submitGetForm: function() {
+        this.querySelector('#' + this.formId).request.handleAs = "json";
+        this.querySelector('#' + this.formId).request.jsonPrefix = this.resources.jsonPrefix;
         this.querySelector('#' + this.formId).submit();
       },
       submitPostForm: function() {
@@ -250,6 +252,11 @@
         var listElem = document.getElementById(this.resources.userListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
+        }
+        var flipperId = this.resources.userAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedUsersJson);
         }
       },
       idMatches: function(id, string1) {
