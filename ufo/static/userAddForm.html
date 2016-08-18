@@ -27,6 +27,7 @@
             <paper-input label="{{emailLabel}}" type="textbox" name="{{inputName}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="[[keyLookupError]]"></paper-input>
             <br>
             <p>{{inputDefinition}}</p>
+            <p>[[oauthFeature]]</p>
             <br>
           </template>
           <template is="dom-if" if="[[idMatches(formId, 'domainAdd')]]">
@@ -184,6 +185,7 @@
         this.lookAgainText = I18N.__('lookAgainText');
         this.dismissText = I18N.__('dismissText');
         this.keyLookupError = I18N.__('keyLookupError');
+        this.oauthFeature = I18N.__('oauthFeature');
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.formId);

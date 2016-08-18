@@ -24,7 +24,7 @@
   "passwordLabel": "Password",
   "loginText": "Login",
   "adminTitleText": "First Admin Configuration",
-  "oauthTitleText": "Oauth Configuration",
+  "oauthTitleText": "OAuth Configuration",
   "welcomeText": "Welcome to the uProxy for Organizations Management Server!",
   "firstSteps": "Please complete initial setup by adding the first admin account. Afterwards, you will be prompted to login to that account. You may optionally configure a Google Apps domain afterwards and then begin adding users and servers.",
   "googleDomainPromptText": "If you are planning on integrating with a Google Apps domain, you'll need to authorize this application. The Management Server uses this authorization to keep the list of users in your domain in sync with the access control lists on uProxy servers. The credentials you authorize will be shared by any administrators who are able to log into this server. If you do not plan on using a Google Apps domain with this product, you can just create an admin account and proceed to adding users and servers.",
@@ -115,5 +115,6 @@
   "noAdministratorError": "Please enter an administrator email and password.",
   "noOauthCodeError": "No OAuth code was found in the request.",
   "domainInvalidError": "Credentials do not match given domain.",
-  "nonAdminAccessError": "Credentials do not have admin access."
+  "nonAdminAccessError": "Credentials do not have admin access.",
+  "oauthFeature": "Please note that this feature only works if you have OAuth configured with a Google Apps domain. You can do so in the OAuth Configuration section or simply add users manually."
 }
