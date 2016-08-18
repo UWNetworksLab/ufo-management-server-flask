@@ -10,6 +10,7 @@ import os
 import sys
 
 from ufo.services import custom_exceptions
+from ufo.services import oauth
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
@@ -120,6 +121,18 @@ def get_json_message(message_key):
       return messages[message_key]
   except:
     return message_key
+
+def make_oauth_configration_resources_dict():
+  """Make the resources for the oauth configuration component.
+
+    Returns:
+      A dict of the resources for the oauth configuration component.
+  """
+  config = get_user_config()
+  return {
+    'config': config.to_dict(),
+    'oauth_url': oauth.getOauthFlow().step1_get_authorize_url(),
+  }
 
 
 from ufo.services import key_distributor

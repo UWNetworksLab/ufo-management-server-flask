@@ -13,7 +13,11 @@ from ufo.handlers import user
 @ufo.setup_required
 @auth.login_required
 def landing():
-  return flask.render_template('landing.html')
+  oauth_resources_dict = ufo.make_oauth_configration_resources_dict()
+
+  return flask.render_template(
+      'landing.html',
+      configuration_resources=json.dumps(oauth_resources_dict))
 
 # There's an issue in the web driver tests with our vulcanized JS and HTML
 # files getting cached and executing the i18n calls early, such as before the
