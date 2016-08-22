@@ -1,4 +1,5 @@
 <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="add-modal">
   <style is="custom-style">
@@ -12,7 +13,7 @@
   </style>
   <template>
     <paper-dialog id="{{modalId}}" with-backdrop>
-      <h2 class="title">{{addText}}</h2>
+      <h2 class="title">[[addText]]</h2>
       <div id="contentHolder">
         <template is="dom-if" if="{{isUser}}">
           <user-add-tabs resources="{{resources}}" should-display-with-dialog></user-add-tabs>
@@ -37,6 +38,7 @@
           value: '',
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-overlay-canceled': 'handleCancelled',
       },
@@ -44,13 +46,31 @@
         switch (this.addType) {
           case 'proxyServer':
             this.modalId = this.resources.proxyServerModalId;
-            this.addText = this.resources.proxyServerAddText;
             this.isProxyServer = true;
             break;
           default:
             this.modalId = this.resources.userModalId;
-            this.addText = this.resources.userAddText;
             this.isUser= true;
+            break;
+        }
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.addText == 'userAddText' || this.addText == 'proxyServerAddText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addText = I18N.__('proxyServerAddText');
+            break;
+          default:
+            this.addText = I18N.__('userAddText');
             break;
         }
       },

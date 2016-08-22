@@ -1,3 +1,5 @@
+import json
+
 import flask
 from flask import request
 from flask.ext import sqlalchemy
@@ -7,7 +9,8 @@ import functools
 import os
 import sys
 
-from ufo.services.custom_exceptions import SetupNeeded
+from ufo.services import custom_exceptions
+from ufo.services import oauth
 
 app = flask.Flask(__name__, instance_relative_config=True)
 
@@ -23,13 +26,17 @@ if 'DATABASE_URL' in os.environ:
   app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
   app.config['WHOOSH_BASE'] = os.environ['DATABASE_URL']
 
+RECAPTCHA_ENABLED_FOR_APP = False
+MAX_FAILED_LOGINS_BEFORE_RECAPTCHA = 10
 if 'RECAPTCHA_SITE_KEY' in os.environ and 'RECAPTCHA_SECRET_KEY' in os.environ:
   app.config['RECAPTCHA_SITE_KEY'] = os.environ['RECAPTCHA_SITE_KEY']
   app.config['RECAPTCHA_SECRET_KEY'] = os.environ['RECAPTCHA_SECRET_KEY']
+  RECAPTCHA_ENABLED_FOR_APP = True
 else:
   app.logger.error('No recaptcha site or secret key found. Please configure ' +
                    'RECAPTCHA_SITE_KEY and RECAPTCHA_SECRET_KEY in the ' +
                    'environment variables.')
+  # RECAPTCHA_ENABLED_FOR_APP stays false
 
 # any instance-specific config the user wants to set, these override everything
 app.config.from_pyfile('application.cfg', silent=True)
@@ -43,8 +50,12 @@ error_handler.init_error_handlers(app)
 # DB needs to be defined before this point
 from ufo.database import models
 
-whooshalchemy.whoosh_index(app, models.User)
-whooshalchemy.whoosh_index(app, models.ProxyServer)
+try:
+  whooshalchemy.whoosh_index(app, models.User)
+  whooshalchemy.whoosh_index(app, models.ProxyServer)
+except:
+  app.logger.error('Whoosh indexing failed. Search may be broken as result. '
+                   'Please redeploy to correct this.')
 
 # The headers and prefix listed below are to help guard against XSSI. The
 # prefix specifically causes us to escape out of any client that attempts to
@@ -89,9 +100,40 @@ def setup_required(func):
   def decorated_function(*args, **kwargs):
     config = get_user_config()
     if not config.isConfigured:
-      raise SetupNeeded
+      raise custom_exceptions.SetupNeeded
     return func(*args, **kwargs)
   return decorated_function
+
+def get_json_message(message_key):
+  """Get an i18n-ed message from the appropriate json file for the given key.
+
+  Args:
+    message_key: The message to get.
+
+  Returns:
+    A string the for the i18n-ed message or the key itself if an error occurs.
+  """
+  file_path = (os.getcwd() + '/ufo/static/locales/' +
+               flask.session['language_prefix'] + '/messages.json')
+  try:
+    with open(file_path) as json_file:
+      messages = json.load(json_file)
+      return messages[message_key]
+  except:
+    return message_key
+
+def make_oauth_configration_resources_dict():
+  """Make the resources for the oauth configuration component.
+
+    Returns:
+      A dict of the resources for the oauth configuration component.
+  """
+  config = get_user_config()
+  return {
+    'config': config.to_dict(),
+    'oauth_url': oauth.getOauthFlow().step1_get_authorize_url(),
+  }
+
 
 from ufo.services import key_distributor
 from ufo.handlers import routes

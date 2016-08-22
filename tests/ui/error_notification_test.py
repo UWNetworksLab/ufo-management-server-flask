@@ -18,16 +18,18 @@ class ErrorNotificationTest(BaseTest):
   def setUp(self):
     """Setup for test methods."""
     super(ErrorNotificationTest, self).setUp()
-    super(ErrorNotificationTest, self).setContext()
+    super(ErrorNotificationTest, self).set_context()
     LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
   def tearDown(self):
     """Teardown for test methods."""
+    # Refresh the page to remove any opened notifications easily.
+    self.driver.get(self.args.server_url + flask.url_for('landing'))
     landing_page = LandingPage(self.driver)
-    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                                self.args.server_url,
-                                should_raise_exception=False)
+    landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                                  self.args.server_url,
+                                  should_raise_exception=False)
     LoginPage(self.driver).Logout(self.args.server_url)
     super(ErrorNotificationTest, self).tearDown()
 
@@ -45,12 +47,12 @@ class ErrorNotificationTest(BaseTest):
     self.assertTrue(error_notification.is_present())
     self.assertFalse(error_notification.is_displayed())
 
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
 
     # Trying to add the same user twice will cause the error notification
     # to be displayed.

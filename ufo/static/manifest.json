@@ -1,0 +1,21 @@
+{
+  "background_color": "#009788",
+  "description": "A web application for controlling usage of uProxy and securing access for users in your domain to distributed proxy servers.",
+  "dir": "ltr",
+  "display": "standalone",
+  "icons": [{
+    "src": "ufo/static/img/ufo-logo.svg",
+    "sizes": "250x108",
+    "type": "image/svg"
+  },{
+    "src": "ufo/static/img/favicon.png",
+    "sizes": "16x16",
+    "type": "image/png"
+  }],
+  "lang": "en-US",
+  "name": "uProxy for Organizations Management Server",
+  "orientation": "any",
+  "short_name": "UfO Management Server",
+  "start_url": "/",
+  "theme_color": "#009788"
+}

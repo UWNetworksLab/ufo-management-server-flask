@@ -51,6 +51,7 @@ class BaseTest(TestCase):
     self.config.isConfigured = True
     self.config.domain = FAKE_DOMAIN
     self.config.id = 0
+    ufo.RECAPTCHA_ENABLED_FOR_APP = False
 
     self.config.save()
 

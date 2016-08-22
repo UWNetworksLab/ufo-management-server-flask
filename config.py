@@ -11,6 +11,8 @@ from ufo import app
 class BaseConfiguration(object):
   """Configurations for running the application in production."""
 
+  # pylint: disable=too-few-public-methods
+
   TESTING = False
   SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'app.db')
   SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -23,6 +25,8 @@ class BaseConfiguration(object):
 
 class TestConfiguration(BaseConfiguration):
   """Configurations for testing the application in development."""
+
+  # pylint: disable=too-few-public-methods
 
   TESTING = True
 

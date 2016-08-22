@@ -10,7 +10,6 @@ import ufo
 from ufo.database import models
 from ufo.services.custom_exceptions import NotLoggedIn
 
-MAX_FAILED_LOGINS_BEFORE_RECAPTCHA = 10
 INITIAL_RECAPTCHA_TIMEFRAME_MINUTES = 2
 
 
@@ -117,7 +116,8 @@ def login():
   # TODO(eholder): Add a functional test to verify that recaptcha does trigger,
   # but the test must be at the end since we won't be able to login afterwards.
   config = ufo.get_user_config()
-  if config.should_show_recaptcha and not ufo.RECAPTCHA.verify():
+  if (ufo.RECAPTCHA_ENABLED_FOR_APP and config.should_show_recaptcha and
+      not ufo.RECAPTCHA.verify()):
     models.FailedLoginAttempt.create()
     return flask.redirect(flask.url_for('login', error='Failed recaptcha.'))
 
@@ -127,6 +127,7 @@ def login():
 
   flask.session['email'] = user.email
   flask.session['domain'] = config.domain
+  flask.session['isConfigured'] = config.isConfigured
 
   return flask.redirect(flask.url_for('landing'))
 
@@ -166,6 +167,12 @@ def determine_if_recaptcha_should_be_turned_on_or_off():
   failed_attempts_count = 0
   now = datetime.datetime.now()
 
+  if not ufo.RECAPTCHA_ENABLED_FOR_APP:
+    delta = datetime.timedelta(minutes=INITIAL_RECAPTCHA_TIMEFRAME_MINUTES)
+    failed_attempts_count = models.FailedLoginAttempt.count_since_datetime(
+        now - delta)
+    return False, failed_attempts_count
+
   if config.should_show_recaptcha:
     failed_attempts_count = models.FailedLoginAttempt.count_since_datetime(
         config.recaptcha_start_datetime)
@@ -174,7 +181,7 @@ def determine_if_recaptcha_should_be_turned_on_or_off():
       config.should_show_recaptcha = False
       models.FailedLoginAttempt.delete_before_datetime(
           config.recaptcha_end_datetime)
-    elif failed_attempts_count >= MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
+    elif failed_attempts_count >= ufo.MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
       # This is the case when the recaptcha was on and has since seen more
       # failures over the threshold, so it needs to be extended.
       delta = (
@@ -184,7 +191,7 @@ def determine_if_recaptcha_should_be_turned_on_or_off():
     delta = datetime.timedelta(minutes=INITIAL_RECAPTCHA_TIMEFRAME_MINUTES)
     failed_attempts_count = models.FailedLoginAttempt.count_since_datetime(
         now - delta)
-    if failed_attempts_count >= MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
+    if failed_attempts_count >= ufo.MAX_FAILED_LOGINS_BEFORE_RECAPTCHA:
       # This is the case when I need to turn on recaptcha initially.
       _turn_on_recaptcha(config, now, delta)
 

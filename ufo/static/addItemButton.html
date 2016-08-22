@@ -1,5 +1,6 @@
 <link rel="import" href="bower_components/iron-icon/iron-icon.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="add-item-button">
   <style is="custom-style">
@@ -14,7 +15,7 @@
         on-tap="openModal"
         id="{{addButtonId}}">
       <iron-icon src="{{inverseAddIconUrl}}"></iron-icon>
-      <strong>{{addText}}</strong>
+      <strong> [[addText]]</strong>
     </paper-button>
   </template>
 
@@ -31,19 +32,38 @@
           value: '',
         },
       },
+      behaviors: [I18N],
       ready: function() {
         switch (this.addType) {
           case 'proxyServer':
             this.addButtonId = this.resources.proxyServerAddButtonId;
             this.inverseAddIconUrl = this.resources.proxyServerInverseAddIconUrl;
-            this.addText = this.resources.proxyServerAddText;
             this.modalId = this.resources.proxyServerModalId;
             break;
           default:
             this.addButtonId = this.resources.userAddButtonId;
             this.inverseAddIconUrl = this.resources.userInverseAddIconUrl;
-            this.addText = this.resources.userAddText;
             this.modalId = this.resources.userModalId;
+            break;
+        }
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.addText == 'userAddText' || this.addText == 'proxyServerAddText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        switch (this.addType) {
+          case 'proxyServer':
+            this.addText = I18N.__('proxyServerAddText');
+            break;
+          default:
+            this.addText = I18N.__('userAddText');
             break;
         }
       },

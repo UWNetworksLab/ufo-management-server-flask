@@ -4,6 +4,7 @@
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
 <link rel="import" href="bower_components/paper-tabs/paper-tabs.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="user-add-tabs">
   <style is="custom-style">
@@ -26,10 +27,10 @@
     <!--Portion for finding users via group, individual, domain, or manual
     specification. -->
     <paper-tabs id="tabs" selected="{{ selected }}">
-      <paper-tab id="{{resources.groupAddTabId}}">{{resources.groupAddTab}}</paper-tab>
-      <paper-tab id="{{resources.userAddTabId}}">{{resources.userAddTab}}</paper-tab>
-      <paper-tab id="{{resources.domainAddTabId}}">{{resources.domainAddTab}}</paper-tab>
-      <paper-tab id="{{resources.manualAddTabId}}">{{resources.manualAddTab}}</paper-tab>
+      <paper-tab id="{{resources.groupAddTabId}}">[[groupAddTab]]</paper-tab>
+      <paper-tab id="{{resources.userAddTabId}}">[[userAddTab]]</paper-tab>
+      <paper-tab id="{{resources.domainAddTabId}}">[[domainAddTab]]</paper-tab>
+      <paper-tab id="{{resources.manualAddTabId}}">[[manualAddTab]]</paper-tab>
     </paper-tabs>
 
     <div id="ironPagesHolder">
@@ -38,39 +39,39 @@
           resources="{{resources}}"
           should-display-with-dialog$="[[shouldDisplayWithDialog]]"
           form-id="{{resources.groupAddFormId}}"
-          save-button="{{resources.saveMultipleUsersButton}}"
-          search-button="{{resources.groupAddSearchButton}}"
-          email-label="{{resources.groupAddEmailAddressLabel}}"
+          save-button="[[saveMultipleUsersButton]]"
+          search-button="[[groupAddSearchButton]]"
+          email-label="[[groupAddEmailAddressLabel]]"
           input-name="{{resources.groupAddInputName}}"
-          input-definition="{{resources.groupAddEmailAddressDefinition}}">
+          input-definition="[[groupAddEmailAddressDefinition]]">
         </user-add-form>
         <user-add-form
           resources="{{resources}}"
           should-display-with-dialog$="[[shouldDisplayWithDialog]]"
           form-id="{{resources.userAddFormId}}"
-          save-button="{{resources.saveIndividualUserButton}}"
-          search-button="{{resources.userAddSearchButton}}"
-          email-label="{{resources.userAddEmailAddressLabel}}"
+          save-button="[[saveIndividualUserButton]]"
+          search-button="[[userAddSearchButton]]"
+          email-label="[[userAddEmailAddressLabel]]"
           input-name="{{resources.userAddInputName}}"
-          input-definition="{{resources.userAddEmailAddressDefinition}}">
+          input-definition="[[userAddEmailAddressDefinition]]">
         </user-add-form>
         <user-add-form
           resources="{{resources}}"
           should-display-with-dialog$="[[shouldDisplayWithDialog]]"
           form-id="{{resources.domainAddFormId}}"
-          save-button="{{resources.saveMultipleUsersButton}}"
-          search-button="{{resources.domainAddSearchButton}}">
+          save-button="[[saveMultipleUsersButton]]"
+          search-button="[[domainAddSearchButton]]">
         </user-add-form>
         <div>
           <template is="dom-if" if="{{loading}}">
             <paper-spinner id="manualAddSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
           </template>
           <form is="iron-form" id="{{resources.manualAddFormId}}" method="post" action="{{resources.userAddUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-            <paper-input label="{{resources.manualFullNameLabel}}" type="textbox" name="name" value="" id="manualUserName" required on-keypress="submitIfEnter">
+            <paper-input label="[[manualFullNameLabel]]" type="textbox" name="name" value="" id="manualUserName" required on-keypress="submitIfEnter">
             </paper-input>
-            <paper-input label="{{resources.manualEmailAddressLabel}}" type="email" name="email" value="" id="manualUserEmail" required
+            <paper-input label="[[manualEmailAddressLabel]]" type="email" name="email" value="" id="manualUserEmail" required
             pattern="{{resources.regexes.emailValidationPattern}}"
-            error-message="{{resources.regexes.emailValidationError}}" on-keypress="submitIfEnter">
+            error-message="[[emailValidationError]]" on-keypress="submitIfEnter">
             </paper-input>
             <input type="hidden" name="users" id="manualUserInput" value="">
             <input type="hidden" name="manual" value="true">
@@ -79,10 +80,10 @@
           </form>
           <div class="buttons">
             <paper-button class="anchor-button" dialog-dismiss>
-            <strong>{{resources.dismissText}}</strong>
+            <strong>[[dismissText]]</strong>
             </paper-button>
             <paper-button class="anchor-button" autofocus on-tap="submitPostForm" id="manualAddSubmitButton">
-            <strong>{{resources.saveIndividualUserButton}}</strong>
+            <strong>[[saveIndividualUserButton]]</strong>
             </paper-button>
           </div>
         </div>
@@ -112,6 +113,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-form-error': 'handleFormError',
       },
@@ -120,6 +122,35 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.emailValidationError == 'emailValidationError') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        this.groupAddTab = I18N.__('groupAddTab');
+        this.userAddTab = I18N.__('userAddTab');
+        this.domainAddTab = I18N.__('domainAddTab');
+        this.manualAddTab = I18N.__('manualAddTab');
+        this.saveMultipleUsersButton = I18N.__('saveMultipleUsersButton');
+        this.groupAddSearchButton = I18N.__('groupAddSearchButton');
+        this.groupAddEmailAddressLabel = I18N.__('groupAddEmailAddressLabel');
+        this.groupAddEmailAddressDefinition = I18N.__('groupAddEmailAddressDefinition');
+        this.saveIndividualUserButton = I18N.__('saveIndividualUserButton');
+        this.userAddSearchButton = I18N.__('userAddSearchButton');
+        this.userAddEmailAddressLabel = I18N.__('userAddEmailAddressLabel');
+        this.userAddEmailAddressDefinition = I18N.__('userAddEmailAddressDefinition');
+        this.domainAddSearchButton = I18N.__('domainAddSearchButton');
+        this.manualFullNameLabel = I18N.__('manualFullNameLabel');
+        this.manualEmailAddressLabel = I18N.__('manualEmailAddressLabel');
+        this.dismissText = I18N.__('dismissText');
+        this.emailValidationError = I18N.__('emailValidationError');
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.resources.manualAddFormId);
@@ -144,17 +175,25 @@
         this.querySelector('#manualAdd').submit();
       },
       closeModal: function() {
+        this.resetAllForms();
+        this.set('loading', false);
+        var userModal = document.getElementById('userModal');
+        if (userModal) {
+          userModal.close();
+        }
+      },
+      resetAllForms: function() {
         this.resetForm();
         var subForms = this.querySelectorAll('user-add-form');
         var i;
         for (i = 0; i < subForms.length; i++) {
           subForms[i].resetForms();
         }
+      },
+      reopenFromFlipper: function() {
+        this.resetAllForms();
         this.set('loading', false);
-        var userModal = document.getElementById('userModal');
-        if (userModal) {
-          userModal.close();
-        }
+        this.set('selected', 0);
       },
       parsePostResponse: function(e, detail) {
         this.sendUsersJsonToList(e.target.request.lastResponse);
@@ -184,6 +223,11 @@
         var listElem = document.getElementById(this.resources.userListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
+        }
+        var flipperId = this.resources.userAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedUsersJson);
         }
       },
       submitIfEnter: function(e) {

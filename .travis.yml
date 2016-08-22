@@ -3,6 +3,8 @@ language: python
 python:
   - "2.7"
 # commands to setup environment and install dependencies
+before_install:
+ - nvm install node
 install:
  - pip install -r requirements.txt
  - python setup_database.py

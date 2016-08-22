@@ -1,5 +1,6 @@
 <link rel="import" href="bower_components/iron-icon/iron-icon.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="chrome-policy">
   <style is="custom-style">
@@ -12,19 +13,19 @@
   <template>
     <div id="chrome-policy">
       <p>
-        {{resources.policyExplanationText}}
+        [[policyExplanationText]]
       </p>
       <p>
-        {{resources.policyEditText}}
+        [[policyEditText]]
       </p>
 
       <p><a href="https://admin.google.com/AdminHome" class="anchor-no-button" target="_blank">
         <paper-button>
-          <iron-icon icon="open-in-new"></iron-icon> {{resources.adminConsoleText}}
+          <iron-icon icon="open-in-new"></iron-icon> [[adminConsoleText]]
         </paper-button>
       </a></p>
       <p>
-        {{resources.policyUploadText}}
+        [[policyUploadText]]
       </p>
       <div class="buttons">
         <form is="iron-form" id="chromePolicyForm" method="post" action="{{resources.download_chrome_policy}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseChromePolicyResponse">
@@ -33,7 +34,7 @@
             <paper-spinner id="chromePolicySpinner" active$={{loading}}></paper-spinner>
           </template>
           <paper-button class="anchor-button" id="chromePolicyDownloadButton" on-tap="submitChromePolicy" type="submit">
-            <strong><iron-icon icon="file-download"></iron-icon> {{resources.downloadText}}</strong>
+            <strong><iron-icon icon="file-download"></iron-icon> [[downloadText]]</strong>
           </paper-button>
           <a href="data:text/json,{{ajaxResponse}}" download="{{resources.policy_filename}}" hidden id="hiddenChromePolicyButton"></a>
         </form>
@@ -58,11 +59,29 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       ready: function() {
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.downloadText == 'downloadText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        this.policyExplanationText = I18N.__('policyExplanationText');
+        this.policyEditText = I18N.__('policyEditText');
+        this.adminConsoleText = I18N.__('adminConsoleText');
+        this.policyUploadText = I18N.__('policyUploadText');
+        this.downloadText = I18N.__('downloadText');
       },
       enableSpinner: function() {
         this.set('loading', true);

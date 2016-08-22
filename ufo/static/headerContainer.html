@@ -1,6 +1,7 @@
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html" />
 <link rel="import" href="bower_components/paper-material/paper-material.html" />
 <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="header-container">
   <style is="custom-style">
@@ -46,25 +47,39 @@
           value: '',
         },
       },
-      ready: function() {
+      behaviors: [I18N],
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.titleText == 'chromePolicyTitleText' || this.titleText == 'loginTitleText' || this.titleText == 'oauthTitleText' || this.titleText == 'adminTitleText' || this.titleText == 'proxyServerTitleText' || this.titleText == 'settingsTitleText' || this.titleText == 'userTitleText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
         switch (this.headerType) {
           case 'chromePolicy':
-            this.titleText = this.resources.chromePolicyTitleText;
+            this.titleText = I18N.__('chromePolicyTitleText');
             break;
           case 'login':
-            this.titleText = this.resources.loginTitleText;
+            this.titleText = I18N.__('loginTitleText');
+            break;
+          case 'admin':
+            this.titleText = I18N.__('adminTitleText');
             break;
           case 'oauth':
-            this.titleText = this.resources.oauthTitleText;
+            this.titleText = I18N.__('oauthTitleText');
             break;
           case 'proxyServer':
-            this.titleText = this.resources.proxyServerTitleText;
+            this.titleText = I18N.__('proxyServerTitleText');
             break;
           case 'settings':
-            this.titleText = this.resources.settingsTitleText;
+            this.titleText = I18N.__('settingsTitleText');
             break;
           default:
-            this.titleText = this.resources.userTitleText;
+            this.titleText = I18N.__('userTitleText');
             break;
         }
       },

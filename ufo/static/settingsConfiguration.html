@@ -2,6 +2,7 @@
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="settings-configuration">
   <style is="custom-style">
@@ -22,17 +23,19 @@
       json-prefix="{{resources.jsonPrefix}}">
     </iron-ajax>
     <form is="iron-form" id="policyConfigForm" method="post" action="{{resources.settingsEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseConfigResponse">
-      <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="{{resources.proxyValidityText}}" checked$={{ajaxResponse.enforce_proxy_server_validity}}></ufo-toggle-input>
+      <ufo-toggle-input input-name="enforce_proxy_server_validity" button-text="[[proxyValidityText]]" checked$={{ajaxResponse.enforce_proxy_server_validity}}></ufo-toggle-input>
       <br>
-      <ufo-toggle-input input-name="enforce_network_jail" button-text="{{resources.networkJailText}}" checked$={{ajaxResponse.enforce_network_jail}}></ufo-toggle-input>
+      <!-- TODO: Surface this when the network jail functionality is available.
+      <ufo-toggle-input input-name="enforce_network_jail" button-text="[[networkJailText]]" checked$={{ajaxResponse.enforce_network_jail}}></ufo-toggle-input>
       <br>
+      -->
       <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       <div class="buttons">
         <template is="dom-if" if="{{loading}}">
           <paper-spinner id="settingsSpinner" active$={{loading}}></paper-spinner>
         </template>
         <paper-button class="anchor-button" id="saveSettingsButton" on-tap="submitConfig" type="submit">
-          <strong>{{resources.saveText}}</strong>
+          <strong>[[saveText]]</strong>
         </paper-button>
       </div>
     </form>
@@ -54,6 +57,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       ready: function() {
         this.$.policyConfigForm.request.handleAs = "json";
         this.$.policyConfigForm.request.jsonPrefix = this.resources.jsonPrefix;
@@ -61,6 +65,21 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.saveText == 'saveText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        this.proxyValidityText = I18N.__('proxyValidityText');
+        this.networkJailText = I18N.__('networkJailText');
+        this.saveText = I18N.__('saveText');
       },
       enableSpinner: function() {
         this.set('loading', true);

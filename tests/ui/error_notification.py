@@ -24,7 +24,7 @@ class ErrorNotification(BaseDriver):
     Returns: boolean, true if present, else false
     """
     try:
-      self.GetElement(self.ERROR_NOTIFICATION_ELEMENT)
+      self.get_element(self.ERROR_NOTIFICATION_ELEMENT)
     except NoSuchElementException:
       return False
     return True
@@ -34,7 +34,8 @@ class ErrorNotification(BaseDriver):
 
     Returns: boolean, true if present, else false
     """
-    error_notification_dialog = self.GetElement(self.ERROR_NOTIFICATION_DIALOG)
+    error_notification_dialog = self.get_element(
+        self.ERROR_NOTIFICATION_DIALOG)
     if error_notification_dialog.is_displayed():
       return True
     return False
@@ -56,7 +57,7 @@ class ErrorNotification(BaseDriver):
     Not catching the NoSuchElementException on purpose, so that the
     exception will cause the test to fail.
     """
-    self.GetElement(self.ERROR_NOTIFICATION_CLOSE_BUTTON).click()
+    self.get_element(self.ERROR_NOTIFICATION_CLOSE_BUTTON).click()
     # Need to wait for the button's ripple effect to complete.
     WebDriverWait(self.driver, BaseDriver.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located((self.ERROR_NOTIFICATION_CLOSE_BUTTON)))

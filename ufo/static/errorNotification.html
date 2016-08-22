@@ -1,5 +1,6 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="error-notification">
   <style is="custom-style">
@@ -67,11 +68,11 @@
           <div id="right">
             <div id="errorDetail">
               <div id="errorTitle">
-                {{resources.errorTitleText}}
+                [[errorTitleText]]
               </div>
               <br>
               <div id="errorMessage">
-                {{errorMessage}}
+                [[errorMessage]]
               </div>
             </div>
           </div>
@@ -79,7 +80,7 @@
             <paper-button id="errorNotificationCloseButton"
                           class="custom"
                           on-transitionend="closeErrorNotification">
-              <strong>{{resources.closeText}}</strong>
+              <strong>[[closeText]]</strong>
             </paper-button>
           </div>
         </div>
@@ -96,8 +97,23 @@
           type: Object,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'ApplicationError': 'showErrorNotification',
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.closeText == 'closeText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        this.errorTitleText = I18N.__('errorTitleText');
+        this.closeText = I18N.__('closeText');
       },
       showErrorNotification: function(event, detail) {
         this.errorCode = detail.code;

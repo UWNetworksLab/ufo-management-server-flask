@@ -14,12 +14,12 @@ class LandingPage(UfOPageLayout):
   """Home page action methods and locators."""
 
   LANDING_PAGE_ELEMENTS = [
-    UfOPageLayout.USER_DISPLAY_TEMPLATE,
-    UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
-    UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
+      UfOPageLayout.USER_DISPLAY_TEMPLATE,
+      UfOPageLayout.PROXY_SERVER_DISPLAY_TEMPLATE,
+      UfOPageLayout.CHROME_POLICY_DISPLAY_TEMPLATE
   ]
 
-  def addTestUser(self, name, email, server_url):
+  def add_test_user(self, name, email, server_url):
     """Manually add a test user using the landing page.
 
     Args:
@@ -27,19 +27,20 @@ class LandingPage(UfOPageLayout):
       email: A string for the email of a test user.
       server_url: The base url portion of the landing page.
     """
+    self.go_to_landing_page(server_url)
+
     # Navigate to add user and go to manual tab.
-    self.driver.get(server_url + flask.url_for('landing'))
-    add_user_button = self.GetElement(UfOPageLayout.ADD_USER_BUTTON)
+    add_user_button = self.get_element(UfOPageLayout.ADD_USER_BUTTON)
     add_user_button.click()
-    add_manually_tab = WebDriverWait(self.driver,
-                                     UfOPageLayout.DEFAULT_TIMEOUT).until(
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((UfOPageLayout.ADD_MANUALLY_TAB))))
+    add_manually_tab = self.driver.find_element(*LandingPage.ADD_MANUALLY_TAB)
     add_manually_tab.click()
 
     add_user_form = AddUserForm(self.driver)
-    add_user_form.addTestUser(name, email)
+    add_user_form.add_test_user(name, email)
 
-  def removeTestUser(self, name, server_url, should_raise_exception=True):
+  def remove_test_user(self, name, server_url, should_raise_exception=True):
     """Manually remove a test user using the landing page (the only way).
 
     Args:
@@ -48,8 +49,9 @@ class LandingPage(UfOPageLayout):
       should_raise_exception: True to raise an exception if the user is not
                               found.
     """
+    self.go_to_landing_page(server_url)
+
     # Find the user and navigate to their details page.
-    self.driver.get(server_url + flask.url_for('landing'))
     user_item = self.findTestUser(name)
 
     if user_item is None:
@@ -82,12 +84,12 @@ class LandingPage(UfOPageLayout):
       The anchor element for visiting the given item's details page or None.
     """
     landing_page = LandingPage(self.driver)
-    user_list_item = landing_page.GetElement(LandingPage.USER_LIST_ITEM)
+    user_list_item = landing_page.get_element(LandingPage.USER_LIST_ITEM)
     user_listbox = user_list_item.find_element(*LandingPage.GENERIC_LISTBOX)
     return self.findItemInListing(user_listbox, name)
 
-  def addTestServer(self, ip, name, ssh_private_key, host_public_key,
-                    server_url):
+  def add_test_server(self, ip, name, ssh_private_key, host_public_key,
+                      server_url):
     """Add a test server using the landing page.
 
     Args:
@@ -97,13 +99,14 @@ class LandingPage(UfOPageLayout):
       host_public_key: A string for the host public key of the server to add.
       server_url: The base url portion of the setup page.
     """
+    self.go_to_landing_page(server_url)
+
     # Navigate to add server.
-    self.driver.get(server_url + flask.url_for('landing'))
-    add_server_button = self.GetElement(UfOPageLayout.ADD_SERVER_BUTTON)
+    add_server_button = self.get_element(UfOPageLayout.ADD_SERVER_BUTTON)
     add_server_button.click()
-    add_server_modal = WebDriverWait(self.driver,
-                                     UfOPageLayout.DEFAULT_TIMEOUT).until(
+    WebDriverWait(self.driver, UfOPageLayout.DEFAULT_TIMEOUT).until(
         EC.visibility_of_element_located(((UfOPageLayout.ADD_SERVER_MODAL))))
+    add_server_modal = self.driver.find_element(*LandingPage.ADD_SERVER_MODAL)
 
     server_form = ServerForm(self.driver)
     server_form.addServer(add_server_modal, ip, name, ssh_private_key,
@@ -118,10 +121,11 @@ class LandingPage(UfOPageLayout):
       should_raise_exception: True to raise an exception if the server is not
                               found.
     """
+    self.go_to_landing_page(server_url)
+
     # Find the server and navigate to its details page.
-    self.driver.get(server_url + flask.url_for('landing'))
     landing_page = LandingPage(self.driver)
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
+    server_list = landing_page.get_element(LandingPage.SERVER_LIST_ITEM)
     server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
     server_item = landing_page.findItemInListing(server_listbox, name)
 
@@ -158,10 +162,11 @@ class LandingPage(UfOPageLayout):
       host_public_key: A string for the host public key of the server to edit.
       server_url: The base url portion of the landing page.
     """
+    self.go_to_landing_page(server_url)
+
     # Find the server and navigate to its details page.
-    self.driver.get(server_url + flask.url_for('landing'))
     landing_page = LandingPage(self.driver)
-    server_list = landing_page.GetElement(LandingPage.SERVER_LIST_ITEM)
+    server_list = landing_page.get_element(LandingPage.SERVER_LIST_ITEM)
     server_listbox = server_list.find_element(*LandingPage.GENERIC_LISTBOX)
     server_item = landing_page.findItemInListing(server_listbox, old_name)
 
@@ -234,3 +239,25 @@ class LandingPage(UfOPageLayout):
     WebDriverWait(self.driver, LandingPage.DEFAULT_TIMEOUT).until(
         EC.invisibility_of_element_located(((
             LandingPage.USER_DETAILS_SPINNER))))
+
+  def go_to_landing_page(self, server_url):
+    """If the current page is not the landing page, go to the landing page.
+
+    Args:
+      server_url: The base url portion of the landing page.
+    """
+    landing_url = server_url + flask.url_for('landing')
+    if landing_url != self.driver.current_url:
+      self.driver.get(landing_url)
+
+  def tryToCloseDetailsDialogAndRefreshIfFail(self, server_url):
+    """Try to click the close button on a details dialog and refresh on except.
+
+    Args:
+      server_url: The base url portion of the landing page.
+    """
+    user_details_button = self.get_element(LandingPage.USER_DETAILS_BUTTON)
+    try:
+      user_details_button.click()
+    except:
+      self.driver.get(server_url + flask.url_for('landing'))

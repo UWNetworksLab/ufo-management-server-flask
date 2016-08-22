@@ -3,6 +3,7 @@
 <link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="server-add-form">
   <style is="custom-style">
@@ -21,38 +22,37 @@
         <paper-spinner id="serverSpinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
       </template>
       <form is="iron-form" id="serverAddForm" method="post" action="{{resources.proxyServerAddUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parsePostResponse">
-        <paper-input label="{{resources.ipLabel}}" type="text" id="{{resources.ipInput}}" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" on-keypress="submitIfEnter">{{resources.ip_address}}</paper-input>
-        <paper-input label="{{resources.nameLabel}}" type="text" id="{{resources.nameInput}}" name="name" required on-keypress="submitIfEnter">{{resources.name}}</paper-input>
+        <paper-input label="[[ipLabel]]" type="text" id="{{resources.ipInput}}" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="[[ipAddressError]]" on-keypress="submitIfEnter"></paper-input>
+        <paper-input label="[[nameLabel]]" type="text" id="{{resources.nameInput}}" name="name" required on-keypress="submitIfEnter"></paper-input>
         <!-- TODO add the ability to upload files -->
-        <ufo-textarea label="{{resources.sshPrivateKeyLabel}}"
+        <ufo-textarea label="[[sshPrivateKeyLabel]]"
                       id="{{resources.sshPrivateKeyInput}}"
                       name="ssh_private_key"
                       required max-rows="{{resources.textAreaMaxRows}}"
                       pattern="{{resources.regexes.privateKeyPattern}}"
-                      error-message="{{resources.regexes.privateKeyError}}"
-                      value="{{resources.ssh_private_key}}">
+                      error-message="[[privateKeyError]]">
         </ufo-textarea>
         <br>
-        <p>{{resources.sshPrivateKeyText}}</p>
-        <paper-input label="{{resources.hostPublicKeyLabel}}"
+        <p>[[sshPrivateKeyText]]</p>
+        <paper-input label="[[hostPublicKeyLabel]]"
                      type="text"
                      id="{{resources.hostPublicKeyInput}}"
                      name="host_public_key"
                      required pattern="{{resources.regexes.publicKeyPattern}}"
-                     error-message="{{resources.regexes.publicKeyError}}"
-                     on-keypress="submitIfEnter">{{resources.host_public_key}}
+                     error-message="[[publicKeyError]]"
+                     on-keypress="submitIfEnter">
         </paper-input>
         <br>
-        <p>{{resources.hostPublicKeyText}}</p>
-        <p>{{resources.rsaText}}</p>
+        <p>[[hostPublicKeyText]]</p>
+        <p>[[rsaText]]</p>
         <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
       </form>
       <div class="buttons">
         <paper-button class="anchor-button" dialog-dismiss on-tap="resetForm">
-        <strong>{{resources.dismissText}}</strong>
+        <strong>[[dismissText]]</strong>
         </paper-button>
         <paper-button class="anchor-button" id="serverAddSubmitButton" autofocus on-tap="submitPostForm">
-        <strong>{{resources.confirmText}}</strong>
+        <strong>[[confirmText]]</strong>
         </paper-button>
       </div>
     </paper-dialog-scrollable>
@@ -72,6 +72,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-form-error': 'handleFormError',
       },
@@ -82,6 +83,30 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.ipAddressError == 'ipAddressError') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        this.ipLabel = I18N.__('ipLabel');
+        this.nameLabel = I18N.__('nameLabel');
+        this.sshPrivateKeyLabel = I18N.__('sshPrivateKeyLabel');
+        this.sshPrivateKeyText = I18N.__('sshPrivateKeyText');
+        this.hostPublicKeyLabel = I18N.__('hostPublicKeyLabel');
+        this.hostPublicKeyText = I18N.__('hostPublicKeyText');
+        this.rsaText = I18N.__('rsaText');
+        this.dismissText = I18N.__('dismissText');
+        this.confirmText = I18N.__('confirmText');
+        this.publicKeyError = I18N.__('publicKeyError');
+        this.privateKeyError = I18N.__('privateKeyError');
+        this.ipAddressError = I18N.__('ipAddressError');
       },
       enableSpinner: function() {
         this.set('loading', true);
@@ -120,9 +145,21 @@
         if (listElem) {
           listElem.setAjaxResponse(updatedServersJson);
         }
+        var flipperId = this.resources.proxyServerAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedServersJson);
+        }
       },
       resetForm: function(e, details) {
-        document.getElementById('serverAddForm').reset();
+        var formElem = this.querySelector('#serverAddForm');
+        if (formElem) {
+          formElem.querySelector('#' + this.resources.ipInput).value = "";
+          formElem.querySelector('#' + this.resources.nameInput).value = "";
+          formElem.querySelector('#' + this.resources.sshPrivateKeyInput).value = "";
+          formElem.querySelector('#' + this.resources.hostPublicKeyInput).value = "";
+          formElem.reset();
+        }
       },
       submitIfEnter: function(e) {
         if (e.keyCode === 13) {

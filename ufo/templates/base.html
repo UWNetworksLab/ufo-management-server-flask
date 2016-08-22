@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
   <title>{% block title %}{% endblock %}</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'self'; script-src 'self' www.google.com/recaptcha/api.js https://www.gstatic.com/recaptcha/api2/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; frame-src 'self' https://www.google.com/recaptcha/api2/">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'self' https://raw.githubusercontent.com/uProxy/ufo-management-server-flask/; script-src 'self' www.google.com/recaptcha/api.js https://www.gstatic.com/recaptcha/api2/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; frame-src 'self' https://www.google.com/recaptcha/api2/">
   <!-- Include web components script for Polymer to work on firefox. -->
   <script src="{{ url_for('static', filename='bower_components/webcomponentsjs/webcomponents-lite.min.js') }}"></script>
-  <link rel="import" href="{{ url_for('static', filename='vulcanized.html') }}" />
-  <script src="{{ url_for('vulcanized') }}"></script>
+  <link rel="import" href="{{ url_for('vulcanized_html') }}" />
+  <script src="{{ url_for('vulcanized_js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon"/>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}"/>
   {% block head %}{% endblock %}
 </head>
 <style is="custom-style">
@@ -30,9 +31,6 @@
   }
   .verticalSpacer {
     height: 20px;
-  }
-  #dialogMenuHolder {
-    position: absolute;
   }
 </style>
 <body class="fullbleed layout vertical">
@@ -61,12 +59,8 @@
       </paper-toolbar>
     </paper-scroll-header-panel>
   </div>
-  <div class="layout vertical">
-    <div class="horizontal center-justified layout" id="dialogMenuHolder">
-      <ufo-dropdown-menu resources="{{resources}}">
-      </ufo-dropdown-menu>
-    </div>
-  </div>
+  <ufo-dropdown-menu resources="{{resources}}" id="ufoDropdownMenu" version-json-url="{{ url_for('static', filename='version.json') }}">
+  </ufo-dropdown-menu>
   <div class="layout vertical" id="main-holder">
     {% block body %}{% endblock %}
     <br>

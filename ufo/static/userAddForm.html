@@ -5,6 +5,7 @@
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="user-add-form">
   <style is="custom-style">
@@ -23,9 +24,10 @@
       <template is="dom-if" if="{{showInputFields}}">
         <form is="iron-form" id="{{formId}}" method="get" action="{{resources.userAddUrl}}" on-iron-form-response="parseGetResponse" on-iron-form-presubmit="enableSpinnerAndSetPrefixes">
           <template is="dom-if" if="[[!idMatches(formId, 'domainAdd')]]">
-            <paper-input label="{{emailLabel}}" type="textbox" name="{{inputName}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="{{resources.regexes.keyLookupError}}"></paper-input>
+            <paper-input label="{{emailLabel}}" type="textbox" name="{{inputName}}" pattern="{{resources.regexes.keyLookupPattern}}" error-message="[[keyLookupError]]"></paper-input>
             <br>
             <p>{{inputDefinition}}</p>
+            <p>[[oauthFeature]]</p>
             <br>
           </template>
           <template is="dom-if" if="[[idMatches(formId, 'domainAdd')]]">
@@ -41,7 +43,7 @@
               <paper-listbox>
               <template is="dom-if" if="[[!areAnyUsersFound()]]">
                 <paper-item id="noResultsItem" class="horizontal layout">
-                  <span class="flex"><strong>{{resources.addFlowNoResults}}</strong></span>
+                  <span class="flex"><strong>[[addFlowNoResults]]</strong></span>
                 </paper-item>
               </template>
                 <template is="dom-repeat" items="[[lastResponse.directory_users]]">
@@ -63,7 +65,7 @@
             <paper-listbox>
               <template is="dom-if" if="[[!areAnyUsersFound()]]">
                 <paper-item id="noResultsItem" class="horizontal layout">
-                  <span class="flex"><strong>{{resources.addFlowNoResults}}</strong></span>
+                  <span class="flex"><strong>[[addFlowNoResults]]</strong></span>
                 </paper-item>
               </template>
               <template is="dom-repeat" items="[[lastResponse.directory_users]]">
@@ -79,12 +81,12 @@
             <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           </form>
         </template>
-        <paper-button on-tap="resetForms" class="anchor-button addTopMargin"><strong>{{resources.lookAgainText}}</strong></paper-button>
+        <paper-button on-tap="resetForms" class="anchor-button addTopMargin"><strong>[[lookAgainText]]</strong></paper-button>
       </template>
     </div>
     <div class="buttons">
       <paper-button class="anchor-button" dialog-dismiss on-tap="resetForms">
-      <strong>{{resources.dismissText}}</strong>
+      <strong>[[dismissText]]</strong>
       </paper-button>
       <paper-button class="anchor-button" autofocus on-tap="submitPostForm">
       <strong>{{saveButton}}</strong>
@@ -158,6 +160,7 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-form-error': 'handleFormError',
       },
@@ -166,6 +169,23 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.keyLookupError == 'keyLookupError') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        this.addFlowNoResults = I18N.__('addFlowNoResults');
+        this.lookAgainText = I18N.__('lookAgainText');
+        this.dismissText = I18N.__('dismissText');
+        this.keyLookupError = I18N.__('keyLookupError');
+        this.oauthFeature = I18N.__('oauthFeature');
       },
       setJsonPrefixes: function() {
         var addForm = document.getElementById(this.formId);
@@ -180,6 +200,8 @@
         this.enableSpinner();
       },
       submitGetForm: function() {
+        this.querySelector('#' + this.formId).request.handleAs = "json";
+        this.querySelector('#' + this.formId).request.jsonPrefix = this.resources.jsonPrefix;
         this.querySelector('#' + this.formId).submit();
       },
       submitPostForm: function() {
@@ -232,6 +254,11 @@
         var listElem = document.getElementById(this.resources.userListId);
         if (listElem) {
           listElem.setAjaxResponse(updatedUsersJson);
+        }
+        var flipperId = this.resources.userAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedUsersJson);
         }
       },
       idMatches: function(id, string1) {

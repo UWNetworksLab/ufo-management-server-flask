@@ -3,15 +3,17 @@
 # Could turn errors only on if necessary, leave off for now.
 # errors-only=yes
 
+# Ignore migrations directory
+ignore=migrations
+
 [FORMAT]
 
 # String used as indentation unit. This is usually " " (4 spaces) or "\t" (1
 # tab). We use two spaces however.
 indent-string='  '
 
-# Capwords setting for methods and allow get and post for request overloading.
-# Also allow methods that start with test as in testWhateverMethodName.
-method-rgx=([A-Z_][a-zA-Z0-9]{2,30}|get|post|test[A-Z][a-zA-Z0-9]{2,30})$
+# lower_with_underscore setting for method names with capwords for tests.
+method-rgx=([a-z_][a-z0-9_]{2,30}|test[A-Z][a-zA-Z0-9]{2,30}|assert[A-Z][a-zA-Z0-9]{2,30}|setUp|tearDown)$
 
-# Capwords setting with exception for decorate for functions.
-function-rgx=([A-Z_][a-zA-Z0-9_]{2,30}|decorate)$
+# lower_with_underscore setting for function names with capwords for tests.
+function-rgx=([a-z_][a-z0-9_]{2,30}|test[A-Z][a-zA-Z0-9]{2,30}|assert[A-Z][a-zA-Z0-9]{2,30}|setUp|tearDown)$

@@ -17,16 +17,16 @@ class LandingPageTest(BaseTest):
   def setUp(self):
     """Setup for test methods."""
     super(LandingPageTest, self).setUp()
-    super(LandingPageTest, self).setContext()
+    super(LandingPageTest, self).set_context()
     LoginPage(self.driver).Login(self.args.server_url, self.args.email,
                                  self.args.password)
 
   def tearDown(self):
     """Teardown for test methods."""
     landing_page = LandingPage(self.driver)
-    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                                self.args.server_url,
-                                should_raise_exception=False)
+    landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                                  self.args.server_url,
+                                  should_raise_exception=False)
     landing_page.removeTestServer(BaseTest.TEST_SERVER_AS_DICT['name'],
                                   self.args.server_url,
                                   should_raise_exception=False)
@@ -45,14 +45,14 @@ class LandingPageTest(BaseTest):
 
     landing_page = LandingPage(self.driver)
     for element_by_id in LandingPage.BASE_PAGE_ELEMENTS:
-      base_page_element = landing_page.GetElement(element_by_id)
+      base_page_element = landing_page.get_element(element_by_id)
       self.assertIsNotNone(base_page_element)
       self.assertTrue(base_page_element.is_displayed())
 
     self.assertLogoLinksToLandingPage()
 
     for element_by_id in LandingPage.LANDING_PAGE_ELEMENTS:
-      landing_page_element = landing_page.GetElement(element_by_id)
+      landing_page_element = landing_page.get_element(element_by_id)
       self.assertIsNotNone(landing_page_element)
       self.assertTrue(landing_page_element.is_displayed())
 
@@ -61,53 +61,55 @@ class LandingPageTest(BaseTest):
     landing_page = LandingPage(self.driver)
     self.assertTestUserPresenceOnPage(False)
 
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
 
     self.assertTestUserPresenceOnPage(True)
 
   def testDeleteUser(self):
     """Test that deleting a user removes that user."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
 
     self.assertTestUserPresenceOnPage(True)
 
-    landing_page.removeTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                                self.args.server_url)
+    landing_page.remove_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                                  self.args.server_url)
 
     self.assertTestUserPresenceOnPage(False)
 
   def testDisableAndEnableUserFromListbox(self):
     """Test that disabling and enabling a user works from the listbox."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
 
-    self.verifyUserCanBeDisabledAndThenEnabled(True, True)
+    self.assertUserCanBeDisabledAndThenEnabled(True, True)
 
   def testDisableAndEnableUserFromDetailsDialog(self):
     """Test that disabling and enabling a user works from the details page."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
 
-    self.verifyUserCanBeDisabledAndThenEnabled(False, True)
+    self.assertUserCanBeDisabledAndThenEnabled(False, True)
+
+    landing_page.tryToCloseDetailsDialogAndRefreshIfFail(self.args.server_url)
 
   def testCreateNewInviteCode(self):
     """Test that creating a new invite code actually generates a new one."""
     landing_page = LandingPage(self.driver)
     # Create test user and get it.
-    landing_page.addTestUser(BaseTest.TEST_USER_AS_DICT['name'],
-                             BaseTest.TEST_USER_AS_DICT['email'],
-                             self.args.server_url)
+    landing_page.add_test_user(BaseTest.TEST_USER_AS_DICT['name'],
+                               BaseTest.TEST_USER_AS_DICT['email'],
+                               self.args.server_url)
     self.assertTestUserPresenceOnPage(True)
     test_user_item = landing_page.findTestUser(
         BaseTest.TEST_USER_AS_DICT['name'])
@@ -144,27 +146,31 @@ class LandingPageTest(BaseTest):
         *LandingPage.USER_INVITE_CODE_TEXT).get_attribute('value')
     self.assertNotEquals(initial_invite_code, final_invite_code)
 
+    landing_page.tryToCloseDetailsDialogAndRefreshIfFail(self.args.server_url)
+
   def testAddServerFromLandingPage(self):
     """Test that adding a server shows up on the server listing."""
     landing_page = LandingPage(self.driver)
     self.assertTestServerPresenceOnPage(False)
 
-    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                               BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
-                               self.args.server_url)
+    landing_page.add_test_server(
+        BaseTest.TEST_SERVER_AS_DICT['ip'],
+        BaseTest.TEST_SERVER_AS_DICT['name'],
+        BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+        BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+        self.args.server_url)
 
     self.assertTestServerPresenceOnPage(True)
 
   def testDeleteServer(self):
     """Test that deleting a server removes that server."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                               BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
-                               self.args.server_url)
+    landing_page.add_test_server(
+        BaseTest.TEST_SERVER_AS_DICT['ip'],
+        BaseTest.TEST_SERVER_AS_DICT['name'],
+        BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+        BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+        self.args.server_url)
 
     self.assertTestServerPresenceOnPage(True)
 
@@ -177,11 +183,12 @@ class LandingPageTest(BaseTest):
   def testEditServer(self):
     """Test that editing a server displays the modified server."""
     landing_page = LandingPage(self.driver)
-    landing_page.addTestServer(BaseTest.TEST_SERVER_AS_DICT['ip'],
-                               BaseTest.TEST_SERVER_AS_DICT['name'],
-                               BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
-                               BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
-                               self.args.server_url)
+    landing_page.add_test_server(
+        BaseTest.TEST_SERVER_AS_DICT['ip'],
+        BaseTest.TEST_SERVER_AS_DICT['name'],
+        BaseTest.TEST_SERVER_AS_DICT['ssh_private_key'],
+        BaseTest.TEST_SERVER_AS_DICT['host_public_key'],
+        self.args.server_url)
 
     self.assertTestServerPresenceOnPage(True)
 
@@ -206,7 +213,7 @@ class LandingPageTest(BaseTest):
     self.driver.get(self.args.server_url + flask.url_for('landing'))
     self.assertChromePolicyDownloadLinkIsConnected()
 
-  def verifyUserCanBeDisabledAndThenEnabled(self, should_use_listbox,
+  def assertUserCanBeDisabledAndThenEnabled(self, should_use_listbox,
                                             should_refresh_page):
     """Helper method for testing disabling and enabling a user.
 

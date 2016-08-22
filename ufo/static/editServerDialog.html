@@ -6,6 +6,7 @@
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 <link rel="import" href="textarea.html" />
 
 <dom-module id="edit-server-dialog">
@@ -43,7 +44,7 @@
       display: none;
     }
     .showElement {
-      display: inline-block;
+      display: inline-flex;
     }
   </style>
   <template>
@@ -53,8 +54,8 @@
           <iron-icon src="{{resources.proxyServerIconUrl}}" item-icon></iron-icon>
           <div class="first-div"><strong>{{item.name}}</strong></div>
           <div class="second-div">{{item.ip_address}}</div>
-          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton" id="{{resources.editButtonId}}"><strong>{{resources.editText}}</strong></paper-button>
-          <paper-icon-button icon="close" title="{{resources.closeText}}" id="{{resources.proxyServerDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
+          <paper-button on-tap="switchToServerEdit" class="third-div topLineButton" id="{{resources.editButtonId}}"><strong>[[editText]]</strong></paper-button>
+          <paper-icon-button icon="close" title="[[closeText]]" id="{{resources.proxyServerDetailsButtonId}}" on-tap="closeDialog"></paper-icon-button>
         </paper-icon-item>
       </paper-listbox>
       <template is="dom-if" if="{{loading}}">
@@ -62,57 +63,60 @@
       </template>
       <div id="rowHolder" class="vertical center-justified layout">
         <form is="iron-form" id="serverEditForm" method="post" action="{{resources.proxyServerEditUrl}}" on-iron-form-presubmit="enableSpinner" on-iron-form-response="parseEditResponse">
-          <paper-input class="editInputFields" disabled label="{{resources.ipLabel}}" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="{{resources.regexes.ipAddressError}}" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
-          <paper-input class="editInputFields" disabled label="{{resources.nameLabel}}" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter" id="{{resources.nameInput}}"></paper-input>
+          <paper-input class="editInputFields" disabled label="[[ipLabel]]" type="text" name="ip_address" required pattern="{{resources.regexes.ipAddressPattern}}" error-message="[[ipAddressError]]" value="[[item.ip_address]]" on-keypress="submitIfEnter" id="{{resources.ipInput}}"></paper-input>
+          <paper-input class="editInputFields" disabled label="[[nameLabel]]" type="text" name="name" required value="[[item.name]]" on-keypress="submitIfEnter" id="{{resources.nameInput}}"></paper-input>
           <!-- TODO add the ability to upload files -->
           <paper-input class="editInputFields"
                        disabled
-                       label="[[resources.sshPrivateKeyLabel]]"
+                       label="[[sshPrivateKeyLabel]]"
                        name="ssh_private_key"
                        required
                        max-rows="[[resources.textAreaMaxRows]]"
                        pattern="[[resources.regexes.privateKeyPattern]]"
-                       error-message="[[resources.regexes.privateKeyError]]"
+                       error-message="[[privateKeyError]]"
                        value="[[item.ssh_private_key]]"
                        on-keypress="doNothingOnEnter"
                        on-keydown="doNothingOnEnter"
                        id="{{resources.sshPrivateKeyInput}}">
           </paper-input>
           <br>
-          <p class="editElements hideElement">{{resources.sshPrivateKeyText}}</p>
+          <p class="editElements hideElement">[[sshPrivateKeyText]]</p>
           <paper-input class="editInputFields"
                        disabled
-                       label="{{resources.hostPublicKeyLabel}}"
+                       label="[[hostPublicKeyLabel]]"
                        type="text"
                        name="host_public_key"
                        required
                        pattern="{{resources.regexes.publicKeyPattern}}"
-                       error-message="{{resources.regexes.publicKeyError}}"
+                       error-message="[[publicKeyError]]"
                        value="[[item.host_public_key]]"
                        on-keypress="submitIfEnter"
                        id="{{resources.hostPublicKeyInput}}">
           </paper-input>
           <br>
-          <p class="editElements hideElement">{{resources.hostPublicKeyText}}</p>
-          <p class="editElements hideElement">{{resources.rsaText}}</p>
+          <p class="editElements hideElement">[[hostPublicKeyText]]</p>
+          <p class="editElements hideElement">[[rsaText]]</p>
           <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <input type="hidden" name="server_id" value="{{item.id}}">
         </form>
       </div>
       <br>
       <div class="buttons">
-        <paper-button class="editElements hideElement anchor-button" on-tap="cancelServerEdit">
-        <strong>{{resources.dismissText}}</strong>
+        <paper-button class="editElements hideElement anchor-button"
+                      on-tap="cancelServerEdit">
+          <strong>[[dismissText]]</strong>
         </paper-button>
-        <paper-button class="editElements hideElement anchor-button" on-tap="submitEditForm" id="serverEditSubmitButton">
-        <strong>{{resources.saveText}}</strong>
+        <paper-button class="editElements hideElement anchor-button"
+                      on-tap="submitEditForm"
+                      id="serverEditSubmitButton">
+          <strong>[[saveText]]</strong>
         </paper-button>
         <form is="iron-form" id="serverDeleteForm" method="post" action="{{resources.proxyServerDeleteUrl}}" on-iron-form-response="parseDeleteResponse" on-iron-form-presubmit="enableSpinner">
           <input type="hidden" name="server_id" value="{{item.id}}">
           <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
           <paper-button on-tap="submitForm" class="delete-button" id="serverDeleteButton" type="submit">
             <iron-icon icon="delete"></iron-icon>
-            <strong>{{resources.proxyServerDeleteLabel}}</strong>
+            <strong>[[proxyServerDeleteLabel]]</strong>
           </paper-button>
         </form>
       </div>
@@ -140,6 +144,7 @@
           type: Object,
         },
       },
+      behaviors: [I18N],
       listeners: {
         'iron-form-error': 'handleFormError',
         'iron-overlay-canceled': 'closeDialog',
@@ -153,6 +158,33 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.ipAddressError == 'ipAddressError') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        this.editText = I18N.__('editText');
+        this.closeText = I18N.__('closeText');
+        this.ipLabel = I18N.__('ipLabel');
+        this.nameLabel = I18N.__('nameLabel');
+        this.sshPrivateKeyLabel = I18N.__('sshPrivateKeyLabel');
+        this.sshPrivateKeyText = I18N.__('sshPrivateKeyText');
+        this.hostPublicKeyLabel = I18N.__('hostPublicKeyLabel');
+        this.hostPublicKeyText = I18N.__('hostPublicKeyText');
+        this.rsaText = I18N.__('rsaText');
+        this.dismissText = I18N.__('dismissText');
+        this.saveText = I18N.__('saveText');
+        this.proxyServerDeleteLabel = I18N.__('proxyServerDeleteLabel');
+        this.publicKeyError = I18N.__('publicKeyError');
+        this.privateKeyError = I18N.__('privateKeyError');
+        this.ipAddressError = I18N.__('ipAddressError');
       },
       enableSpinner: function() {
         this.set('loading', true);
@@ -203,6 +235,11 @@
         if (listElem) {
           listElem.setAjaxResponse(updatedJson);
         }
+        var flipperId = this.resources.proxyServerAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedJson);
+        }
       },
       openDialog: function() {
         var dialog = this.querySelector('#' + this.resources.proxyServerDetailsOverlayId);
@@ -226,6 +263,9 @@
         this.showHideEdit(true);
       },
       resetInputs: function() {
+        if (this.oldItem == undefined) {
+          return;
+        }
         var editInputs = this.getElementsByClassName('editInputFields');
         for (var i in editInputs) {
           editInputs[i].value = this.oldItem[editInputs[i].name];

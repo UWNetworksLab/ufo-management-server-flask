@@ -36,6 +36,7 @@ class UfOPageLayout(BaseDriver):
 
   DROPDOWN_MENU = (By.ID, 'ufoDropdownMenu')
   DROPDOWN_MENU_SPINNER = (By.ID, 'dropdownMenuSpinner')
+  DROPDOWN_MENU_CLOSE_BUTTON = (By.CLASS_NAME, 'closeDropdownMenuButton')
   ADD_ADMIN_BUTTON = (By.ID, 'addAdminButton')
   ADD_ADMIN_DIALOG = (By.ID, 'addAdminDialog')
   ADD_ADMIN_FORM = (By.ID, 'addAdminForm')
@@ -80,6 +81,7 @@ class UfOPageLayout(BaseDriver):
   USER_COPY_INVITE_BUTTON = (By.ID, 'copyInviteCodeButton')
   USER_ROTATE_KEYS_BUTTON = (By.ID, 'rotateKeysButton')
   USER_DETAILS_SPINNER = (By.ID, 'userDetailsSpinner')
+  USER_DETAILS_BUTTON = (By.ID, 'userDetailsButton')
 
   ADD_SERVER_BUTTON = (By.ID, 'addServerButton')
   SERVER_LIST_ITEM = (By.ID, 'proxyList')

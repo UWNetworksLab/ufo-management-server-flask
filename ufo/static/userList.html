@@ -2,8 +2,9 @@
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-item/paper-item.html" />
-<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />>
+<link rel="import" href="bower_components/paper-listbox/paper-listbox.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
+<link rel="import" href="bower_components/quaintous-i18n/quaintous-i18n.html"/>
 
 <dom-module id="user-list">
   <style is="custom-style">
@@ -22,15 +23,16 @@
       margin: 0;
       padding: 0;
     }
-    .leftTextAlign {
-      text-align: left;
-    }
     .noDisplay {
       opacity: 0.0;
       cursor: default;
     }
     paper-item, paper-icon-item {
       border-top: 1px solid #e5e5e5;
+    }
+    /* Left align the paper-button text in the third div. */
+    paper-button.alignLeftText {
+      display: inline;
     }
     #columnHeader {
       border-top: none;
@@ -48,14 +50,15 @@
       id="getItemsAjax"
       loading="{{loading}}"
       last-response="{{ajaxResponse}}"
+      on-response="parseListResponse"
       json-prefix="{{resources.jsonPrefix}}">
     </iron-ajax>
     <paper-listbox>
       <paper-icon-item id="columnHeader" class="horizontal layout">
         <iron-icon src="{{resources.userIconUrl}}" class="noDisplay" item-icon></iron-icon>
-        <div class="first-div"><strong>{{resources.nameColumnHeader}}</strong></div>
-        <div class="second-div flex"><strong>{{resources.emailColumnHeader}}</strong></div>
-        <div class="third-div"><strong>{{resources.accessColumnHeader}}</strong></div>
+        <div class="first-div"><strong>[[nameColumnHeader]]</strong></div>
+        <div class="second-div flex"><strong>[[emailColumnHeader]]</strong></div>
+        <div class="third-div"><strong>[[accessColumnHeader]]</strong></div>
         <paper-icon-button icon="expand-more" class="noDisplay"></paper-icon-button>
       </paper-icon-item>
       <template is="dom-repeat" items="{{_limitResults(ajaxResponse.items, isShowingAll)}}" id="repeatToRerender">
@@ -66,16 +69,21 @@
           <form is="iron-form" method="post" action="{{resources.revokeToggleUrl}}" loading="{{loading}}" last-response="{{ajaxResponse}}" class="third-div" on-iron-form-response="parseRevokeResponse" on-iron-form-presubmit="enableSpinner">
             <input type="hidden" name="user_id" value="{{item.id}}">
             <input type="hidden" name="_xsrf_token" value="{{xsrfToken}}">
-            <paper-button on-tap="submitRevokeForm" class="topLineButton leftTextAlign" id="userDisableEnableButton" type="submit"><strong>{{item.accessChange}}</strong></paper-button>
+            <paper-button on-tap="submitRevokeForm"
+                class="topLineButton alignLeftText"
+                id="userDisableEnableButton"
+                type="submit">
+              <strong>{{item.accessChange}}</strong>
+            </paper-button>
           </form>
           <user-details-dialog id="detailsHolder" resources="{{resources}}" item="{{item}}"></user-details-dialog>
-          <paper-icon-button icon="expand-more" title="{{resources.userDetailsExpandText}}" id="{{resources.userDetailsButtonId}}"></paper-icon-button>
+          <paper-icon-button icon="expand-more" title="[[userDetailsExpandText]]" id="{{resources.userDetailsButtonId}}"></paper-icon-button>
         </paper-icon-item>
       </template>
       <template is="dom-if" if="[[_hasMoreToShow(ajaxResponse.items, isShowingAll)]]">
         <paper-item id="showMore" class="horizontal layout start-justified">
           <paper-button class="see-all-button" on-tap="_flipShowingAll">
-          {{resources.userSeeAllText}}
+          [[userSeeAllText]]
           </paper-button>
         </paper-item>
       </template>
@@ -116,11 +124,29 @@
           notify: true,
         },
       },
+      behaviors: [I18N],
       ready: function() {
         var xsrfElement = document.getElementById('globalXsrf');
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+      },
+      attached: function() {
+        // Notes about this retry can be found on the dev guide under Assorted
+        // Notes and Retry for i18n After 1 Second.
+        this.setI18nText();
+        setTimeout(function() {
+          if (this.userSeeAllText == 'userSeeAllText') {
+            this.setI18nText();
+          }
+        }, 1000);
+      },
+      setI18nText: function() {
+        this.nameColumnHeader = I18N.__('nameColumnHeader');
+        this.emailColumnHeader = I18N.__('emailColumnHeader');
+        this.accessColumnHeader = I18N.__('accessColumnHeader');
+        this.userDetailsExpandText = I18N.__('userDetailsExpandText');
+        this.userSeeAllText = I18N.__('userSeeAllText');
       },
       _limitCharacters: function(text) {
         if (text.length > this.characterLimit) {
@@ -194,6 +220,14 @@
         if (elem) {
           var dialogHolder = elem.querySelector('#detailsHolder');
           dialogHolder.openServerEdit();
+        }
+      },
+      parseListResponse: function() {
+        var updatedUserResponse = this.ajaxResponse;
+        var flipperId = this.resources.userAddListFlipperId;
+        var flipperElem = document.getElementById(flipperId);
+        if (flipperElem) {
+          flipperElem.setSelectedPageFromResponse(updatedUserResponse);
         }
       },
     });
