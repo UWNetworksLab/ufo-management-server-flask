@@ -14,7 +14,7 @@ The click to deploy method creates a new app based on a template from github. He
 
 1. Create Your Instance
 
-  1. [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://dashboard.heroku.com/new?template=https://github.com/uProxy/ufo-management-server-flask/tree/master).
+  1. [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://dashboard.heroku.com/new?template=https://github.com/uProxy/ufo-management-server-flask/tree/master)
     * It is easier to open this in a new window/tab so you can view the instructions and Heroku at the same time.
     * TODO(eholder): Switch this to production version after beta testing. We want testers to use master in the meantime for quick fixes.
   1. Login if you have an account.
