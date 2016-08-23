@@ -22,7 +22,7 @@ The click to deploy method creates a new app based on a template from github. He
     * If not, create an account, verify your email addres, and come back to click the deployment link again so it takes you to the correct page.
   1. Fill in the app name if desired. Leave all other settings unchanged.
   1. Fill in the RECAPTCHA_SITE_KEY and RECAPTCHA_SECRET_KEY in the Config Variables section. For information on how to create these keys, see [configure Recaptcha for login protection](DeploymentGuide.md#configuring-recaptcha-for-login-protection).
-  * Note, when copying the keys from Recaptcha's site, it can sometimes include some of the html form below the key. Please do not paste the extra html into your key on Heroku.
+    * Note, when copying the keys from Recaptcha's site, it can sometimes include some of the html form below the key. Please do not paste the extra html into your key on Heroku.
   1. Click the “Deploy” button.
   1. Wait for Heroku to create the app...
     * If you encounter an error here with your credit card info after just creating a new account, it is an issue with Heroku. Simply try clicking deploy again.
