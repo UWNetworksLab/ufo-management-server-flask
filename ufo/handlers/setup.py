@@ -113,7 +113,7 @@ def setup_oauth():
   flask.session['domain'] = domain
   config.save()
 
-  response_dict = {'domain': domain, 'credentials': str(credentials)}
+  response_dict = {'domain': domain, 'credentials': config.credentials}
   response_json = json.dumps((response_dict))
   return flask.Response(ufo.XSSI_PREFIX + response_json,
                         headers=ufo.JSON_HEADERS)

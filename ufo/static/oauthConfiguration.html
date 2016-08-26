@@ -1,4 +1,5 @@
 <link rel="import" href="bower_components/iron-form/iron-form.html" />
+<link rel="import" href="bower_components/iron-pages/iron-pages.html" />
 <link rel="import" href="bower_components/paper-button/paper-button.html" />
 <link rel="import" href="bower_components/paper-input/paper-input.html" />
 <link rel="import" href="bower_components/paper-spinner/paper-spinner.html" />
@@ -28,23 +29,17 @@
       <paper-spinner id="spinner" class="absolutePositionSpinner" active$={{loading}}></paper-spinner>
     </template>
 
-    <template is="dom-if" if="{{!isDomainConfigured(configuration.config)}}">
-      <p>
-        [[googleDomainPromptText]]
-      </p>
-    </template>
-
-    <template is="dom-if" if="{{isDomainConfigured(configuration.config)}}">
-      <p>
-        [[domainConfiguredText]] <strong>{{configuration.config.domain}}</strong>
-      </p>
-    </template>
-
-    <template is="dom-if" if="{{!isDomainConfigured(configuration.config)}}">
-      <p>
-        [[noDomainConfiguredText]]
-      </p>
-    </template>
+    <iron-pages selected="{{selectedPage}}">
+      <div>
+        <p>[[googleDomainPromptText]]</p>
+        <p>[[noDomainConfiguredText]]</p>
+      </div>
+      <div>
+        <p>
+          [[domainConfiguredText]] <strong>[[configuration.config.domain]]</strong>
+        </p>
+      </div>
+    </iron-pages>
 
     <p>
       <a class="anchor-no-button" href="{{configuration.oauth_url}}" target="_blank">
@@ -87,6 +82,10 @@
           value: false,
           notify: true,
         },
+        selectedPage: {
+          type: Number,
+          value: 0,
+        },
       },
       behaviors: [I18N],
       listeners: {
@@ -97,6 +96,7 @@
         if (xsrfElement) {
           this.xsrfToken = xsrfElement.value;
         }
+        this.setPageIndexForDomainConfigured();
       },
       attached: function() {
         // Notes about this retry can be found on the dev guide under Assorted
@@ -123,8 +123,17 @@
       enableSpinner: function() {
         this.set('loading', true);
       },
-      isDomainConfigured: function(config) {
-        return config.domain && config.credentials;
+      isDomainConfigured: function() {
+        var config = this.configuration.config;
+        // The !! here wraps a null or undefined result to make it false.
+        return !!(config.domain && config.credentials);
+      },
+      setPageIndexForDomainConfigured: function() {
+        if (this.isDomainConfigured()) {
+          this.set('selectedPage', 1);
+        } else {
+          this.set('selectedPage', 0);
+        }
       },
       submitOauth: function(e, detail) {
         this.querySelector('#oauthConfigurationForm').request.handleAs = "json";
@@ -143,6 +152,7 @@
         currentConfig.config.domain = response.domain;
         currentConfig.config.credentials = response.credentials;
         this.set('configuration', currentConfig);
+        this.setPageIndexForDomainConfigured();
       },
       handleFormError: function(event, detail) {
         event.stopPropagation();
